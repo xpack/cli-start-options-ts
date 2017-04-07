@@ -21,7 +21,7 @@ The module is available as [**cli-start-options**](https://www.npmjs.com/package
 $ npm install @ilg/clis-start-options --save
 ```
 
-The module does not provide any executables, and generaly should not be installed globally.
+The module does not provide any executables, and generaly there are few reasons to install it globally.
 
 The development repository is available from the GitHub [xpack/cli-start-options-js](https://github.com/xpack/cli-start-options-js) project.
 

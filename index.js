@@ -26,6 +26,9 @@
  */
 
 'use strict'
+// eslint valid-jsdoc: "error"
+
+// ----------------------------------------------------------------------------
 
 /**
  * This is the module entry point, the file that is processed when
