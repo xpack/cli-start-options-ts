@@ -1,6 +1,6 @@
 {
   "name": "@ilg/cli-start-options",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Classes to implement a command line Node.js application",
   "main": "./index.js",
   "directories": {
@@ -8,8 +8,7 @@
     "lib": "./lib",
     "test": "./test"
   },
-  "bin": {
-  },
+  "bin": {},
   "scripts": {
     "test": "standard && npm run test-tap -s",
     "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
