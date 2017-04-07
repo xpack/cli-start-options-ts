@@ -15,7 +15,7 @@ A recent Node.js (>7.x), since the ECMAScript 6 class syntax is used.
 
 ## Easy install
 
-The module is available as [**cli-start-options**](https://www.npmjs.com/package/@ilg/cli-start-options repository, use `npm` to install it in the module where it is needed:
+The module is available as [**cli-start-options**](https://www.npmjs.com/package/@ilg/cli-start-options) repository, use `npm` to install it in the module where it is needed:
 
 ```bash
 $ npm install @ilg/clis-start-options --save
@@ -50,7 +50,7 @@ $ sudo npm link
 $ ls -l /usr/local/lib/node_modules/@ilg
 ```
 
-In projects that use this module under development:
+In projects that use this module under development, link back from global location:
 
 ```bash
 $ npm link @ilg/cli-start-options
@@ -61,7 +61,7 @@ $ npm link @ilg/cli-start-options
 As for any `npm` package, the standard way to run the project tests is via `npm test`:
 
 ```bash
-$ cd clis-start-options-js.git
+$ cd cli-start-options-js.git
 $ npm test
 ```
 
