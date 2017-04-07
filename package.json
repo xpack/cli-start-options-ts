@@ -1,0 +1,53 @@
+{
+  "name": "@ilg/cli-start-options",
+  "version": "0.1.0",
+  "description": "Classes to implement a command line Node.js application",
+  "main": "./index.js",
+  "directories": {
+    "bin": "./bin",
+    "lib": "./lib",
+    "test": "./test"
+  },
+  "bin": {
+  },
+  "scripts": {
+    "test": "standard && npm run test-tap -s",
+    "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
+    "test-tap": "tap --reporter=classic --timeout 300 \"test/tap/*.js\"",
+    "tap": "tap --reporter=spec --timeout 300",
+    "fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xpack/cli-start-options-js.git"
+  },
+  "keywords": [
+    "cli",
+    "options"
+  ],
+  "author": {
+    "name": "Liviu Ionescu",
+    "email": "ilg@livius.net",
+    "url": "http://liviusdotnet.wordpress.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xpack/cli-start-options-js/issues"
+  },
+  "homepage": "https://github.com/xpack/cli-start-options-js",
+  "dependencies": {
+    "npmlog": "^4.0.2",
+    "wscript-avoider": "~3.0.0"
+  },
+  "devDependencies": {
+    "should": "^11.2.1",
+    "standard": "*",
+    "tap": "*"
+  },
+  "peerDependencies": {},
+  "bundledDependencies": [],
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">7.7.0"
+  }
+}
