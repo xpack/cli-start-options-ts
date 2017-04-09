@@ -33,10 +33,13 @@
 
 /**
  * This is the module entry point, the file that is processed when
- * `require('<module>')` is called.
+ * `require('@ilg/cli-start-options')` is called.
  *
  * For this to work, it must be linked from `package.json` as
  * `"main": "./index.js",`, which is, BTW, the default behaviour.
+ *
+ * This file does not define the classes itself, but imports them
+ * from various implementation files, and re-exports them.
  *
  * To import classes from this module into Node.js applications, use:
  *
