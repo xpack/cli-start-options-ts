@@ -30,10 +30,10 @@ The development repository is available from the GitHub [xpack/cli-start-options
 The module can be included in CLI applications and the classes can be used to derive application classes.
 
 ```javascript
-// Equivalent of import { CliApp, CliCmd, CliHelp, CliOptions } from 'cli-start-options'
+// Equivalent of import { CliApplication, CliCommand, CliHelp, CliOptions } from 'cli-start-options'
 
-const CliApp = require('@ilg/cli-start-options').CliApp
-const CliCmd = require('@ilg/cli-start-options').CliCmd
+const CliApplication = require('@ilg/cli-start-options').CliApplication
+const CliCommand = require('@ilg/cli-start-options').CliCommand
 const CliHelp = require('@ilg/cli-start-options').CliHelp
 const CliOptions = require('@ilg/cli-start-options').CliOptions
 ```
@@ -85,7 +85,8 @@ To enforce checking at file level, add the following comment to each file:
 
 ```
 'use strict'
-// eslint valid-jsdoc: "error"
+/* eslint valid-jsdoc: "error" */
+/* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 ```
 
 ## License

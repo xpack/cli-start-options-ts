@@ -26,7 +26,8 @@
  */
 
 'use strict'
-// eslint valid-jsdoc: "error"
+/* eslint valid-jsdoc: "error" */
+/* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
 // ----------------------------------------------------------------------------
 
@@ -41,17 +42,17 @@
  *
  * ```javascript
  * const CliOptions = require('@ilg/cli-start-options').CliOptions
- * const CliCmd = require('./lib/cli-cmd.js').CliCmd
+ * const CliCommand = require('./lib/cli-command.js').CliCommand
  * const CliHelp = require('./lib/cli-help.js').CliHelp
  * const CliOptions = require('./lib/cli-options.js').CliOptions
  * ```
  */
 
-// ES6: `import { CliApp } from './lib/cli-app.js'
-const CliApp = require('./lib/cli-app.js').CliApp
+// ES6: `import { CliApplication } from './lib/cli-application.js'
+const CliApplication = require('./lib/cli-application.js').CliApplication
 
-// ES6: `import { CliCmd } from './lib/cli-cmd.js'
-const CliCmd = require('./lib/cli-cmd.js').CliCmd
+// ES6: `import { CliCommand } from './lib/cli-command.js'
+const CliCommand = require('./lib/cli-command.js').CliCommand
 
 // ES6: `import { CliHelp } from './lib/cli-help.js'
 const CliHelp = require('./lib/cli-help.js').CliHelp
@@ -65,14 +66,15 @@ const CliOptions = require('./lib/cli-options.js').CliOptions
 // By default, `module.exports = {}`.
 // The Main class is added as a property with the same name to this object.
 
-module.exports.CliApp = CliApp
-module.exports.CliCmd = CliCmd
+module.exports.CliApplication = CliApplication
+module.exports.CliCommand = CliCommand
 module.exports.CliHelp = CliHelp
 module.exports.CliOptions = CliOptions
 
 // In ES6, it would be:
-// export class CliApp { ... }
+// export class CliApplication { ... }
 // ...
-// import { CliApp, CliCmd, CliHelp, CliOptions } from 'cli-start-options.js'
+// import { CliApplication, CliCommand, CliHelp, CliOptions }
+// from 'cli-start-options.js'
 
 // ----------------------------------------------------------------------------
