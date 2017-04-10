@@ -7,15 +7,17 @@
 
 A Node.js module with classes to implement a command line Node.js application.
 
-The module exports several classes. ... TBD
+The module exports several classes (like CliApplication, CliCommand, ...) that can be used as base classes for CLI applications.
 
 ## Prerequisites
 
-A recent Node.js (>7.x), since the ECMAScript 6 class syntax is used.
+A recent [Node.js](https://nodejs.org) (>7.x), since the ECMAScript 6 class syntax is used.
+
+If this is the first time you hear about Node.js, download and install the the binaries specific for your platform without any concerns, they're just fine. 
 
 ## Easy install
 
-The module is available as [**cli-start-options**](https://www.npmjs.com/package/@ilg/cli-start-options) repository, use `npm` to install it in the module where it is needed:
+The module is available as [**@ilg/cli-start-options**](https://www.npmjs.com/package/@ilg/cli-start-options) from the public repository, use `npm` to install it inside the module where it is needed:
 
 ```bash
 $ npm install @ilg/clis-start-options --save
