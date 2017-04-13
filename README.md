@@ -52,7 +52,7 @@ $ sudo npm link
 $ ls -l /usr/local/lib/node_modules/@ilg
 ```
 
-In projects that use this module under development, link back from global location:
+In projects that use this module under development, link back from the global location:
 
 ```bash
 $ npm link @ilg/cli-start-options
@@ -64,10 +64,11 @@ As for any `npm` package, the standard way to run the project tests is via `npm 
 
 ```bash
 $ cd cli-start-options-js.git
+$ npm install
 $ npm test
 ```
 
-The tests use the [`node-tap`](http://www.node-tap.org) framework ('A Test-Anything-Protocol library for Node.js', written by Isaac Schlueter).
+The tests use the [`node-tap`](http://www.node-tap.org) framework (_A Test-Anything-Protocol library for Node.js_, written by Isaac Schlueter).
 
 The continuous integration tests are performed with [Travis CI](https://travis-ci.org/xpack/cli-start-options-js).
 
@@ -85,7 +86,7 @@ Known and accepted exceptions:
 
 The documentation metadata follows the [JSdoc](http://usejsdoc.org) tags.
 
-To enforce checking at file level, add the following comment to each file:
+To enforce checking at file level, add the following comments right after the `use strict`:
 
 ```
 'use strict'
