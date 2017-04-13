@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/xpack/cli-start-options-js",
   "dependencies": {
-    "npmlog": "^4.0.2",
     "wscript-avoider": "~3.0.0"
   },
   "devDependencies": {
