@@ -40,7 +40,8 @@
   "devDependencies": {
     "should": "^11.2.1",
     "standard": "~10.0.1",
-    "tap": "~10.3.1"
+    "tap": "~10.3.1",
+    "tar": "~2.2.1"
   },
   "peerDependencies": {},
   "bundledDependencies": [],
