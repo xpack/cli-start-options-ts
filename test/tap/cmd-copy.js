@@ -102,7 +102,7 @@ test('xtest copy -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, 0, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -134,7 +134,36 @@ test('xtest co -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, 0, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
+      const outLines = stdout.split(/\r?\n/)
+      t.ok(outLines.length > 9, 'has enough output')
+      if (outLines.length > 9) {
+        // console.log(outLines)
+        t.equal(outLines[1], 'Copy a file to another file',
+          'has title')
+        t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
+          '--file <file> --output <file>', 'has Usage')
+      }
+      // There should be no error messages.
+      t.equal(stderr, '', 'stderr empty')
+    } catch (err) {
+      t.fail(err.message)
+    }
+    t.end()
+  })
+
+/**
+ * Test if partial command recognised and expanded.
+ */
+test('xtest c -h',
+  async (t) => {
+    try {
+      const { code, stdout, stderr } = await Common.xtestCli([
+        'c',
+        '-h'
+      ])
+      // Check exit code.
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -209,7 +238,7 @@ test('xtest co --file input.json --output output.json',
         outPath
       ])
       // Check exit code.
-      t.equal(code, 0, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
       t.equal(stdout, '', 'no output')
       // console.log(stdout)
       t.equal(stderr, '', 'no errors')
@@ -240,7 +269,7 @@ test('xtest co --file input.svd --output output.json -v',
         '-v'
       ])
       // Check exit code.
-      t.equal(code, 0, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
       t.match(stdout, 'Done.', 'done message')
       // console.log(stdout)
       t.equal(stderr, '', 'no errors')
