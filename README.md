@@ -14,14 +14,14 @@ The module exports several classes (like CliApplication, CliCommand, ...) that c
 
 A recent [Node.js](https://nodejs.org) (>7.x), since the ECMAScript 6 class syntax is used.
 
-If this is the first time you hear about Node.js, download and install the the binaries specific for your platform without any concerns, they're just fine. 
+If this is your first encounter with `npm`, you need to install the [node.js](https://nodejs.org/) JavScript run-time. The process is straighforward and does not polute the system locations significantly; just pick the current version, download the package suitable for your platform and install it as usual. The result is a binary program called `node` that can be used to execute JavaScript code from the terminal, and a link called `npm`, pointing to the `npm-cli.js` script, which is part of the node module that implements the npm functionality. On Windows, it is recommended to first install the [Git for Windows](https://git-scm.com/download/win) package.
 
 ## Easy install
 
 The module is available as [**@ilg/cli-start-options**](https://www.npmjs.com/package/@ilg/cli-start-options) from the public repository, use `npm` to install it inside the module where it is needed:
 
 ```bash
-$ npm install @ilg/clis-start-options --save
+$ npm install @ilg/cli-start-options --save
 ```
 
 The module does not provide any executables, and generaly there are few reasons to install it globally.
@@ -207,7 +207,6 @@ All files                           |    82.95 |    63.01 |    82.93 |    82.95 
 ### Continuous Integration (CI)
 
 The continuous integration tests are performed via [Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and [AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
-
 
 ### Standard compliance
 
