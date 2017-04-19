@@ -8,6 +8,8 @@ environment:
 # set clone depth
 clone_depth: 3  # clone entire repository history if not defined
 
+version: "{branch}.{build}"
+
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node.js or io.js
