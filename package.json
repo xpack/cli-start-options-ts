@@ -11,6 +11,7 @@
   "bin": {},
   "scripts": {
     "test": "standard && npm run test-tap -s",
+    "prepublish": "standard && npm run test-tap -s",
     "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
     "test-tap": "tap --reporter=classic --timeout 300 \"test/tap/*.js\"",
     "tap": "tap --reporter=spec --timeout 300",
