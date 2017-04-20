@@ -4,14 +4,35 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "type": "node",
       "request": "launch",
-      "name": "xtest --help",
+      "name": "tap xtest.js",
       "program": "${workspaceRoot}/test/mock/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--help"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap errors.js",
+      "program": "${workspaceRoot}/test/tap/errors.js",
+      "stopOnEntry": true,
+      "args": [
       ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
