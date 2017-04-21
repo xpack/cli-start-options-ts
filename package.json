@@ -12,9 +12,9 @@
   "scripts": {
     "test": "standard && npm run test-tap -s",
     "prepublish": "standard && npm run test-tap -s",
-    "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
-    "test-tap": "tap --reporter=classic --timeout 300 \"test/tap/*.js\"",
-    "tap": "tap --reporter=spec --timeout 300",
+    "test-coverage": "tap --coverage --reporter=classic --timeout 600 --no-color \"test/tap/*.js\"",
+    "test-tap": "tap --reporter=classic --timeout 300 --no-color \"test/tap/*.js\"",
+    "tap": "tap --reporter=spec --timeout 300 --no-color",
     "fix": "standard --fix"
   },
   "repository": {
