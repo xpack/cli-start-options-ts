@@ -82,7 +82,7 @@ class Xtest extends CliApplication {
     CliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
     CliOptions.addCommand(['notclass'], 'xtest/not-class.js')
     // Non existent.
-    CliOptions.addCommand(['cat'], 'xtest/cat.js')
+    CliOptions.addCommand(['con'], 'xtest/con.js')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

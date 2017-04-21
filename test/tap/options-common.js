@@ -60,6 +60,9 @@ const rootPath = path.resolve(path.dirname(__dirname), 'mock')
 
 // ----------------------------------------------------------------------------
 
+/**
+ * Read package.json, to later compare version.
+ */
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   pack = await CliApplication.readPackageJson(rootPath)
@@ -69,6 +72,9 @@ test('setup', async (t) => {
   t.end()
 })
 
+/**
+ * Test if --version returns the package version.
+ */
 test('xtest --version (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
@@ -87,6 +93,9 @@ test('xtest --version (spawn)', async (t) => {
   t.end()
 })
 
+/**
+ * Test if -h shows usage. Check usage content.
+ */
 test('xtest -h (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
@@ -113,6 +122,9 @@ test('xtest -h (spawn)', async (t) => {
   t.end()
 })
 
+/**
+ * Test if --help shows usage.
+ */
 test('xtest --help (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
@@ -128,6 +140,9 @@ test('xtest --help (spawn)', async (t) => {
   t.end()
 })
 
+/**
+ * Test if -d adds debug lines.
+ */
 test('xtest -d (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
@@ -147,6 +162,9 @@ test('xtest -d (spawn)', async (t) => {
   t.end()
 })
 
+/**
+ * Test commands that do not have an implementation derived from CliCommand.
+ */
 test('xtest notclass (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
@@ -156,6 +174,25 @@ test('xtest notclass (spawn)', async (t) => {
     t.equal(stdout, '', 'stdout is empty')
     // console.log(stderr)
     t.match(stderr, 'AssertionError:', 'stderr is assertion')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test commands that are not unique.
+ */
+test('xtest co (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'co'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is app')
+    // console.log(stderr)
+    t.equal(stderr, "ERROR: Command 'co' is not unique.\n",
+      'stderr is error')
+    t.match(stdout, 'Usage: xtest <command>', 'stderr[3] is Usage')
   } catch (err) {
     t.fail(err.message)
   }

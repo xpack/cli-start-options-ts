@@ -131,11 +131,11 @@ test('xtest copy -h',
 /**
  * Test if partial command recognised and expanded.
  */
-test('xtest co -h',
+test('xtest cop -h',
   async (t) => {
     try {
       const { code, stdout, stderr } = await Common.xtestCli([
-        'co',
+        'cop',
         '-h'
       ])
       // Check exit code.
@@ -189,11 +189,11 @@ test('xtest c -h',
 /**
  * Test missing input file.
  */
-test('xtest co --file xxx --output yyy',
+test('xtest cop --file xxx --output yyy',
   async (t) => {
     try {
       const { code, stdout, stderr } = await Common.xtestCli([
-        'co',
+        'cop',
         '--file',
         'xxx',
         '--output',
@@ -231,12 +231,12 @@ test('unpack',
 const filePath = path.resolve(workFolder, 'input.json')
 const readOnlyFolder = path.resolve(workFolder, 'ro')
 
-test('xtest co --file input.json --output output.json',
+test('xtest cop --file input.json --output output.json',
   async (t) => {
     try {
       const outPath = path.resolve(workFolder, 'output.json')
       const { code, stdout, stderr } = await Common.xtestCli([
-        'con',
+        'cop',
         '--file',
         filePath,
         '--output',
@@ -260,11 +260,11 @@ test('xtest co --file input.json --output output.json',
     t.end()
   })
 
-test('xtest co --file input.svd --output output.json -v',
+test('xtest cop --file input.svd --output output.json -v',
   async (t) => {
     try {
       const { code, stdout, stderr } = await Common.xtestCli([
-        'con',
+        'cop',
         '-C',
         workFolder,
         '--file',
@@ -290,12 +290,12 @@ if (os.platform() !== 'win32') {
   /**
    * Test output error.
    */
-  test('xtest co --file input.svd --output ro/output.json -v',
+  test('xtest cop --file input.svd --output ro/output.json -v',
     async (t) => {
       try {
         const outPath = path.resolve(workFolder, 'ro', 'output.json')
         const { code, stdout, stderr } = await Common.xtestCli([
-          'con',
+          'cop',
           '--file',
           filePath,
           '--output',
