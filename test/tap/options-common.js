@@ -395,4 +395,64 @@ test('xtest --loglevel xxx (spawn)', async (t) => {
   t.end()
 })
 
+/**
+ * Test if value not given.
+ */
+test('xtest --loglevel (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--loglevel'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(stdout, '', 'stdout is empty')
+    t.match(stderr, "ERROR: '--loglevel' expects a value",
+      'stderr is message')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if -- is ignored.
+ */
+test('xtest --loglevel -- (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--loglevel'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(stdout, '', 'stdout is empty')
+    t.match(stderr, "ERROR: '--loglevel' expects a value",
+      'stderr is message')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if -- is ignored adds trace lines.
+ */
+test('xtest --version -dd -- xx (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--version',
+      '-dd',
+      '--',
+      'xx'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.ok(stdout.length > 0, 'has stdout')
+    // Matching the whole string also checks that
+    // the colour changes are not used.
+    t.match(stdout, 'TRACE: Xtest.constructor()', 'has debug')
+    // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
 // ----------------------------------------------------------------------------
