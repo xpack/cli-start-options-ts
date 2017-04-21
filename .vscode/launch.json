@@ -69,6 +69,27 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xtest.js notclass",
+      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "notclass"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceRoot}/index.js"
     },

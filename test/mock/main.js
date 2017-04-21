@@ -80,6 +80,7 @@ class Xtest extends CliApplication {
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
     CliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
+    CliOptions.addCommand(['notclass'], 'xtest/not-class.js')
     // Non existent.
     CliOptions.addCommand(['cat'], 'xtest/cat.js')
 

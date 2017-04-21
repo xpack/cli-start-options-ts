@@ -147,4 +147,19 @@ test('xtest -d (spawn)', async (t) => {
   t.end()
 })
 
+test('xtest notclass (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'notclass'
+    ])
+    t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
+    t.equal(stdout, '', 'stdout is empty')
+    // console.log(stderr)
+    t.match(stderr, 'AssertionError:', 'stderr is assertion')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
 // ----------------------------------------------------------------------------
