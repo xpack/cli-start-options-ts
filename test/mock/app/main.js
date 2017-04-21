@@ -48,8 +48,8 @@
 // const path = require('path')
 
 // ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
-const CliApplication = require('../../index.js').CliApplication
-const CliOptions = require('../../index.js').CliOptions
+const CliApplication = require('../../../index.js').CliApplication
+const CliOptions = require('../../../index.js').CliOptions
 
 // ============================================================================
 

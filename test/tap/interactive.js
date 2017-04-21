@@ -45,8 +45,10 @@ const path = require('path')
 const test = require('tap').test
 
 const CliApplication = require('../../index.js').CliApplication
+const CliExitCodes = require('../../index.js').CliExitCodes
 
 assert(CliApplication)
+assert(CliExitCodes)
 
 // ----------------------------------------------------------------------------
 
@@ -56,10 +58,10 @@ const debug = false
 
 const nodeBin = process.env.npm_node_execpath || process.env.NODE ||
   process.execPath
-const executableName = './test/mock/bin/xtest.js'
+const executableName = './test/mock/app/bin/xtest.js'
 
 let pack = null
-const rootPath = path.resolve(path.dirname(__dirname), 'mock')
+const rootPath = path.resolve(path.dirname(__dirname), 'mock', 'app')
 
 // ----------------------------------------------------------------------------
 
@@ -72,7 +74,7 @@ test('setup', async (t) => {
   t.end()
 })
 
-test('xsvd -i (spawn)', (t) => {
+test('xtest -i (spawn)', (t) => {
   const cmd = [executableName, '-i']
   const opts = {}
   opts.env = process.env
@@ -91,7 +93,7 @@ test('xsvd -i (spawn)', (t) => {
     if (debug) {
       console.log('close')
     }
-    t.equal(code, 0, 'exit 0')
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code success')
     t.end()
   })
 

@@ -55,7 +55,7 @@ assert(CliExitCodes)
 // ----------------------------------------------------------------------------
 
 let pack = null
-const rootPath = path.resolve(path.dirname(__dirname), 'mock')
+const rootPath = path.resolve(path.dirname(__dirname), 'mock', 'app')
 // console.log(rootPath)
 
 // ----------------------------------------------------------------------------

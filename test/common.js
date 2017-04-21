@@ -40,7 +40,7 @@ const Console = require('console').Console
 const Writable = require('stream').Writable
 
 // ES6: `import { CliHelp } from './utils/cli-helps.js'
-const Xtest = require('./mock/main.js').Xtest
+const Xtest = require('./mock/app/main.js').Xtest
 
 // ----------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ const Xtest = require('./mock/main.js').Xtest
 
 const nodeBin = process.env.npm_node_execpath || process.env.NODE ||
   process.execPath
-const executableName = './test/mock/bin/xtest.js'
+const executableName = './test/mock/app/bin/xtest.js'
 const programName = 'xtest'
 
 // ============================================================================

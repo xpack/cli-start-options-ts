@@ -37,34 +37,9 @@
 
 // ----------------------------------------------------------------------------
 
-const fs = require('fs')
-const path = require('path')
-
-const Promisifier = require('@ilg/es6-promisifier').Promisifier
-
 // ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
-const CliCommand = require('../../../index.js').CliCommand
-const CliExitCodes = require('../../../index.js').CliExitCodes
-const CliError = require('../../../index.js').CliError
-
-// ----------------------------------------------------------------------------
-
-// Promisify functions from the Node.js library.
-if (!fs.readFilePromise) {
-  fs.readFilePromise = Promisifier.promisify(fs.readFile)
-}
-
-if (!fs.statPromise) {
-  fs.statPromise = Promisifier.promisify(fs.stat)
-}
-
-if (!fs.mkdirPromise) {
-  fs.mkdirPromise = Promisifier.promisify(fs.mkdir)
-}
-
-if (!fs.writeFilePromise) {
-  fs.writeFilePromise = Promisifier.promisify(fs.writeFile)
-}
+const CliCommand = require('../../../../index.js').CliCommand
+const CliExitCodes = require('../../../../index.js').CliExitCodes
 
 // ============================================================================
 
@@ -80,42 +55,13 @@ class Copy extends CliCommand {
     super(context)
 
     // Title displayed with the help message.
-    this.title = 'Copy a file to another file'
+    this.title = 'Exercise verbosity'
     this.optionGroups = [
-      {
-        title: 'Copy options',
-        optionDefs: [
-          {
-            options: ['--file'],
-            action: (context, val) => {
-              context.config.inputPath = val
-            },
-            init: (context) => {
-              context.config.inputPath = undefined
-            },
-            msg: 'Input file',
-            param: 'file',
-            isMandatory: true
-          },
-          {
-            options: ['--output'],
-            action: (context, val) => {
-              context.config.outputPath = val
-            },
-            init: (context) => {
-              context.config.outputPath = undefined
-            },
-            msg: 'Output file',
-            param: 'file',
-            isMandatory: true
-          }
-        ]
-      }
     ]
   }
 
   /**
-   * @summary Execute the `copy` command.
+   * @summary Execute the `verbosity` command.
    *
    * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
@@ -127,30 +73,8 @@ class Copy extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.title)
-    const config = this.context.config
-    const inputAbsolutePath = this.makePathAbsolute(config.inputPath)
-    log.info(`Reading '${inputAbsolutePath}'...`)
-    let inputData
-    try {
-      inputData = await fs.readFilePromise(inputAbsolutePath, 'utf8')
-    } catch (err) {
-      throw new CliError(err.message, CliExitCodes.ERROR.INPUT)
-    }
 
-    this.inputFileName = path.basename(config.inputPath)
-
-    const outputAbsolutePath = this.makePathAbsolute(config.outputPath)
-    const folderPath = path.dirname(outputAbsolutePath)
-
-    log.info(`Writing '${outputAbsolutePath}'...`)
-    try {
-      if (!await fs.statPromise(folderPath)) {
-        await fs.mkdirPromise(folderPath)
-      }
-      await fs.writeFilePromise(outputAbsolutePath, inputData, 'utf8')
-    } catch (err) {
-      throw new CliError(err.message, CliExitCodes.ERROR.OUTPUT)
-    }
+    log.verbose('Extra verbose')
 
     log.info('Done.')
     return CliExitCodes.SUCCESS
