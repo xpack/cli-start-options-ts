@@ -32,83 +32,65 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The Xtest main module.
- *
- * It is re-exported publicly by `index.js`.
- *
- * To import classes from this module into Node.js applications, use:
- *
- * ```javascript
- * const Xtest = require('xtest').Xtest
- * ```
+ * The `xsvd copy <options> ...` command implementation.
  */
 
 // ----------------------------------------------------------------------------
 
-// const path = require('path')
-
-// ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
-const CliApplication = require('../../index.js').CliApplication
-const CliOptions = require('../../index.js').CliOptions
+// ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
+const CliCommand = require('../../../index.js').CliCommand
+const CliExitCodes = require('../../../index.js').CliExitCodes
 
 // ============================================================================
 
-// export
-class Xtest extends CliApplication {
+class Copy extends CliCommand {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Initialise the application class object.
+   * @summary Constructor, to set help definitions.
    *
-   * @returns {undefined} Nothing.
+   * @param {Object} context Reference to a context.
+   */
+  constructor (context) {
+    super(context)
+
+    // Title displayed with the help message.
+    this.title = 'Exercise verbosity'
+    this.optionGroups = [
+    ]
+  }
+
+  /**
+   * @summary Execute the `verbosity` command.
    *
-   * @description
-   * Initialise the options manager with application
-   * specific commands and common options.
+   * @param {string[]} args Command line arguments.
+   * @returns {number} Return code.
    *
    * @override
    */
-  static doInitialise () {
-    const Self = this
+  async doRun (args) {
+    const log = this.log
+    log.trace(`${this.constructor.name}.doRun()`)
 
-    // ------------------------------------------------------------------------
-    // Mandatory, must be set here, not in the library, since it takes
-    // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = __dirname
+    log.info(this.title)
 
-    // ------------------------------------------------------------------------
-    // Initialise the tree of known commands.
-    // Paths should be relative to the package root.
-    CliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
-    CliOptions.addCommand(['notclass'], 'xtest/not-class.js')
-    // Non existent.
-    CliOptions.addCommand(['con'], 'xtest/con.js')
-    CliOptions.addCommand(['verbosity', 'c'], 'xtest/verbosity.js')
+    log.verbose('Extra verbose')
 
-    // The common options were already initialised by the caller,
-    // and are ok, no need to redefine them.
+    log.info('Done.')
+    return CliExitCodes.SUCCESS
   }
-
-  // --------------------------------------------------------------------------
-
-  // Constructor: use parent definition.
-  // main(): use parent definition
-  // help(): use parent definition.
-
-  // (isn't object oriented code reuse great?)
 }
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Xtest class is added as a property to this object.
-
-module.exports.Xtest = Xtest
+// The Copy class is added as a property of this object.
+module.exports.Copy = Copy
 
 // In ES6, it would be:
-// export class Xtest { ... }
+// export class Copy { ... }
 // ...
-// import { Xtest } from 'xtest.js'
+// import { Copy } from 'copy.js'
 
 // ----------------------------------------------------------------------------

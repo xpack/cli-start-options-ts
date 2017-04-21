@@ -143,7 +143,7 @@ test('xtest --help (spawn)', async (t) => {
 /**
  * Test if -d adds debug lines.
  */
-test('xtest -d (spawn)', async (t) => {
+test('xtest --version -d (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
       '--version',
@@ -154,6 +154,28 @@ test('xtest -d (spawn)', async (t) => {
     // Matching the whole string also checks that
     // the colour changes are not used.
     t.match(stdout, 'DEBUG: start arg0:', 'has debug')
+    // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if -dd adds trace lines.
+ */
+test('xtest --version -dd (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--version',
+      '-dd'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.ok(stdout.length > 0, 'has stdout')
+    // Matching the whole string also checks that
+    // the colour changes are not used.
+    t.match(stdout, 'TRACE: Xtest.constructor()', 'has debug')
     // There should be no error messages.
     t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
@@ -193,6 +215,180 @@ test('xtest co (spawn)', async (t) => {
     t.equal(stderr, "ERROR: Command 'co' is not unique.\n",
       'stderr is error')
     t.match(stdout, 'Usage: xtest <command>', 'stderr[3] is Usage')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if --loglevel debug adds debug lines.
+ */
+test('xtest --version --loglevel debug (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--version',
+      '--loglevel',
+      'debug'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.ok(stdout.length > 0, 'has stdout')
+    // Matching the whole string also checks that
+    // the colour changes are not used.
+    t.match(stdout, 'DEBUG: start arg0:', 'has debug')
+    // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if -s silences the help too.
+ */
+test('xtest xx -s (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'xx',
+      '-s',
+      'debug'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(stdout, '', 'stdout is empty')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if default verbosity is none.
+ */
+test('xtest verb (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'verb'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(stdout, '', 'stdout is empty')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if explicit verbosity is honoured.
+ */
+test('xtest verb -v (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'verb',
+      '-v'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+    t.notMatch(stdout, 'Extra verbose', 'stdout is not extra verbose')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if explicit verbosity is honoured.
+ */
+test('xtest verb --verbose (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'verb',
+      '--verbose'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+    t.notMatch(stdout, 'Extra verbose', 'stdout is not extra verbose')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if explicit verbosity is honoured.
+ */
+test('xtest verb -vv (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'verb',
+      '-vv'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+    t.match(stdout, 'Extra verbose', 'stdout is extra verbose')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if explicit verbosity is honoured.
+ */
+test('xtest verb --extra-verbose (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'verb',
+      '--extra-verbose'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+    t.match(stdout, 'Extra verbose', 'stdout is extra verbose')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if explicit verbosity is honoured.
+ */
+test('xtest verb -v -v (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'verb',
+      '-v',
+      '-v'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+    t.match(stdout, 'Extra verbose', 'stdout is extra verbose')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if not allowed value in common options.
+ */
+test('xtest --loglevel xxx (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--loglevel',
+      'xxx'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(stdout, '', 'stdout is empty')
+    t.match(stderr, "ERROR: Value 'xxx' not allowed for '--loglevel'",
+      'stderr is message')
   } catch (err) {
     t.fail(err.message)
   }

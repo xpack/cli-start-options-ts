@@ -8,6 +8,19 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceRoot}/index.js"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Port",
+      "address": "localhost",
+      "port": 5858
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "tap xtest.js",
       "program": "${workspaceRoot}/test/mock/bin/xtest.js",
       "stopOnEntry": true,
@@ -111,11 +124,12 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "xtest.js c",
+      "name": "xtest.js --loglevel debug",
       "program": "${workspaceRoot}/test/mock/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
-        "c"
+        "--loglevel",
+        "debug"
       ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
@@ -132,15 +146,46 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceRoot}/index.js"
+      "name": "xtest.js xx",
+      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "xx"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
     },
     {
       "type": "node",
-      "request": "attach",
-      "name": "Attach to Port",
-      "address": "localhost",
-      "port": 5858
+      "request": "launch",
+      "name": "xtest.js --loglevel xx",
+      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "--loglevel",
+        "xx"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
     }
+
   ]
 }

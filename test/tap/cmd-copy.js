@@ -158,35 +158,6 @@ test('xtest cop -h',
   })
 
 /**
- * Test if partial command recognised and expanded.
- */
-test('xtest c -h',
-  async (t) => {
-    try {
-      const { code, stdout, stderr } = await Common.xtestCli([
-        'c',
-        '-h'
-      ])
-      // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-      const outLines = stdout.split(/\r?\n/)
-      t.ok(outLines.length > 9, 'has enough output')
-      if (outLines.length > 9) {
-        // console.log(outLines)
-        t.equal(outLines[1], 'Copy a file to another file',
-          'has title')
-        t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
-          '--file <file> --output <file>', 'has Usage')
-      }
-      // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
-    } catch (err) {
-      t.fail(err.message)
-    }
-    t.end()
-  })
-
-/**
  * Test missing input file.
  */
 test('xtest cop --file xxx --output yyy',
