@@ -49,6 +49,26 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap logger.js",
+      "program": "${workspaceRoot}/test/tap/logger.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceRoot}/index.js"
     },

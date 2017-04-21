@@ -75,6 +75,9 @@ const CliErrorSyntax = require('./lib/cli-error.js').CliErrorSyntax
 // ES6: `import { CliErrorApplication } from './lib/cli-error.js'
 const CliErrorApplication = require('./lib/cli-error.js').CliErrorApplication
 
+// ES6: `import { CliLogger } from './lib/cli-error.js'
+const CliLogger = require('./lib/cli-logger.js').CliLogger
+
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
@@ -89,11 +92,12 @@ module.exports.CliExitCodes = CliExitCodes
 module.exports.CliError = CliError
 module.exports.CliErrorSyntax = CliErrorSyntax
 module.exports.CliErrorApplication = CliErrorApplication
+module.exports.CliLogger = CliLogger
 
 // In ES6, it would be:
 // export class CliApplication { ... }
 // ...
-// import { CliApplication, CliCommand, CliHelp, CliOptions, CliExitCodes }
+// import { CliApplication, CliCommand, CliHelp, CliOptions, ... }
 // from 'cli-start-options.js'
 
 // ----------------------------------------------------------------------------
