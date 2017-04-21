@@ -37,6 +37,7 @@
 
 // ----------------------------------------------------------------------------
 
+const assert = require('assert')
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
@@ -50,12 +51,16 @@ const Promisifier = require('@ilg/es6-promisifier').Promisifier
 // ES6: `import { CliExitCodes } from 'cli-start-options'
 const CliExitCodes = require('../../index.js').CliExitCodes
 
+assert(Common)
+assert(Promisifier)
+assert(CliExitCodes)
+
 // ----------------------------------------------------------------------------
 
 const fixtures = path.resolve(__dirname, '../fixtures')
 const workFolder = path.resolve(os.tmpdir(), 'xtest-copy')
-const rimraf = Promisifier.promisify(require('rimraf'))
-const mkdirp = Promisifier.promisify(require('mkdirp'))
+const rimrafPromise = Promisifier.promisify(require('rimraf'))
+const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
 
 // Promisified functions from the Node.js callbacks library.
 if (!fs.chmodPromise) {
@@ -213,7 +218,7 @@ test('unpack',
       t.pass('cmd-code.tgz unpacked into ' + workFolder)
       await fs.chmodPromise(filePath, 0o444)
       t.pass('chmod')
-      await mkdirp(readOnlyFolder)
+      await mkdirpPromise(readOnlyFolder)
       t.pass('mkdir ro')
       await fs.chmodPromise(readOnlyFolder, 0o444)
       t.pass('chmod ro')
@@ -316,7 +321,7 @@ test('cleanup', async (t) => {
   t.pass('chmod')
   await fs.chmodPromise(readOnlyFolder, 0o666)
   t.pass('chmod ro')
-  await rimraf(workFolder)
+  await rimrafPromise(workFolder)
   t.pass('tmpdir removed')
 })
 

@@ -48,7 +48,7 @@ const CliLogger = require('../../index.js').CliLogger
 
 assert(CliLogger, 'CliLogger')
 
-// ----------------------------------------------------------------------------
+// ============================================================================
 
 class MockConsole {
   constructor () {

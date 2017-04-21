@@ -37,14 +37,18 @@
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
-const test = require('tap').test
+const assert = require('assert')
 const spawn = require('child_process').spawn
 const path = require('path')
 
-// const Common = require('../common.js').Common
+// The `[node-tap](http://www.node-tap.org)` framework.
+const test = require('tap').test
 
 const CliApplication = require('../../index.js').CliApplication
+
+assert(CliApplication)
+
+// ----------------------------------------------------------------------------
 
 const debug = false
 
@@ -56,6 +60,8 @@ const executableName = './test/mock/bin/xtest.js'
 
 let pack = null
 const rootPath = path.resolve(path.dirname(__dirname), 'mock')
+
+// ----------------------------------------------------------------------------
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.

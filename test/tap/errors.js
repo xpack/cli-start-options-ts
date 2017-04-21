@@ -37,6 +37,8 @@
 
 // ----------------------------------------------------------------------------
 
+const assert = require('assert')
+
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
 
@@ -44,6 +46,11 @@ const CliExitCodes = require('../../index.js').CliExitCodes
 const CliError = require('../../index.js').CliError
 const CliErrorSyntax = require('../../index.js').CliErrorSyntax
 const CliErrorApplication = require('../../index.js').CliErrorApplication
+
+assert(CliExitCodes)
+assert(CliError)
+assert(CliErrorSyntax)
+assert(CliErrorApplication)
 
 // ----------------------------------------------------------------------------
 

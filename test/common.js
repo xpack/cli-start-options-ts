@@ -35,7 +35,6 @@ const assert = require('assert')
 const fs = require('fs')
 const zlib = require('zlib')
 const tar = require('tar')
-
 const spawn = require('child_process').spawn
 const Console = require('console').Console
 const Writable = require('stream').Writable
@@ -55,6 +54,8 @@ const nodeBin = process.env.npm_node_execpath || process.env.NODE ||
   process.execPath
 const executableName = './test/mock/bin/xtest.js'
 const programName = 'xtest'
+
+// ============================================================================
 
 /**
  * @class Main

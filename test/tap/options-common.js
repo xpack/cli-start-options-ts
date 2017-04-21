@@ -37,19 +37,26 @@
 
 // ----------------------------------------------------------------------------
 
+const assert = require('assert')
+const path = require('path')
+
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
-const path = require('path')
 
 const Common = require('../common.js').Common
 
 const CliApplication = require('../../index.js').CliApplication
+
+assert(Common)
+assert(CliApplication)
 
 // ----------------------------------------------------------------------------
 
 let pack = null
 const rootPath = path.resolve(path.dirname(__dirname), 'mock')
 // console.log(rootPath)
+
+// ----------------------------------------------------------------------------
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.

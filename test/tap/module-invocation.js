@@ -37,9 +37,11 @@
 
 // ----------------------------------------------------------------------------
 
+const assert = require('assert')
+const path = require('path')
+
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
-const path = require('path')
 
 // The Mocha-like DSL http://www.node-tap.org/mochalike/
 // require('tap').mochaGlobals()
@@ -51,10 +53,15 @@ const Common = require('../common.js').Common
 // ES6: `import { CliApplication } from 'cli-start-options.js'
 const CliApplication = require('../../index.js').CliApplication
 
+assert(Common)
+assert(CliApplication)
+
 // ----------------------------------------------------------------------------
 
 let pack = null
 const rootPath = path.resolve(path.dirname(__dirname), 'mock')
+
+// ----------------------------------------------------------------------------
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
