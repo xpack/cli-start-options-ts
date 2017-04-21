@@ -46,9 +46,11 @@ const test = require('tap').test
 const Common = require('../common.js').Common
 
 const CliApplication = require('../../index.js').CliApplication
+const CliExitCodes = require('../../index.js').CliExitCodes
 
 assert(Common)
 assert(CliApplication)
+assert(CliExitCodes)
 
 // ----------------------------------------------------------------------------
 
@@ -73,12 +75,12 @@ test('xtest --version (spawn)', async (t) => {
       '--version'
     ])
     // Check exit code.
-    t.equal(code, 0, 'exit 0')
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
-    t.equal(stdout, pack.version + '\n', 'version ok')
+    t.equal(stdout, pack.version + '\n', 'version value')
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr empty')
+    t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
   }
@@ -90,7 +92,7 @@ test('xtest -h (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '-h'
     ])
-    t.equal(code, 0, 'exit 0')
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     // console.log(stdout)
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
 
@@ -104,7 +106,7 @@ test('xtest -h (spawn)', async (t) => {
     t.match(stdout, '-s|--silent', 'has -s|--silent')
     t.match(stdout, 'Bug reports:', 'has Bug reports:')
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr empty')
+    t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
   }
@@ -116,10 +118,10 @@ test('xtest --help (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '--help'
     ])
-    t.equal(code, 0, 'exit 0')
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr empty')
+    t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
   }
@@ -132,13 +134,13 @@ test('xtest -d (spawn)', async (t) => {
       '--version',
       '-d'
     ])
-    t.equal(code, 0, 'exit 0')
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.ok(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
     t.match(stdout, 'DEBUG: start arg0:', 'has debug')
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr empty')
+    t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
   }

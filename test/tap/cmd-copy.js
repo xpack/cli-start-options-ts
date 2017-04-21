@@ -79,10 +79,10 @@ test('xtest copy',
         'copy'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code')
+      t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
       const errLines = stderr.split(/\r?\n/)
       // console.log(errLines)
-      t.ok(errLines.length === 3, 'has two errors')
+      t.equal(errLines.length, 2 + 1, 'has two errors')
       if (errLines.length === 3) {
         t.match(errLines[0], 'Mandatory \'--file\' not found.',
           'has --file error')
@@ -107,7 +107,7 @@ test('xtest copy -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -121,7 +121,7 @@ test('xtest copy -h',
         t.match(outLines[6], '  --output <file>  ', 'has --output')
       }
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr empty')
+      t.equal(stderr, '', 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -139,7 +139,7 @@ test('xtest co -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -150,7 +150,7 @@ test('xtest co -h',
           '--file <file> --output <file>', 'has Usage')
       }
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr empty')
+      t.equal(stderr, '', 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -168,7 +168,7 @@ test('xtest c -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -179,7 +179,7 @@ test('xtest c -h',
           '--file <file> --output <file>', 'has Usage')
       }
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr empty')
+      t.equal(stderr, '', 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -200,10 +200,10 @@ test('xtest co --file xxx --output yyy',
         'yyy'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.ERROR.INPUT, 'exit code')
+      t.equal(code, CliExitCodes.ERROR.INPUT, 'exit code is input')
       // There should be no output.
-      t.equal(stdout, '', 'stdout empty')
-      t.match(stderr, 'ENOENT: no such file or directory', 'ENOENT')
+      t.equal(stdout, '', 'stdout is empty')
+      t.match(stderr, 'ENOENT: no such file or directory', 'strerr is ENOENT')
     } catch (err) {
       t.fail(err.message)
     }
@@ -217,11 +217,11 @@ test('unpack',
       await Common.extractTgz(tgzPath, workFolder)
       t.pass('cmd-code.tgz unpacked into ' + workFolder)
       await fs.chmodPromise(filePath, 0o444)
-      t.pass('chmod')
+      t.pass('chmod ro file')
       await mkdirpPromise(readOnlyFolder)
-      t.pass('mkdir ro')
+      t.pass('mkdir folder')
       await fs.chmodPromise(readOnlyFolder, 0o444)
-      t.pass('chmod ro')
+      t.pass('chmod ro folder')
     } catch (err) {
       t.fail(err)
     }
@@ -243,16 +243,16 @@ test('xtest co --file input.json --output output.json',
         outPath
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code')
-      t.equal(stdout, '', 'no output')
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.equal(stdout, '', 'stdout is empty')
       // console.log(stdout)
-      t.equal(stderr, '', 'no errors')
+      t.equal(stderr, '', 'stderr is empty')
       // console.log(stderr)
 
       const fileContent = await fs.readFilePromise(outPath)
-      t.ok(fileContent, 'read in')
+      t.ok(fileContent, 'content is read in')
       const json = JSON.parse(fileContent.toString())
-      t.ok(json, 'json parsed')
+      t.ok(json, 'json was parsed')
       t.match(json.name, '@ilg/cli-start-options', 'has name')
     } catch (err) {
       t.fail(err.message)
@@ -275,9 +275,9 @@ test('xtest co --file input.svd --output output.json -v',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code')
-      t.match(stdout, 'Done.', 'done message')
+      t.match(stdout, 'Done.', 'message is Done')
       // console.log(stdout)
-      t.equal(stderr, '', 'no errors')
+      t.equal(stderr, '', 'stderr is empty')
       // console.log(stderr)
     } catch (err) {
       t.fail(err.message)
@@ -303,12 +303,12 @@ if (os.platform() !== 'win32') {
           '-v'
         ])
         // Check exit code.
-        t.equal(code, CliExitCodes.ERROR.OUTPUT, 'exit code')
+        t.equal(code, CliExitCodes.ERROR.OUTPUT, 'exit code is output')
         // Output should go up to Writing...
         // console.log(stdout)
         t.match(stdout, 'Writing ', 'up to writing')
         // console.log(stderr)
-        t.match(stderr, 'EACCES: permission denied', 'EACCES')
+        t.match(stderr, 'EACCES: permission denied', 'stderr is EACCES')
       } catch (err) {
         t.fail(err.message)
       }
@@ -318,11 +318,11 @@ if (os.platform() !== 'win32') {
 
 test('cleanup', async (t) => {
   await fs.chmodPromise(filePath, 0o666)
-  t.pass('chmod')
+  t.pass('chmod rw file')
   await fs.chmodPromise(readOnlyFolder, 0o666)
-  t.pass('chmod ro')
+  t.pass('chmod rw folder')
   await rimrafPromise(workFolder)
-  t.pass('tmpdir removed')
+  t.pass('remove tmpdir')
 })
 
 // ----------------------------------------------------------------------------

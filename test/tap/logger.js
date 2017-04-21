@@ -75,13 +75,13 @@ class MockConsole {
 
 test('mock console', (t) => {
   const mc = new MockConsole()
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
   mc.console.log('output')
-  t.equal(mc.stdout, 'output\n', 'msg stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'output\n', 'stdout is output')
+  t.equal(mc.stderr, '', 'stderr is empty')
   mc.console.error('error')
-  t.equal(mc.stderr, 'error\n', 'msg stderr')
+  t.equal(mc.stderr, 'error\n', 'stderr is error')
 
   t.end()
 })
@@ -106,38 +106,38 @@ test('logger level all', (t) => {
   t.equal(logger.level, 'all', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, 'TRACE: trace\n', 'trace stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'TRACE: trace\n', 'stdout is trace')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, 'DEBUG: debug\n', 'debug stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'DEBUG: debug\n', 'stdout is debug')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'verbose stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'info stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'WARN: warn\n', 'warn stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -148,38 +148,38 @@ test('logger level trace', (t) => {
   t.equal(logger.level, 'trace', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, 'TRACE: trace\n', 'trace stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'TRACE: trace\n', 'stdout is trace')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, 'DEBUG: debug\n', 'debug stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'DEBUG: debug\n', 'stdout is debug')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'verbose stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'info stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'WARN: warn\n', 'warn stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -190,38 +190,38 @@ test('logger level debug', (t) => {
   t.equal(logger.level, 'debug', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, 'DEBUG: debug\n', 'debug stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'DEBUG: debug\n', 'stdout is debug')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'verbose stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'info stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'WARN: warn\n', 'warn stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -232,38 +232,38 @@ test('logger level verbose', (t) => {
   t.equal(logger.level, 'verbose', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'verbose stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'info stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'WARN: warn\n', 'warn stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -274,38 +274,38 @@ test('logger level info', (t) => {
   t.equal(logger.level, 'info', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'info stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'WARN: warn\n', 'warn stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -316,38 +316,38 @@ test('logger level warn', (t) => {
   t.equal(logger.level, 'warn', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'WARN: warn\n', 'warn stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -358,38 +358,38 @@ test('logger level error', (t) => {
   t.equal(logger.level, 'error', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, 'ERROR: error\n', 'error stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -400,38 +400,38 @@ test('logger level silent', (t) => {
   t.equal(logger.level, 'silent', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.debug('debug')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.verbose('verbose')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.info('info')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stdout = ''
   logger.warn('warn')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stderr = ''
   logger.error('error')
-  t.equal(mc.stdout, '', 'empty stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, '', 'stdout is empty')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.stderr = ''
   logger.always('always')
-  t.equal(mc.stdout, 'always\n', 'always stdout')
-  t.equal(mc.stderr, '', 'empty stderr')
+  t.equal(mc.stdout, 'always\n', 'stdout is always')
+  t.equal(mc.stderr, '', 'stderr is empty')
 
   t.end()
 })
@@ -443,8 +443,8 @@ test('logger error exception', (t) => {
   logger.error(new Error('msg'))
   // console.log(mc.stderr)
   const errLines = mc.stderr.split(/\r?\n/)
-  t.equal(errLines[0], 'Error: msg', 'msg error')
-  t.match(errLines[1], 'at Test.test', 'at Test')
+  t.equal(errLines[0], 'Error: msg', 'stderr[0] is msg')
+  t.match(errLines[1], 'at Test.test', 'stderr[1] is at Test')
 
   t.end()
 })

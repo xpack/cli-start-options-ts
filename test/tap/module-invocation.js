@@ -52,9 +52,11 @@ const Common = require('../common.js').Common
 
 // ES6: `import { CliApplication } from 'cli-start-options.js'
 const CliApplication = require('../../index.js').CliApplication
+const CliExitCodes = require('../../index.js').CliExitCodes
 
 assert(Common)
 assert(CliApplication)
+assert(CliExitCodes)
 
 // ----------------------------------------------------------------------------
 
@@ -66,7 +68,7 @@ const rootPath = path.resolve(path.dirname(__dirname), 'mock')
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   pack = await CliApplication.readPackageJson(rootPath)
-  t.ok(pack, 'package ok')
+  t.ok(pack, 'package parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
   t.end()
@@ -78,12 +80,12 @@ test('xtest --version (module call)', async (t) => {
       '--version'
     ])
     // Check exit code.
-    t.equal(code, 0, 'exit 0')
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
-    t.equal(stdout, pack.version + '\n', 'version ok')
+    t.equal(stdout, pack.version + '\n', 'version value')
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr empty')
+    t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     console.log(err.stack)
     t.fail(err.message)
@@ -97,7 +99,7 @@ test('xtest xyz (module call)', async (t) => {
       'xyz'
     ])
     // Check exit code.
-    t.equal(code, 1, 'exit 1')
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
     // There should be one error message.
     t.match(stderr, 'Command \'xyz\' not supported.', 'error')

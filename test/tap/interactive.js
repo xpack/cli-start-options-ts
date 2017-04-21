@@ -66,7 +66,7 @@ const rootPath = path.resolve(path.dirname(__dirname), 'mock')
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   pack = await CliApplication.readPackageJson(rootPath)
-  t.ok(pack, 'package ok')
+  t.ok(pack, 'package was parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
   t.end()
@@ -124,14 +124,14 @@ test('xsvd -i (spawn)', (t) => {
         if (count === 0) {
           t.test('first prompt', (t) => {
             t.ok(true, 'prompt ok')
-            t.equal(stderr, '', 'stderr empty')
+            t.equal(stderr, '', 'stderr is empty')
             t.end()
           })
 
           ostr = '--version'
         } else if (count === 1) {
           t.test('--version', (t) => {
-            t.equal(stdout, pack.version + '\n', 'version ok')
+            t.equal(stdout, pack.version + '\n', 'version value')
             t.end()
           })
 
@@ -147,7 +147,7 @@ test('xsvd -i (spawn)', (t) => {
           ostr = '--version'
         } else if (count === 3) {
           t.test('--version again', (t) => {
-            t.equal(stdout, pack.version + '\n', 'version ok')
+            t.equal(stdout, pack.version + '\n', 'version value')
             t.end()
           })
 
