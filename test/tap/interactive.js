@@ -44,6 +44,8 @@ const path = require('path')
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
 
+const Common = require('../common.js').Common
+
 const CliApplication = require('../../index.js').CliApplication
 const CliExitCodes = require('../../index.js').CliExitCodes
 
@@ -58,10 +60,10 @@ const debug = false
 
 const nodeBin = process.env.npm_node_execpath || process.env.NODE ||
   process.execPath
-const executableName = './test/mock/app/bin/xtest.js'
+const executableName = Common.xtest.executableName
 
 let pack = null
-const rootPath = path.resolve(path.dirname(__dirname), 'mock', 'app')
+const rootPath = path.resolve(path.dirname(__dirname), Common.xtest.mockPath)
 
 // ----------------------------------------------------------------------------
 

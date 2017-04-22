@@ -33,6 +33,7 @@
 
 const assert = require('assert')
 const fs = require('fs')
+const path = require('path')
 const zlib = require('zlib')
 const tar = require('tar')
 const spawn = require('child_process').spawn
@@ -40,7 +41,7 @@ const Console = require('console').Console
 const Writable = require('stream').Writable
 
 // ES6: `import { CliHelp } from './utils/cli-helps.js'
-const Xtest = require('./mock/app/main.js').Xtest
+const Xtest = require('./mock/xtest/main.js').Xtest
 
 // ----------------------------------------------------------------------------
 
@@ -52,8 +53,11 @@ const Xtest = require('./mock/app/main.js').Xtest
 
 const nodeBin = process.env.npm_node_execpath || process.env.NODE ||
   process.execPath
-const executableName = './test/mock/app/bin/xtest.js'
-const programName = 'xtest'
+const xtest = {}
+xtest.programName = 'xtest'
+xtest.mockPath = path.join('mock', 'xtest')
+xtest.executableName = path.join('.', 'test', xtest.mockPath, 'bin',
+  xtest.programName + '.js')
 
 // ============================================================================
 
@@ -83,7 +87,7 @@ class Common {
       // console.log(`Current directory: ${process.cwd()}`)
       let stdout = ''
       let stderr = ''
-      const cmd = [executableName]
+      const cmd = [xtest.executableName]
       const child = spawn(nodeBin, cmd.concat(args), spawnOpts)
 
       assert(child.stderr)
@@ -141,7 +145,8 @@ class Common {
     })
 
     const _console = new Console(ostream, errstream)
-    const context = await Xtest.initialiseContext(ctx, programName, _console)
+    const context =
+      await Xtest.initialiseContext(ctx, xtest.programName, _console)
     const app = new Xtest(context)
     const code = await app.main(args)
     return { code, stdout, stderr }
@@ -167,6 +172,8 @@ class Common {
     })
   }
 }
+
+Common.xtest = xtest
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
