@@ -32,7 +32,7 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The `xtest copy <options> ...` command implementation.
+ * The `xtest long` command implementation.
  */
 
 // ----------------------------------------------------------------------------
@@ -43,7 +43,7 @@ const CliExitCodes = require('../../../../index.js').CliExitCodes
 
 // ============================================================================
 
-class Copy extends CliCommand {
+class Long extends CliCommand {
   // --------------------------------------------------------------------------
 
   /**
@@ -55,13 +55,32 @@ class Copy extends CliCommand {
     super(context)
 
     // Title displayed with the help message.
-    this.title = 'Exercise verbosity'
+    this.title = 'Test long options'
     this.optionGroups = [
+      {
+        title: 'Long options',
+        preOptions: '[<name>...]', // Array of test names.
+        postOptions: '[-- <very-long-long-long-args>...]',
+        optionDefs: [
+          {
+            options: ['--long', '--very-long', '--extra-very-long'],
+            action: (context, val) => {
+              context.config.long = val
+            },
+            init: (context) => {
+              context.config.long = undefined
+            },
+            msg: 'Very long option',
+            param: 'name',
+            isMandatory: true
+          }
+        ]
+      }
     ]
   }
 
   /**
-   * @summary Execute the `verbosity` command.
+   * @summary Execute the `copy` command.
    *
    * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
@@ -73,8 +92,7 @@ class Copy extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.title)
-
-    log.verbose('Extra verbose')
+    // const config = this.context.config
 
     log.info('Done.')
     return CliExitCodes.SUCCESS
@@ -86,11 +104,11 @@ class Copy extends CliCommand {
 
 // By default, `module.exports = {}`.
 // The Copy class is added as a property of this object.
-module.exports.Copy = Copy
+module.exports.Long = Long
 
 // In ES6, it would be:
-// export class Copy { ... }
+// export class Long { ... }
 // ...
-// import { Copy } from 'copy.js'
+// import { Long } from 'long.js'
 
 // ----------------------------------------------------------------------------

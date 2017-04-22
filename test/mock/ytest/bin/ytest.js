@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+// Mandatory shebang must point to `node` and this file must be executable.
+
 /*
  * This file is part of the xPack distribution
  *   (http://xpack.github.io).
@@ -31,66 +34,34 @@
 
 // ----------------------------------------------------------------------------
 
-/**
- * The `xtest copy <options> ...` command implementation.
+/*
+ * On POSIX platforms, when installing a global package,
+ * a symbolic link named `xtest` is created
+ * in the `/usr/local/bin` folder (on macOS), or
+ * in the `/usr/bin` folder (on Ubuntu), pointing to this file.
+ *
+ * On Windows, where symbolic links are not available,
+ * when installing a global package,
+ * two forwarders are automatically created in the
+ * user `\AppData\Roaming\npm\node_modules\xtest\bin` folder:
+ * - `xtest.cmd`, for invocation from the Windows command line
+ * - `xtest` (a shell script), for invokations from an optional
+ * POSIX environments like minGW-w64, msys2, git shell, etc.
+ *
+ * On all platforms, `process.argv[1]` will be the full path of
+ * this file, or the full path of the `xtest` link, so, in case
+ * the program will need to be invoked with different names,
+ * this is the method to differentiate between them.
  */
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
-const CliCommand = require('../../../../index.js').CliCommand
-const CliExitCodes = require('../../../../index.js').CliExitCodes
-
-// ============================================================================
-
-class Copy extends CliCommand {
-  // --------------------------------------------------------------------------
-
-  /**
-   * @summary Constructor, to set help definitions.
-   *
-   * @param {Object} context Reference to a context.
-   */
-  constructor (context) {
-    super(context)
-
-    // Title displayed with the help message.
-    this.title = 'Exercise verbosity'
-    this.optionGroups = [
-    ]
-  }
-
-  /**
-   * @summary Execute the `verbosity` command.
-   *
-   * @param {string[]} args Command line arguments.
-   * @returns {number} Return code.
-   *
-   * @override
-   */
-  async doRun (args) {
-    const log = this.log
-    log.trace(`${this.constructor.name}.doRun()`)
-
-    log.info(this.title)
-
-    log.verbose('Extra verbose')
-
-    log.info('Done.')
-    return CliExitCodes.SUCCESS
-  }
-}
+// ES6: `import { Xtest } from 'main.js'
+const Ytest = require('../main.js').Ytest
 
 // ----------------------------------------------------------------------------
-// Node.js specific export definitions.
 
-// By default, `module.exports = {}`.
-// The Copy class is added as a property of this object.
-module.exports.Copy = Copy
-
-// In ES6, it would be:
-// export class Copy { ... }
-// ...
-// import { Copy } from 'copy.js'
+// TODO: use instances, not static classes.
+Ytest.start()
 
 // ----------------------------------------------------------------------------

@@ -231,7 +231,7 @@ test('xtest cop --file input.json --output output.json',
     t.end()
   })
 
-test('xtest cop --file input.svd --output output.json -v',
+test('xtest cop --file input --output output -v',
   async (t) => {
     try {
       const { code, stdout, stderr } = await Common.xtestCli([
@@ -261,7 +261,7 @@ if (os.platform() !== 'win32') {
   /**
    * Test output error.
    */
-  test('xtest cop --file input.svd --output ro/output.json -v',
+  test('xtest cop --file input --output ro/output -v',
     async (t) => {
       try {
         const outPath = path.resolve(workFolder, 'ro', 'output.json')

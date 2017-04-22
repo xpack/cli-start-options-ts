@@ -113,6 +113,7 @@ test('xtest -h (spawn)', async (t) => {
     t.match(stdout, 'Set log level (silent|warn|info|verbose|debug|trace)',
       'has log levels')
     t.match(stdout, '-s|--silent', 'has -s|--silent')
+    t.match(stdout, 'Home page:', 'has Home page')
     t.match(stdout, 'Bug reports:', 'has Bug reports:')
     // There should be no error messages.
     t.equal(stderr, '', 'stderr is empty')
@@ -448,6 +449,88 @@ test('xtest --version -dd -- xx (spawn)', async (t) => {
     // the colour changes are not used.
     t.match(stdout, 'TRACE: Xtest.constructor()', 'has debug')
     // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if long post options are moved to the next line.
+ */
+test('xtest long -h (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'long',
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, '                  [-- <very-long-long-long-args>...]',
+      'stdout has long post options')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if long early options are moved to the next line.
+ */
+test('xtest -h (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, '                                         Extra options',
+      'stdout has long early options')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if many options are moved to the next line.
+ */
+test('xtest many -h (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'many',
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, '                  [--two <name>]+',
+      'stdout has many options')
+    t.match(stdout, '[--four <s>]', 'has <s>' )
+    t.match(stdout, '  --four <s>  ', 'has <s>' )
+    t.match(stdout, 'Option two (multiple)', 'has multiple')
+    t.match(stdout, 'Option three (optional, multiple)',
+      'has optional multiple')
+    t.match(stdout, 'Option four (optional)', 'has optional')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test long program name.
+ */
+test('wtest-long-name -h (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.wtestCli([
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, 'wtest-long-name -h|--help            Quick help',
+      'has long name')
+    t.match(stdout, '  five-long-command,', 'has command five')
+    t.match(stdout, '  two-long-command', 'has command two')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)

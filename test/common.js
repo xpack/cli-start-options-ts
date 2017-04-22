@@ -59,6 +59,24 @@ xtest.mockPath = path.join('mock', 'xtest')
 xtest.executableName = path.join('.', 'test', xtest.mockPath, 'bin',
   xtest.programName + '.js')
 
+const ytest = {}
+ytest.programName = 'ytest'
+ytest.mockPath = path.join('mock', 'ytest')
+ytest.executableName = path.join('.', 'test', ytest.mockPath, 'bin',
+  ytest.programName + '.js')
+
+const ztest = {}
+ztest.programName = 'ztest'
+ztest.mockPath = path.join('mock', 'ztest')
+ztest.executableName = path.join('.', 'test', ztest.mockPath, 'bin',
+  ztest.programName + '.js')
+
+const wtest = {}
+wtest.programName = 'wtest-long-name'
+wtest.mockPath = path.join('mock', 'wtest')
+wtest.executableName = path.join('.', 'test', wtest.mockPath, 'bin',
+  wtest.programName + '.js')
+
 // ============================================================================
 
 /**
@@ -67,10 +85,11 @@ xtest.executableName = path.join('.', 'test', xtest.mockPath, 'bin',
 // export
 class Common {
   /**
-   * @summary Run xtest in a separate process.
+   * @summary Run program in a separate process.
    *
    * @async
-   * @param {string[]} args Command line arguments
+   * @param {string} name Program name.
+   * @param {string[]} args Command line arguments.
    * @param {Object} spawnOpts Optional spawn options.
    * @returns {{code: number, stdout: string, stderr: string}} Exit
    *  code and captured output/error streams.
@@ -79,7 +98,7 @@ class Common {
    * Spawn a separate process to run node with the given arguments and
    * return the exit code and the stdio streams captured in strings.
    */
-  static async xtestCli (args, spawnOpts = {}) {
+  static async cli (name, args, spawnOpts = {}) {
     return new Promise((resolve, reject) => {
       spawnOpts.env = spawnOpts.env || process.env
 
@@ -87,7 +106,7 @@ class Common {
       // console.log(`Current directory: ${process.cwd()}`)
       let stdout = ''
       let stderr = ''
-      const cmd = [xtest.executableName]
+      const cmd = [name]
       const child = spawn(nodeBin, cmd.concat(args), spawnOpts)
 
       assert(child.stderr)
@@ -110,6 +129,26 @@ class Common {
         resolve({ code, stdout, stderr })
       })
     })
+  }
+
+  static async xtestCli (args, spawnOpts = {}) {
+    const Self = this
+    return Self.cli(xtest.executableName, args, spawnOpts)
+  }
+
+  static async ytestCli (args, spawnOpts = {}) {
+    const Self = this
+    return Self.cli(ytest.executableName, args, spawnOpts)
+  }
+
+  static async ztestCli (args, spawnOpts = {}) {
+    const Self = this
+    return Self.cli(ztest.executableName, args, spawnOpts)
+  }
+
+  static async wtestCli (args, spawnOpts = {}) {
+    const Self = this
+    return Self.cli(wtest.executableName, args, spawnOpts)
   }
 
   /**
@@ -174,6 +213,7 @@ class Common {
 }
 
 Common.xtest = xtest
+Common.ytest = ytest
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.

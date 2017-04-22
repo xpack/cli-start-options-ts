@@ -146,12 +146,12 @@ test/tap/cmd-copy.js
     ✓ json parsed
     ✓ has name
 
-  xtest co --file input.svd --output output.json -v
+  xtest co --file input --output output -v
     ✓ exit code
     ✓ done message
     ✓ no errors
 
-  xtest co --file input.svd --output ro/output.json -v
+  xtest co --file input --output ro/output -v
     ✓ exit code
     ✓ up to writing
     ✓ EACCES

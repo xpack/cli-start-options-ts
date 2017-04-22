@@ -32,65 +32,71 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The `xtest copy <options> ...` command implementation.
+ * Test author.
  */
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
-const CliCommand = require('../../../../index.js').CliCommand
-const CliExitCodes = require('../../../../index.js').CliExitCodes
+const assert = require('assert')
 
-// ============================================================================
+// The `[node-tap](http://www.node-tap.org)` framework.
+const test = require('tap').test
 
-class Copy extends CliCommand {
-  // --------------------------------------------------------------------------
+const Common = require('../common.js').Common
 
-  /**
-   * @summary Constructor, to set help definitions.
-   *
-   * @param {Object} context Reference to a context.
-   */
-  constructor (context) {
-    super(context)
+// ES6: `import { CliExitCodes } from 'cli-start-options'
+const CliExitCodes = require('../../index.js').CliExitCodes
 
-    // Title displayed with the help message.
-    this.title = 'Exercise verbosity'
-    this.optionGroups = [
-    ]
-  }
+assert(Common)
+assert(CliExitCodes)
 
-  /**
-   * @summary Execute the `verbosity` command.
-   *
-   * @param {string[]} args Command line arguments.
-   * @returns {number} Return code.
-   *
-   * @override
-   */
-  async doRun (args) {
-    const log = this.log
-    log.trace(`${this.constructor.name}.doRun()`)
-
-    log.info(this.title)
-
-    log.verbose('Extra verbose')
-
-    log.info('Done.')
-    return CliExitCodes.SUCCESS
-  }
-}
 
 // ----------------------------------------------------------------------------
-// Node.js specific export definitions.
 
-// By default, `module.exports = {}`.
-// The Copy class is added as a property of this object.
-module.exports.Copy = Copy
+/**
+ * Test if with empty line fails with mandatory error and displays help.
+ */
+test('ytest -h',
+  async (t) => {
+    try {
+      const { code, stdout, stderr } = await Common.ytestCli([
+        '-h'
+      ])
+      // Check exit code.
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      // console.log(errLines)
+      t.match(stdout, 'Usage: ytest', 'has Usage')
+      t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+        'has Bug reports')
+      // There should be no error messages.
+      t.equal(stderr, '', 'stderr is empty')
+    } catch (err) {
+      t.fail(err.message)
+    }
+    t.end()
+  })
 
-// In ES6, it would be:
-// export class Copy { ... }
-// ...
-// import { Copy } from 'copy.js'
+/**
+ * Test if with empty line fails with mandatory error and displays help.
+ */
+test('ztest -h',
+  async (t) => {
+    try {
+      const { code, stdout, stderr } = await Common.ztestCli([
+        '-h'
+      ])
+      // Check exit code.
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      // console.log(errLines)
+      t.match(stdout, 'Usage: ztest', 'has Usage')
+      t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+        'has Bug reports')
+      // There should be no error messages.
+      t.equal(stderr, '', 'stderr is empty')
+    } catch (err) {
+      t.fail(err.message)
+    }
+    t.end()
+  })
 
 // ----------------------------------------------------------------------------

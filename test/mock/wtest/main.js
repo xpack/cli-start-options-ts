@@ -32,14 +32,14 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The Xtest main module.
+ * The Wtest main module.
  *
  * It is re-exported publicly by `index.js`.
  *
  * To import classes from this module into Node.js applications, use:
  *
  * ```javascript
- * const Xtest = require('xtest').Xtest
+ * const Wtest = require('ztest').Wtest
  * ```
  */
 
@@ -54,7 +54,7 @@ const CliOptions = require('../../../index.js').CliOptions
 // ============================================================================
 
 // export
-class Xtest extends CliApplication {
+class Wtest extends CliApplication {
   // --------------------------------------------------------------------------
 
   /**
@@ -68,7 +68,7 @@ class Xtest extends CliApplication {
    *
    * @override
    */
-  static doInitialise() {
+  static doInitialise () {
     const Self = this
 
     // ------------------------------------------------------------------------
@@ -79,35 +79,15 @@ class Xtest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
-    CliOptions.addCommand(['notclass'], 'xtest/not-class.js')
-    // Non existent.
-    CliOptions.addCommand(['con'], 'xtest/con.js')
-    CliOptions.addCommand(['verbosity', 'c'], 'xtest/verbosity.js')
-    CliOptions.addCommand(['long'], 'xtest/long.js')
-    CliOptions.addCommand(['many'], 'xtest/many.js')
+    CliOptions.addCommand(['one-long-command'], '')
+    CliOptions.addCommand(['two-long-command'], '')
+    CliOptions.addCommand(['three-long-command'], '')
+    CliOptions.addCommand(['four-long-command'], '')
+    CliOptions.addCommand(['five-long-command'], '')
+    CliOptions.addCommand(['six-long-command'], '')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
-    CliOptions.addOptionGroups(
-      [
-        {
-          title: 'Extra options',
-          optionDefs: [
-            {
-              options: ['--extra', '--very-extra', '--very-long-extra'],
-              msg: 'Extra options',
-              action: (context) => {
-                context.config.extra = true
-              },
-              init: (context) => {
-                context.config.extra = false
-              },
-              doProcessEarly: true
-            }
-          ]
-        }
-      ])
   }
 
   // --------------------------------------------------------------------------
@@ -125,11 +105,11 @@ class Xtest extends CliApplication {
 // By default, `module.exports = {}`.
 // The Xtest class is added as a property to this object.
 
-module.exports.Xtest = Xtest
+module.exports.Wtest = Wtest
 
 // In ES6, it would be:
-// export class Xtest { ... }
+// export class Wtest { ... }
 // ...
-// import { Xtest } from 'xtest.js'
+// import { Wtest } from 'wtest.js'
 
 // ----------------------------------------------------------------------------
