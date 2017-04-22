@@ -186,6 +186,29 @@ test('xtest --version -dd (spawn)', async (t) => {
 })
 
 /**
+ * Test if -d -d adds trace lines.
+ */
+test('xtest --version -d -d (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--version',
+      '-d',
+      '-d'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.ok(stdout.length > 0, 'has stdout')
+    // Matching the whole string also checks that
+    // the colour changes are not used.
+    t.match(stdout, 'TRACE: Xtest.constructor()', 'has debug')
+    // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
  * Test commands that do not have an implementation derived from CliCommand.
  */
 test('xtest notclass (spawn)', async (t) => {
@@ -258,6 +281,29 @@ test('xtest xx -s (spawn)', async (t) => {
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.equal(stdout, '', 'stdout is empty')
     t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test if -q shows warnings.
+ */
+test('xtest long --long value --xx -q (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'long',
+      '--long',
+      'value',
+      '--xx',
+      '-q',
+      'debug'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(stdout, '', 'stdout is empty')
+    t.equal(stderr, "WARN: Option '--xx' not supported; ignored.\n",
+      'stderr is warning')
   } catch (err) {
     t.fail(err.message)
   }
@@ -588,6 +634,80 @@ test('xtest unim (spawn)', async (t) => {
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
     t.match(stderr, '{ AssertionError:', 'stdout has assertion')
     t.equal(stdout, '', 'stdout is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test no command.
+ */
+test('xtest (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(stderr, 'ERROR: Missing mandatory command.\n', 'stdout has error')
+    t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test no command with app options.
+ */
+test('xtest -- xx (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      '--',
+      'xx'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(stderr, 'ERROR: Missing mandatory command.\n', 'stdout has error')
+    t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test no command with app options.
+ */
+test('xtest cwd -C /xx (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'cwd',
+      '-C',
+      '/xx'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, '/xx\n', 'stdout has path')
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test no command with app options.
+ */
+test('xtest cwd -C /xx -C yy (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'cwd',
+      '-C',
+      '/xx',
+      '-C',
+      'yy'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, '/xx/yy\n', 'stdout has path')
+    t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
   }
