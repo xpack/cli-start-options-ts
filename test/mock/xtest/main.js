@@ -86,6 +86,8 @@ class Xtest extends CliApplication {
     CliOptions.addCommand(['verbosity', 'c'], 'xtest/verbosity.js')
     CliOptions.addCommand(['long'], 'xtest/long.js')
     CliOptions.addCommand(['many'], 'xtest/many.js')
+    CliOptions.addCommand(['gen'], 'xtest/generator.js')
+    CliOptions.addCommand(['unimpl'], 'xtest/unimpl.js')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

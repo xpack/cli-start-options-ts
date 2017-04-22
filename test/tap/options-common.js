@@ -476,6 +476,27 @@ test('xtest long -h (spawn)', async (t) => {
 })
 
 /**
+ * Test if long with unused.
+ */
+test('xtest long -xyz (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'long',
+      '--long',
+      'value',
+      '--xyz'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(stdout, '', 'stdout is empty')
+    t.match(stderr, "WARN: Option '--xyz' not supported; ignored.\n",
+      'stderr has error')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
  * Test if long early options are moved to the next line.
  */
 test('xtest -h (spawn)', async (t) => {
@@ -532,6 +553,41 @@ test('wtest-long-name -h (spawn)', async (t) => {
     t.match(stdout, '  five-long-command,', 'has command five')
     t.match(stdout, '  two-long-command', 'has command two')
     t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test generator.
+ */
+test('xtest gen (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'gen'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.match(stdout, '{ generators:', 'stdout has generators')
+    t.match(stdout, `homepage: '${pack.homepage}'`)
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
+ * Test unimplemented command.
+ */
+test('xtest unim (spawn)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestCli([
+      'unim'
+    ])
+    t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
+    t.match(stderr, '{ AssertionError:', 'stdout has assertion')
+    t.equal(stdout, '', 'stdout is empty')
   } catch (err) {
     t.fail(err.message)
   }

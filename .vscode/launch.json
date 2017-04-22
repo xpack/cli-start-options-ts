@@ -22,7 +22,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap xtest.js",
-      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--help"
@@ -82,8 +82,28 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap options-common.js",
+      "program": "${workspaceRoot}/test/tap/options-common.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xtest.js notclass",
-      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "notclass"
@@ -104,7 +124,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js co",
-      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "co"
@@ -125,7 +145,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel debug",
-      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -147,7 +167,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js xx",
-      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "xx"
@@ -168,11 +188,33 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel xx",
-      "program": "${workspaceRoot}/test/mock/bin/xtest.js",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
         "xx"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js long",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "long",
+        "--xx"
       ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,

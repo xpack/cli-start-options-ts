@@ -208,6 +208,8 @@ All files                           |    82.95 |    63.01 |    82.93 |    82.95 
 
 The continuous integration tests are performed via [Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and [AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
 
+To speed up things, the `node_modules` folder is cached between builds.
+
 ### Standard compliance
 
 The module uses ECMAScript 6 class definitions.
