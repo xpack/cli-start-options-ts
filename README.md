@@ -83,16 +83,19 @@ A typical test result looks like:
 ```
 $ npm run test
 
-> @ilg/cli-start-options@0.1.12 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.1.15 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard && npm run test-tap -s
 
+test/tap/author.js .................................... 8/8
 test/tap/cmd-copy.js ................................ 40/40
+test/tap/errors.js .................................. 18/18
 test/tap/interactive.js ............................. 14/14
+test/tap/logger.js ................................ 147/147
 test/tap/module-invocation.js ......................... 9/9
-test/tap/options-common.js .......................... 24/24
-total ............................................... 87/87
+test/tap/options-common.js ........................ 126/126
+total ............................................. 362/362
 
-  87 passing (4s)
+  362 passing (10s)
 
   ok
 ```
@@ -104,62 +107,62 @@ $ npm run tap test/tap/cmd-copy.js -s
 
 test/tap/cmd-copy.js
   xtest copy
-    ✓ exit code
+    ✓ exit code is syntax
     ✓ has two errors
     ✓ has --file error
     ✓ has --output error
     ✓ has Usage
 
   xtest copy -h
-    ✓ exit code
+    ✓ exit code is success
     ✓ has enough output
     ✓ has title
     ✓ has Usage
     ✓ has copy options
     ✓ has --file
     ✓ has --output
-    ✓ stderr empty
+    ✓ stderr is empty
 
-  xtest co -h
-    ✓ exit code
+  xtest cop -h
+    ✓ exit code is success
     ✓ has enough output
     ✓ has title
     ✓ has Usage
-    ✓ stderr empty
+    ✓ stderr is empty
 
-  xtest co --file xxx --output yyy
-    ✓ exit code
-    ✓ stdout empty
-    ✓ ENOENT
+  xtest cop --file xxx --output yyy
+    ✓ exit code is input
+    ✓ stdout is empty
+    ✓ strerr is ENOENT
 
   unpack
     ✓ cmd-code.tgz unpacked into /var/folders/n7/kxqjc5zs4qs0nb44v1l2r2j00000gn/T/xtest-copy
-    ✓ chmod
-    ✓ mkdir ro
-    ✓ chmod ro
+    ✓ chmod ro file
+    ✓ mkdir folder
+    ✓ chmod ro folder
 
-  xtest co --file input.json --output output.json
-    ✓ exit code
-    ✓ no output
-    ✓ no errors
-    ✓ read in
-    ✓ json parsed
+  xtest cop --file input.json --output output.json
+    ✓ exit code is success
+    ✓ stdout is empty
+    ✓ stderr is empty
+    ✓ content is read in
+    ✓ json was parsed
     ✓ has name
 
-  xtest co --file input --output output -v
+  xtest cop --file input --output output -v
     ✓ exit code
-    ✓ done message
-    ✓ no errors
+    ✓ message is Done
+    ✓ stderr is empty
 
-  xtest co --file input --output ro/output -v
-    ✓ exit code
+  xtest cop --file input --output ro/output -v
+    ✓ exit code is output
     ✓ up to writing
-    ✓ EACCES
+    ✓ stderr is EACCES
 
   cleanup
-    ✓ chmod
-    ✓ chmod ro
-    ✓ tmpdir removed
+    ✓ chmod rw file
+    ✓ chmod rw folder
+    ✓ remove tmpdir
 
 
   40 passing (2s)
@@ -174,34 +177,35 @@ To run the coverage tests, use `npm run test-coverage`:
 ```
 $ npm run test-coverage
 
-> @ilg/cli-start-options@0.1.12 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
-> tap --coverage --reporter=classic --timeout 600 "test/tap/*.js"
+> @ilg/cli-start-options@0.1.15 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> tap --coverage --reporter=classic --timeout 600 --no-color "test/tap/*.js"
 
+test/tap/author.js .................................... 8/8
 test/tap/cmd-copy.js ................................ 40/40
+test/tap/errors.js .................................. 18/18
 test/tap/interactive.js ............................. 14/14
+test/tap/logger.js ................................ 147/147
 test/tap/module-invocation.js ......................... 9/9
-test/tap/options-common.js .......................... 24/24
-total ............................................... 87/87
+test/tap/options-common.js ........................ 126/126
+total ............................................. 362/362
 
-  87 passing (9s)
+  362 passing (20s)
 
   ok
-------------------------------------|----------|----------|----------|----------|----------------|
-File                                |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
-------------------------------------|----------|----------|----------|----------|----------------|
-All files                           |    82.95 |    63.01 |    82.93 |    82.95 |                |
- cli-start-options-js.git           |      100 |      100 |      100 |      100 |                |
-  index.js                          |      100 |      100 |      100 |      100 |                |
- cli-start-options-js.git/lib       |    84.28 |    65.54 |    86.61 |    84.28 |                |
-  cli-application.js                |     83.7 |    63.64 |    76.09 |     83.7 |... 822,823,866 |
-  cli-command.js                    |    74.58 |    57.14 |    77.78 |    74.58 |... 199,201,203 |
-  cli-error.js                      |    94.12 |        0 |    66.67 |    94.12 |            118 |
-  cli-help.js                       |    84.43 |    65.35 |      100 |    84.43 |... 283,284,326 |
-  cli-logger.js                     |    80.77 |    45.45 |       90 |    80.77 |... 114,126,138 |
-  cli-options.js                    |    88.24 |    77.78 |      100 |    88.24 |... 403,466,489 |
- cli-start-options-js.git/lib/utils |    51.43 |       36 |    45.45 |    51.43 |                |
-  asy.js                            |    51.43 |       36 |    45.45 |    51.43 |... 122,137,147 |
-------------------------------------|----------|----------|----------|----------|----------------|
+------------------------------|----------|----------|----------|----------|----------------|
+File                          |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+------------------------------|----------|----------|----------|----------|----------------|
+All files                     |      100 |    89.01 |    96.43 |      100 |                |
+ cli-start-options-js.git     |      100 |      100 |      100 |      100 |                |
+  index.js                    |      100 |      100 |      100 |      100 |                |
+ cli-start-options-js.git/lib |      100 |    89.01 |    96.43 |      100 |                |
+  cli-application.js          |      100 |    85.71 |    90.91 |      100 |                |
+  cli-command.js              |      100 |    78.57 |      100 |      100 |                |
+  cli-error.js                |      100 |      100 |      100 |      100 |                |
+  cli-help.js                 |      100 |    90.43 |      100 |      100 |                |
+  cli-logger.js               |      100 |       72 |      100 |      100 |                |
+  cli-options.js              |      100 |    98.39 |      100 |      100 |                |
+------------------------------|----------|----------|----------|----------|----------------|
 ```
 
 ### Continuous Integration (CI)
