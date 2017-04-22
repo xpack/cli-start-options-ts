@@ -50,21 +50,10 @@ const CliError = require('../../../../index.js').CliError
 // ----------------------------------------------------------------------------
 
 // Promisify functions from the Node.js library.
-if (!fs.readFilePromise) {
-  fs.readFilePromise = Promisifier.promisify(fs.readFile)
-}
-
-if (!fs.statPromise) {
-  fs.statPromise = Promisifier.promisify(fs.stat)
-}
-
-if (!fs.mkdirPromise) {
-  fs.mkdirPromise = Promisifier.promisify(fs.mkdir)
-}
-
-if (!fs.writeFilePromise) {
-  fs.writeFilePromise = Promisifier.promisify(fs.writeFile)
-}
+Promisifier.promisifyInPlace(fs, 'readFile')
+Promisifier.promisifyInPlace(fs, 'stat')
+Promisifier.promisifyInPlace(fs, 'mkdir')
+Promisifier.promisifyInPlace(fs, 'writeFile')
 
 // ============================================================================
 

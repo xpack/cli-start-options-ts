@@ -63,9 +63,7 @@ const rimrafPromise = Promisifier.promisify(require('rimraf'))
 const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
 
 // Promisified functions from the Node.js callbacks library.
-if (!fs.chmodPromise) {
-  fs.chmodPromise = Promisifier.promisify(fs.chmod)
-}
+Promisifier.promisifyInPlace(fs, 'chmod')
 
 // ----------------------------------------------------------------------------
 
