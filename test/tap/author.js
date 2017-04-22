@@ -50,7 +50,6 @@ const CliExitCodes = require('../../index.js').CliExitCodes
 assert(Common)
 assert(CliExitCodes)
 
-
 // ----------------------------------------------------------------------------
 
 /**

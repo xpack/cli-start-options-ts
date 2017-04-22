@@ -505,8 +505,8 @@ test('xtest many -h (spawn)', async (t) => {
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, '                  [--two <name>]+',
       'stdout has many options')
-    t.match(stdout, '[--four <s>]', 'has <s>' )
-    t.match(stdout, '  --four <s>  ', 'has <s>' )
+    t.match(stdout, '[--four <s>]', 'has <s>')
+    t.match(stdout, '  --four <s>  ', 'has <s>')
     t.match(stdout, 'Option two (multiple)', 'has multiple')
     t.match(stdout, 'Option three (optional, multiple)',
       'has optional multiple')

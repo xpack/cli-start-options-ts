@@ -68,7 +68,7 @@ class Xtest extends CliApplication {
    *
    * @override
    */
-  static doInitialise() {
+  static doInitialise () {
     const Self = this
 
     // ------------------------------------------------------------------------
