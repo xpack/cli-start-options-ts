@@ -39,6 +39,7 @@
 
 const assert = require('assert')
 const path = require('path')
+const os = require('os')
 
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
@@ -706,7 +707,12 @@ test('xtest cwd -C /xx -C yy (spawn)', async (t) => {
       'yy'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.match(stdout, '/xx/yy\n', 'stdout has path')
+    const absPath = path.resolve('/xx', 'yy')
+    if (os.platform() === 'win32') {
+      t.match(stdout, absPath, 'stdout has path')
+    } else {
+      t.match(stdout, absPath, 'stdout has path')
+    }
     t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
