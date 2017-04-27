@@ -170,7 +170,7 @@ test('xtest -i (spawn)', (t) => {
           t.test('copy', (t) => {
             t.match(stdout, 'Usage: xtest copy [options...] --file <file> ' +
               '--output <file>', 'has code Usage')
-            t.match(stdout, 'Mandatory \'--file\' not found.',
+            t.match(stdout, 'Mandatory \'--file\' not found',
               '--file not found')
             t.end()
           })

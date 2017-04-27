@@ -94,7 +94,7 @@ test('mock console', (t) => {
 test('logger level', (t) => {
   const mc = new MockConsole()
   const logger = new CliLogger(mc.console)
-  t.equal(logger.level, 'warn', 'default level')
+  t.equal(logger.level, 'info', 'default level')
   logger.level = 'trace'
   t.equal(logger.level, 'trace', 'set level')
   try {
@@ -111,33 +111,33 @@ test('logger level all', (t) => {
   t.equal(logger.level, 'all', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, 'TRACE: trace\n', 'stdout is trace')
+  t.equal(mc.stdout, 'trace: trace\n', 'stdout is trace')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.debug('debug')
-  t.equal(mc.stdout, 'DEBUG: debug\n', 'stdout is debug')
+  t.equal(mc.stdout, 'debug: debug\n', 'stdout is debug')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.warn('warn')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
+  t.equal(mc.stderr, 'warning: warn\n', 'stderr is warn')
 
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -158,33 +158,33 @@ test('logger level trace', (t) => {
   t.equal(logger.level, 'trace', 'level')
 
   logger.trace('trace')
-  t.equal(mc.stdout, 'TRACE: trace\n', 'stdout is trace')
+  t.equal(mc.stdout, 'trace: trace\n', 'stdout is trace')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.debug('debug')
-  t.equal(mc.stdout, 'DEBUG: debug\n', 'stdout is debug')
+  t.equal(mc.stdout, 'debug: debug\n', 'stdout is debug')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.warn('warn')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
+  t.equal(mc.stderr, 'warning: warn\n', 'stderr is warn')
 
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -210,28 +210,28 @@ test('logger level debug', (t) => {
 
   mc.clear()
   logger.debug('debug')
-  t.equal(mc.stdout, 'DEBUG: debug\n', 'stdout is debug')
+  t.equal(mc.stdout, 'debug: debug\n', 'stdout is debug')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.warn('warn')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
+  t.equal(mc.stderr, 'warning: warn\n', 'stderr is warn')
 
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -262,23 +262,23 @@ test('logger level verbose', (t) => {
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.warn('warn')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
+  t.equal(mc.stderr, 'warning: warn\n', 'stderr is warn')
 
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -314,18 +314,18 @@ test('logger level info', (t) => {
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.warn('warn')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
+  t.equal(mc.stderr, 'warning: warn\n', 'stderr is warn')
 
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -367,12 +367,12 @@ test('logger level warn', (t) => {
   mc.clear()
   logger.warn('warn')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'WARN: warn\n', 'stderr is warn')
+  t.equal(mc.stderr, 'warning: warn\n', 'stderr is warn')
 
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -419,7 +419,7 @@ test('logger level error', (t) => {
   mc.clear()
   logger.error('error')
   t.equal(mc.stdout, '', 'stdout is empty')
-  t.equal(mc.stderr, 'ERROR: error\n', 'stderr is error')
+  t.equal(mc.stderr, 'error: error\n', 'stderr is error')
 
   mc.clear()
   logger.output('output')
@@ -484,7 +484,7 @@ test('logger level silent', (t) => {
 test('logger error exception', (t) => {
   const mc = new MockConsole()
   const logger = new CliLogger(mc.console)
-  t.equal(logger.level, 'warn', 'default level')
+  t.equal(logger.level, 'info', 'default level')
   logger.error(new Error('msg'))
   // console.log(mc.stderr)
   const errLines = mc.stderr.split(/\r?\n/)

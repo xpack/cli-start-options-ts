@@ -74,7 +74,7 @@ class Copy extends CliCommand {
 
     log.info(this.title)
 
-    log.verbose('Extra verbose')
+    log.verbose('Verbose')
 
     log.info('Done.')
     return CliExitCodes.SUCCESS

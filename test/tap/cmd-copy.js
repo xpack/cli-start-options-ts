@@ -82,9 +82,9 @@ test('xtest copy',
       // console.log(errLines)
       t.equal(errLines.length, 2 + 1, 'has two errors')
       if (errLines.length === 3) {
-        t.match(errLines[0], 'Mandatory \'--file\' not found.',
+        t.match(errLines[0], 'Mandatory \'--file\' not found',
           'has --file error')
-        t.match(errLines[1], 'Mandatory \'--output\' not found.',
+        t.match(errLines[1], 'Mandatory \'--output\' not found',
           'has --output error')
       }
       t.match(stdout, 'Usage: xtest copy [options...]', 'has Usage')
