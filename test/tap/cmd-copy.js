@@ -158,7 +158,7 @@ test('xtest cop -h',
 /**
  * Test missing input file.
  */
-test('xtest cop --file xxx --output yyy',
+test('xtest cop --file xxx --output yyy -q',
   async (t) => {
     try {
       const { code, stdout, stderr } = await Common.xtestCli([
@@ -166,7 +166,8 @@ test('xtest cop --file xxx --output yyy',
         '--file',
         'xxx',
         '--output',
-        'yyy'
+        'yyy',
+        '-q'
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.ERROR.INPUT, 'exit code is input')
@@ -213,7 +214,7 @@ test('xtest cop --file input.json --output output.json',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-      t.equal(stdout, '', 'stdout is empty')
+      t.match(stdout, 'Done', 'stdout is done')
       // console.log(stdout)
       t.equal(stderr, '', 'stderr is empty')
       // console.log(stderr)

@@ -320,7 +320,7 @@ test('xtest verb (spawn)', async (t) => {
       'verb'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout, '', 'stdout is empty')
+    t.match(stdout, 'Done', 'stdout is done')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -494,7 +494,7 @@ test('xtest long -xyz (spawn)', async (t) => {
       '--xyz'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout, '', 'stdout is empty')
+    t.match(stdout, 'Done', 'stdout is done')
     t.match(stderr, "warning: Option '--xyz' not supported; ignored\n",
       'stderr has error')
   } catch (err) {
