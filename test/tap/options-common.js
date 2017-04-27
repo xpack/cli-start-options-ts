@@ -303,7 +303,7 @@ test('xtest long --long value --xx -q (spawn)', async (t) => {
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.equal(stdout, '', 'stdout is empty')
-    t.equal(stderr, "warning: Option '--xx' not supported; ignored.\n",
+    t.equal(stderr, "warning: Option '--xx' not supported; ignored\n",
       'stderr is warning')
   } catch (err) {
     t.fail(err.message)
@@ -495,7 +495,7 @@ test('xtest long -xyz (spawn)', async (t) => {
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.equal(stdout, '', 'stdout is empty')
-    t.match(stderr, "warning: Option '--xyz' not supported; ignored.\n",
+    t.match(stderr, "warning: Option '--xyz' not supported; ignored\n",
       'stderr has error')
   } catch (err) {
     t.fail(err.message)
