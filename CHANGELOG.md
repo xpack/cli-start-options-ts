@@ -1,3 +1,8 @@
+## v0.2.1 (2017-04-29)
+
+- CliError: add ERROR.CHILD
+- CliOptions: add filterOtherArguments()
+
 ## v0.2.0 (2017-04-29)
 
 - still not perfect, but more ready for prime time
