@@ -121,12 +121,12 @@ test('logger level all', (t) => {
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
@@ -168,12 +168,12 @@ test('logger level trace', (t) => {
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
@@ -215,12 +215,12 @@ test('logger level debug', (t) => {
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
@@ -262,12 +262,12 @@ test('logger level verbose', (t) => {
 
   mc.clear()
   logger.verbose('verbose')
-  t.equal(mc.stdout, 'verbose: verbose\n', 'stdout is verbose')
+  t.equal(mc.stdout, 'verbose\n', 'stdout is verbose')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
@@ -314,7 +314,7 @@ test('logger level info', (t) => {
 
   mc.clear()
   logger.info('info')
-  t.equal(mc.stdout, 'info: info\n', 'stdout is info')
+  t.equal(mc.stdout, 'info\n', 'stdout is info')
   t.equal(mc.stderr, '', 'stderr is empty')
 
   mc.clear()
