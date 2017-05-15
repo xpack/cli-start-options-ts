@@ -1,3 +1,8 @@
+## v0.2.2 (2017-05-15)
+
+- CliCommand: add unparsedArgs property
+- CliCommand.addGenerator() uses unparsedArgs
+
 ## v0.2.1 (2017-04-29)
 
 - CliError: add ERROR.CHILD
