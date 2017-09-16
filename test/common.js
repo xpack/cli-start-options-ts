@@ -43,6 +43,12 @@ const Writable = require('stream').Writable
 // ES6: `import { CliHelp } from './utils/cli-helps.js'
 const Xtest = require('./mock/xtest/main.js').Xtest
 
+const Promisifier = require('@ilg/es6-promisifier').Promisifier
+
+// ----------------------------------------------------------------------------
+
+const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
+
 // ----------------------------------------------------------------------------
 
 /**
@@ -200,12 +206,13 @@ class Common {
    * @returns {undefined} Nothing.
    */
   static async extractTgz (tgzPath, destPath) {
+    await mkdirpPromise(destPath)
     return new Promise((resolve, reject) => {
       fs.createReadStream(tgzPath)
         .on('error', (er) => { reject(er) })
         .pipe(zlib.createGunzip())
         .on('error', (er) => { reject(er) })
-        .pipe(tar.Extract({ path: destPath }))
+        .pipe(tar.extract({ cwd: destPath }))
         .on('error', (er) => { reject(er) })
         .on('end', () => { resolve() })
     })

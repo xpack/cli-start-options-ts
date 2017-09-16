@@ -638,15 +638,15 @@ test('xtest -- xx (spawn)', async (t) => {
 /**
  * Test no command with app options.
  */
-test('xtest cwd -C /xx (spawn)', async (t) => {
+test('xtest cwd -C /tmp/xx (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
       'cwd',
       '-C',
-      '/xx'
+      '/tmp/xx'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.match(stdout, '/xx\n', 'stdout has path')
+    t.match(stdout, '/tmp/xx\n', 'stdout has path')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -657,17 +657,17 @@ test('xtest cwd -C /xx (spawn)', async (t) => {
 /**
  * Test no command with app options.
  */
-test('xtest cwd -C /xx -C yy (spawn)', async (t) => {
+test('xtest cwd -C /tmp/xx -C yy (spawn)', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.xtestCli([
       'cwd',
       '-C',
-      '/xx',
+      '/tmp/xx',
       '-C',
       'yy'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    const absPath = path.resolve('/xx', 'yy')
+    const absPath = path.resolve('/tmp/xx', 'yy')
     if (os.platform() === 'win32') {
       t.match(stdout, absPath, 'stdout has path')
     } else {

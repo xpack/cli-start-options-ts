@@ -187,12 +187,82 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xtest.js cop --file input --output output -v",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "cop",
+        "--file", 
+        "input", 
+        "--output", 
+        "output", 
+        "-v"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "ztest.js -h",
+      "program": "${workspaceRoot}/test/mock/ztest/bin/ztest.js",
+      "stopOnEntry": true,
+      "args": [
+        "-h"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xtest.js --loglevel xx",
       "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
         "xx"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js cwd -C /tmp/xx",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "cwd", 
+        "-C", 
+        "/tmp/xx"
       ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
