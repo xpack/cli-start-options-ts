@@ -39,7 +39,7 @@
   "dependencies": {
     "@ilg/es6-promisifier": "~0.1.9",
     "mkdirp": "~0.5.1",
-    "wscript-avoider": "~3.0.0"
+    "wscript-avoider": "~3.0.2"
   },
   "devDependencies": {
     "should": "~11.2.1",
