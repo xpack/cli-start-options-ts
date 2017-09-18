@@ -1,3 +1,11 @@
+## v0.3.1 (2017-09-18)
+
+- add 'npm run link'
+- add support for single command
+- add chdir() to -C path
+- update tsts for tar 4.x
+- update tests for node 8.5 AsserionError with cause
+
 ## v0.2.2 (2017-05-15)
 
 - CliCommand: add unparsedArgs property
