@@ -15,9 +15,11 @@ sudo: false
 # build environment, for example installing a more recent version of
 # Ruby than the default version present in all build environments you
 # can do so in the `before_install` stage of the build.
+# async/await supported since v7.x
 language: node_js
 node_js:
   - "node" 
+  - "7" 
 
 # https://docs.travis-ci.com/user/customizing-the-build/#Git-Clone-Depth
 git:
