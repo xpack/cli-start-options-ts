@@ -100,7 +100,7 @@ test('logger level', (t) => {
   try {
     logger.level = 'xyz'
   } catch (err) {
-    t.equal(err.name, 'AssertionError', 'assert')
+    t.match(err.name, 'AssertionError', 'assert')
   }
   t.end()
 })
