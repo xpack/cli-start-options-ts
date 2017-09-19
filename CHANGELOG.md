@@ -1,3 +1,7 @@
+## v0.4.0 (2017-09-19)
+
+- cli-commands: add formatDuration()
+
 ## v0.3.1 (2017-09-18)
 
 - add 'npm run link'
