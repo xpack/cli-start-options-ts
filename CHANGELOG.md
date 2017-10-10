@@ -1,3 +1,12 @@
+## Change log
+
+Changes in reverse chronological order.
+
+## v0.4.1 (2017-10-10)
+
+- README: add How to publish
+- cli-commands: in outputDoneDuration () also display the actual command after the program name
+
 ## v0.4.0 (2017-09-19)
 
 - cli-commands: add formatDuration()
