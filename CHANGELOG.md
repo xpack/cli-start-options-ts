@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.2 (2017-11-12)
+
+- cli-options: fix cmds split
+
 ## v0.4.1 (2017-10-10)
 
 - README: add How to publish
