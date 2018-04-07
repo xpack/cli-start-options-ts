@@ -10,29 +10,36 @@
 
 A Node.js module with classes to implement a command line Node.js application.
 
-The module exports several classes (like CliApplication, CliCommand, ...) that can be used as base classes for CLI applications.
+The module exports several classes (like CliApplication, CliCommand, ...) 
+that can be used as base classes for CLI applications.
 
 ## Prerequisites
 
-A recent [Node.js](https://nodejs.org) (>7.x), since the ECMAScript 6 class syntax is used.
-
-If this is your first encounter with `npm`, you need to install the [node.js](https://nodejs.org/) JavScript run-time. The process is straightforward and does not pollute the system locations significantly; just pick the current version, download the package suitable for your platform and install it as usual. The result is a binary program called `node` that can be used to execute JavaScript code from the terminal, and a link called `npm`, pointing to the `npm-cli.js` script, which is part of the node module that implements the npm functionality. On Windows, it is recommended to first install the [Git for Windows](https://git-scm.com/download/win) package.
+A recent [Node.js](https://nodejs.org) (>7.x), since the ECMAScript 6 class 
+syntax is used.
 
 ## Easy install
 
-The module is available as [**@ilg/cli-start-options**](https://www.npmjs.com/package/@ilg/cli-start-options) from the public repository, use `npm` to install it inside the module where it is needed:
+The module is available as 
+[`@ilg/cli-start-options`](https://www.npmjs.com/package/@ilg/cli-start-options) 
+from the public repository, use `npm` to install it inside the module where 
+it is needed:
 
 ```bash
 $ npm install @ilg/cli-start-options --save
 ```
 
-The module does not provide any executables, and generally there are few reasons to install it globally.
+The module does not provide any executables, and generally there are few 
+reasons to install it globally.
 
-The development repository is available from the GitHub [xpack/cli-start-options-js](https://github.com/xpack/cli-start-options-js) project.
+The development repository is available from the GitHub 
+[xpack/cli-start-options-js](https://github.com/xpack/cli-start-options-js) 
+project.
 
 ## User info
 
-The module can be included in CLI applications and the classes can be used to derive application classes.
+The module can be included in CLI applications and the classes can be used 
+to derive application classes.
 
 ```javascript
 // Equivalent of import { CliApplication, CliCommand, CliHelp, CliOptions } from 'cli-start-options'
@@ -60,9 +67,11 @@ $ sudo npm link
 $ ls -l /usr/local/lib/node_modules/@ilg
 ```
 
-A link to the development folder should be present in the system `node_modules` folder.
+A link to the development folder should be present in the system
+`node_modules` folder.
 
-In projects that use this module under development, link back from the global location:
+In projects that use this module under development, link back from the
+global location:
 
 ```console
 $ npm link @ilg/cli-start-options
@@ -70,9 +79,11 @@ $ npm link @ilg/cli-start-options
 
 ### Tests
 
-The tests use the [`node-tap`](http://www.node-tap.org) framework (_A Test-Anything-Protocol library for Node.js_, written by Isaac Schlueter).
+The tests use the [`node-tap`](http://www.node-tap.org) framework 
+(_A Test-Anything-Protocol library for Node.js_, written by Isaac Schlueter).
 
-As for any `npm` package, the standard way to run the project tests is via `npm test`:
+As for any `npm` package, the standard way to run the project tests is via 
+`npm test`:
 
 ```bash
 $ cd cli-start-options-js.git
@@ -172,7 +183,9 @@ test/tap/cmd-copy.js
 
 ### Coverage tests
 
-Coverage tests are a good indication on how much of the source files is exercised by the tests. Ideally all source files should be covered 100%, for all 4 criteria (statements, branches, functions, lines).
+Coverage tests are a good indication on how much of the source files is 
+exercised by the tests. Ideally all source files should be covered 100%, 
+for all 4 criteria (statements, branches, functions, lines).
 
 To run the coverage tests, use `npm run test-coverage`:
 
@@ -212,7 +225,9 @@ All files                     |      100 |    89.01 |    96.43 |      100 |     
 
 ### Continuous Integration (CI)
 
-The continuous integration tests are performed via [Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and [AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
+The continuous integration tests are performed via 
+[Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and 
+[AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
 
 To speed up things, the `node_modules` folder is cached between builds.
 
@@ -220,11 +235,13 @@ To speed up things, the `node_modules` folder is cached between builds.
 
 The module uses ECMAScript 6 class definitions.
 
-As style, it uses the [JavaScript Standard Style](https://standardjs.com/), automatically checked at each commit via Travis CI.
+As style, it uses the [JavaScript Standard Style](https://standardjs.com/), 
+automatically checked at each commit via Travis CI.
 
 Known and accepted exceptions:
 
-- `// eslint-disable-line node/no-deprecated-api` to continue using the deprecated `domain` module
+- `// eslint-disable-line node/no-deprecated-api` to continue using the 
+deprecated `domain` module
 
 To manually fix compliance with the style guide (where possible):
 
@@ -240,7 +257,8 @@ $ npm run fix
 
 The documentation metadata follows the [JSdoc](http://usejsdoc.org) tags.
 
-To enforce checking at file level, add the following comments right after the `use strict`:
+To enforce checking at file level, add the following comments right after 
+the `use strict`:
 
 ```
 'use strict'
@@ -248,7 +266,8 @@ To enforce checking at file level, add the following comments right after the `u
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 ```
 
-Note: be sure C style comments are used, C++ styles are not parsed by [ESLint](http://eslint.org).
+Note: be sure C style comments are used, C++ styles are not parsed by 
+[ESLint](http://eslint.org).
 
 ### How to publish
 
@@ -262,4 +281,6 @@ Note: be sure C style comments are used, C++ styles are not parsed by [ESLint](h
 
 ## License
 
-The original content is released under the [MIT License](https://opensource.org/licenses/MIT), with all rights reserved to [Liviu Ionescu](https://github.com/ilg-ul).
+The original content is released under the 
+[MIT License](https://opensource.org/licenses/MIT), with all rights 
+reserved to [Liviu Ionescu](https://github.com/ilg-ul).
