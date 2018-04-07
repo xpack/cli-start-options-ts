@@ -38,8 +38,14 @@
   "homepage": "https://github.com/xpack/cli-start-options-js",
   "dependencies": {
     "@ilg/es6-promisifier": "~0.1.9",
-    "mkdirp": "~0.5.1",
-    "wscript-avoider": "~3.0.2"
+    "wscript-avoider": "~3.0.2",
+    "latest-version": "~3.1.0",
+    "semver-diff": "~2.1.0",
+    "is-installed-globally": "0.1.0",
+    "is-ci": "~1.1.0",
+    "make-dir": "~1.2.0",
+    "user-home": "~2.0.0",
+    "del": "~3.0.0"
   },
   "devDependencies": {
     "should": "~11.2.1",

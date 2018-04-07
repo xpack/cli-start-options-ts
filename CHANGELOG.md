@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.3 (2018-04-07)
+
+- cli-application: check for updates
+
 ## v0.4.2 (2017-11-12)
 
 - cli-options: fix cmds split
