@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.4 (2018-04-07)
+
+- add 'sudo' to message, if installed globally
+
 ## v0.4.3 (2018-04-07)
 
 - cli-application: check for updates
