@@ -2,7 +2,7 @@
 
 Changes in reverse chronological order.
 
-## v0.4.7 (2018-04-13)
+## v0.4.8 (2018-04-13)
 
 - split update message on two lines.
 
