@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.7 (2018-04-13)
+
+- split update message on two lines.
+
 ## v0.4.6 (2018-04-13)
 
 - add force to delete
