@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.6 (2018-04-13)
+
+- add force to delete
+
 ## v0.4.5 (2018-04-07)
 
 - improve logic to save the timestamp
