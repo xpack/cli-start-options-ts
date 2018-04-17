@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.9 (2018-04-17)
+
+- fix typo in trace message
+
 ## v0.4.8 (2018-04-13)
 
 - split update message on two lines.
