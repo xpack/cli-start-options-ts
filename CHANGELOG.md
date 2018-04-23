@@ -2,6 +2,12 @@
 
 Changes in reverse chronological order.
 
+## v0.4.10 (2018-04-24)
+
+- cli-error: add ERROR.PREREQUISITES
+- deps: add semver@5.5.0
+- [#4] Check node version >= 8.x
+
 ## v0.4.9 (2018-04-17)
 
 - fix typo in trace message
