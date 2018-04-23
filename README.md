@@ -15,7 +15,7 @@ that can be used as base classes for CLI applications.
 
 ## Prerequisites
 
-A recent [Node.js](https://nodejs.org) (>7.x), since the ECMAScript 6 class 
+A recent [Node.js](https://nodejs.org) (>=8.x), since the ECMAScript 6 class 
 syntax is used.
 
 ## Easy install
