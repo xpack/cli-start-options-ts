@@ -40,6 +40,7 @@
     "@ilg/es6-promisifier": "~0.1.9",
     "wscript-avoider": "~3.0.2",
     "latest-version": "~3.1.0",
+    "semver": "~5.5.0",
     "semver-diff": "~2.1.0",
     "is-installed-globally": "0.1.0",
     "is-ci": "~1.1.0",
