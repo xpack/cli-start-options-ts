@@ -5,8 +5,8 @@
 # async/await supported since v7.x
 environment:
   matrix:
+    - nodejs_version: "9"
     - nodejs_version: "8"
-    - nodejs_version: "7"
 
 # set clone depth
 clone_depth: 3  # clone entire repository history if not defined
