@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.11 (2018-04-30)
+
+- [#5] check if the install path is below /usr/local
+
 ## v0.4.10 (2018-04-24)
 
 - cli-error: add ERROR.PREREQUISITES
