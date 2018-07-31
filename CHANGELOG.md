@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.12 (2018-07-31)
+
+- rename exception in catch() as `ex`
+
 ## v0.4.11 (2018-04-30)
 
 - [#5] check if the install path is below /usr/local
