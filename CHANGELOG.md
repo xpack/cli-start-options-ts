@@ -2,6 +2,10 @@
 
 Changes in reverse chronological order.
 
+## v0.4.13 (2018-09-18)
+
+- [#6] Process Error, SyntaxError, TypeError gently
+
 ## v0.4.12 (2018-07-31)
 
 - rename exception in catch() as `ex`
