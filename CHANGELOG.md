@@ -2,6 +2,12 @@
 
 Changes in reverse chronological order.
 
+Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues).
+
+## v0.5.0 (2018-11-02)
+
+-[#7] Add more functions to check the log level
+
 ## v0.4.13 (2018-09-18)
 
 - [#6] Process Error, SyntaxError, TypeError gently
