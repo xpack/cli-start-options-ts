@@ -593,7 +593,7 @@ test('xtest unim (spawn)', async (t) => {
       'unim'
     ])
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
-    t.match(stderr, '{ AssertionError', 'stdout has assertion')
+    t.match(stderr, 'AssertionError', 'stdout has assertion')
     t.equal(stdout, '', 'stdout is empty')
   } catch (err) {
     t.fail(err.message)
