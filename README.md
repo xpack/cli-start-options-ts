@@ -6,9 +6,13 @@
 [![GitHub issues](https://img.shields.io/github/issues/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/issues)
 [![GitHub pulls](https://img.shields.io/github/issues-pr/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/pulls)
 
-## CLI startup and options processing
+## CLI startup and options processing framework
 
-A Node.js module with classes to implement a command line Node.js application.
+A Node.js module with an advanced framework used to implement a command 
+line Node.js application.
+
+It support single shot, interractive (one instance that accepts a sequence of 
+commands) and server like operations (multiple instances in parallel).
 
 The module exports several classes (like CliApplication, CliCommand, ...) 
 that can be used as base classes for CLI applications.
@@ -25,7 +29,7 @@ The module is available as
 from the public repository, use `npm` to install it inside the module where 
 it is needed:
 
-```bash
+```console
 $ npm install @ilg/cli-start-options --save
 ```
 
@@ -42,8 +46,6 @@ The module can be included in CLI applications and the classes can be used
 to derive application classes.
 
 ```javascript
-// Equivalent of import { CliApplication, CliCommand, CliHelp, CliOptions } from 'cli-start-options'
-
 const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliCommand = require('@ilg/cli-start-options').CliCommand
 const CliHelp = require('@ilg/cli-start-options').CliHelp
@@ -53,6 +55,170 @@ const CliError = require('@ilg/cli-start-options').CliError
 const CliErrorSyntax = require('@ilg/cli-start-options').CliErrorSyntax
 const CliErrorApplication = require('@ilg/cli-start-options').CliErrorApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
+```
+
+### Simple use case
+
+The traditional use case is when there is a single entry point, which
+processes all command line options.
+
+For example, the main file can be `/lib/main.js`:
+
+```js
+const path = require('path')
+
+const CliApplication = require('@ilg/cli-start-options').CliApplication
+const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
+
+class Xyz extends CliApplication {
+  static doInitialise () {
+    const Self = this
+
+    // ------------------------------------------------------------------------
+    // Mandatory, must be set here, not in the library, since it takes
+    // the shortcut of using `__dirname` of the main file.
+    Self.rootPath = path.dirname(__dirname)
+  }
+
+  async doMain (argv) {
+    const log = this.context.log
+    log.trace(argv)
+
+    // Implement the functionality.
+    return CliExitCodes.SUCCESS
+  }
+}
+
+module.exports.Main = Xyz
+```
+
+And it can be invoked from `/bin/xyz.js`:
+
+```js
+#!/usr/bin/env node
+const Main = require('../lib/main.js').Main
+
+Main.start().then()
+```
+
+The framework implements a lot of functionality, like parsing logger level 
+options, displaying help, displaying version, etc.
+
+An example of such an application with an empty `doMain()` behaves like this:
+
+```console
+$ xmk --help
+
+The xPack Make command line tool
+Usage: xmk  [<options> ...] [<args>...]
+
+Common options:
+  --loglevel <level>    Set log level (silent|warn|info|verbose|debug|trace)
+  -s|--silent           Disable all messages (--loglevel silent)
+  -q|--quiet            Mostly quiet, warnings and errors (--loglevel warn)
+  --informative         Informative (--loglevel info)
+  -v|--verbose          Verbose (--loglevel verbose)
+  -d|--debug            Debug messages (--loglevel debug)
+  -dd|--trace           Trace messages (--loglevel trace, -d -d)
+  --no-update-notifier  Skip check for a more recent version
+  -C <folder>           Set current folder
+
+xmk -h|--help           Quick help
+xmk --version           Show version
+
+npm xmk@0.1.0 '/Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/xmk.git'
+Home page: <https://github.com/xpack/xmk-js>
+Bug reports: <https://github.com/xpack/xmk-js/issues>
+
+$ xmk --version
+0.1.0
+```
+
+The `argv` array has the parsed options 
+filtered out, only the remaining options are passed to `doMain()`.
+
+### A more complex use case
+
+If the tool implements multiple commands, the framework is able to 
+identify them and call the specific implementation directly, without any application code.
+
+For this, in addition to the CliApplication class, there must be separate
+CliCommand classes, for each command. 
+
+The commands must be registered to the framework in `doInitialise()`; 
+for example the main file in `/lib/main.js` can read:
+
+```js
+const path = require('path')
+
+const CliApplication = require('@ilg/cli-start-options').CliApplication
+const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
+
+class Xbld extends CliApplication {
+  static doInitialise () {
+    const Self = this
+
+    // ------------------------------------------------------------------------
+    // Mandatory, must be set here, not in the library, since it takes
+    // the shortcut of using `__dirname` of the main file.
+    Self.rootPath = path.dirname(__dirname)
+
+    // Enable -i|--interactive
+    Self.hasInteractiveMode = true
+
+    // ------------------------------------------------------------------------
+    // Initialise the tree of known commands.
+    // Paths should be relative to the package root.
+    CliOptions.addCommand(['build', 'b', 'bild'], 'lib/xmake/build.js')
+    CliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
+    CliOptions.addCommand(['import'], 'lib/xmake/import.js')
+    CliOptions.addCommand(['export'], 'lib/xmake/export.js')
+
+    // The common options were already initialised by the caller,
+    // and are ok, no need to redefine them.
+  }
+}
+```
+
+### The running context
+
+The framework is able to also run in a server configuration, which 
+creates multiple instances of the application; to differentiate between 
+instances, a run context is used.
+
+
+```js
+/**
+  * @typedef {Object} Context
+  * @property {Logger} log The logger.
+  * @property {Object} config The configuration, parsed from the options.
+  * @property {String} programName The short name the program was invoked with.
+  * @property {String} cmdPath Full command path, from argv[1]
+  * @property {String} processCwd The process current working folder.
+  * @property {String[]} processEnv The process environment.
+  * @property {String[]} processArgv The process arguments.
+  * @property {String} rootPath The absolute path of the project root folder.
+  * @property {Object} package The parsed package.json.
+  * @property {Number} startTime
+  * @property {Object} console
+  */
+```
+
+### The command configuration
+
+The framework can parse each command options, and leave the results
+in a configuration object.
+
+```js
+/**
+ * @typedef {Object} Config
+ * @property {String} cwd The actual current working folder, from -C.
+ * @property {Number} logLevel The actual log level.
+ * @property {Boolean} isInteractive
+ * @property {Boolean} invokedFromCli
+ * @property {Boolean} isVersionRequest
+ */
+
 ```
 
 ## Developer info
@@ -85,15 +251,15 @@ The tests use the [`node-tap`](http://www.node-tap.org) framework
 As for any `npm` package, the standard way to run the project tests is via 
 `npm test`:
 
-```bash
+```console
 $ cd cli-start-options-js.git
 $ npm install
-$ npm test
+$ npm run test
 ```
 
 A typical test result looks like:
 
-```
+```console
 $ npm run test
 
 > @ilg/cli-start-options@0.1.15 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
@@ -115,7 +281,7 @@ total ............................................. 362/362
 
 To run a specific test with more verbose output, use `npm run tap`:
 
-```
+```console
 $ npm run tap test/tap/cmd-copy.js -s
 
 test/tap/cmd-copy.js
@@ -189,7 +355,7 @@ for all 4 criteria (statements, branches, functions, lines).
 
 To run the coverage tests, use `npm run test-coverage`:
 
-```
+```console
 $ npm run test-coverage
 
 > @ilg/cli-start-options@0.1.15 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
@@ -245,7 +411,7 @@ deprecated `domain` module
 
 To manually fix compliance with the style guide (where possible):
 
-```
+```console
 $ npm run fix
 
 > @ilg/cli-start-options@0.1.12 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
@@ -260,7 +426,7 @@ The documentation metadata follows the [JSdoc](http://usejsdoc.org) tags.
 To enforce checking at file level, add the following comments right after 
 the `use strict`:
 
-```
+```javascript
 'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */

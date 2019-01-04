@@ -4,7 +4,6 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
     {
       "type": "node",
       "request": "launch",
@@ -36,6 +35,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -56,6 +59,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -76,14 +83,18 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap options-common.js",
-      "program": "${workspaceRoot}/test/tap/options-common.js",
+      "name": "tap 030-options-common.js",
+      "program": "${workspaceRoot}/test/tap/030-options-common.js",
       "stopOnEntry": true,
       "args": [
       ],
@@ -96,6 +107,34 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap 040-module-invocation.js",
+      "program": "${workspaceRoot}/test/tap/040-module-invocation.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -138,6 +177,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -160,6 +203,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -181,6 +228,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -207,6 +258,40 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js long --long value --xx -q",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "long",
+        "--long", 
+        "value", 
+        "--xx", 
+        "-q", 
+        "debug"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -228,6 +313,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -250,6 +339,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -273,6 +366,10 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -295,9 +392,12 @@
       "env": {
         "NODE_ENV": "development"
       },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
       "console": "internalConsole",
       "sourceMaps": false
     }
-
   ]
 }

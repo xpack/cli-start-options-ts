@@ -189,9 +189,13 @@ class Common {
       }
     })
 
-    const _console = new Console(ostream, errstream)
+    const console_ = new Console(ostream, errstream)
     const context =
-      await Xtest.initialiseContext(ctx, xtest.programName, _console)
+      await Xtest.initialiseContext({
+        context: ctx,
+        programName: xtest.programName,
+        console: console_
+      })
     const app = new Xtest(context)
     const code = await app.main(argv)
     return { code, stdout, stderr }
