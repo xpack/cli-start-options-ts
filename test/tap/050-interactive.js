@@ -48,9 +48,11 @@ const Common = require('../common.js').Common
 
 const CliApplication = require('../../index.js').CliApplication
 const CliExitCodes = require('../../index.js').CliExitCodes
+const CliUtil = require('../../index.js').CliUtil
 
 assert(CliApplication)
 assert(CliExitCodes)
+assert(CliUtil)
 
 // ----------------------------------------------------------------------------
 
@@ -69,7 +71,7 @@ const rootPath = path.resolve(path.dirname(__dirname), Common.xtest.mockPath)
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
-  pack = await CliApplication.readPackageJson(rootPath)
+  pack = await CliUtil.readPackageJson(rootPath)
   t.ok(pack, 'package was parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
