@@ -51,10 +51,10 @@ class Generator extends CliCommand {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} context Reference to a context.
+   * @param {Object} args The generic arguments object.
    */
-  constructor (context) {
-    super(context)
+  constructor (args) {
+    super(args)
 
     // Title displayed with the help message.
     this.title = 'Test generator options'

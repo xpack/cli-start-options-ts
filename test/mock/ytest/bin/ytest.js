@@ -61,7 +61,8 @@ const Ytest = require('../main.js').Ytest
 
 // ----------------------------------------------------------------------------
 
-// TODO: use instances, not static classes.
-Ytest.start()
+Ytest.start().then((code) => {
+  process.exit(code)
+})
 
 // ----------------------------------------------------------------------------

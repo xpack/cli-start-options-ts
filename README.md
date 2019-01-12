@@ -11,7 +11,8 @@
 A Node.js module with an advanced framework used to implement a command 
 line Node.js application.
 
-It support single shot, interractive (one instance that accepts a sequence of 
+It support batch (single shot, one command per invocation), 
+interactive (one invocation that accepts a sequence of 
 commands) and server like operations (multiple instances in parallel).
 
 The module exports several classes (like CliApplication, CliCommand, ...) 
@@ -50,7 +51,6 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliCommand = require('@ilg/cli-start-options').CliCommand
 const CliHelp = require('@ilg/cli-start-options').CliHelp
 const CliOptions = require('@ilg/cli-start-options').CliOptions
-const CliOptions = require('@ilg/cli-start-options').CliOptions
 const CliError = require('@ilg/cli-start-options').CliError
 const CliErrorSyntax = require('@ilg/cli-start-options').CliErrorSyntax
 const CliErrorApplication = require('@ilg/cli-start-options').CliErrorApplication
@@ -71,7 +71,7 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
 
 class Xyz extends CliApplication {
-  static doInitialise () {
+  static doInitialize () {
     const Self = this
 
     // ------------------------------------------------------------------------
@@ -145,7 +145,7 @@ identify them and call the specific implementation directly, without any applica
 For this, in addition to the CliApplication class, there must be separate
 CliCommand classes, for each command. 
 
-The commands must be registered to the framework in `doInitialise()`; 
+The commands must be registered to the framework in `doInitialize()`; 
 for example the main file in `/lib/main.js` can read:
 
 ```js
@@ -155,7 +155,7 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
 
 class Xbld extends CliApplication {
-  static doInitialise () {
+  static doInitialize () {
     const Self = this
 
     // ------------------------------------------------------------------------
@@ -164,15 +164,15 @@ class Xbld extends CliApplication {
     Self.rootPath = path.dirname(__dirname)
 
     // Enable -i|--interactive
-    Self.hasInteractiveMode = true
+    Self.enableInteractiveMode = true
 
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['build', 'b', 'bild'], 'lib/xmake/build.js')
-    CliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
-    CliOptions.addCommand(['import'], 'lib/xmake/import.js')
-    CliOptions.addCommand(['export'], 'lib/xmake/export.js')
+    Self.cliOptions.addCommand(['build', 'b', 'bild'], 'lib/xmake/build.js')
+    Self.cliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
+    Self.cliOptions.addCommand(['import'], 'lib/xmake/import.js')
+    Self.cliOptions.addCommand(['export'], 'lib/xmake/export.js')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
@@ -193,7 +193,6 @@ instances, a run context is used.
   * @property {Logger} log The logger.
   * @property {Object} config The configuration, parsed from the options.
   * @property {String} programName The short name the program was invoked with.
-  * @property {String} cmdPath Full command path, from argv[1]
   * @property {String} processCwd The process current working folder.
   * @property {String[]} processEnv The process environment.
   * @property {String[]} processArgv The process arguments.

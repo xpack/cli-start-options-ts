@@ -61,7 +61,8 @@ const Xtest = require('../main.js').Xtest
 
 // ----------------------------------------------------------------------------
 
-// TODO: use instances, not static classes.
-Xtest.start()
+Xtest.start().then((code) => {
+  process.exit(code)
+})
 
 // ----------------------------------------------------------------------------

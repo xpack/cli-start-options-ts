@@ -49,7 +49,6 @@
 
 // ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
 const CliApplication = require('../../../index.js').CliApplication
-const CliOptions = require('../../../index.js').CliOptions
 
 // ============================================================================
 
@@ -68,7 +67,7 @@ class Xtest extends CliApplication {
    *
    * @override
    */
-  static doInitialise () {
+  static doInitialize () {
     const Self = this
 
     // ------------------------------------------------------------------------
@@ -77,37 +76,48 @@ class Xtest extends CliApplication {
     Self.rootPath = __dirname
 
     // Enable -i|--interactive
-    Self.hasInteractiveMode = true
+    Self.enableInteractiveMode = true
 
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
-    CliOptions.addCommand(['notclass'], 'xtest/not-class.js')
-    // Non existent.
-    CliOptions.addCommand(['con'], 'xtest/con.js')
-    CliOptions.addCommand(['verbosity', 'c'], 'xtest/verbosity.js')
-    CliOptions.addCommand(['long'], 'xtest/long.js')
-    CliOptions.addCommand(['many'], 'xtest/many.js')
-    CliOptions.addCommand(['gen'], 'xtest/generator.js')
-    CliOptions.addCommand(['unimpl'], 'xtest/unimpl.js')
-    CliOptions.addCommand(['cwd'], 'xtest/cwd.js')
+    const cliOptions = Self.cliOptions
 
-    // The common options were already initialised by the caller,
-    // and are ok, no need to redefine them.
-    CliOptions.addOptionGroups(
+    cliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
+    cliOptions.addCommand(['notclass'], 'xtest/not-class.js')
+    // Non existent.
+    cliOptions.addCommand(['con'], 'xtest/con.js')
+    cliOptions.addCommand(['verbosity', 'c'], 'xtest/verbosity.js')
+    cliOptions.addCommand(['long'], 'xtest/long.js')
+    cliOptions.addCommand(['many'], 'xtest/many.js')
+    cliOptions.addCommand(['gen'], 'xtest/generator.js')
+    cliOptions.addCommand(['unimpl'], 'xtest/unimpl.js')
+    cliOptions.addCommand(['cwd'], 'xtest/cwd.js')
+
+    // The common options will be initialised right after these.
+    cliOptions.addOptionGroups(
       [
         {
           title: 'Extra options',
           optionDefs: [
             {
               options: ['--extra', '--very-extra', '--very-long-extra'],
-              msg: 'Extra options',
+              message: 'Extra options',
               action: (context) => {
                 context.config.extra = true
               },
               init: (context) => {
                 context.config.extra = false
+              }
+            },
+            {
+              options: ['--early', '--very-early', '--very-long-early'],
+              message: 'Early options',
+              action: (context) => {
+                context.config.early = true
+              },
+              init: (context) => {
+                context.config.early = false
               },
               doProcessEarly: true
             }

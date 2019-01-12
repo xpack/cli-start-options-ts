@@ -64,6 +64,7 @@ const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
 
 // Promisified functions from the Node.js callbacks library.
 Promisifier.promisifyInPlace(fs, 'chmod')
+Promisifier.promisifyInPlace(fs, 'readFile')
 
 // ----------------------------------------------------------------------------
 
@@ -78,16 +79,19 @@ test('xtest copy',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-      const errLines = stderr.split(/\r?\n/)
+      t.true(stdout.length > 0, 'has stdout')
+      t.match(stdout[2], 'Usage: xtest copy [<options>...]', 'has Usage')
+
       // console.log(errLines)
-      t.equal(errLines.length, 2 + 1, 'has two errors')
-      if (errLines.length === 3) {
-        t.match(errLines[0], 'Mandatory \'--file\' not found',
+      t.equal(stderr.length, 2, 'has two errors')
+      if (stderr.length > 0) {
+        t.match(stderr[0], 'Mandatory \'--file\' not found',
           'has --file error')
-        t.match(errLines[1], 'Mandatory \'--output\' not found',
+      }
+      if (stderr.length > 1) {
+        t.match(stderr[1], 'Mandatory \'--output\' not found',
           'has --output error')
       }
-      t.match(stdout, 'Usage: xtest copy [options...]', 'has Usage')
     } catch (err) {
       t.fail(err.message)
     }
@@ -106,20 +110,18 @@ test('xtest copy -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-      const outLines = stdout.split(/\r?\n/)
-      t.ok(outLines.length > 9, 'has enough output')
-      if (outLines.length > 9) {
+      t.true(stdout.length > 0, 'has stdout')
+      if (stdout.length > 9) {
         // console.log(outLines)
-        t.equal(outLines[1], 'Copy a file to another file',
+        t.equal(stdout[1], 'Copy a file to another file',
           'has title')
-        t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
-          '--file <file> --output <file>', 'has Usage')
-        t.match(outLines[4], 'Copy options:', 'has copy options')
-        t.match(outLines[5], '  --file <file>  ', 'has --file')
-        t.match(outLines[6], '  --output <file>  ', 'has --output')
+        t.match(stdout[2], 'Usage: xtest copy [<options>...]', 'has Usage')
+        t.match(stdout[4], 'Copy options:', 'has copy options')
+        t.match(stdout[5], '  --file <file>  ', 'has --file')
+        t.match(stdout[6], '  --output <file>  ', 'has --output')
       }
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -138,17 +140,15 @@ test('xtest cop -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-      const outLines = stdout.split(/\r?\n/)
-      t.ok(outLines.length > 9, 'has enough output')
-      if (outLines.length > 9) {
+      t.true(stdout.length > 0, 'has stdout')
+      if (stdout.length > 9) {
         // console.log(outLines)
-        t.equal(outLines[1], 'Copy a file to another file',
+        t.match(stdout[1], 'Copy a file to another file',
           'has title')
-        t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
-          '--file <file> --output <file>', 'has Usage')
+        t.match(stdout[2], 'Usage: xtest copy [<options>...]', 'has Usage')
       }
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -172,8 +172,10 @@ test('xtest cop --file xxx --output yyy -q',
       // Check exit code.
       t.equal(code, CliExitCodes.ERROR.INPUT, 'exit code is input')
       // There should be no output.
-      t.equal(stdout, '', 'stdout is empty')
-      t.match(stderr, 'ENOENT: no such file or directory', 'strerr is ENOENT')
+      t.equal(stdout.length, 0, 'stdout is empty')
+      t.equal(stderr.length, 1, 'stderr has 1 line')
+      t.match(stderr[0], 'ENOENT: no such file or directory',
+        'stderr is ENOENT')
     } catch (err) {
       t.fail(err.message)
     }
@@ -214,9 +216,10 @@ test('xtest cop --file input.json --output output.json',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-      t.match(stdout, 'Done', 'stdout is done')
+      t.equal(stdout.length, 4, 'stdout has 4 lines')
+      t.match(stdout[3], 'Done', 'stdout is done')
       // console.log(stdout)
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(stderr.length, 0, 'stderr is empty')
       // console.log(stderr)
 
       const fileContent = await fs.readFilePromise(outPath)
@@ -245,9 +248,10 @@ test('xtest cop --file input --output output -v',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code')
-      t.match(stdout, 'Done.', 'message is Done')
+      t.equal(stdout.length, 5, 'stdout has 5 lines')
+      t.match(stdout[4], 'Done', 'stdout is done')
       // console.log(stdout)
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(stderr.length, 0, 'stderr is empty')
       // console.log(stderr)
     } catch (err) {
       t.fail(err.message)
@@ -274,11 +278,13 @@ if (os.platform() !== 'win32') {
         ])
         // Check exit code.
         t.equal(code, CliExitCodes.ERROR.OUTPUT, 'exit code is output')
+        t.equal(stdout.length, 4, 'stdout has 4 lines')
         // Output should go up to Writing...
         // console.log(stdout)
-        t.match(stdout, 'Writing ', 'up to writing')
+        t.match(stdout[3], 'Writing ', 'up to writing')
         // console.log(stderr)
-        t.match(stderr, 'EACCES: permission denied', 'stderr is EACCES')
+        t.equal(stderr.length, 1, 'stderr has 1 line')
+        t.match(stderr[0], 'EACCES: permission denied', 'stderr is EACCES')
       } catch (err) {
         t.fail(err.message)
       }

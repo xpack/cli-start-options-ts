@@ -20,57 +20,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "tap xtest.js",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
-      "stopOnEntry": true,
-      "args": [
-        "--help"
-      ],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "skipFiles": [
-        "*async_hook*.js",
-        "domain.js"
-      ],
-      "console": "internalConsole",
-      "sourceMaps": false
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "tap errors.js",
-      "program": "${workspaceRoot}/test/tap/errors.js",
-      "stopOnEntry": true,
-      "args": [
-      ],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "skipFiles": [
-        "*async_hook*.js",
-        "domain.js"
-      ],
-      "console": "internalConsole",
-      "sourceMaps": false
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "tap logger.js",
-      "program": "${workspaceRoot}/test/tap/logger.js",
+      "name": "tap 020-errors.js",
+      "program": "${workspaceRoot}/test/tap/020-errors.js",
       "stopOnEntry": true,
       "args": [
       ],
@@ -135,6 +86,121 @@
         "*async_hook*.js",
         "domain.js"
       ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap 050-interactive.js",
+      "program": "${workspaceRoot}/test/tap/050-interactive.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap 060-cmd-copy.js",
+      "program": "${workspaceRoot}/test/tap/060-cmd-copy.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap 070-author.js",
+      "program": "${workspaceRoot}/test/tap/070-author.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js --help",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "--help"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js long --help",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "long",
+        "--help"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
       "sourceMaps": false
     },
@@ -382,6 +448,57 @@
       "args": [
         "long",
         "--xx"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js -i",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "-i",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "ctest.js --help",
+      "program": "${workspaceRoot}/test/mock/ctest/bin/ctest.js",
+      "stopOnEntry": true,
+      "args": [
+        "--help"
       ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,

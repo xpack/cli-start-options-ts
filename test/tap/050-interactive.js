@@ -144,7 +144,7 @@ test('xtest -i (spawn)', (t) => {
           ostr = '-h'
         } else if (count === 2) {
           t.test('-h', (t) => {
-            t.match(stdout, 'Usage: xtest <command> [<subcommand>...]',
+            t.match(stdout, 'Usage: xtest <command> [<options>...]',
               'has Usage')
             // t.equal(stderr, '', 'stderr empty')
             t.end()
@@ -161,8 +161,8 @@ test('xtest -i (spawn)', (t) => {
         } else if (count === 4) {
           t.test('copy -h', (t) => {
             // console.log(stdout)
-            t.match(stdout, 'Usage: xtest copy [options...] --file <file> ' +
-              '--output <file>', 'has code Usage')
+            t.match(stdout, 'Usage: xtest copy [<options>...]',
+              'has code Usage')
             // t.equal(stderr, '', 'stderr empty')
             t.end()
           })
@@ -170,8 +170,8 @@ test('xtest -i (spawn)', (t) => {
           ostr = 'copy'
         } else if (count === 5) {
           t.test('copy', (t) => {
-            t.match(stdout, 'Usage: xtest copy [options...] --file <file> ' +
-              '--output <file>', 'has code Usage')
+            t.match(stdout, 'Usage: xtest copy [<options>...]',
+              'has code Usage')
             t.match(stdout, 'Mandatory \'--file\' not found',
               '--file not found')
             t.end()
@@ -182,7 +182,7 @@ test('xtest -i (spawn)', (t) => {
           t.test('xyz', (t) => {
             t.match(stdout, `Command 'xyz' not supported.`,
               'xyz is not supported')
-            t.match(stdout, 'Usage: xtest <command> [<subcommand>...]',
+            t.match(stdout, 'Usage: xtest <command> [<options>...]',
               'has Usage')
             // t.equal(stderr, '', 'stderr empty')
             t.end()

@@ -32,84 +32,86 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The `xtest many` command implementation.
+ * The Ctest main module.
+ *
+ * It is re-exported publicly by `index.js`.
+ *
+ * To import classes from this module into Node.js applications, use:
+ *
+ * ```javascript
+ * const Ctest = require('ctest').Ctest
+ * ```
  */
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
-const CliCommand = require('../../../../index.js').CliCommand
-const CliExitCodes = require('../../../../index.js').CliExitCodes
+// const path = require('path')
+
+// ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
+const CliApplication = require('../../../index.js').CliApplication
+// const CliOptions = require('../../../index.js').CliOptions
+const CliExitCodes = require('../../../index.js').CliExitCodes
 
 // ============================================================================
 
-class Long extends CliCommand {
+// export
+class Ctest extends CliApplication {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Constructor, to set help definitions.
+   * @summary Initialise the application class object.
    *
-   * @param {Object} args The generic arguments object.
+   * @returns {undefined} Nothing.
+   *
+   * @description
+   * Initialise the options manager with application
+   * specific commands and common options.
+   *
+   * @override
    */
+  static doInitialize () {
+    const Self = this
+
+    // ------------------------------------------------------------------------
+    // Mandatory, must be set here, not in the library, since it takes
+    // the shortcut of using `__dirname` of the main file.
+    Self.rootPath = __dirname
+  }
+
+  // --------------------------------------------------------------------------
+
   constructor (args) {
     super(args)
 
-    // Title displayed with the help message.
-    this.title = 'Test many options'
+    args.context.rootPath = __dirname
     this.optionGroups = [
       {
-        title: 'Long options',
-        preOptions: '[<name1> <name2> <name3>...]',
+        title: 'Ctest options',
+        postOptions: '[<targets>...]',
         optionDefs: [
           {
-            options: ['--one'],
-            action: (context, val) => {
-              context.config.one = val
-            },
-            init: (context) => {
-              context.config.one = undefined
-            },
-            msg: 'Option one',
+            options: ['-t', '--tool'],
             param: 'name',
-            isMandatory: true
-          },
-          {
-            options: ['--two'],
-            action: (context, val) => {
-              context.config.two = val
-            },
+            message: 'Subtool name',
             init: (context) => {
-              context.config.two = undefined
+              context.config.toolName = undefined
             },
-            msg: 'Option two',
-            param: 'name',
-            isMandatory: true,
-            isMultiple: true
-          },
-          {
-            options: ['--three'],
             action: (context, val) => {
-              context.config.three = val
+              context.config.toolName = val.toLowerCase()
             },
-            init: (context) => {
-              context.config.three = undefined
-            },
-            msg: 'Option three',
-            param: 'name',
-            isOptional: true,
-            isMultiple: true
-          },
-          {
-            options: ['--four'],
-            action: (context, val) => {
-              context.config.four = val
-            },
-            init: (context) => {
-              context.config.four = undefined
-            },
-            msg: 'Option four',
-            // Has no param.
             hasValue: true,
+            values: [ 'clean' ],
+            isOptional: true
+          },
+          {
+            options: ['-n', '--dry-run'],
+            message: 'Only display, do not run commands',
+            init: (context) => {
+              context.config.isDryRun = false
+            },
+            action: (context, val) => {
+              context.config.isDryRun = true
+            },
             isOptional: true
           }
         ]
@@ -117,8 +119,11 @@ class Long extends CliCommand {
     ]
   }
 
+  // main(): use parent definition
+  // help(): use parent definition.
+
   /**
-   * @summary Execute the `copy` command.
+   * @summary Execute the `build` command.
    *
    * @param {string[]} argv Command line arguments.
    * @returns {number} Return code.
@@ -127,26 +132,28 @@ class Long extends CliCommand {
    */
   async doRun (argv) {
     const log = this.log
-    log.trace(`${this.constructor.name}.doRun()`)
+    log.trace(`${this.constructor.name}.doRun(${argv})`)
 
     log.info(this.title)
-    // const config = this.context.config
 
-    log.info('Done.')
+    this.outputDoneDuration()
     return CliExitCodes.SUCCESS
   }
+
+  // --------------------------------------------------------------------------
 }
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Copy class is added as a property of this object.
-module.exports.Long = Long
+// The Ctest class is added as a property to this object.
+
+module.exports.Ctest = Ctest
 
 // In ES6, it would be:
-// export class Long { ... }
+// export class Ctest { ... }
 // ...
-// import { Long } from 'long.js'
+// import { Ctest } from 'ctest.js'
 
 // ----------------------------------------------------------------------------

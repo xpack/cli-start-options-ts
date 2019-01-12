@@ -62,6 +62,8 @@ const Wtest = require('../main.js').Wtest
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Wtest.start()
+Wtest.start().then((code) => {
+  process.exit(code)
+})
 
 // ----------------------------------------------------------------------------

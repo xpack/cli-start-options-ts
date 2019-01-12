@@ -110,21 +110,39 @@ class Common {
 
       // Runs in project root.
       // console.log(`Current directory: ${process.cwd()}`)
-      let stdout = ''
-      let stderr = ''
+      let stdout = []
+      let stdoutBuf = ''
+      let stderr = []
+      let stderrBuf = ''
       const cmd = [name]
       const child = spawn(nodeBin, cmd.concat(argv), spawnOpts)
 
       assert(child.stderr)
       child.stderr.on('data', (chunk) => {
         // console.log(chunk.toString())
-        stderr += chunk
+        stderrBuf += chunk
+        while (true) {
+          const ix = stderrBuf.indexOf('\n')
+          if (ix === -1) {
+            break
+          }
+          stderr.push(stderrBuf.substring(0, ix))
+          stderrBuf = stderrBuf.substring(ix + 1)
+        }
       })
 
       assert(child.stdout)
       child.stdout.on('data', (chunk) => {
         // console.log(chunk.toString())
-        stdout += chunk
+        stdoutBuf += chunk
+        while (true) {
+          const ix = stdoutBuf.indexOf('\n')
+          if (ix === -1) {
+            break
+          }
+          stdout.push(stdoutBuf.substring(0, ix))
+          stdoutBuf = stdoutBuf.substring(ix + 1)
+        }
       })
 
       child.on('error', (err) => {
@@ -132,6 +150,12 @@ class Common {
       })
 
       child.on('close', (code) => {
+        if (stdoutBuf.length > 0) {
+          stdout.push(stdoutBuf)
+        }
+        if (stderrBuf.length > 0) {
+          stderr.push(stderrBuf)
+        }
         resolve({ code, stdout, stderr })
       })
     })
@@ -189,15 +213,14 @@ class Common {
       }
     })
 
-    const console_ = new Console(ostream, errstream)
-    const context =
-      await Xtest.initialiseContext({
-        context: ctx,
-        programName: xtest.programName,
-        console: console_
-      })
-    const app = new Xtest(context)
-    const code = await app.main(argv)
+    const mockConsole = new Console(ostream, errstream)
+
+    const code = await Xtest.start({
+      programName: xtest.programName,
+      argv: ['', '', ...argv],
+      env: [],
+      console: mockConsole
+    })
     return { code, stdout, stderr }
   }
 

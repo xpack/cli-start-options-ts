@@ -53,7 +53,7 @@ assert(CliExitCodes)
 // ----------------------------------------------------------------------------
 
 /**
- * Test if with empty line fails with mandatory error and displays help.
+ * Test if help includes single line author.
  */
 test('ytest -h',
   async (t) => {
@@ -63,12 +63,13 @@ test('ytest -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.true(stdout.length > 0, 'has stdout')
       // console.log(errLines)
-      t.match(stdout, 'Usage: ytest', 'has Usage')
-      t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+      t.match(stdout[2], 'Usage: ytest <command>', 'has Usage')
+      t.match(stdout[23], 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -76,7 +77,7 @@ test('ytest -h',
   })
 
 /**
- * Test if with empty line fails with mandatory error and displays help.
+ * Test if help includes multi-line author.
  */
 test('ztest -h',
   async (t) => {
@@ -86,12 +87,13 @@ test('ztest -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.true(stdout.length > 0, 'has stdout')
       // console.log(errLines)
-      t.match(stdout, 'Usage: ztest', 'has Usage')
-      t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+      t.match(stdout[2], 'Usage: ztest <command>', 'has Usage')
+      t.match(stdout[23], 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }

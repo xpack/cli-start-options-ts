@@ -49,7 +49,6 @@
 
 // ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
 const CliApplication = require('../../../index.js').CliApplication
-const CliOptions = require('../../../index.js').CliOptions
 
 // ============================================================================
 
@@ -68,7 +67,7 @@ class Wtest extends CliApplication {
    *
    * @override
    */
-  static doInitialise () {
+  static doInitialize () {
     const Self = this
 
     // ------------------------------------------------------------------------
@@ -79,12 +78,12 @@ class Wtest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['one-long-command'], '')
-    CliOptions.addCommand(['two-long-command'], '')
-    CliOptions.addCommand(['three-long-command'], '')
-    CliOptions.addCommand(['four-long-command'], '')
-    CliOptions.addCommand(['five-long-command'], '')
-    CliOptions.addCommand(['six-long-command'], '')
+    Self.cliOptions.addCommand(['one-long-command'], '')
+    Self.cliOptions.addCommand(['two-long-command'], '')
+    Self.cliOptions.addCommand(['three-long-command'], '')
+    Self.cliOptions.addCommand(['four-long-command'], '')
+    Self.cliOptions.addCommand(['five-long-command'], '')
+    Self.cliOptions.addCommand(['six-long-command'], '')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

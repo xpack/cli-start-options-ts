@@ -56,12 +56,14 @@
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { Xtest } from 'main.js'
+// ES6: `import { Ztest } from 'main.js'
 const Ztest = require('../main.js').Ztest
 
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Ztest.start()
+Ztest.start().then((code) => {
+  process.exit(code)
+})
 
 // ----------------------------------------------------------------------------

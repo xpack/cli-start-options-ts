@@ -49,7 +49,6 @@
 
 // ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
 const CliApplication = require('../../../index.js').CliApplication
-const CliOptions = require('../../../index.js').CliOptions
 
 // ============================================================================
 
@@ -68,7 +67,7 @@ class Ztest extends CliApplication {
    *
    * @override
    */
-  static doInitialise () {
+  static doInitialize () {
     const Self = this
 
     // ------------------------------------------------------------------------
@@ -79,7 +78,7 @@ class Ztest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['verbosity', 'c'], 'ztest/verbosity.js')
+    Self.cliOptions.addCommand(['verbosity', 'c'], 'ztest/verbosity.js')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
