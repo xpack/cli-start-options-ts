@@ -71,7 +71,7 @@ class Long extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.title)
-    const config = this.context.config
+    const config = this.config
     log.always(config.cwd)
 
     log.info('Done.')

@@ -130,7 +130,6 @@ class Long extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.title)
-    // const config = this.context.config
 
     log.info('Done.')
     return CliExitCodes.SUCCESS

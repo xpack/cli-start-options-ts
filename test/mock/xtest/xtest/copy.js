@@ -116,7 +116,7 @@ class Copy extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.title)
-    const config = this.context.config
+    const config = this.config
     const inputAbsolutePath = this.makePathAbsolute(config.inputPath)
     log.info(`Reading '${inputAbsolutePath}'...`)
     let inputData

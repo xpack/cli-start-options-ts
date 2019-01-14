@@ -75,7 +75,6 @@ class Generator extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.title)
-    // const config = this.context.config
 
     const object = {}
     this.addGenerator(object)
