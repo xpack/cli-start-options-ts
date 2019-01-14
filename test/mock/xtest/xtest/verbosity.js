@@ -55,7 +55,7 @@ class Copy extends CliCommand {
     super(args)
 
     // Title displayed with the help message.
-    this.title = 'Exercise verbosity'
+    this.helpTitle = 'Exercise verbosity'
     this.optionGroups = [
     ]
   }
@@ -72,7 +72,7 @@ class Copy extends CliCommand {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
-    log.info(this.title)
+    log.info(this.helpTitle)
 
     log.verbose('Verbose')
 

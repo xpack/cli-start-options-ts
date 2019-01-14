@@ -134,7 +134,7 @@ class Ctest extends CliApplication {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun(${argv})`)
 
-    log.info(this.title)
+    log.info(this.helpTitle)
 
     this.outputDoneDuration()
     return CliExitCodes.SUCCESS

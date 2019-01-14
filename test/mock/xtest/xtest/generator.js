@@ -57,7 +57,7 @@ class Generator extends CliCommand {
     super(args)
 
     // Title displayed with the help message.
-    this.title = 'Test generator options'
+    this.helpTitle = 'Test generator options'
     this.optionGroups = [
     ]
   }
@@ -74,7 +74,7 @@ class Generator extends CliCommand {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
-    log.info(this.title)
+    log.info(this.helpTitle)
 
     const object = {}
     this.addGenerator(object)

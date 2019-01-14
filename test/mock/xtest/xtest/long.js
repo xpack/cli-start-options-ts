@@ -55,7 +55,7 @@ class Long extends CliCommand {
     super(args)
 
     // Title displayed with the help message.
-    this.title = 'Test long options'
+    this.helpTitle = 'Test long options'
     this.optionGroups = [
       {
         title: 'Long options',
@@ -91,7 +91,7 @@ class Long extends CliCommand {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
-    log.info(this.title)
+    log.info(this.helpTitle)
 
     log.info('Done.')
     return CliExitCodes.SUCCESS

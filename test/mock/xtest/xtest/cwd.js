@@ -55,7 +55,7 @@ class Long extends CliCommand {
     super(args)
 
     // Title displayed with the help message.
-    this.title = 'CWD options'
+    this.helpTitle = 'CWD options'
   }
 
   /**
@@ -70,7 +70,7 @@ class Long extends CliCommand {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
-    log.info(this.title)
+    log.info(this.helpTitle)
     const config = this.config
     log.always(config.cwd)
 

@@ -54,7 +54,7 @@ class Unimpl extends CliCommand {
     super(args)
 
     // Title displayed with the help message.
-    this.title = 'Test unimpl options'
+    this.helpTitle = 'Test unimpl options'
   }
 }
 

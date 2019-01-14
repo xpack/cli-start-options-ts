@@ -69,7 +69,7 @@ class Copy extends CliCommand {
     super(args)
 
     // Title displayed with the help message.
-    this.title = 'Copy a file to another file'
+    this.helpTitle = 'Copy a file to another file'
     this.optionGroups = [
       {
         title: 'Copy options',
@@ -115,7 +115,7 @@ class Copy extends CliCommand {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
-    log.info(this.title)
+    log.info(this.helpTitle)
     const config = this.config
     const inputAbsolutePath = this.makePathAbsolute(config.inputPath)
     log.info(`Reading '${inputAbsolutePath}'...`)
