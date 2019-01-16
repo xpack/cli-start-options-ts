@@ -62,9 +62,14 @@ const workFolder = path.resolve(os.tmpdir(), 'xtest-copy')
 const rimrafPromise = Promisifier.promisify(require('rimraf'))
 const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
 
-// Promisified functions from the Node.js callbacks library.
+// Promisify functions from the Node.js callbacks library.
+// New functions have similar names, but belong to `promises_`.
 Promisifier.promisifyInPlace(fs, 'chmod')
 Promisifier.promisifyInPlace(fs, 'readFile')
+
+// For easy migration, inspire from the Node 10 experimental API.
+// Do not use `fs.promises` yet, to avoid the warning.
+const fsPromises = fs.promises_
 
 // ----------------------------------------------------------------------------
 
@@ -188,11 +193,11 @@ test('unpack',
     try {
       await Common.extractTgz(tgzPath, workFolder)
       t.pass('cmd-code.tgz unpacked into ' + workFolder)
-      await fs.chmodPromise(filePath, 0o444)
+      await fsPromises.chmod(filePath, 0o444)
       t.pass('chmod ro file')
       await mkdirpPromise(readOnlyFolder)
       t.pass('mkdir folder')
-      await fs.chmodPromise(readOnlyFolder, 0o444)
+      await fsPromises.chmod(readOnlyFolder, 0o444)
       t.pass('chmod ro folder')
     } catch (err) {
       t.fail(err)
@@ -222,7 +227,7 @@ test('xtest cop --file input.json --output output.json',
       t.equal(stderr.length, 0, 'stderr is empty')
       // console.log(stderr)
 
-      const fileContent = await fs.readFilePromise(outPath)
+      const fileContent = await fsPromises.readFile(outPath)
       t.ok(fileContent, 'content is read in')
       const json = JSON.parse(fileContent.toString())
       t.ok(json, 'json was parsed')
@@ -293,9 +298,9 @@ if (os.platform() !== 'win32') {
 }
 
 test('cleanup', async (t) => {
-  await fs.chmodPromise(filePath, 0o666)
+  await fsPromises.chmod(filePath, 0o666)
   t.pass('chmod rw file')
-  await fs.chmodPromise(readOnlyFolder, 0o666)
+  await fsPromises.chmod(readOnlyFolder, 0o666)
   t.pass('chmod rw folder')
   await rimrafPromise(workFolder)
   t.pass('remove tmpdir')

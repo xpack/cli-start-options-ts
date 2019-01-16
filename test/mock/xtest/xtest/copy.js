@@ -49,11 +49,16 @@ const CliError = require('../../../../index.js').CliError
 
 // ----------------------------------------------------------------------------
 
-// Promisify functions from the Node.js library.
+// Promisify functions from the Node.js callbacks library.
+// New functions have similar names, but belong to `promises_`.
 Promisifier.promisifyInPlace(fs, 'readFile')
 Promisifier.promisifyInPlace(fs, 'stat')
 Promisifier.promisifyInPlace(fs, 'mkdir')
 Promisifier.promisifyInPlace(fs, 'writeFile')
+
+// For easy migration, inspire from the Node 10 experimental API.
+// Do not use `fs.promises` yet, to avoid the warning.
+const fsPromises = fs.promises_
 
 // ============================================================================
 
@@ -121,7 +126,7 @@ class Copy extends CliCommand {
     log.info(`Reading '${inputAbsolutePath}'...`)
     let inputData
     try {
-      inputData = await fs.readFilePromise(inputAbsolutePath, 'utf8')
+      inputData = await fsPromises.readFile(inputAbsolutePath, 'utf8')
     } catch (err) {
       throw new CliError(err.message, CliExitCodes.ERROR.INPUT)
     }
@@ -133,10 +138,10 @@ class Copy extends CliCommand {
 
     log.info(`Writing '${outputAbsolutePath}'...`)
     try {
-      if (!await fs.statPromise(folderPath)) {
-        await fs.mkdirPromise(folderPath)
+      if (!await fsPromises.stat(folderPath)) {
+        await fsPromises.mkdir(folderPath)
       }
-      await fs.writeFilePromise(outputAbsolutePath, inputData, 'utf8')
+      await fsPromises.writeFile(outputAbsolutePath, inputData, 'utf8')
     } catch (err) {
       throw new CliError(err.message, CliExitCodes.ERROR.OUTPUT)
     }
