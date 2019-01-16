@@ -46,7 +46,6 @@ const test = require('tap').test
 // The Mocha-like DSL http://www.node-tap.org/mochalike/
 // require('tap').mochaGlobals()
 // const should = require('should') // eslint-disable-line no-unused-vars
-// /* global describe, context, it */
 
 const Common = require('../common.js').Common
 
@@ -63,13 +62,14 @@ assert(CliUtil)
 // ----------------------------------------------------------------------------
 
 let pack = null
-const rootPath = path.resolve(path.dirname(__dirname), Common.xtest.mockPath)
+const rootAbsolutePath = path.resolve(path.dirname(__dirname),
+  Common.xtest.mockPath)
 
 // ----------------------------------------------------------------------------
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
-  pack = await CliUtil.readPackageJson(rootPath)
+  pack = await CliUtil.readPackageJson(rootAbsolutePath)
   t.ok(pack, 'package parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
@@ -112,16 +112,51 @@ test('xtest xyz (module call)', async (t) => {
   t.end()
 })
 
-/*
-describe('setup', () => {
-  context('when reading package.json', async function () {
-    // Read in the package.json, to later compare version.
-    pack = await CliApplication.readPackageJson()
-    it('json object exists', () => { pack.should.not.equal(null) })
-    it('version string is not empty', () => {
-      pack.version.should.be.type('string').and.not.be.empty() })
-  })
+/**
+ * Test if -h shows usage. Check usage content.
+ */
+test('xtest -h (module call)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.xtestLib([
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    // console.log(stdout)
+    t.true(stdout.length > 0, 'stdout has content')
+    t.match(stdout, 'Mock Test', 'has title')
+    t.match(stdout, 'Usage: xtest <command> [<options>...] ...',
+      'has Usage')
+
+    t.match(stdout, '--loglevel <level>', 'has --loglevel <level>')
+    t.match(stdout,
+      'Set log level (silent|warn|info|verbose|debug|trace)',
+      'has log levels list')
+    t.match(stdout, '-s|--silent', 'has -s|--silent')
+    t.match(stdout, '-q|--quiet', 'has -q|--quiet')
+    t.match(stdout, '--informative', 'has --informative')
+    t.match(stdout, '-v|--verbose', 'has -v|--verbose')
+    t.match(stdout, '-d|--debug', 'has -d|--debug')
+    t.match(stdout, '-dd|--trace', 'has -dd|--trace')
+
+    t.match(stdout, '--no-update-notifier', 'has --no-update-notifier')
+
+    t.match(stdout, '-C <folder>', 'has -C <folder>')
+
+    t.match(stdout, 'xtest -h|--help', 'has -h|--help')
+    t.match(stdout, 'xtest <command> -h|--help',
+      'has <command> -h|--help')
+    t.match(stdout, 'xtest --version', 'has --version')
+    t.match(stdout, 'xtest -i|--interactive', 'has -i|--interactive')
+
+    t.match(stdout, 'Home page:', 'has Home page')
+    t.match(stdout, 'Bug reports:', 'has Bug reports:')
+
+    // There should be no error messages.
+    t.equal(stderr.length, 0, 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
 })
-*/
 
 // ----------------------------------------------------------------------------

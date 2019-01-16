@@ -186,7 +186,6 @@ class Common {
    *
    * @async
    * @param {string[]} argv Command line arguments
-   * @param {Object} ctx Optional context.
    * @returns {{code: number, stdout: string, stderr: string}} Exit
    *  code and captured output/error streams.
    *
@@ -194,7 +193,7 @@ class Common {
    * Call the application directly, as a regular module, and return
    * the exit code and the stdio streams captured in strings.
    */
-  static async xtestLib (argv, ctx = null) {
+  static async xtestLib (argv) {
     assert(Xtest !== null, 'No application class')
     // Create two streams to local strings.
     let stdout = ''
@@ -215,12 +214,15 @@ class Common {
 
     const mockConsole = new Console(ostream, errstream)
 
-    const code = await Xtest.start({
+    const app = new Xtest({
       programName: xtest.programName,
-      argv: ['', '', ...argv],
+      argv: ['', xtest.programName, ...argv],
       env: [],
-      console: mockConsole
+      console: mockConsole,
+      cwd: process.cwd(),
+      enableInteractiveMode: true
     })
+    const code = await app.main(argv)
     return { code, stdout, stderr }
   }
 

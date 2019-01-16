@@ -216,8 +216,8 @@ test('xtest cop --file input.json --output output.json',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-      t.equal(stdout.length, 4, 'stdout has 4 lines')
-      t.match(stdout[3], 'Done', 'stdout is done')
+      t.equal(stdout.length, 5, 'stdout has 5 lines')
+      t.match(stdout[4], 'completed in', 'stdout is completed')
       // console.log(stdout)
       t.equal(stderr.length, 0, 'stderr is empty')
       // console.log(stderr)
@@ -248,8 +248,8 @@ test('xtest cop --file input --output output -v',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code')
-      t.equal(stdout.length, 5, 'stdout has 5 lines')
-      t.match(stdout[4], 'Done', 'stdout is done')
+      t.equal(stdout.length, 6, 'stdout has 6 lines')
+      t.match(stdout[5], 'completed in', 'stdout is completed')
       // console.log(stdout)
       t.equal(stderr.length, 0, 'stderr is empty')
       // console.log(stderr)

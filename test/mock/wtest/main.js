@@ -57,41 +57,36 @@ class Wtest extends CliApplication {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Initialise the application class object.
+   * @summary Construct the application object.
    *
-   * @returns {undefined} Nothing.
+   * @param {Object} args The generic arguments object.
    *
    * @description
    * Initialise the options manager with application
    * specific commands and common options.
-   *
-   * @override
    */
-  static doInitialize () {
-    const Self = this
+  constructor (args) {
+    super(args)
 
-    // ------------------------------------------------------------------------
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = __dirname
+    this.rootAbsolutePath = __dirname
 
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    Self.cliOptions.addCommand(['one-long-command'], '')
-    Self.cliOptions.addCommand(['two-long-command'], '')
-    Self.cliOptions.addCommand(['three-long-command'], '')
-    Self.cliOptions.addCommand(['four-long-command'], '')
-    Self.cliOptions.addCommand(['five-long-command'], '')
-    Self.cliOptions.addCommand(['six-long-command'], '')
+    const cliOptions = this.cliOptions
 
-    // The common options were already initialised by the caller,
-    // and are ok, no need to redefine them.
+    cliOptions.addCommand(['one-long-command'], '')
+    cliOptions.addCommand(['two-long-command'], '')
+    cliOptions.addCommand(['three-long-command'], '')
+    cliOptions.addCommand(['four-long-command'], '')
+    cliOptions.addCommand(['five-long-command'], '')
+    cliOptions.addCommand(['six-long-command'], '')
   }
 
   // --------------------------------------------------------------------------
 
-  // Constructor: use parent definition.
   // main(): use parent definition
   // help(): use parent definition.
 

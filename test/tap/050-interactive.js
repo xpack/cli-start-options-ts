@@ -65,13 +65,14 @@ const nodeBin = process.env.npm_node_execpath || process.env.NODE ||
 const executableName = Common.xtest.executableName
 
 let pack = null
-const rootPath = path.resolve(path.dirname(__dirname), Common.xtest.mockPath)
+const rootAbsolutePath = path.resolve(path.dirname(__dirname),
+  Common.xtest.mockPath)
 
 // ----------------------------------------------------------------------------
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
-  pack = await CliUtil.readPackageJson(rootPath)
+  pack = await CliUtil.readPackageJson(rootAbsolutePath)
   t.ok(pack, 'package was parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
@@ -172,19 +173,20 @@ test('xtest -i (spawn)', (t) => {
           t.test('copy', (t) => {
             t.match(stdout, 'Usage: xtest copy [<options>...]',
               'has code Usage')
-            t.match(stdout, 'Mandatory \'--file\' not found',
+            t.match(stderr, 'Mandatory \'--file\' not found',
               '--file not found')
+            t.match(stderr, 'Mandatory \'--output\' not found',
+              '--output not found')
             t.end()
           })
 
           ostr = 'xyz'
         } else if (count === 6) {
           t.test('xyz', (t) => {
-            t.match(stdout, `Command 'xyz' not supported.`,
-              'xyz is not supported')
             t.match(stdout, 'Usage: xtest <command> [<options>...]',
               'has Usage')
-            // t.equal(stderr, '', 'stderr empty')
+            t.match(stderr, `Command 'xyz' not supported.`,
+              'xyz is not supported')
             t.end()
           })
 

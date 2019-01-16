@@ -71,17 +71,17 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
 
 class Xyz extends CliApplication {
-  static doInitialize () {
-    const Self = this
+  constructor (args) {
+    super(args)
 
     // ------------------------------------------------------------------------
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = path.dirname(__dirname)
+    this.rootAbsolutePath = path.dirname(__dirname)
   }
 
-  async doMain (argv) {
-    const log = this.context.log
+  async doRun (argv) {
+    const log = this.log
     log.trace(argv)
 
     // Implement the functionality.
@@ -98,7 +98,9 @@ And it can be invoked from `/bin/xyz.js`:
 #!/usr/bin/env node
 const Main = require('../lib/main.js').Main
 
-Main.start().then()
+Main.start().then((code) => {
+  process.exit(code)
+})
 ```
 
 The framework implements a lot of functionality, like parsing logger level 
@@ -135,7 +137,7 @@ $ xmk --version
 ```
 
 The `argv` array has the parsed options 
-filtered out, only the remaining options are passed to `doMain()`.
+filtered out, only the remaining options are passed to `doRun()`.
 
 ### A more complex use case
 
@@ -145,7 +147,7 @@ identify them and call the specific implementation directly, without any applica
 For this, in addition to the CliApplication class, there must be separate
 CliCommand classes, for each command. 
 
-The commands must be registered to the framework in `doInitialize()`; 
+The commands must be registered to the framework in constructor; 
 for example the main file in `/lib/main.js` can read:
 
 ```js
@@ -155,52 +157,24 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
 
 class Xbld extends CliApplication {
-  static doInitialize () {
-    const Self = this
+  constructor (args) {
+    super(args)
 
     // ------------------------------------------------------------------------
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = path.dirname(__dirname)
+    this.rootAbsolutePath = path.dirname(__dirname)
 
-    // Enable -i|--interactive
-    Self.enableInteractiveMode = true
-
+    const cliOptions = this.cliOptions
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    Self.cliOptions.addCommand(['build', 'b', 'bild'], 'lib/xmake/build.js')
-    Self.cliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
-    Self.cliOptions.addCommand(['import'], 'lib/xmake/import.js')
-    Self.cliOptions.addCommand(['export'], 'lib/xmake/export.js')
-
-    // The common options were already initialised by the caller,
-    // and are ok, no need to redefine them.
+    cliOptions.addCommand(['build', 'b', 'bild'], 'lib/xmake/build.js')
+    cliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
+    cliOptions.addCommand(['import'], 'lib/xmake/import.js')
+    cliOptions.addCommand(['export'], 'lib/xmake/export.js')
   }
 }
-```
-
-### The running context
-
-The framework is able to also run in a server configuration, which 
-creates multiple instances of the application; to differentiate between 
-instances, a run context is used.
-
-
-```js
-/**
-  * @typedef {Object} Context
-  * @property {Logger} log The logger.
-  * @property {Object} config The configuration, parsed from the options.
-  * @property {String} programName The short name the program was invoked with.
-  * @property {String} processCwd The process current working folder.
-  * @property {String[]} processEnv The process environment.
-  * @property {String[]} processArgv The process arguments.
-  * @property {String} rootPath The absolute path of the project root folder.
-  * @property {Object} package The parsed package.json.
-  * @property {Number} startTime
-  * @property {Object} console
-  */
 ```
 
 ### The command configuration

@@ -58,8 +58,9 @@ assert(CliUtil)
 // ----------------------------------------------------------------------------
 
 let pack = null
-const rootPath = path.resolve(path.dirname(__dirname), Common.xtest.mockPath)
-// console.log(rootPath)
+const rootAbsolutePath = path.resolve(path.dirname(__dirname),
+  Common.xtest.mockPath)
+// console.log(rootAbsolutePath)
 
 // ----------------------------------------------------------------------------
 
@@ -68,7 +69,7 @@ const rootPath = path.resolve(path.dirname(__dirname), Common.xtest.mockPath)
  */
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
-  pack = await CliUtil.readPackageJson(rootPath)
+  pack = await CliUtil.readPackageJson(rootAbsolutePath)
   t.true(pack, 'package ok')
   t.true(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
@@ -112,29 +113,31 @@ test('xtest -h (spawn)', async (t) => {
     t.match(stdout[2], 'Usage: xtest <command> [<options>...] ...',
       'has Usage')
 
-    t.match(stdout[12], '--loglevel <level>', 'has --loglevel <level>')
-    t.match(stdout[12],
+    const str = stdout.join('\n')
+    t.match(str, '--loglevel <level>', 'has --loglevel <level>')
+    t.match(str,
       'Set log level (silent|warn|info|verbose|debug|trace)',
       'has log levels list')
-    t.match(stdout[13], '-s|--silent', 'has -s|--silent')
-    t.match(stdout[14], '-q|--quiet', 'has -q|--quiet')
-    t.match(stdout[15], '--informative', 'has --informative')
-    t.match(stdout[16], '-v|--verbose', 'has -v|--verbose')
-    t.match(stdout[17], '-d|--debug', 'has -d|--debug')
-    t.match(stdout[18], '-dd|--trace', 'has -dd|--trace')
+    t.match(str, '-s|--silent', 'has -s|--silent')
+    t.match(str, '-q|--quiet', 'has -q|--quiet')
+    t.match(str, '--informative', 'has --informative')
+    t.match(str, '-v|--verbose', 'has -v|--verbose')
+    t.match(str, '-d|--debug', 'has -d|--debug')
+    t.match(str, '-dd|--trace', 'has -dd|--trace')
 
-    t.match(stdout[19], '--no-update-notifier', 'has --no-update-notifier')
+    t.match(str, '--no-update-notifier', 'has --no-update-notifier')
 
-    t.match(stdout[20], '-C <folder>', 'has -C <folder>')
+    t.match(str, '-C <folder>', 'has -C <folder>')
 
-    t.match(stdout[22], 'xtest -h|--help', 'has -h|--help')
-    t.match(stdout[23], 'xtest <command> -h|--help',
+    t.match(str, 'xtest -h|--help', 'has -h|--help')
+    t.match(str, 'xtest <command> -h|--help',
       'has <command> -h|--help')
-    t.match(stdout[26], 'xtest --version', 'has --version')
-    t.match(stdout[27], 'xtest -i|--interactive', 'has -i|--interactive')
+    t.match(str, 'xtest --version', 'has --version')
+    t.match(str, 'xtest -i|--interactive', 'has -i|--interactive')
 
-    t.match(stdout[30], 'Home page:', 'has Home page')
-    t.match(stdout[31], 'Bug reports:', 'has Bug reports:')
+    t.match(str, 'Home page:', 'has Home page')
+    t.match(str, 'Bug reports:', 'has Bug reports:')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -175,7 +178,8 @@ test('xtest --version -d (spawn)', async (t) => {
     // Matching the whole string also checks that
     // the colour changes are not used.
     const str = stdout.join('\n')
-    t.match(str, 'debug: start arg0:', 'has debug')
+    t.match(str, 'debug: args.argv', 'has debug')
+    t.equal(stdout[4], pack.version, 'version value')
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -287,7 +291,7 @@ test('xtest --version --loglevel debug (spawn)', async (t) => {
     const str = stdout.join('\n')
     // Matching the whole string also checks that
     // the colour changes are not used.
-    t.match(str, 'debug: start arg0:', 'has debug')
+    t.match(str, 'debug: args.argv', 'has debug')
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -348,8 +352,8 @@ test('xtest verb (spawn)', async (t) => {
       'verb'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 2, 'stdout has 2 lines')
-    t.match(stdout[1], 'Done', 'stdout is done')
+    t.equal(stdout.length, 3, 'stdout has 3 lines')
+    t.match(stdout[2], 'completed in', 'stdout is completed')
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -367,7 +371,7 @@ test('xtest verb --informative (spawn)', async (t) => {
       '--informative'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 2, 'stdout has 2 lines')
+    t.equal(stdout.length, 3, 'stdout has 3 lines')
     t.match(stdout[0], 'Exercise verbosity', 'stdout is verbosity')
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -386,7 +390,7 @@ test('xtest verb -v (spawn)', async (t) => {
       '-v'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 4, 'stdout has 4 lines')
+    t.equal(stdout.length, 5, 'stdout has 5 lines')
     t.match(stdout[1], 'Exercise verbosity', 'stdout is verbose')
     t.match(stdout[2], 'Verbose', 'stdout is verbose')
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -406,7 +410,7 @@ test('xtest verb --verbose (spawn)', async (t) => {
       '--verbose'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 4, 'stdout has 4 lines')
+    t.equal(stdout.length, 5, 'stdout has 5 lines')
     t.match(stdout[1], 'Exercise verbosity', 'stdout is verbose')
     t.match(stdout[2], 'Verbose', 'stdout is verbose')
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -534,8 +538,8 @@ test('xtest long -xyz (spawn)', async (t) => {
       '--xyz'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 2, 'stdout has 2 lines')
-    t.match(stdout[1], 'Done.', 'stdout is done')
+    t.equal(stdout.length, 3, 'stdout has 3 lines')
+    t.match(stdout[2], 'completed in', 'stdout is completed')
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.match(stderr[0], "warning: Option '--xyz' not supported; ignored",
       'stderr has error')
@@ -555,7 +559,8 @@ test('xtest -h (spawn)', async (t) => {
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[9],
+    const str = stdout.join('\n')
+    t.match(str,
       '                                         Extra options',
       'stdout has long early options')
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -697,7 +702,7 @@ test('xtest cwd -C /tmp/xx (spawn)', async (t) => {
       '/tmp/xx'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 3, 'stdout has 3 lines')
+    t.equal(stdout.length, 4, 'stdout has 4 lines')
     t.match(stdout[1], '/tmp/xx', 'stdout has path')
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -707,7 +712,7 @@ test('xtest cwd -C /tmp/xx (spawn)', async (t) => {
 })
 
 /**
- * Test no command with app options.
+ * Test cumulative -C.
  */
 test('xtest cwd -C /tmp/xx -C yy (spawn)', async (t) => {
   try {
@@ -719,7 +724,7 @@ test('xtest cwd -C /tmp/xx -C yy (spawn)', async (t) => {
       'yy'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 3, 'stdout has 3 lines')
+    t.equal(stdout.length, 4, 'stdout has 4 lines')
     const absPath = path.resolve('/tmp/xx', 'yy')
     if (os.platform() === 'win32') {
       t.match(stdout[1], absPath, 'stdout has path')

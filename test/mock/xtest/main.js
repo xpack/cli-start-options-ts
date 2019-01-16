@@ -57,31 +57,25 @@ class Xtest extends CliApplication {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Initialise the application class object.
+   * @summary Construct the application object.
    *
-   * @returns {undefined} Nothing.
+   * @param {Object} args The generic arguments object.
    *
    * @description
    * Initialise the options manager with application
    * specific commands and common options.
-   *
-   * @override
    */
-  static doInitialize () {
-    const Self = this
+  constructor (args) {
+    super(args)
 
-    // ------------------------------------------------------------------------
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = __dirname
-
-    // Enable -i|--interactive
-    Self.enableInteractiveMode = true
+    this.rootAbsolutePath = __dirname
 
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    const cliOptions = Self.cliOptions
+    const cliOptions = this.cliOptions
 
     cliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
     cliOptions.addCommand(['notclass'], 'xtest/not-class.js')
@@ -128,7 +122,6 @@ class Xtest extends CliApplication {
 
   // --------------------------------------------------------------------------
 
-  // Constructor: use parent definition.
   // main(): use parent definition
   // help(): use parent definition.
 

@@ -77,11 +77,12 @@ class Generator extends CliCommand {
     log.info(this.helpTitle)
 
     const object = {}
-    this.addGenerator(object)
+    this.addGenerator(object, argv)
 
     log.output(util.inspect(object, { depth: 3 }))
 
-    log.info('Done.')
+    // log.info('Done.')
+    this.outputDoneDuration()
     return CliExitCodes.SUCCESS
   }
 }

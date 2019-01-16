@@ -76,7 +76,8 @@ class Copy extends CliCommand {
 
     log.verbose('Verbose')
 
-    log.info('Done.')
+    // log.info('Done.')
+    this.outputDoneDuration()
     return CliExitCodes.SUCCESS
   }
 }

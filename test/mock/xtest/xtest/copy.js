@@ -141,7 +141,8 @@ class Copy extends CliCommand {
       throw new CliError(err.message, CliExitCodes.ERROR.OUTPUT)
     }
 
-    log.info('Done.')
+    // log.info('Done.')
+    this.outputDoneDuration()
     return CliExitCodes.SUCCESS
   }
 }

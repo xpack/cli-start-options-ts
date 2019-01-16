@@ -58,32 +58,13 @@ const CliExitCodes = require('../../../index.js').CliExitCodes
 class Ctest extends CliApplication {
   // --------------------------------------------------------------------------
 
-  /**
-   * @summary Initialise the application class object.
-   *
-   * @returns {undefined} Nothing.
-   *
-   * @description
-   * Initialise the options manager with application
-   * specific commands and common options.
-   *
-   * @override
-   */
-  static doInitialize () {
-    const Self = this
-
-    // ------------------------------------------------------------------------
-    // Mandatory, must be set here, not in the library, since it takes
-    // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = __dirname
-  }
-
-  // --------------------------------------------------------------------------
-
   constructor (args) {
     super(args)
 
-    args.context.rootPath = __dirname
+    // Mandatory, must be set here, not in the library, since it takes
+    // the shortcut of using `__dirname` of the main file.
+    this.rootAbsolutePath = __dirname
+
     this.optionGroups = [
       {
         title: 'Ctest options',
@@ -119,8 +100,12 @@ class Ctest extends CliApplication {
     ]
   }
 
+  // --------------------------------------------------------------------------
+
   // main(): use parent definition
   // help(): use parent definition.
+
+  // --------------------------------------------------------------------------
 
   /**
    * @summary Execute the `build` command.

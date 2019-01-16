@@ -61,7 +61,10 @@ const Xtest = require('../main.js').Xtest
 
 // ----------------------------------------------------------------------------
 
-Xtest.start().then((code) => {
+Xtest.start({
+  // Enable -i|--interactive
+  enableInteractiveMode: true
+}).then((code) => {
   process.exit(code)
 })
 

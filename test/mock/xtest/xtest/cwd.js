@@ -74,7 +74,9 @@ class Long extends CliCommand {
     const config = this.config
     log.always(config.cwd)
 
-    log.info('Done.')
+    // log.info('Done.')
+    this.outputDoneDuration()
+
     return CliExitCodes.SUCCESS
   }
 }

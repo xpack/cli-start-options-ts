@@ -93,7 +93,8 @@ class Long extends CliCommand {
 
     log.info(this.helpTitle)
 
-    log.info('Done.')
+    // log.info('Done.')
+    this.outputDoneDuration()
     return CliExitCodes.SUCCESS
   }
 }
