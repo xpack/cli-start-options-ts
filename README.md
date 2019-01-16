@@ -235,19 +235,18 @@ A typical test result looks like:
 ```console
 $ npm run test
 
-> @ilg/cli-start-options@0.1.15 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.0 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard && npm run test-tap -s
 
-test/tap/author.js .................................... 8/8
-test/tap/cmd-copy.js ................................ 40/40
-test/tap/errors.js .................................. 18/18
-test/tap/interactive.js ............................. 14/14
-test/tap/logger.js ................................ 147/147
-test/tap/module-invocation.js ......................... 9/9
-test/tap/options-common.js ........................ 126/126
-total ............................................. 362/362
+test/tap/020-errors.js .............................. 18/18
+test/tap/030-options-common.js .................... 154/154
+test/tap/040-module-invocation.js ................... 30/30
+test/tap/050-interactive.js ......................... 15/15
+test/tap/060-cmd-copy.js ............................ 46/46
+test/tap/070-author.js .............................. 10/10
+total ............................................. 273/273
 
-  362 passing (10s)
+  273 passing (15s)
 
   ok
 ```
@@ -255,19 +254,24 @@ total ............................................. 362/362
 To run a specific test with more verbose output, use `npm run tap`:
 
 ```console
-$ npm run tap test/tap/cmd-copy.js -s
+$ npm run tap test/tap/060-cmd-copy.js
 
-test/tap/cmd-copy.js
+> @ilg/cli-start-options@0.6.0 tap /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> tap --reporter=spec --timeout 300 --no-color "test/tap/060-cmd-copy.js"
+
+
+test/tap/060-cmd-copy.js
   xtest copy
     ✓ exit code is syntax
+    ✓ has stdout
+    ✓ has Usage
     ✓ has two errors
     ✓ has --file error
     ✓ has --output error
-    ✓ has Usage
 
   xtest copy -h
     ✓ exit code is success
-    ✓ has enough output
+    ✓ has stdout
     ✓ has title
     ✓ has Usage
     ✓ has copy options
@@ -277,15 +281,16 @@ test/tap/cmd-copy.js
 
   xtest cop -h
     ✓ exit code is success
-    ✓ has enough output
+    ✓ has stdout
     ✓ has title
     ✓ has Usage
     ✓ stderr is empty
 
-  xtest cop --file xxx --output yyy
+  xtest cop --file xxx --output yyy -q
     ✓ exit code is input
     ✓ stdout is empty
-    ✓ strerr is ENOENT
+    ✓ stderr has 1 line
+    ✓ stderr is ENOENT
 
   unpack
     ✓ cmd-code.tgz unpacked into /var/folders/n7/kxqjc5zs4qs0nb44v1l2r2j00000gn/T/xtest-copy
@@ -295,7 +300,8 @@ test/tap/cmd-copy.js
 
   xtest cop --file input.json --output output.json
     ✓ exit code is success
-    ✓ stdout is empty
+    ✓ stdout has 5 lines
+    ✓ stdout is completed
     ✓ stderr is empty
     ✓ content is read in
     ✓ json was parsed
@@ -303,12 +309,15 @@ test/tap/cmd-copy.js
 
   xtest cop --file input --output output -v
     ✓ exit code
-    ✓ message is Done
+    ✓ stdout has 6 lines
+    ✓ stdout is completed
     ✓ stderr is empty
 
   xtest cop --file input --output ro/output -v
     ✓ exit code is output
+    ✓ stdout has 4 lines
     ✓ up to writing
+    ✓ stderr has 1 line
     ✓ stderr is EACCES
 
   cleanup
@@ -317,7 +326,7 @@ test/tap/cmd-copy.js
     ✓ remove tmpdir
 
 
-  40 passing (2s)
+  46 passing (3s)
 ```
 
 ### Coverage tests
@@ -334,32 +343,32 @@ $ npm run test-coverage
 > @ilg/cli-start-options@0.1.15 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > tap --coverage --reporter=classic --timeout 600 --no-color "test/tap/*.js"
 
-test/tap/author.js .................................... 8/8
-test/tap/cmd-copy.js ................................ 40/40
-test/tap/errors.js .................................. 18/18
-test/tap/interactive.js ............................. 14/14
-test/tap/logger.js ................................ 147/147
-test/tap/module-invocation.js ......................... 9/9
-test/tap/options-common.js ........................ 126/126
-total ............................................. 362/362
+test/tap/020-errors.js .............................. 18/18
+test/tap/030-options-common.js .................... 154/154
+test/tap/040-module-invocation.js ................... 30/30
+test/tap/050-interactive.js ......................... 15/15
+test/tap/060-cmd-copy.js ............................ 46/46
+test/tap/070-author.js .............................. 10/10
+total ............................................. 273/273
 
-  362 passing (20s)
+  273 passing (31s)
 
   ok
-------------------------------|----------|----------|----------|----------|----------------|
-File                          |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
-------------------------------|----------|----------|----------|----------|----------------|
-All files                     |      100 |    89.01 |    96.43 |      100 |                |
- cli-start-options-js.git     |      100 |      100 |      100 |      100 |                |
-  index.js                    |      100 |      100 |      100 |      100 |                |
- cli-start-options-js.git/lib |      100 |    89.01 |    96.43 |      100 |                |
-  cli-application.js          |      100 |    85.71 |    90.91 |      100 |                |
-  cli-command.js              |      100 |    78.57 |      100 |      100 |                |
-  cli-error.js                |      100 |      100 |      100 |      100 |                |
-  cli-help.js                 |      100 |    90.43 |      100 |      100 |                |
-  cli-logger.js               |      100 |       72 |      100 |      100 |                |
-  cli-options.js              |      100 |    98.39 |      100 |      100 |                |
-------------------------------|----------|----------|----------|----------|----------------|
+------------------------------|----------|----------|----------|----------|-------------------|
+File                          |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+------------------------------|----------|----------|----------|----------|-------------------|
+All files                     |    88.38 |    74.07 |    88.24 |    88.38 |                   |
+ cli-start-options-js.git     |      100 |      100 |      100 |      100 |                   |
+  index.js                    |      100 |      100 |      100 |      100 |                   |
+ cli-start-options-js.git/lib |    88.11 |    74.07 |    88.24 |    88.11 |                   |
+  cli-application.js          |    92.92 |    74.44 |    84.09 |    92.92 |... 27,728,730,910 |
+  cli-command.js              |    98.91 |     87.8 |      100 |    98.91 |               163 |
+  cli-error.js                |    88.46 |      100 |       50 |    88.46 |       149,170,187 |
+  cli-help.js                 |    90.91 |       80 |       96 |    90.91 |... 54,156,157,258 |
+  cli-options.js              |    89.39 |       80 |    92.86 |    89.39 |... 06,607,608,611 |
+  cli-util.js                 |    92.86 |       50 |      100 |    92.86 |                84 |
+  upgrade-checker.js          |    48.61 |    10.34 |       75 |    48.61 |... 72,175,176,178 |
+------------------------------|----------|----------|----------|----------|-------------------|
 ```
 
 ### Continuous Integration (CI)
@@ -410,13 +419,15 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 
 ### How to publish
 
+* `npm run fix`
 * commit all changes
-* `npm run test` (`fix` included)
+* `npm run test-coverage`
 * update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.1.2_
-* `npm version patch`
+* `npm version patch` (bug fixes), `npm version minor` (compatible API 
+  additions), `npm version major` (incompatible API changes)
 * push all changes to GitHub; this should trigger CI
 * wait for CI tests to complete
-* `npm publish`
+* `npm publish` (use `--access public` when publishing for the first time)
 
 ## License
 
