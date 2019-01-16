@@ -63,11 +63,11 @@ class Long extends CliCommand {
         optionDefs: [
           {
             options: ['--one'],
-            action: (context, val) => {
-              context.config.one = val
+            action: (object, val) => {
+              object.config.one = val
             },
-            init: (context) => {
-              context.config.one = undefined
+            init: (object) => {
+              object.config.one = undefined
             },
             msg: 'Option one',
             param: 'name',
@@ -75,11 +75,11 @@ class Long extends CliCommand {
           },
           {
             options: ['--two'],
-            action: (context, val) => {
-              context.config.two = val
+            action: (object, val) => {
+              object.config.two = val
             },
-            init: (context) => {
-              context.config.two = undefined
+            init: (object) => {
+              object.config.two = undefined
             },
             msg: 'Option two',
             param: 'name',
@@ -88,11 +88,11 @@ class Long extends CliCommand {
           },
           {
             options: ['--three'],
-            action: (context, val) => {
-              context.config.three = val
+            action: (object, val) => {
+              object.config.three = val
             },
-            init: (context) => {
-              context.config.three = undefined
+            init: (object) => {
+              object.config.three = undefined
             },
             msg: 'Option three',
             param: 'name',
@@ -101,11 +101,11 @@ class Long extends CliCommand {
           },
           {
             options: ['--four'],
-            action: (context, val) => {
-              context.config.four = val
+            action: (object, val) => {
+              object.config.four = val
             },
-            init: (context) => {
-              context.config.four = undefined
+            init: (object) => {
+              object.config.four = undefined
             },
             msg: 'Option four',
             // Has no param.

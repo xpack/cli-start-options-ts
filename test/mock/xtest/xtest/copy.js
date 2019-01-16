@@ -76,11 +76,11 @@ class Copy extends CliCommand {
         optionDefs: [
           {
             options: ['--file'],
-            action: (context, val) => {
-              context.config.inputPath = val
+            action: (object, val) => {
+              object.config.inputPath = val
             },
-            init: (context) => {
-              context.config.inputPath = undefined
+            init: (object) => {
+              object.config.inputPath = undefined
             },
             msg: 'Input file',
             param: 'file',
@@ -88,11 +88,11 @@ class Copy extends CliCommand {
           },
           {
             options: ['--output'],
-            action: (context, val) => {
-              context.config.outputPath = val
+            action: (object, val) => {
+              object.config.outputPath = val
             },
-            init: (context) => {
-              context.config.outputPath = undefined
+            init: (object) => {
+              object.config.outputPath = undefined
             },
             msg: 'Output file',
             param: 'file',

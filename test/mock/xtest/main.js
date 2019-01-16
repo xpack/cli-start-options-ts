@@ -97,21 +97,21 @@ class Xtest extends CliApplication {
             {
               options: ['--extra', '--very-extra', '--very-long-extra'],
               message: 'Extra options',
-              action: (context) => {
-                context.config.extra = true
+              action: (object) => {
+                object.config.extra = true
               },
-              init: (context) => {
-                context.config.extra = false
+              init: (object) => {
+                object.config.extra = false
               }
             },
             {
               options: ['--early', '--very-early', '--very-long-early'],
               message: 'Early options',
-              action: (context) => {
-                context.config.early = true
+              action: (object) => {
+                object.config.early = true
               },
-              init: (context) => {
-                context.config.early = false
+              init: (object) => {
+                object.config.early = false
               },
               doProcessEarly: true
             }

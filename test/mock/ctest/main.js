@@ -74,11 +74,11 @@ class Ctest extends CliApplication {
             options: ['-t', '--tool'],
             param: 'name',
             message: 'Subtool name',
-            init: (context) => {
-              context.config.toolName = undefined
+            init: (object) => {
+              object.config.toolName = undefined
             },
-            action: (context, val) => {
-              context.config.toolName = val.toLowerCase()
+            action: (object, val) => {
+              object.config.toolName = val.toLowerCase()
             },
             hasValue: true,
             values: [ 'clean' ],
@@ -87,11 +87,11 @@ class Ctest extends CliApplication {
           {
             options: ['-n', '--dry-run'],
             message: 'Only display, do not run commands',
-            init: (context) => {
-              context.config.isDryRun = false
+            init: (object) => {
+              object.config.isDryRun = false
             },
-            action: (context, val) => {
-              context.config.isDryRun = true
+            action: (object, val) => {
+              object.config.isDryRun = true
             },
             isOptional: true
           }
