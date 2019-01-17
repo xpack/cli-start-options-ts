@@ -247,7 +247,7 @@ test('xtest notclass (spawn)', async (t) => {
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
     t.equal(stdout.length, 0, 'stdout is empty')
     // console.log(stderr)
-    t.equal(stderr.length, 3, 'stderr has 3 lines')
+    t.true(stderr.length > 1, 'stderr has lines')
     t.match(stderr[0], 'AssertionError', 'stderr is assertion')
   } catch (err) {
     t.fail(err.message)
@@ -644,7 +644,7 @@ test('xtest unim (spawn)', async (t) => {
     ])
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
     t.equal(stdout.length, 0, 'stdout is empty')
-    t.equal(stderr.length, 4, 'stderr has 4 lines')
+    t.true(stderr.length > 1, 'stderr has lines')
     t.match(stderr[0], 'AssertionError', 'stdout has assertion')
   } catch (err) {
     t.fail(err.message)

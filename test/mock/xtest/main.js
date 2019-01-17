@@ -81,7 +81,7 @@ class Xtest extends CliApplication {
     cliOptions.addCommand(['notclass'], 'xtest/not-class.js')
     // Non existent.
     cliOptions.addCommand(['con'], 'xtest/con.js')
-    cliOptions.addCommand(['verbosity', 'c'], 'xtest/verbosity.js')
+    cliOptions.addCommand(['verbosity'], 'xtest/verbosity.js')
     cliOptions.addCommand(['long'], 'xtest/long.js')
     cliOptions.addCommand(['many'], 'xtest/many.js')
     cliOptions.addCommand(['gen'], 'xtest/generator.js')
