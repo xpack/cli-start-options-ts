@@ -68,6 +68,8 @@ class Xtest extends CliApplication {
   constructor (args) {
     super(args)
 
+    const log = this.log
+
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
     this.rootAbsolutePath = __dirname
@@ -75,21 +77,42 @@ class Xtest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    const cliOptions = this.cliOptions
 
-    cliOptions.addCommand(['copy', 'c'], 'xtest/copy.js')
-    cliOptions.addCommand(['notclass'], 'xtest/not-class.js')
-    // Non existent.
-    cliOptions.addCommand(['con'], 'xtest/con.js')
-    cliOptions.addCommand(['verbosity'], 'xtest/verbosity.js')
-    cliOptions.addCommand(['long'], 'xtest/long.js')
-    cliOptions.addCommand(['many'], 'xtest/many.js')
-    cliOptions.addCommand(['gen'], 'xtest/generator.js')
-    cliOptions.addCommand(['unimpl'], 'xtest/unimpl.js')
-    cliOptions.addCommand(['cwd'], 'xtest/cwd.js')
+    const commands = {
+      copy: {
+        aliases: ['c'],
+        modulePath: 'xtest/copy.js'
+      },
+      notclass: {
+        modulePath: 'xtest/not-class.js'
+      },
+      con: {
+        modulePath: 'xtest/con.js'
+      },
+      verbosity: {
+        modulePath: 'xtest/verbosity.js'
+      },
+      long: {
+        modulePath: 'xtest/long.js'
+      },
+      many: {
+        modulePath: 'xtest/many.js'
+      },
+      gen: {
+        modulePath: 'xtest/generator.js'
+      },
+      unimpl: {
+        modulePath: 'xtest/unimpl.js'
+      },
+      cwd: {
+        modulePath: 'xtest/cwd.js'
+      }
+    }
+    this.cmdsTree.addCommands(commands)
+    log.trace(this.cmdsTree.getCommandsNames())
 
     // The common options will be initialised right after these.
-    cliOptions.addOptionGroups(
+    this.cliOptions.addOptionGroups(
       [
         {
           title: 'Extra options',

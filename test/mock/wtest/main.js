@@ -68,6 +68,8 @@ class Wtest extends CliApplication {
   constructor (args) {
     super(args)
 
+    const log = this.log
+
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
     this.rootAbsolutePath = __dirname
@@ -75,14 +77,29 @@ class Wtest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    const cliOptions = this.cliOptions
 
-    cliOptions.addCommand(['one-long-command'], '')
-    cliOptions.addCommand(['two-long-command'], '')
-    cliOptions.addCommand(['three-long-command'], '')
-    cliOptions.addCommand(['four-long-command'], '')
-    cliOptions.addCommand(['five-long-command'], '')
-    cliOptions.addCommand(['six-long-command'], '')
+    const commands = {
+      'one-long-command': {
+        modulePath: 'none.js'
+      },
+      'two-long-command': {
+        modulePath: 'none.js'
+      },
+      'three-long-command': {
+        modulePath: 'none.js'
+      },
+      'four-long-command': {
+        modulePath: 'none.js'
+      },
+      'five-long-command': {
+        modulePath: 'none.js'
+      },
+      'six-long-command': {
+        modulePath: 'none.js'
+      }
+    }
+    this.cmdsTree.addCommands(commands)
+    log.trace(this.cmdsTree.getCommandsNames())
   }
 
   // --------------------------------------------------------------------------

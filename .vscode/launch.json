@@ -45,6 +45,32 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xtest.js --help -dd",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "--help",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xtest.js long --help",
       "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,

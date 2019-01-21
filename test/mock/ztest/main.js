@@ -68,6 +68,8 @@ class Ztest extends CliApplication {
   constructor (args) {
     super(args)
 
+    const log = this.log
+
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
     this.rootAbsolutePath = __dirname
@@ -75,9 +77,14 @@ class Ztest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    const cliOptions = this.cliOptions
 
-    cliOptions.addCommand(['verbosity', 'c'], 'ztest/verbosity.js')
+    const commands = {
+      verbosity: {
+        modulePath: 'ztest/verbosity.js'
+      }
+    }
+    this.cmdsTree.addCommands(commands)
+    log.trace(this.cmdsTree.getCommandsNames())
   }
 
   // --------------------------------------------------------------------------
