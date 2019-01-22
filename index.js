@@ -77,6 +77,8 @@ const CliErrorApplication = require('./lib/cli-error.js').CliErrorApplication
 
 const CliUtil = require('./lib/cli-util.js').CliUtil
 
+const CmdsTree = require('./lib/dm-commands.js').CmdsTree
+
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
@@ -93,6 +95,7 @@ module.exports.CliErrorSyntax = CliErrorSyntax
 module.exports.CliErrorApplication = CliErrorApplication
 
 module.exports.CliUtil = CliUtil
+module.exports.CmdsTree = CmdsTree
 
 // In ES6, it would be:
 // export class CliApplication { ... }
