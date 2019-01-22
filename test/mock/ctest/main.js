@@ -58,8 +58,8 @@ const CliExitCodes = require('../../../index.js').CliExitCodes
 class Ctest extends CliApplication {
   // --------------------------------------------------------------------------
 
-  constructor (args) {
-    super(args)
+  constructor (params) {
+    super(params)
 
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.

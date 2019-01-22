@@ -71,8 +71,8 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
 
 class Xyz extends CliApplication {
-  constructor (args) {
-    super(args)
+  constructor (params) {
+    super(params)
 
     // ------------------------------------------------------------------------
     // Mandatory, must be set here, not in the library, since it takes
@@ -112,7 +112,7 @@ An example of such an application with an empty `doMain()` behaves like this:
 $ xmk --help
 
 The xPack Make command line tool
-Usage: xmk  [<options> ...] [<args>...]
+Usage: xmk  [<options> ...] [<params>...]
 
 Common options:
   --loglevel <level>    Set log level (silent|warn|info|verbose|debug|trace)
@@ -157,8 +157,8 @@ const CliApplication = require('@ilg/cli-start-options').CliApplication
 const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
 
 class Xbld extends CliApplication {
-  constructor (args) {
-    super(args)
+  constructor (params) {
+    super(params)
 
     // ------------------------------------------------------------------------
     // Mandatory, must be set here, not in the library, since it takes

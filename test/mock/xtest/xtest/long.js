@@ -49,10 +49,10 @@ class Long extends CliCommand {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} args The generic arguments object.
+   * @param {Object} params The generic parameters object.
    */
-  constructor (args) {
-    super(args)
+  constructor (params) {
+    super(params)
 
     // Title displayed with the help message.
     this.helpTitle = 'Test long options'
@@ -60,7 +60,7 @@ class Long extends CliCommand {
       {
         title: 'Long options',
         preOptions: '[<name>...]', // Array of test names.
-        postOptions: '[-- <very-long-long-long-args>...]',
+        postOptions: '[-- <very-long-long-long-params>...]',
         optionDefs: [
           {
             options: ['--long', '--very-long', '--extra-very-long'],

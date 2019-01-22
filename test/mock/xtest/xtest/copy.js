@@ -68,10 +68,10 @@ class Copy extends CliCommand {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} args The generic arguments object.
+   * @param {Object} params The generic parameters object.
    */
-  constructor (args) {
-    super(args)
+  constructor (params) {
+    super(params)
 
     // Title displayed with the help message.
     this.helpTitle = 'Copy a file to another file'

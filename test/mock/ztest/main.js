@@ -59,14 +59,14 @@ class Ztest extends CliApplication {
   /**
    * @summary Construct the application object.
    *
-   * @param {Object} args The generic arguments object.
+   * @param {Object} params The generic parameters object.
    *
    * @description
    * Initialise the options manager with application
    * specific commands and common options.
    */
-  constructor (args) {
-    super(args)
+  constructor (params) {
+    super(params)
 
     const log = this.log
 

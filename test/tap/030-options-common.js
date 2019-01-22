@@ -178,7 +178,7 @@ test('xtest --version -d (spawn)', async (t) => {
     // Matching the whole string also checks that
     // the colour changes are not used.
     const str = stdout.join('\n')
-    t.match(str, 'debug: args.argv', 'has debug')
+    t.match(str, 'debug: params.argv', 'has debug')
     t.equal(stdout[4], pack.version, 'version value')
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -291,7 +291,7 @@ test('xtest --version --loglevel debug (spawn)', async (t) => {
     const str = stdout.join('\n')
     // Matching the whole string also checks that
     // the colour changes are not used.
-    t.match(str, 'debug: args.argv', 'has debug')
+    t.match(str, 'debug: params.argv', 'has debug')
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
