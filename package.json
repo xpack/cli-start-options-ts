@@ -15,6 +15,7 @@
     "test-coverage": "tap --coverage --reporter=classic --timeout 600 --no-color \"test/tap/*.js\"",
     "test-tap": "tap --reporter=classic --timeout 300 --no-color \"test/tap/*.js\"",
     "tap": "tap --reporter=spec --timeout 300 --no-color",
+    "tap-coverage": "tap --coverage --reporter=spec --timeout 300 --no-color",
     "fix": "standard --fix",
     "link": "npm link @ilg/es6-promisifier; npm link wscript-avoider"
   },
