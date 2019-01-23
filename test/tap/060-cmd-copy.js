@@ -79,7 +79,7 @@ const fsPromises = fs.promises_
 test('xtest copy',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { code, stdout, stderr } = await Common.cliRunXtest([
         'copy'
       ])
       // Check exit code.
@@ -109,7 +109,7 @@ test('xtest copy',
 test('xtest copy -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { code, stdout, stderr } = await Common.cliRunXtest([
         'copy',
         '-h'
       ])
@@ -139,7 +139,7 @@ test('xtest copy -h',
 test('xtest cop -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { code, stdout, stderr } = await Common.cliRunXtest([
         'cop',
         '-h'
       ])
@@ -166,7 +166,7 @@ test('xtest cop -h',
 test('xtest cop --file xxx --output yyy -q',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { code, stdout, stderr } = await Common.cliRunXtest([
         'cop',
         '--file',
         'xxx',
@@ -212,7 +212,7 @@ test('xtest cop --file input.json --output output.json',
   async (t) => {
     try {
       const outPath = path.resolve(workFolder, 'output.json')
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { code, stdout, stderr } = await Common.cliRunXtest([
         'cop',
         '--file',
         filePath,
@@ -241,7 +241,7 @@ test('xtest cop --file input.json --output output.json',
 test('xtest cop --file input --output output -v',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { code, stdout, stderr } = await Common.cliRunXtest([
         'cop',
         '-C',
         workFolder,
@@ -273,7 +273,7 @@ if (os.platform() !== 'win32') {
     async (t) => {
       try {
         const outPath = path.resolve(workFolder, 'ro', 'output.json')
-        const { code, stdout, stderr } = await Common.xtestCli([
+        const { code, stdout, stderr } = await Common.cliRunXtest([
           'cop',
           '--file',
           filePath,

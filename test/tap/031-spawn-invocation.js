@@ -32,79 +32,81 @@
 // ----------------------------------------------------------------------------
 
 /**
- * Test the direct invocation as a module.
+ * Test common options, like --version, --help, etc.
  */
 
 // ----------------------------------------------------------------------------
 
 const assert = require('assert')
 const path = require('path')
+// const os = require('os')
 
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
 
-// The Mocha-like DSL http://www.node-tap.org/mochalike/
-// require('tap').mochaGlobals()
-// const should = require('should') // eslint-disable-line no-unused-vars
-
 const Common = require('../common.js').Common
 
-// ES6: `import { CliApplication } from 'cli-start-options.js'
-const CliApplication = require('../../index.js').CliApplication
 const CliExitCodes = require('../../index.js').CliExitCodes
 const CliUtil = require('../../index.js').CliUtil
 
 assert(Common)
-assert(CliApplication)
-assert(CliExitCodes)
-assert(CliUtil)
 
 // ----------------------------------------------------------------------------
 
 let pack = null
 const rootAbsolutePath = path.resolve(path.dirname(__dirname),
   Common.xtest.mockPath)
+// console.log(rootAbsolutePath)
 
 // ----------------------------------------------------------------------------
 
+/**
+ * Read package.json, to later compare version.
+ */
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   pack = await CliUtil.readPackageJson(rootAbsolutePath)
-  t.ok(pack, 'package parsed')
-  t.ok(pack.version.length > 0, 'version length > 0')
+  t.true(pack, 'package ok')
+  t.true(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
   t.end()
 })
 
-test('xtest --version (module call)', async (t) => {
+/**
+ * Test if --version returns the package version.
+ */
+test('xtest --version (spawn)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestLib([
+    const { code, stdout, stderr } = await Common.cliRunXtest([
       '--version'
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(stdout.length, 1, 'stdout has one line')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
-    t.equal(stdout, pack.version + '\n', 'version value')
+    t.equal(stdout[0], pack.version, 'version value')
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr is empty')
+    t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
-    console.log(err.stack)
     t.fail(err.message)
   }
   t.end()
 })
 
-test('xtest xyz (module call)', async (t) => {
+test('xtest xyz (spawn)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestLib([
+    const { code, stdout, stderr } = await Common.cliRunXtest([
       'xyz'
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    t.match(stdout, 'Usage: xtest <command>', 'has Usage')
+    t.true(stdout.length > 0, 'has stdout')
+    t.match(stdout[1], 'Mock Test', 'has title')
+    t.match(stdout[2], 'Usage: xtest <command>', 'has Usage')
     // There should be one error message.
-    t.match(stderr, 'Command \'xyz\' is not supported.', 'error')
+    t.equal(stderr.length, 1, 'stderr has 1 line')
+    t.match(stderr[0], 'Command \'xyz\' is not supported.', 'error')
   } catch (err) {
     console.log(err.stack)
     t.fail(err.message)
@@ -115,41 +117,42 @@ test('xtest xyz (module call)', async (t) => {
 /**
  * Test if -h shows usage. Check usage content.
  */
-test('xtest -h (module call)', async (t) => {
+test('xtest -h (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestLib([
+    const { code, stdout, stderr } = await Common.cliRunXtest([
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     // console.log(stdout)
-    t.true(stdout.length > 0, 'stdout has content')
-    t.match(stdout, 'Mock Test', 'has title')
-    t.match(stdout, 'Usage: xtest <command> [<options>...] ...',
+    t.equal(stdout.length, 32, 'stdout has 17 lines')
+    t.match(stdout[1], 'Mock Test', 'has title')
+    t.match(stdout[2], 'Usage: xtest <command> [<options>...] ...',
       'has Usage')
 
-    t.match(stdout, '--loglevel <level>', 'has --loglevel <level>')
-    t.match(stdout,
+    const str = stdout.join('\n')
+    t.match(str, '--loglevel <level>', 'has --loglevel <level>')
+    t.match(str,
       'Set log level (silent|warn|info|verbose|debug|trace)',
       'has log levels list')
-    t.match(stdout, '-s|--silent', 'has -s|--silent')
-    t.match(stdout, '-q|--quiet', 'has -q|--quiet')
-    t.match(stdout, '--informative', 'has --informative')
-    t.match(stdout, '-v|--verbose', 'has -v|--verbose')
-    t.match(stdout, '-d|--debug', 'has -d|--debug')
-    t.match(stdout, '-dd|--trace', 'has -dd|--trace')
+    t.match(str, '-s|--silent', 'has -s|--silent')
+    t.match(str, '-q|--quiet', 'has -q|--quiet')
+    t.match(str, '--informative', 'has --informative')
+    t.match(str, '-v|--verbose', 'has -v|--verbose')
+    t.match(str, '-d|--debug', 'has -d|--debug')
+    t.match(str, '-dd|--trace', 'has -dd|--trace')
 
-    t.match(stdout, '--no-update-notifier', 'has --no-update-notifier')
+    t.match(str, '--no-update-notifier', 'has --no-update-notifier')
 
-    t.match(stdout, '-C <folder>', 'has -C <folder>')
+    t.match(str, '-C <folder>', 'has -C <folder>')
 
-    t.match(stdout, 'xtest -h|--help', 'has -h|--help')
-    t.match(stdout, 'xtest <command> -h|--help',
+    t.match(str, 'xtest -h|--help', 'has -h|--help')
+    t.match(str, 'xtest <command> -h|--help',
       'has <command> -h|--help')
-    t.match(stdout, 'xtest --version', 'has --version')
-    t.match(stdout, 'xtest -i|--interactive', 'has -i|--interactive')
+    t.match(str, 'xtest --version', 'has --version')
+    t.match(str, 'xtest -i|--interactive', 'has -i|--interactive')
 
-    t.match(stdout, 'Home page:', 'has Home page')
-    t.match(stdout, 'Bug reports:', 'has Bug reports:')
+    t.match(str, 'Home page:', 'has Home page')
+    t.match(str, 'Bug reports:', 'has Bug reports:')
 
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')

@@ -58,15 +58,16 @@ assert(CliExitCodes)
 test('ytest -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.ytestCli([
+      const { code, stdout, stderr } = await Common.libRunYtest([
         '-h'
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       t.true(stdout.length > 0, 'has stdout')
       // console.log(errLines)
+      const str = stdout.join('\n')
       t.match(stdout[2], 'Usage: ytest <command>', 'has Usage')
-      t.match(stdout[23], 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+      t.match(str, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
@@ -82,15 +83,16 @@ test('ytest -h',
 test('ztest -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.ztestCli([
+      const { code, stdout, stderr } = await Common.libRunZtest([
         '-h'
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       t.true(stdout.length > 0, 'has stdout')
+      const str = stdout.join('\n')
       // console.log(errLines)
       t.match(stdout[2], 'Usage: ztest <command>', 'has Usage')
-      t.match(stdout[23], 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+      t.match(str, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')

@@ -46,14 +46,10 @@ const test = require('tap').test
 
 const Common = require('../common.js').Common
 
-const CliApplication = require('../../index.js').CliApplication
 const CliExitCodes = require('../../index.js').CliExitCodes
 const CliUtil = require('../../index.js').CliUtil
 
 assert(Common)
-assert(CliApplication)
-assert(CliExitCodes)
-assert(CliUtil)
 
 // ----------------------------------------------------------------------------
 
@@ -79,9 +75,9 @@ test('setup', async (t) => {
 /**
  * Test if --version returns the package version.
  */
-test('xtest --version (spawn)', async (t) => {
+test('xtest --version (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--version'
     ])
     // Check exit code.
@@ -101,9 +97,9 @@ test('xtest --version (spawn)', async (t) => {
 /**
  * Test if -h shows usage. Check usage content.
  */
-test('xtest -h (spawn)', async (t) => {
+test('xtest -h (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
@@ -149,9 +145,9 @@ test('xtest -h (spawn)', async (t) => {
 /**
  * Test if --help shows usage.
  */
-test('xtest --help (spawn)', async (t) => {
+test('xtest --help (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--help'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
@@ -167,9 +163,9 @@ test('xtest --help (spawn)', async (t) => {
 /**
  * Test if -d adds debug lines.
  */
-test('xtest --version -d (spawn)', async (t) => {
+test('xtest --version -d (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--version',
       '-d'
     ])
@@ -191,9 +187,9 @@ test('xtest --version -d (spawn)', async (t) => {
 /**
  * Test if -dd adds trace lines.
  */
-test('xtest --version -dd (spawn)', async (t) => {
+test('xtest --version -dd (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--version',
       '-dd'
     ])
@@ -215,9 +211,9 @@ test('xtest --version -dd (spawn)', async (t) => {
 /**
  * Test if -d -d adds trace lines.
  */
-test('xtest --version -d -d (spawn)', async (t) => {
+test('xtest --version -d -d (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--version',
       '-d',
       '-d'
@@ -239,9 +235,9 @@ test('xtest --version -d -d (spawn)', async (t) => {
 /**
  * Test commands that do not have an implementation derived from CliCommand.
  */
-test('xtest notclass (spawn)', async (t) => {
+test('xtest notclass (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'notclass'
     ])
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
@@ -258,9 +254,9 @@ test('xtest notclass (spawn)', async (t) => {
 /**
  * Test commands that are not unique.
  */
-test('xtest co (spawn)', async (t) => {
+test('xtest co (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'co'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is app')
@@ -279,9 +275,9 @@ test('xtest co (spawn)', async (t) => {
 /**
  * Test if --loglevel debug adds debug lines.
  */
-test('xtest --version --loglevel debug (spawn)', async (t) => {
+test('xtest --version --loglevel debug (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--version',
       '--loglevel',
       'debug'
@@ -303,9 +299,9 @@ test('xtest --version --loglevel debug (spawn)', async (t) => {
 /**
  * Test if -s silences the help too.
  */
-test('xtest xx -s (spawn)', async (t) => {
+test('xtest xx -s (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'xx',
       '-s',
       'debug'
@@ -322,9 +318,9 @@ test('xtest xx -s (spawn)', async (t) => {
 /**
  * Test if -q shows warnings.
  */
-test('xtest long --long value --xx -q (spawn)', async (t) => {
+test('xtest long --long value --xx -q (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'long',
       '--long',
       'value',
@@ -346,9 +342,9 @@ test('xtest long --long value --xx -q (spawn)', async (t) => {
 /**
  * Test if default verbosity is none.
  */
-test('xtest verb (spawn)', async (t) => {
+test('xtest verb (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'verb'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
@@ -364,9 +360,9 @@ test('xtest verb (spawn)', async (t) => {
 /**
  * Test if explicit verbosity is honoured.
  */
-test('xtest verb --informative (spawn)', async (t) => {
+test('xtest verb --informative (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'verb',
       '--informative'
     ])
@@ -383,9 +379,9 @@ test('xtest verb --informative (spawn)', async (t) => {
 /**
  * Test if explicit verbosity is honoured.
  */
-test('xtest verb -v (spawn)', async (t) => {
+test('xtest verb -v (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'verb',
       '-v'
     ])
@@ -403,9 +399,9 @@ test('xtest verb -v (spawn)', async (t) => {
 /**
  * Test if explicit verbosity is honoured.
  */
-test('xtest verb --verbose (spawn)', async (t) => {
+test('xtest verb --verbose (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'verb',
       '--verbose'
     ])
@@ -423,9 +419,9 @@ test('xtest verb --verbose (spawn)', async (t) => {
 /**
  * Test if not allowed value in common options.
  */
-test('xtest --loglevel xxx (spawn)', async (t) => {
+test('xtest --loglevel xxx (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--loglevel',
       'xxx'
     ])
@@ -443,9 +439,9 @@ test('xtest --loglevel xxx (spawn)', async (t) => {
 /**
  * Test if value not given.
  */
-test('xtest --loglevel (spawn)', async (t) => {
+test('xtest --loglevel (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--loglevel'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
@@ -462,9 +458,9 @@ test('xtest --loglevel (spawn)', async (t) => {
 /**
  * Test if -- is ignored.
  */
-test('xtest --loglevel -- (spawn)', async (t) => {
+test('xtest --loglevel -- (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--loglevel'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
@@ -481,9 +477,9 @@ test('xtest --loglevel -- (spawn)', async (t) => {
 /**
  * Test if -- is ignored adds trace lines.
  */
-test('xtest --version -dd -- xx (spawn)', async (t) => {
+test('xtest --version -dd -- xx (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--version',
       '-dd',
       '--',
@@ -506,9 +502,9 @@ test('xtest --version -dd -- xx (spawn)', async (t) => {
 /**
  * Test if the description for long options is moved to the next line.
  */
-test('xtest long -h (spawn)', async (t) => {
+test('xtest long -h (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'long',
       '-h'
     ])
@@ -529,9 +525,9 @@ test('xtest long -h (spawn)', async (t) => {
 /**
  * Test if long with unused.
  */
-test('xtest long -xyz (spawn)', async (t) => {
+test('xtest long -xyz (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'long',
       '--long',
       'value',
@@ -552,9 +548,9 @@ test('xtest long -xyz (spawn)', async (t) => {
 /**
  * Test if long early options are moved to the next line.
  */
-test('xtest -h (spawn)', async (t) => {
+test('xtest -h (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
@@ -573,9 +569,9 @@ test('xtest -h (spawn)', async (t) => {
 /**
  * Test if many options are moved to the next line.
  */
-test('xtest many -h (spawn)', async (t) => {
+test('xtest many -h (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'many',
       '-h'
     ])
@@ -597,9 +593,9 @@ test('xtest many -h (spawn)', async (t) => {
 /**
  * Test long program name.
  */
-test('wtest-long-name -h (spawn)', async (t) => {
+test('wtest-long-name -h (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.wtestCli([
+    const { code, stdout, stderr } = await Common.libRunWtest([
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
@@ -618,9 +614,9 @@ test('wtest-long-name -h (spawn)', async (t) => {
 /**
  * Test generator.
  */
-test('xtest gen (spawn)', async (t) => {
+test('xtest gen (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'gen'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
@@ -637,9 +633,9 @@ test('xtest gen (spawn)', async (t) => {
 /**
  * Test unimplemented command.
  */
-test('xtest unim (spawn)', async (t) => {
+test('xtest unim (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'unim'
     ])
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
@@ -655,9 +651,9 @@ test('xtest unim (spawn)', async (t) => {
 /**
  * Test no command.
  */
-test('xtest (spawn)', async (t) => {
+test('xtest (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.true(stdout.length > 0, 'has stdout')
@@ -673,9 +669,9 @@ test('xtest (spawn)', async (t) => {
 /**
  * Test no command with app options.
  */
-test('xtest -- xx (spawn)', async (t) => {
+test('xtest -- xx (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       '--',
       'xx'
     ])
@@ -694,9 +690,9 @@ test('xtest -- xx (spawn)', async (t) => {
 /**
  * Test no command with app options.
  */
-test('xtest cwd -C /tmp/xx (spawn)', async (t) => {
+test('xtest cwd -C /tmp/xx (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'cwd',
       '-C',
       '/tmp/xx'
@@ -714,9 +710,9 @@ test('xtest cwd -C /tmp/xx (spawn)', async (t) => {
 /**
  * Test cumulative -C.
  */
-test('xtest cwd -C /tmp/xx -C yy (spawn)', async (t) => {
+test('xtest cwd -C /tmp/xx -C yy (lib)', async (t) => {
   try {
-    const { code, stdout, stderr } = await Common.xtestCli([
+    const { code, stdout, stderr } = await Common.libRunXtest([
       'cwd',
       '-C',
       '/tmp/xx',

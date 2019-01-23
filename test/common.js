@@ -40,8 +40,10 @@ const spawn = require('child_process').spawn
 const Console = require('console').Console
 const Writable = require('stream').Writable
 
-// ES6: `import { CliHelp } from './utils/cli-helps.js'
 const Xtest = require('./mock/xtest/main.js').Xtest
+const Ytest = require('./mock/ytest/main.js').Ytest
+const Ztest = require('./mock/ztest/main.js').Ztest
+const Wtest = require('./mock/wtest/main.js').Wtest
 
 const Promisifier = require('@ilg/es6-promisifier').Promisifier
 
@@ -104,33 +106,17 @@ class Common {
    * Spawn a separate process to run node with the given arguments and
    * return the exit code and the stdio streams captured in strings.
    */
-  static async cli (name, argv, spawnOpts = {}) {
+  static async cliRun (name, argv, spawnOpts = {}) {
     return new Promise((resolve, reject) => {
       spawnOpts.env = spawnOpts.env || process.env
 
       // Runs in project root.
       // console.log(`Current directory: ${process.cwd()}`)
-      let stdout = []
-      let stdoutBuf = ''
-      let stderr = []
-      let stderrBuf = ''
       const cmd = [name]
       const child = spawn(nodeBin, cmd.concat(argv), spawnOpts)
 
-      assert(child.stderr)
-      child.stderr.on('data', (chunk) => {
-        // console.log(chunk.toString())
-        stderrBuf += chunk
-        while (true) {
-          const ix = stderrBuf.indexOf('\n')
-          if (ix === -1) {
-            break
-          }
-          stderr.push(stderrBuf.substring(0, ix))
-          stderrBuf = stderrBuf.substring(ix + 1)
-        }
-      })
-
+      let stdout = []
+      let stdoutBuf = ''
       assert(child.stdout)
       child.stdout.on('data', (chunk) => {
         // console.log(chunk.toString())
@@ -142,6 +128,22 @@ class Common {
           }
           stdout.push(stdoutBuf.substring(0, ix))
           stdoutBuf = stdoutBuf.substring(ix + 1)
+        }
+      })
+
+      let stderr = []
+      let stderrBuf = ''
+      assert(child.stderr)
+      child.stderr.on('data', (chunk) => {
+        // console.log(chunk.toString())
+        stderrBuf += chunk
+        while (true) {
+          const ix = stderrBuf.indexOf('\n')
+          if (ix === -1) {
+            break
+          }
+          stderr.push(stderrBuf.substring(0, ix))
+          stderrBuf = stderrBuf.substring(ix + 1)
         }
       })
 
@@ -161,30 +163,19 @@ class Common {
     })
   }
 
-  static async xtestCli (argv, spawnOpts = {}) {
+  static async cliRunXtest (argv, spawnOpts = {}) {
     const Self = this
-    return Self.cli(xtest.executableName, argv, spawnOpts)
+    return Self.cliRun(xtest.executableName, argv, spawnOpts)
   }
 
-  static async ytestCli (argv, spawnOpts = {}) {
-    const Self = this
-    return Self.cli(ytest.executableName, argv, spawnOpts)
-  }
-
-  static async ztestCli (argv, spawnOpts = {}) {
-    const Self = this
-    return Self.cli(ztest.executableName, argv, spawnOpts)
-  }
-
-  static async wtestCli (argv, spawnOpts = {}) {
-    const Self = this
-    return Self.cli(wtest.executableName, argv, spawnOpts)
-  }
+  // --------------------------------------------------------------------------
 
   /**
    * @summary Run xtest as a library call.
    *
    * @async
+   * @param {string} programName Program name.
+   * @param {string} ClassObject Class object.
    * @param {string[]} argv Command line arguments
    * @returns {{code: number, stdout: string, stderr: string}} Exit
    *  code and captured output/error streams.
@@ -193,30 +184,51 @@ class Common {
    * Call the application directly, as a regular module, and return
    * the exit code and the stdio streams captured in strings.
    */
-  static async xtestLib (argv) {
-    assert(Xtest !== null, 'No application class')
+  static async libRun (programName, ClassObject, argv) {
+    assert(ClassObject, 'No application class')
+
     // Create two streams to local strings.
-    let stdout = ''
+    let stdout = []
+    let stdoutBuf = ''
     const ostream = new Writable({
       write (chunk, encoding, callback) {
-        stdout += chunk.toString()
-        callback()
+        stdoutBuf += chunk
+        while (true) {
+          const ix = stdoutBuf.indexOf('\n')
+          if (ix === -1) {
+            break
+          }
+          stdout.push(stdoutBuf.substring(0, ix))
+          stdoutBuf = stdoutBuf.substring(ix + 1)
+
+          callback()
+        }
       }
     })
 
-    let stderr = ''
+    let stderr = []
+    let stderrBuf = ''
     const errstream = new Writable({
       write (chunk, encoding, callback) {
-        stderr += chunk.toString()
-        callback()
+        stderrBuf += chunk
+        while (true) {
+          const ix = stderrBuf.indexOf('\n')
+          if (ix === -1) {
+            break
+          }
+          stderr.push(stderrBuf.substring(0, ix))
+          stderrBuf = stderrBuf.substring(ix + 1)
+
+          callback()
+        }
       }
     })
 
     const mockConsole = new Console(ostream, errstream)
 
-    const app = new Xtest({
-      programName: xtest.programName,
-      argv: ['', xtest.programName, ...argv],
+    const app = new ClassObject({
+      programName: programName,
+      argv: ['', programName, ...argv],
       env: [],
       console: mockConsole,
       cwd: process.cwd(),
@@ -224,6 +236,26 @@ class Common {
     })
     const code = await app.main(argv)
     return { code, stdout, stderr }
+  }
+
+  static async libRunXtest (argv) {
+    const Self = this
+    return Self.libRun('xtest', Xtest, argv)
+  }
+
+  static async libRunYtest (argv) {
+    const Self = this
+    return Self.libRun('ytest', Ytest, argv)
+  }
+
+  static async libRunZtest (argv) {
+    const Self = this
+    return Self.libRun('ztest', Ztest, argv)
+  }
+
+  static async libRunWtest (argv) {
+    const Self = this
+    return Self.libRun('wtest-long-name', Wtest, argv)
   }
 
   /**
@@ -250,6 +282,8 @@ class Common {
 
 Common.xtest = xtest
 Common.ytest = ytest
+Common.ztest = ztest
+Common.wtest = wtest
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
