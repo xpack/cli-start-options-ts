@@ -75,6 +75,10 @@ const CliErrorSyntax = require('./lib/cli-error.js').CliErrorSyntax
 // ES6: `import { CliErrorApplication } from './lib/cli-error.js'
 const CliErrorApplication = require('./lib/cli-error.js').CliErrorApplication
 
+const CliErrorType = require('./lib/cli-error.js').CliErrorType
+const CliErrorInput = require('./lib/cli-error.js').CliErrorInput
+const CliErrorOutput = require('./lib/cli-error.js').CliErrorOutput
+
 const CliUtil = require('./lib/cli-util.js').CliUtil
 
 const CmdsTree = require('./lib/dm-commands.js').CmdsTree
@@ -93,6 +97,9 @@ module.exports.CliExitCodes = CliExitCodes
 module.exports.CliError = CliError
 module.exports.CliErrorSyntax = CliErrorSyntax
 module.exports.CliErrorApplication = CliErrorApplication
+module.exports.CliErrorType = CliErrorType
+module.exports.CliErrorInput = CliErrorInput
+module.exports.CliErrorOutput = CliErrorOutput
 
 module.exports.CliUtil = CliUtil
 module.exports.CmdsTree = CmdsTree

@@ -37,7 +37,7 @@
 
 // ----------------------------------------------------------------------------
 
-const assert = require('assert')
+// const assert = require('assert')
 
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
@@ -46,27 +46,46 @@ const CliExitCodes = require('../../index.js').CliExitCodes
 const CliError = require('../../index.js').CliError
 const CliErrorSyntax = require('../../index.js').CliErrorSyntax
 const CliErrorApplication = require('../../index.js').CliErrorApplication
-
-assert(CliExitCodes)
-assert(CliError)
-assert(CliErrorSyntax)
-assert(CliErrorApplication)
+const CliErrorType = require('../../index.js').CliErrorType
+const CliErrorInput = require('../../index.js').CliErrorInput
+const CliErrorOutput = require('../../index.js').CliErrorOutput
 
 // ----------------------------------------------------------------------------
 
+test('asserts', (t) => {
+  t.true(CliExitCodes !== undefined, 'CliExitCodes is defined')
+  t.true(CliError !== undefined, 'CliError is defined')
+  t.true(CliErrorSyntax !== undefined, 'CliErrorSyntax is defined')
+  t.true(CliErrorApplication !== undefined, 'CliErrorApplication is defined')
+  t.true(CliErrorType !== undefined, 'CliErrorType is defined')
+  t.true(CliErrorInput !== undefined, 'CliErrorInput is defined')
+  t.true(CliErrorOutput !== undefined, 'CliErrorOutput is defined')
+
+  t.end()
+})
+
 test('types', (t) => {
-  t.ok(Error.isPrototypeOf(CliError), 'CliError is Error')
-  t.ok(Error.isPrototypeOf(CliErrorSyntax), 'CliErrorSyntax is Error')
-  t.ok(Error.isPrototypeOf(CliErrorApplication), 'CliErrorApplication is Error')
+  t.true(Error.isPrototypeOf(CliError), 'CliError is Error')
+  t.true(Error.isPrototypeOf(CliErrorSyntax), 'CliErrorSyntax is Error')
+  t.true(Error.isPrototypeOf(CliErrorApplication),
+    'CliErrorApplication is Error')
+  t.true(Error.isPrototypeOf(CliErrorType), 'CliErrorType is Error')
+  t.true(Error.isPrototypeOf(CliErrorInput), 'CliErrorInput is Error')
+  t.true(Error.isPrototypeOf(CliErrorOutput), 'CliErrorOutput is Error')
 
-  t.ok(CliExitCodes instanceof Object, 'CliExitCodes is Object')
-  t.ok(CliExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')
+  t.true(CliExitCodes instanceof Object, 'CliExitCodes is Object')
+  t.true(CliExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')
 
-  t.ok(!isNaN(CliExitCodes.SUCCESS), 'SUCCESS is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.SYNTAX), 'ERROR.SYNTAX is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.APPLICATION), 'ERROR.APPLICATION is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.INPUT), 'ERROR.INPUT is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.OUTPUT), 'ERROR.OUTPUT is a number')
+  t.true(!isNaN(CliExitCodes.SUCCESS), 'SUCCESS is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.SYNTAX), 'ERROR.SYNTAX is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.APPLICATION),
+    'ERROR.APPLICATION is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.INPUT), 'ERROR.INPUT is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.OUTPUT), 'ERROR.OUTPUT is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.CHILD), 'ERROR.CHILD is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.PREREQUISITES),
+    'ERROR.PREREQUISITES is a number')
+  t.true(!isNaN(CliExitCodes.ERROR.TYPE), 'ERROR.TYPE is a number')
 
   t.end()
 })
@@ -105,6 +124,39 @@ test('exitCodes', (t) => {
       t.equal(err.message, 'one', 'message is one')
       t.equal(err.exitCode, CliExitCodes.ERROR.APPLICATION,
         'exit code is app')
+    }
+    t.end()
+  })
+
+  t.test('CliErrorType', (t) => {
+    try {
+      throw new CliErrorType('one')
+    } catch (err) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, CliExitCodes.ERROR.TYPE,
+        'exit code is type')
+    }
+    t.end()
+  })
+
+  t.test('CliErrorInput', (t) => {
+    try {
+      throw new CliErrorInput('one')
+    } catch (err) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, CliExitCodes.ERROR.INPUT,
+        'exit code is input')
+    }
+    t.end()
+  })
+
+  t.test('CliErrorOutput', (t) => {
+    try {
+      throw new CliErrorOutput('one')
+    } catch (err) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, CliExitCodes.ERROR.OUTPUT,
+        'exit code is output')
     }
     t.end()
   })
