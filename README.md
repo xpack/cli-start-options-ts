@@ -371,6 +371,16 @@ All files                     |    88.38 |    74.07 |    88.24 |    88.38 |     
 ------------------------------|----------|----------|----------|----------|-------------------|
 ```
 
+It is also possible to get coverage while running a single test:
+
+```console
+$ npm run tap-coverage test/tap/021-dm-commands.js
+
+> @ilg/cli-start-options@0.6.0 tap-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> tap --coverage --reporter=spec --timeout 300 --no-color "test/tap/021-dm-commands.js"
+...
+```
+
 ### Continuous Integration (CI)
 
 The continuous integration tests are performed via 
