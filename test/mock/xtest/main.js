@@ -112,11 +112,11 @@ class Xtest extends CliApplication {
     log.trace(this.cmdsTree.getCommandsNames())
 
     // The common options will be initialised right after these.
-    this.cliOptions.addOptionGroups(
+    this.cliOptions.addOptionsGroups(
       [
         {
           title: 'Extra options',
-          optionDefs: [
+          optionsDefs: [
             {
               options: ['--extra', '--very-extra', '--very-long-extra'],
               message: 'Extra options',

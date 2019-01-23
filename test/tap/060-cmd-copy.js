@@ -79,7 +79,7 @@ const fsPromises = fs.promises_
 test('xtest copy',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.cliRunXtest([
+      const { code, stdout, stderr } = await Common.libRunXtest([
         'copy'
       ])
       // Check exit code.

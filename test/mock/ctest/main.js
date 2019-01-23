@@ -65,11 +65,11 @@ class Ctest extends CliApplication {
     // the shortcut of using `__dirname` of the main file.
     this.rootAbsolutePath = __dirname
 
-    this.optionGroups = [
+    this.optionsGroups = [
       {
         title: 'Ctest options',
         postOptions: '[<targets>...]',
-        optionDefs: [
+        optionsDefs: [
           {
             options: ['-t', '--tool'],
             param: 'name',

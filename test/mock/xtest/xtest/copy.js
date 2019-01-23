@@ -75,10 +75,10 @@ class Copy extends CliCommand {
 
     // Title displayed with the help message.
     this.helpTitle = 'Copy a file to another file'
-    this.optionGroups = [
+    this.optionsGroups = [
       {
         title: 'Copy options',
-        optionDefs: [
+        optionsDefs: [
           {
             options: ['--file'],
             action: (object, val) => {
