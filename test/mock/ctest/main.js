@@ -65,39 +65,42 @@ class Ctest extends CliApplication {
     // the shortcut of using `__dirname` of the main file.
     this.rootAbsolutePath = __dirname
 
-    this.optionsGroups = [
-      {
-        title: 'Ctest options',
-        postOptions: '[<targets>...]',
-        optionsDefs: [
-          {
-            options: ['-t', '--tool'],
-            param: 'name',
-            message: 'Subtool name',
-            init: (object) => {
-              object.config.toolName = undefined
+    this.cliOptions.addOptionsGroups(
+      [
+        {
+          title: 'Ctest options',
+          insertInFront: true,
+          postOptions: '[<targets>...]',
+          optionsDefs: [
+            {
+              options: ['-t', '--tool'],
+              param: 'name',
+              message: 'Subtool name',
+              init: (object) => {
+                object.config.toolName = undefined
+              },
+              action: (object, val) => {
+                object.config.toolName = val.toLowerCase()
+              },
+              hasValue: true,
+              values: [ 'clean' ],
+              isOptional: true
             },
-            action: (object, val) => {
-              object.config.toolName = val.toLowerCase()
-            },
-            hasValue: true,
-            values: [ 'clean' ],
-            isOptional: true
-          },
-          {
-            options: ['-n', '--dry-run'],
-            message: 'Only display, do not run commands',
-            init: (object) => {
-              object.config.isDryRun = false
-            },
-            action: (object, val) => {
-              object.config.isDryRun = true
-            },
-            isOptional: true
-          }
-        ]
-      }
-    ]
+            {
+              options: ['-n', '--dry-run'],
+              message: 'Only display, do not run commands',
+              init: (object) => {
+                object.config.isDryRun = false
+              },
+              action: (object, val) => {
+                object.config.isDryRun = true
+              },
+              isOptional: true
+            }
+          ]
+        }
+      ]
+    )
   }
 
   // --------------------------------------------------------------------------

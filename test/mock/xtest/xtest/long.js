@@ -56,27 +56,31 @@ class Long extends CliCommand {
 
     // Title displayed with the help message.
     this.helpTitle = 'Test long options'
-    this.optionsGroups = [
-      {
-        title: 'Long options',
-        preOptions: '[<name>...]', // Array of test names.
-        postOptions: '[-- <very-long-long-long-params>...]',
-        optionsDefs: [
-          {
-            options: ['--long', '--very-long', '--extra-very-long'],
-            action: (object, val) => {
-              object.config.long = val
-            },
-            init: (object) => {
-              object.config.long = undefined
-            },
-            msg: 'Very long option',
-            param: 'name',
-            isMandatory: true
-          }
-        ]
-      }
-    ]
+
+    this.cliOptions.addOptionsGroups(
+      [
+        {
+          title: 'Long options',
+          insertInFront: true,
+          preOptions: '[<name>...]', // Array of test names.
+          postOptions: '[-- <very-long-long-long-params>...]',
+          optionsDefs: [
+            {
+              options: ['--long', '--very-long', '--extra-very-long'],
+              action: (object, val) => {
+                object.config.long = val
+              },
+              init: (object) => {
+                object.config.long = undefined
+              },
+              msg: 'Very long option',
+              param: 'name',
+              isMandatory: true
+            }
+          ]
+        }
+      ]
+    )
   }
 
   /**

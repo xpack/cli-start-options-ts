@@ -58,8 +58,6 @@ class Generator extends CliCommand {
 
     // Title displayed with the help message.
     this.helpTitle = 'Test generator options'
-    this.optionsGroups = [
-    ]
   }
 
   /**

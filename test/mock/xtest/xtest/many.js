@@ -56,65 +56,68 @@ class Long extends CliCommand {
 
     // Title displayed with the help message.
     this.helpTitle = 'Test many options'
-    this.optionsGroups = [
-      {
-        title: 'Long options',
-        preOptions: '[<name1> <name2> <name3>...]',
-        optionsDefs: [
-          {
-            options: ['--one'],
-            action: (object, val) => {
-              object.config.one = val
+    this.cliOptions.addOptionsGroups(
+      [
+        {
+          title: 'Long options',
+          insertInFront: true,
+          preOptions: '[<name1> <name2> <name3>...]',
+          optionsDefs: [
+            {
+              options: ['--one'],
+              action: (object, val) => {
+                object.config.one = val
+              },
+              init: (object) => {
+                object.config.one = undefined
+              },
+              msg: 'Option one',
+              param: 'name',
+              isMandatory: true
             },
-            init: (object) => {
-              object.config.one = undefined
+            {
+              options: ['--two'],
+              action: (object, val) => {
+                object.config.two = val
+              },
+              init: (object) => {
+                object.config.two = undefined
+              },
+              msg: 'Option two',
+              param: 'name',
+              isMandatory: true,
+              isMultiple: true
             },
-            msg: 'Option one',
-            param: 'name',
-            isMandatory: true
-          },
-          {
-            options: ['--two'],
-            action: (object, val) => {
-              object.config.two = val
+            {
+              options: ['--three'],
+              action: (object, val) => {
+                object.config.three = val
+              },
+              init: (object) => {
+                object.config.three = undefined
+              },
+              msg: 'Option three',
+              param: 'name',
+              isOptional: true,
+              isMultiple: true
             },
-            init: (object) => {
-              object.config.two = undefined
-            },
-            msg: 'Option two',
-            param: 'name',
-            isMandatory: true,
-            isMultiple: true
-          },
-          {
-            options: ['--three'],
-            action: (object, val) => {
-              object.config.three = val
-            },
-            init: (object) => {
-              object.config.three = undefined
-            },
-            msg: 'Option three',
-            param: 'name',
-            isOptional: true,
-            isMultiple: true
-          },
-          {
-            options: ['--four'],
-            action: (object, val) => {
-              object.config.four = val
-            },
-            init: (object) => {
-              object.config.four = undefined
-            },
-            msg: 'Option four',
-            // Has no param.
-            hasValue: true,
-            isOptional: true
-          }
-        ]
-      }
-    ]
+            {
+              options: ['--four'],
+              action: (object, val) => {
+                object.config.four = val
+              },
+              init: (object) => {
+                object.config.four = undefined
+              },
+              msg: 'Option four',
+              // Has no param.
+              hasValue: true,
+              isOptional: true
+            }
+          ]
+        }
+      ]
+    )
   }
 
   /**

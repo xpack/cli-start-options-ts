@@ -75,37 +75,40 @@ class Copy extends CliCommand {
 
     // Title displayed with the help message.
     this.helpTitle = 'Copy a file to another file'
-    this.optionsGroups = [
-      {
-        title: 'Copy options',
-        optionsDefs: [
-          {
-            options: ['--file'],
-            action: (object, val) => {
-              object.config.inputPath = val
+    this.cliOptions.addOptionsGroups(
+      [
+        {
+          title: 'Copy options',
+          insertInFront: true,
+          optionsDefs: [
+            {
+              options: ['--file'],
+              action: (object, val) => {
+                object.config.inputPath = val
+              },
+              init: (object) => {
+                object.config.inputPath = undefined
+              },
+              msg: 'Input file',
+              param: 'file',
+              isMandatory: true
             },
-            init: (object) => {
-              object.config.inputPath = undefined
-            },
-            msg: 'Input file',
-            param: 'file',
-            isMandatory: true
-          },
-          {
-            options: ['--output'],
-            action: (object, val) => {
-              object.config.outputPath = val
-            },
-            init: (object) => {
-              object.config.outputPath = undefined
-            },
-            msg: 'Output file',
-            param: 'file',
-            isMandatory: true
-          }
-        ]
-      }
-    ]
+            {
+              options: ['--output'],
+              action: (object, val) => {
+                object.config.outputPath = val
+              },
+              init: (object) => {
+                object.config.outputPath = undefined
+              },
+              msg: 'Output file',
+              param: 'file',
+              isMandatory: true
+            }
+          ]
+        }
+      ]
+    )
   }
 
   /**

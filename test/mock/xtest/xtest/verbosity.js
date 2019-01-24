@@ -56,8 +56,6 @@ class Copy extends CliCommand {
 
     // Title displayed with the help message.
     this.helpTitle = 'Exercise verbosity'
-    this.optionsGroups = [
-    ]
   }
 
   /**
