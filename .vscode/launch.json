@@ -97,6 +97,59 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xtest.js multi --help",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "multi",
+        "--help"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js multi second --help",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "multi",
+        "second",
+        "--help"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xtest.js notclass",
       "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,

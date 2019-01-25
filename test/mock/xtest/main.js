@@ -106,6 +106,20 @@ class Xtest extends CliApplication {
       },
       cwd: {
         modulePath: 'xtest/cwd.js'
+      },
+      multi: {
+        modulePath: 'xtest/multi.js',
+        className: 'Multi',
+        subCommands: {
+          first: {
+            modulePath: 'xtest/multi.js',
+            className: 'MultiFirst'
+          },
+          second: {
+            modulePath: 'xtest/multi.js',
+            className: 'MultiSecond'
+          }
+        }
       }
     }
     this.cmdsTree.addCommands(commands)
