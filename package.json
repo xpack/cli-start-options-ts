@@ -17,7 +17,7 @@
     "tap": "tap --reporter=spec --timeout 300 --no-color",
     "tap-coverage": "tap --coverage --reporter=spec --timeout 300 --no-color",
     "fix": "standard --fix",
-    "link": "npm link @ilg/es6-promisifier; npm link wscript-avoider"
+    "link": "npm link @xpack/es6-promisifier"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/xpack/cli-start-options-js",
   "dependencies": {
-    "@ilg/es6-promisifier": "~0.3.0",
+    "@xpack/es6-promisifier": "~1.0.0",
     "@xpack/logger": "~2.2.0",
     "latest-version": "~3.1.0",
     "semver": "~5.6.0",

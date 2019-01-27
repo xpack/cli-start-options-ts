@@ -45,7 +45,7 @@ const Ytest = require('./mock/ytest/main.js').Ytest
 const Ztest = require('./mock/ztest/main.js').Ztest
 const Wtest = require('./mock/wtest/main.js').Wtest
 
-const Promisifier = require('@ilg/es6-promisifier').Promisifier
+const Promisifier = require('@xpack/es6-promisifier').Promisifier
 
 // ----------------------------------------------------------------------------
 
