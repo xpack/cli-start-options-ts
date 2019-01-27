@@ -40,7 +40,6 @@
   "dependencies": {
     "@ilg/es6-promisifier": "~0.3.0",
     "@xpack/logger": "~2.2.0",
-    "wscript-avoider": "~3.0.2",
     "latest-version": "~3.1.0",
     "semver": "~5.6.0",
     "semver-diff": "~2.1.0",
