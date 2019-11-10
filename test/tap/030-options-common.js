@@ -175,7 +175,8 @@ test('xtest --version -d (lib)', async (t) => {
     // the colour changes are not used.
     const str = stdout.join('\n')
     t.match(str, 'debug: params.argv', 'has debug')
-    t.equal(stdout[4], pack.version, 'version value')
+    // console.log(stdout)
+    t.equal(stdout[7], pack.version, 'version value')
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {

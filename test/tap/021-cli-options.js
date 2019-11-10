@@ -43,6 +43,7 @@
 const test = require('tap').test
 
 const CliOptions = require('../../index.js').CliOptions
+const MockLog = require('../common.js').MockLog
 
 // ----------------------------------------------------------------------------
 
@@ -53,7 +54,11 @@ test('asserts', (t) => {
 })
 
 test('filterOwnArguments', (t) => {
-  const cliOptions = new CliOptions()
+  const log = new MockLog()
+  const cliOptions = new CliOptions({
+    log: log,
+    object: {}
+  })
   let arr
 
   arr = cliOptions.filterOwnArguments([
@@ -119,7 +124,11 @@ test('filterOwnArguments', (t) => {
 })
 
 test('filterOtherArguments', (t) => {
-  const cliOptions = new CliOptions()
+  const log = new MockLog()
+  const cliOptions = new CliOptions({
+    log: log,
+    object: {}
+  })
   let arr
 
   arr = cliOptions.filterOtherArguments([

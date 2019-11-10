@@ -36,6 +36,7 @@ const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')
 const tar = require('tar')
+const util = require('util')
 const spawn = require('child_process').spawn
 const Console = require('console').Console
 const Writable = require('stream').Writable
@@ -286,12 +287,40 @@ Common.ztest = ztest
 Common.wtest = wtest
 
 // ----------------------------------------------------------------------------
+
+class MockLog {
+  constructor () {
+    this.lines = []
+  }
+
+  info (msg = '', ...args) {
+    const str = util.format(msg, ...args)
+    this.lines.push(str)
+  }
+
+  debug (msg = '', ...args) {
+    const str = util.format(msg, ...args)
+    this.lines.push(str)
+  }
+
+  trace (msg = '', ...args) {
+    const str = util.format(msg, ...args)
+    this.lines.push(str)
+  }
+
+  clear () {
+    this.lines = []
+  }
+}
+
+// ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
 // The Main class is added as a property to this object.
 
 module.exports.Common = Common
+module.exports.MockLog = MockLog
 
 // In ES6, it would be:
 // export class Common { ... }

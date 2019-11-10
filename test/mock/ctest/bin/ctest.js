@@ -36,20 +36,20 @@
 
 /*
  * On POSIX platforms, when installing a global package,
- * a symbolic link named `xtest` is created
+ * a symbolic link named `ctest` is created
  * in the `/usr/local/bin` folder (on macOS), or
  * in the `/usr/bin` folder (on Ubuntu), pointing to this file.
  *
  * On Windows, where symbolic links are not available,
  * when installing a global package,
  * two forwarders are automatically created in the
- * user `\AppData\Roaming\npm\node_modules\xtest\bin` folder:
- * - `xtest.cmd`, for invocation from the Windows command line
- * - `xtest` (a shell script), for invokations from an optional
+ * user `\AppData\Roaming\npm\node_modules\ctest\bin` folder:
+ * - `ctest.cmd`, for invocation from the Windows command line
+ * - `ctest` (a shell script), for invokations from an optional
  * POSIX environments like minGW-w64, msys2, git shell, etc.
  *
  * On all platforms, `process.argv[1]` will be the full path of
- * this file, or the full path of the `xtest` link, so, in case
+ * this file, or the full path of the `ctest` link, so, in case
  * the program will need to be invoked with different names,
  * this is the method to differentiate between them.
  */
@@ -57,11 +57,11 @@
 // ----------------------------------------------------------------------------
 
 // ES6: `import { Xtest } from 'main.js'
-const Wtest = require('../main.js').Wtest
+const Ctest = require('../main.js').Ctest
 
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Wtest.start().then()
+Ctest.start().then()
 
 // ----------------------------------------------------------------------------

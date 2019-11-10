@@ -62,8 +62,6 @@ const Ztest = require('../main.js').Ztest
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Ztest.start().then((code) => {
-  process.exit(code)
-})
+Ztest.start().then()
 
 // ----------------------------------------------------------------------------
