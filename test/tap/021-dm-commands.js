@@ -178,11 +178,10 @@ test('aliases', (t) => {
   t.equal(cmdsTree.endCharNode.length, 4, 'has 4 end nodes')
 
   let cmd
-  let arr
   cmd = cmdsTree.findCommands(['build'])
   t.equal(cmd.modulePath, 'build.js', 'build module is build.js')
 
-  arr = cmd.fullCommandsArray()
+  const arr = cmd.fullCommandsArray()
   t.equal(arr.length, 1, 'full array has one entry')
   t.equal(arr[0], 'build', 'first command is build')
 
@@ -227,11 +226,10 @@ test('mixed aliases', (t) => {
   t.equal(cmdsTree.endCharNode.length, 4, 'has 4 end nodes')
 
   let cmd
-  let arr
   cmd = cmdsTree.findCommands(['build'])
   t.equal(cmd.modulePath, 'build.js', 'build module is build.js')
 
-  arr = cmd.fullCommandsArray()
+  const arr = cmd.fullCommandsArray()
   t.equal(arr.length, 1, 'full array has one entry')
   t.equal(arr[0], 'build', 'first command is build')
 

@@ -83,7 +83,7 @@ class Ctest extends CliApplication {
                 object.config.toolName = val.toLowerCase()
               },
               hasValue: true,
-              values: [ 'clean' ],
+              values: ['clean'],
               isOptional: true
             },
             {

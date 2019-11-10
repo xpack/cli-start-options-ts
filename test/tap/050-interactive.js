@@ -185,7 +185,7 @@ test('xtest -i (spawn)', (t) => {
           t.test('xyz', (t) => {
             t.match(stdout, 'Usage: xtest <command> [<options>...]',
               'has Usage')
-            t.match(stderr, `Command 'xyz' is not supported.`,
+            t.match(stderr, 'Command \'xyz\' is not supported.',
               'xyz is not supported')
             t.end()
           })

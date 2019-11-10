@@ -116,7 +116,7 @@ class Common {
       const cmd = [name]
       const child = spawn(nodeBin, cmd.concat(argv), spawnOpts)
 
-      let stdout = []
+      const stdout = []
       let stdoutBuf = ''
       assert(child.stdout)
       child.stdout.on('data', (chunk) => {
@@ -132,7 +132,7 @@ class Common {
         }
       })
 
-      let stderr = []
+      const stderr = []
       let stderrBuf = ''
       assert(child.stderr)
       child.stderr.on('data', (chunk) => {
@@ -189,7 +189,7 @@ class Common {
     assert(ClassObject, 'No application class')
 
     // Create two streams to local strings.
-    let stdout = []
+    const stdout = []
     let stdoutBuf = ''
     const ostream = new Writable({
       write (chunk, encoding, callback) {
@@ -207,7 +207,7 @@ class Common {
       }
     })
 
-    let stderr = []
+    const stderr = []
     let stderrBuf = ''
     const errstream = new Writable({
       write (chunk, encoding, callback) {
