@@ -2,14 +2,12 @@
 # https://www.appveyor.com/docs/
 
 # https://www.appveyor.com/docs/lang/nodejs-iojs/
-# async/await supported since v7.x
+# async/await supported since v7.x, but on v8.x something wrong
+# happens in 050-interractive, so start with 10.
 environment:
   matrix:
     - nodejs_version: "12"
-    - nodejs_version: "11"
     - nodejs_version: "10"
-    - nodejs_version: "9"
-    - nodejs_version: "8"
 
 # set clone depth
 clone_depth: 3  # clone entire repository history if not defined
