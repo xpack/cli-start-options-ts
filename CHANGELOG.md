@@ -4,6 +4,12 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues).
 
+## v0.7.0 (2019-11-10)
+
+- [#12] Set process.exitCode at the end
+- [#11] Log system info & node version
+- bump dependencies to fix vulnerabilities
+
 ## v0.6.0 (2018-12-25)
 
 - [#10] Show stack for all system errors
