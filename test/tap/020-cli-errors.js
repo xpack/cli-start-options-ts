@@ -65,13 +65,13 @@ test('asserts', (t) => {
 })
 
 test('types', (t) => {
-  t.true(Error.isPrototypeOf(CliError), 'CliError is Error')
-  t.true(Error.isPrototypeOf(CliErrorSyntax), 'CliErrorSyntax is Error')
-  t.true(Error.isPrototypeOf(CliErrorApplication),
+  t.true(CliError.prototype instanceof Error, 'CliError is Error')
+  t.true(CliErrorSyntax.prototype instanceof Error, 'CliErrorSyntax is Error')
+  t.true(CliErrorApplication.prototype instanceof Error,
     'CliErrorApplication is Error')
-  t.true(Error.isPrototypeOf(CliErrorType), 'CliErrorType is Error')
-  t.true(Error.isPrototypeOf(CliErrorInput), 'CliErrorInput is Error')
-  t.true(Error.isPrototypeOf(CliErrorOutput), 'CliErrorOutput is Error')
+  t.true(CliErrorType.prototype instanceof Error, 'CliErrorType is Error')
+  t.true(CliErrorInput.prototype instanceof Error, 'CliErrorInput is Error')
+  t.true(CliErrorOutput.prototype instanceof Error, 'CliErrorOutput is Error')
 
   t.true(CliExitCodes instanceof Object, 'CliExitCodes is Object')
   t.true(CliExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')
