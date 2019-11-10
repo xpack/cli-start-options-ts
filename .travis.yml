@@ -21,7 +21,7 @@ sudo: false
 # happens in 050-interractive, so start with 10.
 language: node_js
 node_js:
-  - "node" 
+  - "12" 
   - "10" 
 
 # https://docs.travis-ci.com/user/customizing-the-build/#Git-Clone-Depth
