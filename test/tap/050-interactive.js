@@ -56,7 +56,7 @@ assert(CliUtil)
 
 // ----------------------------------------------------------------------------
 
-const debug = false
+const debug = true
 
 // ----------------------------------------------------------------------------
 
@@ -109,6 +109,7 @@ test('xtest -i (spawn)', (t) => {
     child.stderr.on('data', (chunk) => {
       if (debug) {
         console.log(chunk)
+        console.log(chunk.toString())
       }
       stderr += chunk
     })
