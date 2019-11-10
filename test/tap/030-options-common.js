@@ -622,8 +622,11 @@ test('xtest gen (lib)', async (t) => {
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[1], '{ generators:', 'stdout has generators')
-    t.match(stdout[5], `homepage: '${pack.homepage}'`)
+    // console.log(stdout.length)
+    const str = stdout.join('\n')
+    // console.log(str)
+    t.match(str, 'generators:', 'stdout has generators')
+    t.match(str, `homepage: '${pack.homepage}'`)
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
