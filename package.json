@@ -41,12 +41,12 @@
     "@xpack/es6-promisifier": "~1.0.0",
     "@xpack/logger": "~2.2.0",
     "@xpack/update-checker": "~1.0.0",
-    "semver": "~5.6.0"
+    "semver": "~6.3.0"
   },
   "devDependencies": {
-    "standard": "~12.0.1",
-    "tap": "~12.1.1",
-    "tar": "~4.4.8"
+    "standard": "~14.3.1",
+    "tap": "~14.9.2",
+    "tar": "~5.0.5"
   },
   "peerDependencies": {},
   "bundledDependencies": [],
