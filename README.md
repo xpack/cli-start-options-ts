@@ -385,6 +385,10 @@ $ npm run tap-coverage test/tap/021-dm-commands.js
 ...
 ```
 
+#### Coverage exceptions
+
+- none
+  
 ### Continuous Integration (CI)
 
 The continuous integration tests are performed via 
