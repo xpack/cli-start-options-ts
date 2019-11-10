@@ -98,10 +98,14 @@ And it can be invoked from `/bin/xyz.js`:
 #!/usr/bin/env node
 const Main = require('../lib/main.js').Main
 
-Main.start().then((code) => {
-  process.exit(code)
-})
+Main.start().then()
 ```
+
+The `.then()` callback is used mainly to make expclit that the `start()` is
+a promise.
+
+Note: Generally do not call `process.exit()`, since this will abruptly
+termintate the process and do not allow pending callbacks to run.
 
 The framework implements a lot of functionality, like parsing logger level 
 options, displaying help, displaying version, etc.
