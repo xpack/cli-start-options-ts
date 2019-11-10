@@ -201,9 +201,8 @@ class Common {
           }
           stdout.push(stdoutBuf.substring(0, ix))
           stdoutBuf = stdoutBuf.substring(ix + 1)
-
-          callback()
         }
+        callback()
       }
     })
 
@@ -219,9 +218,8 @@ class Common {
           }
           stderr.push(stderrBuf.substring(0, ix))
           stderrBuf = stderrBuf.substring(ix + 1)
-
-          callback()
         }
+        callback()
       }
     })
 
