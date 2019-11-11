@@ -56,7 +56,7 @@ assert(CliUtil)
 
 // ----------------------------------------------------------------------------
 
-const debug = true
+const debug = false
 
 // ----------------------------------------------------------------------------
 
@@ -70,6 +70,102 @@ const rootAbsolutePath = path.resolve(path.dirname(__dirname),
 
 // ----------------------------------------------------------------------------
 
+const sleep = async (millis) => {
+  return new Promise((resolve) => {
+    if (debug) {
+      console.log(`sleep ${millis}`)
+    }
+    setTimeout(() => { resolve() }, millis)
+  })
+}
+
+class XtestImmediate {
+  constructor (cmd, opts) {
+    if (debug) {
+      console.log('constructor')
+    }
+    this.stdout = ''
+    this.stderr = ''
+
+    this.promise = new Promise((resolve, reject) => {
+      if (debug) {
+        console.log('new promise')
+      }
+      this.proc = spawn(nodeBin, cmd, opts)
+
+      this.proc.on('error', (err) => {
+        if (debug) {
+          console.log('on.error')
+        }
+        reject(err)
+      })
+
+      this.proc.on('close', (code) => {
+        if (debug) {
+          console.log('on.close')
+        }
+        resolve(code)
+      })
+
+      if (this.proc.stdout) {
+        this.proc.stdout.on('data', (chunk) => {
+          if (debug) {
+            console.log(chunk)
+            console.log(`stdout '${chunk.toString()}'`)
+          }
+          this.stdout += chunk
+        })
+      }
+
+      if (this.proc.stderr) {
+        this.proc.stderr.on('data', (chunk) => {
+          if (debug) {
+            console.log(chunk)
+            console.log(`stderr '${chunk.toString()}'`)
+          }
+          this.stderr += chunk
+        })
+      }
+    })
+  }
+
+  writeToInput (str) {
+    if (debug) {
+      console.log(`stdin '${str}'`)
+    }
+    if (this.proc.stdin) {
+      this.proc.stdin.write(`${str}\n`)
+    }
+  }
+
+  readFromStderr () {
+    const tmp = this.stderr
+    this.stderr = ''
+    if (debug) {
+      console.log(`err '${tmp}'`)
+    }
+    return tmp
+  }
+
+  async readFromStdout () {
+    let tmp
+    while (true) {
+      if (this.stdout.includes('xtest> ')) {
+        tmp = this.stdout.replace('xtest> ', '')
+        break
+      }
+      await sleep(10)
+    }
+    this.stdout = ''
+    if (debug) {
+      console.log(`out '${tmp}'`)
+    }
+    return tmp
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   pack = await CliUtil.readPackageJson(rootAbsolutePath)
@@ -79,135 +175,80 @@ test('setup', async (t) => {
   t.end()
 })
 
-test('xtest -i (spawn)', (t) => {
+test('xtest -i (spawn)', async (t) => {
   const cmd = [executableName, '-i']
   const opts = {}
   opts.env = process.env
-  const child = spawn(nodeBin, cmd, opts)
 
-  child.on('error', (err) => {
-    if (debug) {
-      console.log('error')
-    }
-    t.fail(err.message)
+  const child = new XtestImmediate(cmd, opts)
+
+  let outstr
+  let errstr
+
+  await t.test('first prompt', async (t) => {
+    outstr = await child.readFromStdout()
+    t.equal(outstr, '', 'stdout is empty')
+    errstr = child.readFromStderr()
+    t.equal(errstr, '', 'stderr is empty')
     t.end()
   })
 
-  child.on('close', (code) => {
-    // Check exit code.
-    if (debug) {
-      console.log('close')
-    }
+  await t.test('--version', async (t) => {
+    child.writeToInput('--version')
+    outstr = await child.readFromStdout()
+    t.equal(outstr, `${pack.version}\n`, 'version value')
+    errstr = child.readFromStderr()
+    t.equal(errstr, '', 'stderr is empty')
+    t.end()
+  })
+
+  await t.test('copy -h', async (t) => {
+    child.writeToInput('copy -h')
+    outstr = await child.readFromStdout()
+    t.match(outstr, 'Usage: xtest copy [<options>...]',
+      'has code Usage')
+    errstr = child.readFromStderr()
+    t.equal(errstr, '', 'stderr is empty')
+    t.end()
+  })
+
+  await t.test('copy', async (t) => {
+    child.writeToInput('copy')
+    outstr = await child.readFromStdout()
+    t.match(outstr, 'Usage: xtest copy [<options>...]',
+      'has code Usage')
+    errstr = child.readFromStderr()
+    t.match(errstr, 'Mandatory \'--file\' not found',
+      '--file not found')
+    t.match(errstr, 'Mandatory \'--output\' not found',
+      '--output not found')
+    t.end()
+  })
+
+  await t.test('xyz', async (t) => {
+    child.writeToInput('xyz')
+    outstr = await child.readFromStdout()
+    t.match(outstr, 'Usage: xtest <command> [<options>...]',
+      'has Usage')
+    errstr = child.readFromStderr()
+    t.match(errstr, 'Command \'xyz\' is not supported.',
+      'xyz is not supported')
+    t.end()
+  })
+
+  await t.test('.exit', async (t) => {
+    child.writeToInput('.exit')
+
+    const code = await child.promise
     t.equal(code, CliExitCodes.SUCCESS, 'exit code success')
+
+    t.match(child.stdout, 'Done.', 'done')
+    t.equal(child.stderr, '', 'stderr is empty')
+
     t.end()
   })
 
-  // For unknown reasons, REPL stderr is not forwarded here,
-  // but to stdout.
-  let stderr = ''
-  if (child.stderr) {
-    child.stderr.on('data', (chunk) => {
-      if (debug) {
-        console.log(chunk)
-        console.log(chunk.toString())
-      }
-      stderr += chunk
-    })
-  }
-
-  let stdout = ''
-  let count = 0
-  if (child.stdout) {
-    child.stdout.on('data', (chunk) => {
-      // console.log(chunk)
-      stdout += chunk
-      let ostr = null
-      if (stdout.endsWith('xtest> ')) {
-        stdout = stdout.replace('xtest> ', '')
-        if (debug) {
-          // console.log(stdout)
-        }
-        // A small state machine to check the conditions after each
-        // new prompt identified.
-        if (count === 0) {
-          t.test('first prompt', (t) => {
-            t.ok(true, 'prompt ok')
-            t.equal(stderr, '', 'stderr is empty')
-            t.end()
-          })
-
-          ostr = '--version'
-        } else if (count === 1) {
-          t.test('--version', (t) => {
-            t.equal(stdout, pack.version + '\n', 'version value')
-            t.end()
-          })
-
-          ostr = '-h'
-        } else if (count === 2) {
-          t.test('-h', (t) => {
-            t.match(stdout, 'Usage: xtest <command> [<options>...]',
-              'has Usage')
-            // t.equal(stderr, '', 'stderr empty')
-            t.end()
-          })
-
-          ostr = '--version'
-        } else if (count === 3) {
-          t.test('--version again', (t) => {
-            t.equal(stdout, pack.version + '\n', 'version value')
-            t.end()
-          })
-
-          ostr = 'copy -h'
-        } else if (count === 4) {
-          t.test('copy -h', (t) => {
-            // console.log(stdout)
-            t.match(stdout, 'Usage: xtest copy [<options>...]',
-              'has code Usage')
-            // t.equal(stderr, '', 'stderr empty')
-            t.end()
-          })
-
-          ostr = 'copy'
-        } else if (count === 5) {
-          t.test('copy', (t) => {
-            t.match(stdout, 'Usage: xtest copy [<options>...]',
-              'has code Usage')
-            t.match(stderr, 'Mandatory \'--file\' not found',
-              '--file not found')
-            t.match(stderr, 'Mandatory \'--output\' not found',
-              '--output not found')
-            t.end()
-          })
-
-          ostr = 'xyz'
-        } else if (count === 6) {
-          t.test('xyz', (t) => {
-            t.match(stdout, 'Usage: xtest <command> [<options>...]',
-              'has Usage')
-            t.match(stderr, 'Command \'xyz\' is not supported.',
-              'xyz is not supported')
-            t.end()
-          })
-
-          ostr = '.exit'
-        }
-        if (ostr) {
-          if (debug) {
-            console.log(`sent ${ostr}`)
-          }
-          child.stdin.write(ostr + '\n')
-        }
-        count++
-        if (debug) {
-          console.log(count)
-        }
-        stdout = ''
-        stderr = ''
-      }
-    })
-  }
+  t.end()
 })
 
 // ----------------------------------------------------------------------------
