@@ -32,14 +32,14 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The Xtest main module.
+ * The Etest main module.
  *
  * It is re-exported publicly by `index.js`.
  *
  * To import classes from this module into Node.js applications, use:
  *
  * ```javascript
- * const Xtest = require('xtest').Xtest
+ * const Etest = require('Etest').Etest
  * ```
  */
 
@@ -49,115 +49,58 @@
 
 // ES6: `import { CliApplication, CliOptions } from 'cli-start-options'
 const CliApplication = require('../../../index.js').CliApplication
+// const CliOptions = require('../../../index.js').CliOptions
+const CliExitCodes = require('../../../index.js').CliExitCodes
 
 // ============================================================================
 
 // export
-class Xtest extends CliApplication {
+class Etest extends CliApplication {
   // --------------------------------------------------------------------------
 
-  /**
-   * @summary Construct the application object.
-   *
-   * @param {Object} params The generic parameters object.
-   *
-   * @description
-   * Initialise the options manager with application
-   * specific commands and common options.
-   */
   constructor (params) {
     super(params)
-
-    const log = this.log
 
     // Mandatory, must be set here, not in the library, since it takes
     // the shortcut of using `__dirname` of the main file.
     this.rootAbsolutePath = __dirname
 
-    // ------------------------------------------------------------------------
-    // Initialise the tree of known commands.
-    // Paths should be relative to the package root.
-
-    const commands = {
-      copy: {
-        aliases: ['c'],
-        modulePath: 'xtest/copy.js'
-      },
-      notclass: {
-        modulePath: 'xtest/not-class.js'
-      },
-      con: {
-        modulePath: 'xtest/con.js'
-      },
-      verbosity: {
-        modulePath: 'xtest/verbosity.js'
-      },
-      long: {
-        modulePath: 'xtest/long.js'
-      },
-      many: {
-        modulePath: 'xtest/many.js'
-      },
-      gen: {
-        modulePath: 'xtest/generator.js'
-      },
-      unimpl: {
-        modulePath: 'xtest/unimpl.js'
-      },
-      cwd: {
-        modulePath: 'xtest/cwd.js'
-      },
-      multi: {
-        modulePath: 'xtest/multi.js',
-        className: 'Multi',
-        subCommands: {
-          first: {
-            modulePath: 'xtest/multi.js',
-            className: 'MultiFirst'
-          },
-          second: {
-            modulePath: 'xtest/multi.js',
-            className: 'MultiSecond'
-          }
-        }
-      },
-      noopts: {
-        modulePath: 'xtest/noopts.js'
-      }
-    }
-    this.cmdsTree.addCommands(commands)
-    log.trace(this.cmdsTree.getCommandsNames())
-
-    // The common options will be initialised right after these.
     this.cliOptions.addOptionsGroups(
       [
         {
-          title: 'Extra options',
+          title: 'Etest options',
+          insertInFront: true,
+          postOptions: '[<targets>...]',
           optionsDefs: [
             {
-              options: ['--extra', '--very-extra', '--very-long-extra'],
-              message: 'Extra options',
-              action: (object) => {
-                object.config.extra = true
-              },
+              options: ['-t', '--tool'],
+              param: 'name',
+              message: 'Subtool name',
               init: (object) => {
-                object.config.extra = false
-              }
+                object.config.toolName = undefined
+              },
+              action: (object, val) => {
+                object.config.toolName = val.toLowerCase()
+              },
+              hasValue: true,
+              values: ['clean'],
+              isOptional: true
             },
             {
-              options: ['--early', '--very-early', '--very-long-early'],
-              message: 'Early options',
-              action: (object) => {
-                object.config.early = true
-              },
+              options: ['-n', '--dry-run'],
+              message: 'Only display, do not run commands',
               init: (object) => {
-                object.config.early = false
+                object.config.isDryRun = false
               },
-              doProcessEarly: true
+              action: (object, val) => {
+                object.config.isDryRun = true
+              },
+              isOptional: true
             }
           ]
         }
-      ])
+      ]
+    )
   }
 
   // --------------------------------------------------------------------------
@@ -165,20 +108,40 @@ class Xtest extends CliApplication {
   // main(): use parent definition
   // help(): use parent definition.
 
-  // (isn't object oriented code reuse great?)
+  // --------------------------------------------------------------------------
+
+  /**
+   * @summary Execute the `build` command.
+   *
+   * @param {string[]} argv Command line arguments.
+   * @returns {number} Return code.
+   *
+   * @override
+   */
+  async doRun (argv) {
+    const log = this.log
+    log.trace(`${this.constructor.name}.doRun(${argv})`)
+
+    log.info(this.helpTitle)
+
+    this.outputDoneDuration()
+    return CliExitCodes.SUCCESS
+  }
+
+  // --------------------------------------------------------------------------
 }
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Xtest class is added as a property to this object.
+// The Etest class is added as a property to this object.
 
-module.exports.Xtest = Xtest
+module.exports.Etest = Etest
 
 // In ES6, it would be:
-// export class Xtest { ... }
+// export class Etest { ... }
 // ...
-// import { Xtest } from 'xtest.js'
+// import { Etest } from 'Etest.js'
 
 // ----------------------------------------------------------------------------

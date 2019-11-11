@@ -220,7 +220,7 @@ class MultiSecond extends Multi {
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Copy class is added as a property of this object.
+// The class is added as a property of this object.
 module.exports.Multi = Multi
 module.exports.MultiFirst = MultiFirst
 module.exports.MultiSecond = MultiFirst

@@ -32,12 +32,10 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The `xtest long` command implementation.
+ * The `xtest many` command implementation.
  */
 
 // ----------------------------------------------------------------------------
-
-const util = require('util')
 
 // ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
 const CliCommand = require('../../../../index.js').CliCommand
@@ -45,7 +43,7 @@ const CliExitCodes = require('../../../../index.js').CliExitCodes
 
 // ============================================================================
 
-class Generator extends CliCommand {
+class NoOpts extends CliCommand {
   // --------------------------------------------------------------------------
 
   /**
@@ -57,11 +55,21 @@ class Generator extends CliCommand {
     super(params)
 
     // Title displayed with the help message.
-    this.helpTitle = 'Test generator options'
+    this.helpTitle = 'No options'
+    this.cliOptions.addOptionsGroups(
+      [
+        {
+          title: 'NoOps options',
+          insertInFront: true,
+          optionsDefs: [
+          ]
+        }
+      ]
+    )
   }
 
   /**
-   * @summary Execute the `copy` command.
+   * @summary Execute the `noopts` command.
    *
    * @param {string[]} argv Command line arguments.
    * @returns {number} Return code.
@@ -73,14 +81,12 @@ class Generator extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.helpTitle)
-
-    const object = {}
-    this.addGenerator(object, argv)
-
-    log.output(util.inspect(object, { depth: 3 }))
+    // const config = this.config
+    log.always('none')
 
     // log.info('Done.')
     this.outputDoneDuration()
+
     return CliExitCodes.SUCCESS
   }
 }
@@ -90,11 +96,11 @@ class Generator extends CliCommand {
 
 // By default, `module.exports = {}`.
 // The class is added as a property of this object.
-module.exports.Generator = Generator
+module.exports.NoOpts = NoOpts
 
 // In ES6, it would be:
-// export class Generator { ... }
+// export class Long { ... }
 // ...
-// import { Generator } from 'generator.js'
+// import { Long } from 'long.js'
 
 // ----------------------------------------------------------------------------

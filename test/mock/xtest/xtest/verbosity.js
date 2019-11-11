@@ -43,7 +43,7 @@ const CliExitCodes = require('../../../../index.js').CliExitCodes
 
 // ============================================================================
 
-class Copy extends CliCommand {
+class Verbosity extends CliCommand {
   // --------------------------------------------------------------------------
 
   /**
@@ -84,8 +84,8 @@ class Copy extends CliCommand {
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Copy class is added as a property of this object.
-module.exports.Copy = Copy
+// The class is added as a property of this object.
+module.exports.Verbosity = Verbosity
 
 // In ES6, it would be:
 // export class Copy { ... }

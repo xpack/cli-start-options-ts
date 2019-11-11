@@ -46,7 +46,7 @@ class NotDerivedClass {
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Copy class is added as a property of this object.
+// The class is added as a property of this object.
 module.exports.NotDerivedClass = NotDerivedClass
 
 // In ES6, it would be:

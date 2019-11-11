@@ -102,4 +102,54 @@ test('ztest -h',
     t.end()
   })
 
+/**
+ * Test if help has no bugs and author.
+ */
+test('dtest -h',
+  async (t) => {
+    try {
+      const { code, stdout, stderr } = await Common.libRunDtest([
+        '-h'
+      ])
+      // Check exit code.
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.true(stdout.length > 0, 'has stdout')
+      // console.log(errLines)
+      const str = stdout.join('\n')
+      t.match(stdout[2], 'Usage: dtest [<options>...]', 'has Usage')
+      t.notMatch(str, 'Bug reports:',
+        'has no Bug reports')
+      // There should be no error messages.
+      t.equal(stderr.length, 0, 'stderr is empty')
+    } catch (err) {
+      t.fail(err.message)
+    }
+    t.end()
+  })
+
+/**
+ * Test if help has no bugs and author is no object or string.
+ */
+test('etest -h',
+  async (t) => {
+    try {
+      const { code, stdout, stderr } = await Common.libRunEtest([
+        '-h'
+      ])
+      // Check exit code.
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.true(stdout.length > 0, 'has stdout')
+      // console.log(errLines)
+      const str = stdout.join('\n')
+      t.match(stdout[2], 'Usage: etest [<options>...]', 'has Usage')
+      t.notMatch(str, 'Bug reports:',
+        'has no Bug reports')
+      // There should be no error messages.
+      t.equal(stderr.length, 0, 'stderr is empty')
+    } catch (err) {
+      t.fail(err.message)
+    }
+    t.end()
+  })
+
 // ----------------------------------------------------------------------------

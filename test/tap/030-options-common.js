@@ -738,4 +738,24 @@ test('xtest cwd -C /tmp/xx -C yy (lib)', async (t) => {
   t.end()
 })
 
+/**
+ * Test no command with app options.
+ */
+test('xtest noopts (lib)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.libRunXtest([
+      'noopts',
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    // console.log(stdout)
+    t.true(stdout.length > 0, 'has stdout')
+    t.match(stdout[2], 'Usage: xtest noopts [<options>...]', 'stdout has usage')
+    t.equal(stderr.length, 0, 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
 // ----------------------------------------------------------------------------

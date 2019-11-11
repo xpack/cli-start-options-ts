@@ -41,6 +41,10 @@ const spawn = require('child_process').spawn
 const Console = require('console').Console
 const Writable = require('stream').Writable
 
+const Ctest = require('./mock/ctest/main.js').Ctest
+const Dtest = require('./mock/dtest/main.js').Dtest
+const Etest = require('./mock/etest/main.js').Etest
+
 const Xtest = require('./mock/xtest/main.js').Xtest
 const Ytest = require('./mock/ytest/main.js').Ytest
 const Ztest = require('./mock/ztest/main.js').Ztest
@@ -255,6 +259,21 @@ class Common {
   static async libRunWtest (argv) {
     const Self = this
     return Self.libRun('wtest-long-name', Wtest, argv)
+  }
+
+  static async libRunCtest (argv) {
+    const Self = this
+    return Self.libRun('ctest', Ctest, argv)
+  }
+
+  static async libRunDtest (argv) {
+    const Self = this
+    return Self.libRun('dtest', Dtest, argv)
+  }
+
+  static async libRunEtest (argv) {
+    const Self = this
+    return Self.libRun('etest', Etest, argv)
   }
 
   /**
