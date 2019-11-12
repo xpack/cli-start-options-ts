@@ -42,7 +42,7 @@ coverage/
 # CI
 .travis.yml
 .appveyor.yml
-test
+test/
 
 README-MAINTAINER.md
 #end
