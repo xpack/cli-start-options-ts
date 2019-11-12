@@ -76,11 +76,11 @@ class Dtest extends CliApplication {
               options: ['-t', '--tool'],
               param: 'name',
               message: 'Subtool name',
-              init: (object) => {
-                object.config.toolName = undefined
+              init: ({ config }) => {
+                config.toolName = undefined
               },
-              action: (object, val) => {
-                object.config.toolName = val.toLowerCase()
+              action: ({ config }, val) => {
+                config.toolName = val.toLowerCase()
               },
               hasValue: true,
               values: ['clean'],
@@ -89,11 +89,11 @@ class Dtest extends CliApplication {
             {
               options: ['-n', '--dry-run'],
               message: 'Only display, do not run commands',
-              init: (object) => {
-                object.config.isDryRun = false
+              init: ({ config }) => {
+                config.isDryRun = false
               },
-              action: (object, val) => {
-                object.config.isDryRun = true
+              action: ({ config }, val) => {
+                config.isDryRun = true
               },
               isOptional: true
             }

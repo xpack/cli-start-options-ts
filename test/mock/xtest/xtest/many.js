@@ -65,11 +65,11 @@ class Many extends CliCommand {
           optionsDefs: [
             {
               options: ['--one'],
-              action: (object, val) => {
-                object.config.one = val
+              init: ({ config }) => {
+                config.one = undefined
               },
-              init: (object) => {
-                object.config.one = undefined
+              action: ({ config }, val) => {
+                config.one = val
               },
               msg: 'Option one',
               param: 'name',
@@ -77,11 +77,11 @@ class Many extends CliCommand {
             },
             {
               options: ['--two'],
-              action: (object, val) => {
-                object.config.two = val
+              init: ({ config }) => {
+                config.two = undefined
               },
-              init: (object) => {
-                object.config.two = undefined
+              action: ({ config }, val) => {
+                config.two = val
               },
               msg: 'Option two',
               param: 'name',
@@ -90,11 +90,11 @@ class Many extends CliCommand {
             },
             {
               options: ['--three'],
-              action: (object, val) => {
-                object.config.three = val
+              init: ({ config }) => {
+                config.three = undefined
               },
-              init: (object) => {
-                object.config.three = undefined
+              action: ({ config }, val) => {
+                config.three = val
               },
               msg: 'Option three',
               param: 'name',
@@ -103,11 +103,11 @@ class Many extends CliCommand {
             },
             {
               options: ['--four'],
-              action: (object, val) => {
-                object.config.four = val
+              init: ({ config }) => {
+                config.four = undefined
               },
-              init: (object) => {
-                object.config.four = undefined
+              action: ({ config }, val) => {
+                config.four = val
               },
               msg: 'Option four',
               // Has no param.

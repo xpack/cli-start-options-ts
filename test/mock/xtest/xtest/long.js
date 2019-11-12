@@ -67,11 +67,11 @@ class Long extends CliCommand {
           optionsDefs: [
             {
               options: ['--long', '--very-long', '--extra-very-long'],
-              action: (object, val) => {
-                object.config.long = val
+              init: ({ config }) => {
+                config.long = undefined
               },
-              init: (object) => {
-                object.config.long = undefined
+              action: ({ config }, val) => {
+                config.long = val
               },
               msg: 'Very long option',
               param: 'name',

@@ -66,11 +66,11 @@ class Multi extends CliCommand {
           optionsDefs: [
             {
               options: ['-m', '--multi'],
-              action: (object, val) => {
-                object.config.multi = val
+              init: ({ config }) => {
+                config.multi = undefined
               },
-              init: (object) => {
-                object.config.multi = undefined
+              action: ({ config }, val) => {
+                config.multi = val
               },
               msg: 'Multi option',
               param: 'name',
@@ -123,11 +123,11 @@ class MultiFirst extends Multi {
           optionsDefs: [
             {
               options: ['--first'],
-              action: (object, val) => {
-                object.config.multi = val
+              init: ({ config }) => {
+                config.multiFirst = undefined
               },
-              init: (object) => {
-                object.config.multiFirst = undefined
+              action: ({ config }, val) => {
+                config.multi = val
               },
               msg: 'Multi first option',
               param: 'int',
@@ -180,11 +180,11 @@ class MultiSecond extends Multi {
           optionsDefs: [
             {
               options: ['--second'],
-              action: (object, val) => {
-                object.config.multi = val
+              init: ({ config }) => {
+                config.multiFirst = undefined
               },
-              init: (object) => {
-                object.config.multiFirst = undefined
+              action: ({ config }, val) => {
+                config.multi = val
               },
               msg: 'Multi second option',
               param: 'int',
