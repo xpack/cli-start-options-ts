@@ -38,15 +38,15 @@
   },
   "homepage": "https://github.com/xpack/cli-start-options-js",
   "dependencies": {
-    "@xpack/es6-promisifier": "~1.0.0",
-    "@xpack/logger": "~2.2.0",
-    "@xpack/update-checker": "~1.1.0",
-    "semver": "~6.3.0"
+    "@xpack/es6-promisifier": "^1.0.0",
+    "@xpack/logger": "^2.2.0",
+    "@xpack/update-checker": "^1.1.0",
+    "semver": "^6.3.0"
   },
   "devDependencies": {
-    "standard": "~14.3.1",
-    "tap": "~14.9.2",
-    "tar": "~5.0.5"
+    "standard": "^14.3.1",
+    "tap": "^14.9.2",
+    "tar": "^5.0.5"
   },
   "peerDependencies": {},
   "bundledDependencies": [],
