@@ -20,11 +20,11 @@ For the user information, see the
 $ git clone https://github.com/xpack/cli-start-options-js.git cli-start-options-js.git
 $ cd cli-start-options-js.git
 $ npm install
-$ sudo npm link
+$ npm link
 $ ls -l ${HOME}/.nvm/versions/node/$(node --version)/lib/node_modules/@ilg
 ```
 
-A link to the development folder should be present in the system
+A link to the development folder should be present in the
 `node_modules` folder.
 
 In projects that use this module under development, link back from the
@@ -33,6 +33,7 @@ global location:
 ```console
 $ cd <project-folder>
 $ npm link @ilg/cli-start-options
+$ ls -l node_modules/@ilg
 ```
 
 ### Tests
