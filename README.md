@@ -179,10 +179,26 @@ class Xbld extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    cliOptions.addCommand(['build', 'b', 'bild'], 'lib/xmake/build.js')
-    cliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
-    cliOptions.addCommand(['import'], 'lib/xmake/import.js')
-    cliOptions.addCommand(['export'], 'lib/xmake/export.js')
+    const commands = {
+      install: {
+        aliases: ['i'],
+        modulePath: 'lib/xpm/install.js'
+      },
+      'run-script': {
+        aliases: ['run', 'rum'],
+        modulePath: 'lib/xpm/run-script.js'
+      },
+      build: {
+        aliases: ['b', 'bild'],
+        modulePath: 'lib/xpm/build.js'
+      },
+      init: {
+        aliases: ['ini'],
+        modulePath: 'lib/xpm/init.js'
+      }
+    }
+    this.cmdsTree.addCommands(commands)
+
   }
 }
 ```
