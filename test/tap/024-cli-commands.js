@@ -158,7 +158,7 @@ test('xtest multi 1 2', async (t) => {
 
     // There should be no error messages.
     t.equal(stderr.length, 1, 'stderr 1 line')
-    t.match(stderr[0], 'error: Command \'one\' is not supported.',
+    t.match(stderr[0], 'error: Command \'multi one\' is not supported.',
       'not supported')
   } catch (err) {
     t.fail(err.message)
