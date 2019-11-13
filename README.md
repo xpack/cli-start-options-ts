@@ -18,12 +18,6 @@ commands) and server like operations (multiple instances in parallel).
 The module exports several classes (like CliApplication, CliCommand, ...)
 that can be used as base classes for CLI applications.
 
-## Maintainer info
-
-This page documents how to use this module in an user application.
-For maintainer information, see the separate
-[README-MAINTAINER](https://github.com/xpack/cli-start-options-js/blob/master/README-MAINTAINER.md) page.
-
 ## Prerequisites
 
 A recent [Node.js](https://nodejs.org) (>=8.x), since the ECMAScript 6 class
@@ -219,6 +213,13 @@ in a configuration object.
  */
 
 ```
+
+## Maintainer info
+
+This page documents how to use this module in an user application.
+For maintainer information, see the separate
+[README-MAINTAINER](https://github.com/xpack/cli-start-options-js/blob/master/README-MAINTAINER.md)
+page.
 
 ## License
 
