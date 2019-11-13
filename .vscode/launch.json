@@ -440,6 +440,36 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xtest.js multi second third -dd 1 2",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "multi",
+        "second",
+        "third",
+        "-dd",
+        "1",
+        "2"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xtest.js -i",
       "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,

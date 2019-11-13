@@ -74,7 +74,7 @@ class Multi extends CliCommand {
               },
               msg: 'Multi option',
               param: 'name',
-              isMandatory: true
+              isMandatory: false
             }
           ]
         }
@@ -95,7 +95,17 @@ class Multi extends CliCommand {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.helpTitle)
-    // const config = this.config
+    const config = this.config
+
+    if (config.multi !== undefined) {
+      log.always(`multi: ${config.multi}`)
+    }
+    if (argv.length === 0) {
+      log.always('no args')
+    }
+    for (const arg of argv) {
+      log.always(arg)
+    }
 
     this.outputDoneDuration()
     return CliExitCodes.SUCCESS
@@ -127,7 +137,7 @@ class MultiFirst extends Multi {
                 config.multiFirst = undefined
               },
               action: ({ config }, val) => {
-                config.multi = val
+                config.multiFirst = val
               },
               msg: 'Multi first option',
               param: 'int',
@@ -152,7 +162,20 @@ class MultiFirst extends Multi {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.helpTitle)
-    // const config = this.config
+    const config = this.config
+
+    if (config.multi !== undefined) {
+      log.always(`multi: ${config.multi}`)
+    }
+    if (config.multiFirst !== undefined) {
+      log.always(`first: ${config.multiFirst}`)
+    }
+    if (argv.length === 0) {
+      log.always('no args')
+    }
+    for (const arg of argv) {
+      log.always(arg)
+    }
 
     this.outputDoneDuration()
     return CliExitCodes.SUCCESS
@@ -181,14 +204,14 @@ class MultiSecond extends Multi {
             {
               options: ['--second'],
               init: ({ config }) => {
-                config.multiFirst = undefined
+                config.multiSecond = undefined
               },
               action: ({ config }, val) => {
-                config.multi = val
+                config.multiSecond = val
               },
               msg: 'Multi second option',
               param: 'int',
-              isMandatory: true
+              isMandatory: false
             }
           ]
         }
@@ -209,7 +232,20 @@ class MultiSecond extends Multi {
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.helpTitle)
-    // const config = this.config
+    const config = this.config
+
+    if (config.multi !== undefined) {
+      log.always(`multi: ${config.multi}`)
+    }
+    if (config.multiSecond !== undefined) {
+      log.always(`second: ${config.multiSecond}`)
+    }
+    if (argv.length === 0) {
+      log.always('no args')
+    }
+    for (const arg of argv) {
+      log.always(arg)
+    }
 
     this.outputDoneDuration()
     return CliExitCodes.SUCCESS
