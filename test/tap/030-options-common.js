@@ -234,46 +234,6 @@ test('xtest --version -d -d (lib)', async (t) => {
 })
 
 /**
- * Test commands that do not have an implementation derived from CliCommand.
- */
-test('xtest notclass (lib)', async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.libRunXtest([
-      'notclass'
-    ])
-    t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
-    t.equal(stdout.length, 0, 'stdout is empty')
-    // console.log(stderr)
-    t.true(stderr.length > 1, 'stderr has lines')
-    t.match(stderr[0], 'AssertionError', 'stderr is assertion')
-  } catch (err) {
-    t.fail(err.message)
-  }
-  t.end()
-})
-
-/**
- * Test commands that are not unique.
- */
-test('xtest co (lib)', async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.libRunXtest([
-      'co'
-    ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is app')
-    // console.log(stderr)
-    t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[2], 'Usage: xtest <command>', 'stderr[3] is Usage')
-    t.equal(stderr.length, 1, 'stderr has 1 line')
-    t.equal(stderr[0], "error: Command 'co' is not unique.",
-      'stderr is error')
-  } catch (err) {
-    t.fail(err.message)
-  }
-  t.end()
-})
-
-/**
  * Test if --loglevel debug adds debug lines.
  */
 test('xtest --version --loglevel debug (lib)', async (t) => {
