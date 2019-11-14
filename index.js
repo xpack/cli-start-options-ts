@@ -79,7 +79,7 @@ const CliErrorType = require('./lib/cli-error.js').CliErrorType
 const CliErrorInput = require('./lib/cli-error.js').CliErrorInput
 const CliErrorOutput = require('./lib/cli-error.js').CliErrorOutput
 
-const CliUtil = require('./lib/cli-util.js').CliUtil
+const CliUtils = require('./lib/cli-utils.js').CliUtils
 
 const CmdsTree = require('./lib/dm-commands.js').CmdsTree
 
@@ -101,7 +101,7 @@ module.exports.CliErrorType = CliErrorType
 module.exports.CliErrorInput = CliErrorInput
 module.exports.CliErrorOutput = CliErrorOutput
 
-module.exports.CliUtil = CliUtil
+module.exports.CliUtils = CliUtils
 module.exports.CmdsTree = CmdsTree
 
 // In ES6, it would be:

@@ -47,7 +47,7 @@ const test = require('tap').test
 const Common = require('../common.js').Common
 
 const CliExitCodes = require('../../index.js').CliExitCodes
-const CliUtil = require('../../index.js').CliUtil
+const CliUtils = require('../../index.js').CliUtils
 
 assert(Common)
 
@@ -65,7 +65,7 @@ const rootAbsolutePath = path.resolve(path.dirname(__dirname),
  */
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
-  pack = await CliUtil.readPackageJson(rootAbsolutePath)
+  pack = await CliUtils.readPackageJson(rootAbsolutePath)
   t.true(pack, 'package ok')
   t.true(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)

@@ -43,19 +43,19 @@ const path = require('path')
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
 
-const CliUtil = require('../../index.js').CliUtil
+const CliUtils = require('../../index.js').CliUtils
 
 // ----------------------------------------------------------------------------
 
 test('asserts', (t) => {
-  t.true(CliUtil !== undefined, 'CliUtil is defined')
+  t.true(CliUtils !== undefined, 'CliUtils is defined')
 
   t.end()
 })
 
 test('readPackageJson', async (t) => {
   const rootPath = path.dirname(path.dirname(__dirname))
-  const json = await CliUtil.readPackageJson(rootPath)
+  const json = await CliUtils.readPackageJson(rootPath)
   t.true(json, 'has json')
   t.equal(json.name, '@ilg/cli-start-options', 'name is right')
   t.true(json.version, 'version is present')
@@ -64,13 +64,13 @@ test('readPackageJson', async (t) => {
 })
 
 test('formatDuration', (t) => {
-  t.equal(CliUtil.formatDuration(1), '1 ms', '1 ms')
-  t.equal(CliUtil.formatDuration(999), '999 ms', '999 ms')
+  t.equal(CliUtils.formatDuration(1), '1 ms', '1 ms')
+  t.equal(CliUtils.formatDuration(999), '999 ms', '999 ms')
 
-  t.equal(CliUtil.formatDuration(1000), '1.000 sec', '1.000 sec')
-  t.equal(CliUtil.formatDuration(1499), '1.499 sec', '1.499 sec')
-  t.equal(CliUtil.formatDuration(1500), '1.500 sec', '1.500 sec')
-  t.equal(CliUtil.formatDuration(1999), '1.999 sec', '1.999 sec')
+  t.equal(CliUtils.formatDuration(1000), '1.000 sec', '1.000 sec')
+  t.equal(CliUtils.formatDuration(1499), '1.499 sec', '1.499 sec')
+  t.equal(CliUtils.formatDuration(1500), '1.500 sec', '1.500 sec')
+  t.equal(CliUtils.formatDuration(1999), '1.999 sec', '1.999 sec')
 
   t.end()
 })

@@ -48,11 +48,11 @@ const Common = require('../common.js').Common
 
 const CliApplication = require('../../index.js').CliApplication
 const CliExitCodes = require('../../index.js').CliExitCodes
-const CliUtil = require('../../index.js').CliUtil
+const CliUtils = require('../../index.js').CliUtils
 
 assert(CliApplication)
 assert(CliExitCodes)
-assert(CliUtil)
+assert(CliUtils)
 
 // ----------------------------------------------------------------------------
 
@@ -168,7 +168,7 @@ class XtestImmediate {
 
 test('setup', async (t) => {
   // Read in the package.json, to later compare version.
-  pack = await CliUtil.readPackageJson(rootAbsolutePath)
+  pack = await CliUtils.readPackageJson(rootAbsolutePath)
   t.ok(pack, 'package was parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
