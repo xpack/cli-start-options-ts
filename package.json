@@ -41,6 +41,7 @@
     "@xpack/es6-promisifier": "^1.0.0",
     "@xpack/logger": "^2.2.0",
     "@xpack/update-checker": "^1.1.0",
+    "del": "^5.1.0",
     "semver": "^6.3.0"
   },
   "devDependencies": {
