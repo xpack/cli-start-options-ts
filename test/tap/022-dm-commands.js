@@ -102,11 +102,19 @@ test('two commands', (t) => {
   cmd = cmdsTree.findCommands(['con'])
   t.equal(cmd.modulePath, 'conf.js', 'con module is conf.js')
 
-  cmd = cmdsTree.findCommands(['copyy'])
-  t.equal(cmd.modulePath, 'copy.js', 'copyy module is copy.js')
+  try {
+    cmd = cmdsTree.findCommands(['copyy'])
+    t.fail('copyy did not throw')
+  } catch (ex) {
+    t.match(ex.message, 'probably mispelled', 'copyy mispelled')
+  }
 
-  cmd = cmdsTree.findCommands(['conff'])
-  t.equal(cmd.modulePath, 'conf.js', 'conff module is conf.js')
+  try {
+    cmd = cmdsTree.findCommands(['conff'])
+    t.fail('conff did not throw')
+  } catch (ex) {
+    t.match(ex.message, 'probably mispelled', 'conff mispelled')
+  }
 
   try {
     cmd = cmdsTree.findCommands(['co'])
@@ -194,8 +202,12 @@ test('aliases', (t) => {
   cmd = cmdsTree.findCommands(['bi'])
   t.equal(cmd.modulePath, 'build.js', 'bi module is build.js')
 
-  cmd = cmdsTree.findCommands(['bildu'])
-  t.equal(cmd.modulePath, 'build.js', 'bildu module is build.js')
+  try {
+    cmd = cmdsTree.findCommands(['bildu'])
+    t.fail('bildu did not throw')
+  } catch (ex) {
+    t.match(ex.message, 'probably mispelled', 'bildu mispelled')
+  }
 
   cmd = cmdsTree.findCommands(['conf'])
   t.equal(cmd.modulePath, 'conf.js', 'conf module is conf.js')
@@ -242,8 +254,12 @@ test('mixed aliases', (t) => {
   cmd = cmdsTree.findCommands(['c'])
   t.equal(cmd.modulePath, 'build.js', 'c module is build.js')
 
-  cmd = cmdsTree.findCommands(['cildu'])
-  t.equal(cmd.modulePath, 'build.js', 'cildu module is build.js')
+  try {
+    cmd = cmdsTree.findCommands(['cildu'])
+    t.fail('cildu did not throw')
+  } catch (ex) {
+    t.match(ex.message, 'probably mispelled', 'bildu mispelled')
+  }
 
   cmd = cmdsTree.findCommands(['conf'])
   t.equal(cmd.modulePath, 'conf.js', 'conf module is conf.js')

@@ -573,6 +573,30 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap 022-dm-commands.js",
+      "program": "${workspaceRoot}/test/tap/022-dm-commands.js",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "tap 030-options-common.js",
       "program": "${workspaceRoot}/test/tap/030-options-common.js",
       "stopOnEntry": true,
