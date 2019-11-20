@@ -42,6 +42,7 @@
     "@xpack/logger": "^2.2.0",
     "@xpack/update-checker": "^1.1.0",
     "del": "^5.1.0",
+    "mkdirp-promise": "^5.0.1",
     "semver": "^6.3.0"
   },
   "devDependencies": {
