@@ -4,6 +4,11 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues).
 
+## v0.7.1 (2019-11-20)
+
+- [#2] Add support for commands with multiple words
+- cli-utils: fix readPackageJson & createFolderLink
+
 ## v0.7.0 (2019-11-10)
 
 - [#12] Set process.exitCode at the end
