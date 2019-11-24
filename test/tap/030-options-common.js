@@ -319,6 +319,24 @@ test('xtest verb (lib)', async (t) => {
 })
 
 /**
+ * Test if unique v is recognised.
+ */
+test('xtest v (lib)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.libRunXtest([
+      'v'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(stdout.length, 3, 'stdout has 3 lines')
+    t.match(stdout[2], 'completed in', 'stdout is completed')
+    t.equal(stderr.length, 0, 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
  * Test if explicit verbosity is honoured.
  */
 test('xtest verb --informative (lib)', async (t) => {

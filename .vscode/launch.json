@@ -336,6 +336,31 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xtest.js v",
+      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "v"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": [
+        "*async_hook*.js",
+        "domain.js"
+      ],
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "ztest.js -h",
       "program": "${workspaceRoot}/test/mock/ztest/bin/ztest.js",
       "stopOnEntry": true,

@@ -334,6 +334,55 @@ test('two commands two subcommands', (t) => {
   t.end()
 })
 
+test('promotion', (t) => {
+  const cmdsTree = new CmdsTree()
+  cmdsTree.addCommands({
+    copy: {
+      aliases: ['cpy'],
+      modulePath: 'copy.js',
+      subCommands: {
+        binary: {
+          aliases: ['by'],
+          modulePath: 'copyBin.js'
+        },
+        ascii: {
+          aliases: ['ai'],
+          modulePath: 'copyAsc.js'
+        },
+        utf: {
+          aliases: ['alt'],
+          modulePath: 'copyAlt.js'
+        }
+      }
+    }
+  })
+
+  const cmds = cmdsTree.getCommandsNames()
+  t.equal(cmds.length, 1, 'has 1 command')
+
+  t.equal(cmds[0], 'copy', 'first is copy')
+
+  cmdsTree.buildCharTrees()
+  t.equal(cmdsTree.endCharNode.length, 2, 'has 2 end nodes')
+
+  let cmd
+
+  cmd = cmdsTree.findCommands(['c'])
+  t.equal(cmd.modulePath, 'copy.js', 'c module is copy.js')
+
+  cmd = cmdsTree.findCommands(['c', 'b'])
+  t.equal(cmd.modulePath, 'copyBin.js', 'c b module is copyBin.js')
+
+  try {
+    cmd = cmdsTree.findCommands(['c', 'a'])
+    t.fail('c a did not throw')
+  } catch (ex) {
+    t.match(ex.message, 'is not unique', 'c a not unique')
+  }
+
+  t.end()
+})
+
 test('subcommands without parent command class', (t) => {
   const cmdsTree = new CmdsTree()
   cmdsTree.addCommands({

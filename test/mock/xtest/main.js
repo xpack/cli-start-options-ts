@@ -90,6 +90,7 @@ class Xtest extends CliApplication {
         modulePath: 'xtest/con.js'
       },
       verbosity: {
+        aliases: ['vb'],
         modulePath: 'xtest/verbosity.js'
       },
       long: {
