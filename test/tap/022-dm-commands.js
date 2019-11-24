@@ -334,4 +334,60 @@ test('two commands two subcommands', (t) => {
   t.end()
 })
 
+test('subcommands without parent command class', (t) => {
+  const cmdsTree = new CmdsTree()
+  cmdsTree.addCommands({
+    copy: {
+      subCommands: {
+        binary: {
+          modulePath: 'copyBin.js'
+        },
+        ascii: {
+          modulePath: 'copyAsc.js'
+        }
+      }
+    }
+  })
+
+  const cmds = cmdsTree.getCommandsNames()
+  t.equal(cmds.length, 1, 'has 1 command')
+
+  t.equal(cmds[0], 'copy', 'first is copy')
+
+  cmdsTree.buildCharTrees()
+  t.equal(cmdsTree.endCharNode.length, 1, 'has 1 end node')
+
+  let cmd
+
+  cmd = cmdsTree.findCommands(['copy'])
+  t.false(cmd.modulePath, 'copy has no modulePath')
+
+  cmd = cmdsTree.findCommands(['copy', 'binary'])
+  t.equal(cmd.modulePath, 'copyBin.js', 'copy binary module is copyBin.js')
+
+  t.end()
+})
+
+test('subcommands without module', (t) => {
+  try {
+    const cmdsTree = new CmdsTree()
+    cmdsTree.addCommands({
+      copy: {
+        subCommands: {
+          binary: {
+            modulePath: 'copyBin.js'
+          },
+          ascii: {
+          }
+        }
+      }
+    })
+    t.fail('buildCharTrees did not throw')
+  } catch (ex) {
+    t.match(ex.message, 'must have a modulePath', 'must have modulePath')
+  }
+
+  t.end()
+})
+
 // ----------------------------------------------------------------------------
