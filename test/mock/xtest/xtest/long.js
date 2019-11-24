@@ -81,22 +81,27 @@ class Long extends CliCommand {
         }
       ]
     )
+
+    this.cliOptions.hasForwardableArgs = true
+    this.cliOptions.hasNoCustomOptions = true
   }
 
   /**
    * @summary Execute the `copy` command.
    *
-   * @param {string[]} argv Command line arguments.
+   * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
    *
    * @override
    */
-  async doRun (argv) {
+  async doRun (args, forwardedArgs) {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
     log.info(this.helpTitle)
 
+    log.info(`Args: ${args}`)
+    log.info(`FwdArgs: ${forwardedArgs}`)
     // log.info('Done.')
     this.outputDoneDuration()
     return CliExitCodes.SUCCESS

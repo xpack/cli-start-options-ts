@@ -277,7 +277,7 @@ test('xtest xx -s (lib)', async (t) => {
 })
 
 /**
- * Test if -q shows warnings.
+ * Test if -q shows errors.
  */
 test('xtest long --long value --xx -q (lib)', async (t) => {
   try {
@@ -289,11 +289,11 @@ test('xtest long --long value --xx -q (lib)', async (t) => {
       '-q',
       'debug'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.equal(stdout.length, 0, 'stdout is empty')
     t.equal(stderr.length, 1, 'stderr has 1 line')
-    t.equal(stderr[0], "warning: Option '--xx' not supported; ignored",
-      'stderr is warning')
+    t.equal(stderr[0], "error: Option '--xx' not supported",
+      'stderr is error')
   } catch (err) {
     t.fail(err.message)
   }
@@ -502,7 +502,7 @@ test('xtest long -h (lib)', async (t) => {
 })
 
 /**
- * Test if long with unused.
+ * Test if long with unused option.
  */
 test('xtest long -xyz (lib)', async (t) => {
   try {
@@ -512,12 +512,39 @@ test('xtest long -xyz (lib)', async (t) => {
       'value',
       '--xyz'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 3, 'stdout has 3 lines')
-    t.match(stdout[2], 'completed in', 'stdout is completed')
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.true(stdout.length > 10, 'stdout has >10 lines')
+    const str = stdout.join('\n')
+
+    t.match(str, 'Usage: xtest long [<options>...] [<name>...] ' +
+    '[-- <very-long-long-long-params>...]', 'stdout has usage')
     t.equal(stderr.length, 1, 'stderr has 1 line')
-    t.match(stderr[0], "warning: Option '--xyz' not supported; ignored",
+    t.match(stderr[0], "error: Option '--xyz' not supported",
       'stderr has error')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+test('xtest long -xyz (lib)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.libRunXtest([
+      'long',
+      '--long',
+      'value',
+      'one',
+      'two',
+      '--',
+      '1',
+      '2'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(stdout.length, 5, 'stdout has 5 lines')
+    t.match(stdout[1], 'Args: one,two', 'stdout has args')
+    t.match(stdout[2], 'FwdArgs: 1,2', 'stdout has fwdArgs')
+    t.match(stdout[4], 'completed in', 'stdout has completed')
+    t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
   }
