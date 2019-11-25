@@ -10,13 +10,14 @@
   },
   "bin": {},
   "scripts": {
-    "prepublishOnly": "standard && npm run test-tap -s",
+    "prepublishOnly": "standard && npm run test-tap100 -s",
     "test": "standard && npm run test-tap -s",
+    "test100": "standard && npm run test-tap100 -s",
     "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
     "test-tap": "tap --reporter=classic --timeout 300 \"test/tap/*.js\"",
-    "tap": "tap --reporter=spec --timeout 300",
-    "tap-coverage": "tap --coverage --reporter=spec --timeout 300",
-    "fix": "standard --fix"
+    "test-tap100": "tap --reporter=classic --timeout 300 --100 \"test/tap/*.js\"",
+    "tap": "tap --reporter=spec --timeout 30",
+    "fix": "standard --fix --verbose"
   },
   "repository": {
     "type": "git",
