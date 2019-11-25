@@ -1,8 +1,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@ilg/cli-start-options.svg)](https://www.npmjs.com/package/@ilg/cli-start-options)
 [![license](https://img.shields.io/github/license/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/blob/xpack/LICENSE)
 [![Standard](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com/)
-[![Travis](https://img.shields.io/travis/xpack/cli-start-options-js.svg?label=linux)](https://travis-ci.org/xpack/cli-start-options-js)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/rydiijfkxr11essq?svg=true)](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js)
+[![Actions Status](https://github.com/xpack/cli-start-options-js/workflows/Node.js%20CI%20on%20Push/badge.svg)](https://github.com/xpack/cli-start-options-js/actions)
 [![GitHub issues](https://img.shields.io/github/issues/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/issues)
 [![GitHub pulls](https://img.shields.io/github/issues-pr/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/pulls)
 
@@ -206,17 +205,18 @@ $ npm run tap-coverage test/tap/021-dm-commands.js
 
 #### Coverage exceptions
 
-- none
+Use `/* istanbul ignore next <something> */` before the code to be ignored
+(https://github.com/gotwarlost/istanbul/blob/master/ignoring-code-for-coverage.md)
+
+- in some CliApplication option definitions
+- in CliApplication.main() for some exceptions
+- in `CmdBaseNode_.findCommands()` for an additional assert
 
 ### Continuous Integration (CI)
 
 The continuous integration tests are performed via
-[Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and
-[AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
-
-To speed up things, the `node_modules` folder is cached between builds.
-
-The tests are currently performed with node 10, 12.
+[GitHub Actions](https://github.com/features/actions) on Ubuntu,
+Windows and macOS, using node 8, 10, 12.
 
 ### Standard compliance
 
@@ -229,6 +229,7 @@ Known and accepted exceptions:
 
 - `// eslint-disable-line node/no-deprecated-api` to continue using the
 deprecated `domain` module
+- `// eslint-disable-line eqeqeq` to accept an object compare
 
 To manually fix compliance with the style guide (where possible):
 
@@ -236,7 +237,7 @@ To manually fix compliance with the style guide (where possible):
 $ npm run fix
 
 > @ilg/cli-start-options@0.1.12 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
-> standard --fix
+> standard --fix --verbose
 
 ```
 
