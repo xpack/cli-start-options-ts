@@ -4,6 +4,8 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues).
 
+TODO: fix pre/postOptions
+
 ## v0.7.1 (2019-11-20)
 
 - [#2] Add support for commands with multiple words

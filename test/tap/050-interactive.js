@@ -148,7 +148,7 @@ class XtestImmediate {
 
   closeInput () {
     if (debug) {
-      console.log(`stdin close`)
+      console.log('stdin close')
     }
     if (this.proc.stdin) {
       this.proc.stdin.end()

@@ -62,8 +62,8 @@ class Long extends CliCommand {
         {
           title: 'Long options',
           insertInFront: true,
-          preOptions: '[<name>...]', // Array of test names.
-          postOptions: '[-- <very-long-long-long-params>...]',
+          // preOptions: '[<name>...]', // Array of test names.
+          // postOptions: '[-- <very-long-long-long-params>...]',
           optionsDefs: [
             {
               options: ['--long', '--very-long', '--extra-very-long'],
@@ -84,6 +84,9 @@ class Long extends CliCommand {
 
     this.cliOptions.hasForwardableArgs = true
     this.cliOptions.hasNoCustomOptions = true
+
+    this.helpOptions.usageMoreOptions =
+      '[<name>...] [-- <very-long-long-long-params>...]'
   }
 
   /**
