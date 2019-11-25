@@ -107,6 +107,14 @@ class XtestImmediate {
         resolve(code)
       })
 
+      // Used when terminating with kill().
+      this.proc.on('exit', (code) => {
+        if (debug) {
+          console.log('on.exit')
+        }
+        resolve(code)
+      })
+
       if (this.proc.stdout) {
         this.proc.stdout.on('data', (chunk) => {
           if (debug) {
@@ -135,6 +143,15 @@ class XtestImmediate {
     }
     if (this.proc.stdin) {
       this.proc.stdin.write(`${str}\n`)
+    }
+  }
+
+  closeInput () {
+    if (debug) {
+      console.log(`stdin close`)
+    }
+    if (this.proc.stdin) {
+      this.proc.stdin.end()
     }
   }
 
@@ -238,6 +255,13 @@ test('xtest -i (spawn)', async (t) => {
 
   await t.test('.exit', async (t) => {
     child.writeToInput('.exit')
+
+    // node 8 REPL does not close the stream on .exit, so it must be done
+    // explicitly, otherwise the promise never resolves.
+    child.closeInput()
+
+    // This was an alternate, more brutal, way of terminating the process.
+    // child.proc.kill()
 
     const code = await child.promise
     t.equal(code, CliExitCodes.SUCCESS, 'exit code success')
