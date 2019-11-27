@@ -85,12 +85,12 @@ class Multi extends CliCommand {
   /**
    * @summary Execute the `multi` command.
    *
-   * @param {string[]} argv Command line arguments.
+   * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
    *
    * @override
    */
-  async doRun (argv) {
+  async doRun (args) {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
@@ -100,10 +100,10 @@ class Multi extends CliCommand {
     if (config.multi !== undefined) {
       log.always(`multi: ${config.multi}`)
     }
-    if (argv.length === 0) {
+    if (args.length === 0) {
       log.always('no args')
     }
-    for (const arg of argv) {
+    for (const arg of args) {
       log.always(arg)
     }
 
@@ -152,12 +152,12 @@ class MultiFirst extends Multi {
   /**
    * @summary Execute the `multi first` command.
    *
-   * @param {string[]} argv Command line arguments.
+   * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
    *
    * @override
    */
-  async doRun (argv) {
+  async doRun (args) {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
@@ -170,10 +170,10 @@ class MultiFirst extends Multi {
     if (config.multiFirst !== undefined) {
       log.always(`first: ${config.multiFirst}`)
     }
-    if (argv.length === 0) {
+    if (args.length === 0) {
       log.always('no args')
     }
-    for (const arg of argv) {
+    for (const arg of args) {
       log.always(arg)
     }
 
@@ -222,12 +222,12 @@ class MultiSecond extends Multi {
   /**
    * @summary Execute the `multi second` command.
    *
-   * @param {string[]} argv Command line arguments.
+   * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
    *
    * @override
    */
-  async doRun (argv) {
+  async doRun (args) {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
@@ -240,10 +240,10 @@ class MultiSecond extends Multi {
     if (config.multiSecond !== undefined) {
       log.always(`second: ${config.multiSecond}`)
     }
-    if (argv.length === 0) {
+    if (args.length === 0) {
       log.always('no args')
     }
-    for (const arg of argv) {
+    for (const arg of args) {
       log.always(arg)
     }
 

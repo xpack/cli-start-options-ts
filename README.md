@@ -79,9 +79,9 @@ class Xyz extends CliApplication {
     this.rootAbsolutePath = path.dirname(__dirname)
   }
 
-  async doRun (argv) {
+  async doRun (args) {
     const log = this.log
-    log.trace(argv)
+    log.trace(args)
 
     // Implement the functionality.
     return CliExitCodes.SUCCESS
@@ -139,7 +139,7 @@ $ xmk --version
 0.1.0
 ```
 
-The `argv` array has the parsed options
+The `args` array has the parsed options
 filtered out, only the remaining options are passed to `doRun()`.
 
 ### A more complex use case

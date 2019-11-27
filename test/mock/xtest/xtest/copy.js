@@ -114,12 +114,12 @@ class Copy extends CliCommand {
   /**
    * @summary Execute the `copy` command.
    *
-   * @param {string[]} argv Command line arguments.
+   * @param {string[]} args Command line arguments.
    * @returns {number} Return code.
    *
    * @override
    */
-  async doRun (argv) {
+  async doRun (args) {
     const log = this.log
     log.trace(`${this.constructor.name}.doRun()`)
 
