@@ -49,18 +49,6 @@ class Generator extends CliCommand {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Constructor, to set help definitions.
-   *
-   * @param {Object} params The generic parameters object.
-   */
-  constructor (params) {
-    super(params)
-
-    // Title displayed with the help message.
-    this.helpTitle = 'Test generator options'
-  }
-
-  /**
    * @summary Execute the `copy` command.
    *
    * @param {string[]} args Command line arguments.

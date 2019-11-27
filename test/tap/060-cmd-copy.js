@@ -84,8 +84,9 @@ test('xtest copy',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
       t.true(stdout.length > 0, 'has stdout')
-      t.match(stdout[2], 'Usage: xtest copy [<options>...]', 'has Usage')
+      t.match(stdout[3], 'Usage: xtest copy [<options>...]', 'has Usage')
 
       // console.log(errLines)
       t.equal(stderr.length, 2, 'has two errors')
@@ -115,16 +116,16 @@ test('xtest copy -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
       t.true(stdout.length > 0, 'has stdout')
-      if (stdout.length > 9) {
-        // console.log(outLines)
-        t.equal(stdout[1], 'Copy a file to another file',
-          'has title')
-        t.match(stdout[2], 'Usage: xtest copy [<options>...]', 'has Usage')
-        t.match(stdout[4], 'Copy options:', 'has copy options')
-        t.match(stdout[5], '  --file <file>  ', 'has --file')
-        t.match(stdout[6], '  --output <file>  ', 'has --output')
-      }
+      // console.log(outLines)
+      t.equal(stdout[1], 'Copy a file to another file',
+        'has title')
+      t.match(stdout[3], 'Usage: xtest copy [<options>...]', 'has Usage')
+      t.match(stdout[5], 'Copy options:', 'has copy options')
+      t.match(stdout[6], '  --file <file>  ', 'has --file')
+      t.match(stdout[7], '  --output <file>  ', 'has --output')
+
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
@@ -145,13 +146,13 @@ test('xtest cop -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
       t.true(stdout.length > 0, 'has stdout')
-      if (stdout.length > 9) {
-        // console.log(outLines)
-        t.match(stdout[1], 'Copy a file to another file',
-          'has title')
-        t.match(stdout[2], 'Usage: xtest copy [<options>...]', 'has Usage')
-      }
+      // console.log(outLines)
+      t.match(stdout[1], 'Copy a file to another file',
+        'has title')
+      t.match(stdout[3], 'Usage: xtest copy [<options>...]', 'has Usage')
+
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
@@ -176,8 +177,10 @@ test('xtest cop --file xxx --output yyy -q',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.ERROR.INPUT, 'exit code is input')
+
       // There should be no output.
       t.equal(stdout.length, 0, 'stdout is empty')
+
       t.equal(stderr.length, 1, 'stderr has 1 line')
       t.match(stderr[0], 'ENOENT: no such file or directory',
         'stderr is ENOENT')
@@ -221,11 +224,13 @@ test('xtest cop --file input.json --output output.json',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
+      // console.log(stdout)
       t.equal(stdout.length, 5, 'stdout has 5 lines')
       t.match(stdout[4], 'completed in', 'stdout is completed')
-      // console.log(stdout)
-      t.equal(stderr.length, 0, 'stderr is empty')
+
       // console.log(stderr)
+      t.equal(stderr.length, 0, 'stderr is empty')
 
       const fileContent = await fsPromises.readFile(outPath)
       t.ok(fileContent, 'content is read in')
@@ -253,11 +258,13 @@ test('xtest cop --file input --output output -v',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code')
+
+      // console.log(stdout)
       t.equal(stdout.length, 6, 'stdout has 6 lines')
       t.match(stdout[5], 'completed in', 'stdout is completed')
-      // console.log(stdout)
-      t.equal(stderr.length, 0, 'stderr is empty')
+
       // console.log(stderr)
+      t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
       t.fail(err.message)
     }
@@ -283,10 +290,12 @@ if (os.platform() !== 'win32') {
         ])
         // Check exit code.
         t.equal(code, CliExitCodes.ERROR.OUTPUT, 'exit code is output')
+
+        // console.log(stdout)
         t.equal(stdout.length, 4, 'stdout has 4 lines')
         // Output should go up to Writing...
-        // console.log(stdout)
         t.match(stdout[3], 'Writing ', 'up to writing')
+
         // console.log(stderr)
         t.equal(stderr.length, 1, 'stderr has 1 line')
         t.match(stderr[0], 'EACCES: permission denied', 'stderr is EACCES')

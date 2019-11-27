@@ -82,10 +82,12 @@ test('xtest --version (spawn)', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 1, 'stdout has one line')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
     t.equal(stdout[0], pack.version, 'version value')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -101,9 +103,11 @@ test('xtest xyz (spawn)', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[1], 'Mock Test', 'has title')
-    t.match(stdout[2], 'Usage: xtest <command>', 'has Usage')
+    t.match(stdout[3], 'Usage: xtest <command>', 'has Usage')
+
     // There should be one error message.
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.match(stderr[0], 'Command \'xyz\' is not supported.', 'error')
@@ -123,10 +127,11 @@ test('xtest -h (lib)', async (t) => {
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     // console.log(stdout)
-    t.equal(stdout.length, 32, 'stdout has 17 lines')
+    t.equal(stdout.length, 33, 'stdout has 33 lines')
     t.match(stdout[1], 'Mock Test', 'has title')
-    t.match(stdout[2], 'Usage: xtest <command> [<options>...] ...',
+    t.match(stdout[3], 'Usage: xtest <command> [<options>...] ...',
       'has Usage')
 
     const str = stdout.join('\n')

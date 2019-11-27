@@ -44,6 +44,37 @@ const CliExitCodes = require('../../index.js').CliExitCodes
 // ----------------------------------------------------------------------------
 
 /**
+ * Test top help.
+ */
+test('xtest -h (lib)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.libRunXtest([
+      '-h'
+    ])
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
+    // console.log(stdout)
+    t.true(stdout.length > 0, 'has stdout')
+    t.equal(stdout[0], '', '1st line is empty')
+    t.equal(stdout[1], 'Mock Test', '2nd line is title')
+    t.equal(stdout[2], '', '3rd line is empty')
+    t.equal(stdout[3], 'Usage: xtest <command> [<options>...] ...',
+      '4th line is usage')
+    t.equal(stdout[4], '', '5th line is empty')
+    t.equal(stdout[5], 'where <command> is one of:', '6th line is where')
+    t.match(stdout[6], 'con, copy, cwd', '7th line has commands')
+    t.equal(stdout[7], '', '8th line is empty')
+    t.equal(stdout[8], 'Common options:', '9th line is common')
+
+    // There should be no error messages.
+    t.equal(stderr.length, 0, 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
  * Test commands that do not have an implementation derived from CliCommand.
  */
 test('xtest notclass (lib)', async (t) => {
@@ -52,7 +83,9 @@ test('xtest notclass (lib)', async (t) => {
       'notclass'
     ])
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     // console.log(stderr)
     t.true(stderr.length > 1, 'stderr has lines')
     t.match(stderr[0], 'AssertionError', 'stderr is assertion')
@@ -70,10 +103,13 @@ test('xtest co (lib)', async (t) => {
     const { code, stdout, stderr } = await Common.libRunXtest([
       'co'
     ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is app')
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
+    // console.log(stdout)
+    t.true(stdout.length > 3, 'has stdout')
+    t.match(stdout[3], 'Usage: xtest <command>', '4th is usage')
+
     // console.log(stderr)
-    t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[2], 'Usage: xtest <command>', 'stderr[3] is Usage')
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.equal(stderr[0], "error: Command 'co' is not unique.",
       'stderr is error')
@@ -93,14 +129,15 @@ test('xtest multi --help', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.true(stdout.length > 0, 'has stdout')
+
     // console.log(stdout)
+    t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[1], 'Multiple subcommands', 'has title')
-    t.match(stdout[2], 'Usage: xtest multi <command> [<options>...] ...',
+    t.match(stdout[3], 'Usage: xtest multi <command> [<options>...] ...',
       'has Usage')
 
-    t.match(stdout[4], 'where <command> is one of:', 'has where')
-    t.match(stdout[5], '  first, second', 'has subcommands')
+    t.match(stdout[5], 'where <command> is one of:', 'has where')
+    t.match(stdout[6], '  first, second', 'has subcommands')
 
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -117,10 +154,12 @@ test('xtest multi', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 4, 'has 4 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 4, 'has 4 stdout')
     t.match(stdout[0], 'Multiple subcommands', 'has title')
     t.match(stdout[1], 'no args', 'has no args')
+    t.equal(stdout[2], '', 'has empty line')
     t.match(stdout[3], '\'xtest multi\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -140,11 +179,13 @@ test('xtest multi -m mmm', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 5, 'has 5 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 5, 'has 5 stdout')
     t.match(stdout[0], 'Multiple subcommands', 'has title')
     t.match(stdout[1], 'multi: mmm', 'has -m')
     t.match(stdout[2], 'no args', 'has no args')
+    t.equal(stdout[3], '', 'has empty line')
     t.match(stdout[4], '\'xtest multi\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -166,12 +207,14 @@ test('xtest multi -m mmm 1 2', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 6, 'has 6 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 6, 'has 6 stdout')
     t.match(stdout[0], 'Multiple subcommands', 'has title')
     t.match(stdout[1], 'multi: mmm', 'has -m')
     t.match(stdout[2], 'one', 'has one')
     t.match(stdout[3], 'two', 'has two')
+    t.equal(stdout[4], '', 'has empty line')
     t.match(stdout[5], '\'xtest multi\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -192,10 +235,11 @@ test('xtest multi 1 2', async (t) => {
     // Check exit code.
     // console.log(code)
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    t.true(stdout.length > 0, 'has stdout')
+
     // console.log(stdout)
+    t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[1], 'Mock Test', 'has title')
-    t.match(stdout[2], 'Usage: xtest <command> [<options>...] ...',
+    t.match(stdout[3], 'Usage: xtest <command> [<options>...] ...',
       'has Usage')
 
     // There should be no error messages.
@@ -217,14 +261,15 @@ test('xtest multi first --help', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.true(stdout.length > 0, 'has stdout')
+
     // console.log(stdout)
+    t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[1], 'Multiple first', 'has title')
-    t.match(stdout[2], 'Usage: xtest multi first [<options>...] ...',
+    t.match(stdout[3], 'Usage: xtest multi first [<options>...] ...',
       'has Usage')
 
-    t.match(stdout[4], 'Multi first:', 'has first group')
-    t.match(stdout[5], '  --first <int>', 'has --first')
+    t.match(stdout[5], 'Multi first options:', 'has first group')
+    t.match(stdout[6], '  --first <int>', 'has --first')
 
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -242,10 +287,12 @@ test('xtest multi first', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 4, 'has 4 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 4, 'has 4 stdout')
     t.match(stdout[0], 'Multiple first', 'has title')
     t.match(stdout[1], 'no args', 'has no args')
+    t.equal(stdout[2], '', 'has empty line')
     t.match(stdout[3], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -268,12 +315,14 @@ test('xtest multi first -m mmm --first fff', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 6, 'has 6 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 6, 'has 6 stdout')
     t.match(stdout[0], 'Multiple first', 'has title')
     t.match(stdout[1], 'multi: mmm', 'has -m')
     t.match(stdout[2], 'first: fff', 'has --first')
     t.match(stdout[3], 'no args', 'has no args')
+    t.equal(stdout[4], '', 'has empty line')
     t.match(stdout[5], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -298,6 +347,7 @@ test('xtest multi first -m mmm --first fff 1 2', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 7, 'has 7 stdout')
     // console.log(stdout)
     t.match(stdout[0], 'Multiple first', 'has title')
@@ -305,6 +355,7 @@ test('xtest multi first -m mmm --first fff 1 2', async (t) => {
     t.match(stdout[2], 'first: fff', 'has --first')
     t.match(stdout[3], 'one', 'has one')
     t.match(stdout[4], 'two', 'has two')
+    t.equal(stdout[5], '', 'has empty line')
     t.match(stdout[6], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -325,11 +376,13 @@ test('xtest multi first 1 2', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 5, 'has 5 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 5, 'has 5 stdout')
     t.match(stdout[0], 'Multiple first', 'has title')
     t.match(stdout[1], 'one', 'has one')
     t.match(stdout[2], 'two', 'has two')
+    t.equal(stdout[3], '', 'has empty line')
     t.match(stdout[4], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -349,14 +402,18 @@ test('xtest multi second --help', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.true(stdout.length > 0, 'has stdout')
+
     // console.log(stdout)
+    t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[1], 'Multiple second', 'has title')
-    t.match(stdout[2], 'Usage: xtest multi second [<options>...] ...',
+    t.match(stdout[3], 'Usage: xtest multi second [<options>...] ...',
       'has Usage')
 
-    t.match(stdout[4], 'Multi second:', 'has second group')
-    t.match(stdout[5], ' --second <int>', 'has --second')
+    t.match(stdout[5], 'Multi second options:', 'has second group')
+    t.match(stdout[6], ' --second <int>', 'has --second')
+
+    t.match(stdout[8], 'Multi options:', 'has multi group')
+    t.match(stdout[9], ' -m|--multi <name>', 'has --multi')
 
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
@@ -374,10 +431,12 @@ test('xtest multi second', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 4, 'has 4 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 4, 'has 4 stdout')
     t.match(stdout[0], 'Multiple second', 'has title')
     t.match(stdout[1], 'no args', 'has no args')
+    t.equal(stdout[2], '', 'has empty line')
     t.match(stdout[3], '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -400,12 +459,14 @@ test('xtest multi second -m mmm --second fff', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 6, 'has 6 stdout')
     // console.log(stdout)
     t.match(stdout[0], 'Multiple second', 'has title')
     t.match(stdout[1], 'multi: mmm', 'has -m')
     t.match(stdout[2], 'second: fff', 'has --second')
     t.match(stdout[3], 'no args', 'has no args')
+    t.equal(stdout[4], '', 'has empty line')
     t.match(stdout[5], '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -430,6 +491,7 @@ test('xtest multi second -m mmm --second fff 1 2', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 7, 'has 7 stdout')
     // console.log(stdout)
     t.match(stdout[0], 'Multiple second', 'has title')
@@ -437,6 +499,7 @@ test('xtest multi second -m mmm --second fff 1 2', async (t) => {
     t.match(stdout[2], 'second: fff', 'has --second')
     t.match(stdout[3], 'one', 'has one')
     t.match(stdout[4], 'two', 'has two')
+    t.equal(stdout[5], '', 'has empty line')
     t.match(stdout[6], '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
@@ -457,11 +520,13 @@ test('xtest multi second 1 2', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.equal(stdout.length, 5, 'has 5 stdout')
+
     // console.log(stdout)
+    t.equal(stdout.length, 5, 'has 5 stdout')
     t.match(stdout[0], 'Multiple second', 'has title')
     t.match(stdout[1], 'one', 'has one')
     t.match(stdout[2], 'two', 'has two')
+    t.equal(stdout[3], '', 'has empty line')
     t.match(stdout[4], '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.

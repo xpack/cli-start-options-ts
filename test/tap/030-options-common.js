@@ -82,10 +82,12 @@ test('xtest --version (lib)', async (t) => {
     ])
     // Check exit code.
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 1, 'stdout has one line')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
     t.equal(stdout[0], pack.version, 'version value')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -103,10 +105,11 @@ test('xtest -h (lib)', async (t) => {
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     // console.log(stdout)
-    t.equal(stdout.length, 32, 'stdout has 17 lines')
+    t.true(stdout.length > 1, 'has stdout')
     t.match(stdout[1], 'Mock Test', 'has title')
-    t.match(stdout[2], 'Usage: xtest <command> [<options>...] ...',
+    t.match(stdout[3], 'Usage: xtest <command> [<options>...] ...',
       'has Usage')
 
     const str = stdout.join('\n')
@@ -151,7 +154,10 @@ test('xtest --help (lib)', async (t) => {
       '--help'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.match(stdout[2], 'Usage: xtest <command>', 'has Usage')
+
+    t.true(stdout.length > 1, 'has stdout')
+    t.match(stdout[3], 'Usage: xtest <command>', 'has Usage')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -170,13 +176,15 @@ test('xtest --version -d (lib)', async (t) => {
       '-d'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
+    // console.log(stdout)
     t.true(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
     const str = stdout.join('\n')
     t.match(str, 'debug: params.argv', 'has debug')
-    // console.log(stdout)
     t.equal(stdout[7], pack.version, 'version value')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -195,12 +203,14 @@ test('xtest --version -dd (lib)', async (t) => {
       '-dd'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[0], 'trace: Logger.constructor()', 'has Logger constructor')
     const str = stdout.join('\n')
     // Matching the whole string also checks that
     // the colour changes are not used.
     t.match(str, 'trace: Xtest.constructor()', 'has trace')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -220,11 +230,13 @@ test('xtest --version -d -d (lib)', async (t) => {
       '-d'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
     const str = stdout.join('\n')
     // Matching the whole string also checks that
     // the colour changes are not used.
     t.match(str, 'trace: Xtest.constructor()', 'has trace')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -244,11 +256,13 @@ test('xtest --version --loglevel debug (lib)', async (t) => {
       'debug'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
     const str = stdout.join('\n')
     // Matching the whole string also checks that
     // the colour changes are not used.
     t.match(str, 'debug: params.argv', 'has debug')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -268,7 +282,9 @@ test('xtest xx -s (lib)', async (t) => {
       'debug'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -290,7 +306,9 @@ test('xtest long --long value --xx -q (lib)', async (t) => {
       'debug'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.equal(stderr[0], "error: Option '--xx' not supported",
       'stderr is error')
@@ -309,8 +327,10 @@ test('xtest verb (lib)', async (t) => {
       'verb'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 3, 'stdout has 3 lines')
     t.match(stdout[2], 'completed in', 'stdout is completed')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -327,8 +347,10 @@ test('xtest v (lib)', async (t) => {
       'v'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 3, 'stdout has 3 lines')
     t.match(stdout[2], 'completed in', 'stdout is completed')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -346,8 +368,10 @@ test('xtest verb --informative (lib)', async (t) => {
       '--informative'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 3, 'stdout has 3 lines')
     t.match(stdout[0], 'Exercise verbosity', 'stdout is verbosity')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -365,9 +389,11 @@ test('xtest verb -v (lib)', async (t) => {
       '-v'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 5, 'stdout has 5 lines')
     t.match(stdout[1], 'Exercise verbosity', 'stdout is verbose')
     t.match(stdout[2], 'Verbose', 'stdout is verbose')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -385,9 +411,11 @@ test('xtest verb --verbose (lib)', async (t) => {
       '--verbose'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 5, 'stdout has 5 lines')
     t.match(stdout[1], 'Exercise verbosity', 'stdout is verbose')
     t.match(stdout[2], 'Verbose', 'stdout is verbose')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -405,7 +433,9 @@ test('xtest --loglevel xxx (lib)', async (t) => {
       'xxx'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.match(stderr[0], "error: Value 'xxx' not allowed for '--loglevel'",
       'stderr is message')
@@ -424,7 +454,9 @@ test('xtest --loglevel (lib)', async (t) => {
       '--loglevel'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.match(stderr[0], "error: '--loglevel' expects a value",
       'stderr is message')
@@ -443,7 +475,9 @@ test('xtest --loglevel -- (lib)', async (t) => {
       '--loglevel'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.match(stderr[0], "error: '--loglevel' expects a value",
       'stderr is message')
@@ -465,11 +499,13 @@ test('xtest --version -dd -- xx (lib)', async (t) => {
       'xx'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
     const str = stdout.join('\n')
     // Matching the whole string also checks that
     // the colour changes are not used.
     t.match(str, 'trace: Xtest.constructor()', 'has debug')
+
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
@@ -488,12 +524,14 @@ test('xtest long -h (lib)', async (t) => {
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[5], '--long|--very-long|--extra-very-long <name>',
+    t.match(stdout[6], '--long|--very-long|--extra-very-long <name>',
       'stdout has long options')
-    t.match(stdout[6],
+    t.match(stdout[7],
       '                                         Very long option',
       'was moved to next line')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -513,11 +551,12 @@ test('xtest long -xyz (lib)', async (t) => {
       '--xyz'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.true(stdout.length > 10, 'stdout has >10 lines')
     const str = stdout.join('\n')
-
     t.match(str, 'Usage: xtest long [<options>...] [<name>...] ' +
     '[-- <very-long-long-long-params>...]', 'stdout has usage')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.match(stderr[0], "error: Option '--xyz' not supported",
       'stderr has error')
@@ -540,10 +579,12 @@ test('xtest long -xyz (lib)', async (t) => {
       '2'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 5, 'stdout has 5 lines')
     t.match(stdout[1], 'Args: one,two', 'stdout has args')
     t.match(stdout[2], 'FwdArgs: 1,2', 'stdout has fwdArgs')
     t.match(stdout[4], 'completed in', 'stdout has completed')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -565,6 +606,7 @@ test('xtest -h (lib)', async (t) => {
     t.match(str,
       '                                         Extra options',
       'stdout has long early options')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -582,13 +624,15 @@ test('xtest many -h (lib)', async (t) => {
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[6], '--two <name>', 'has <name>')
-    t.match(stdout[6], 'Option two (multiple)', 'has multiple')
-    t.match(stdout[7], 'Option three (optional, multiple)',
+    t.match(stdout[7], '--two <name>', 'has <name>')
+    t.match(stdout[7], 'Option two (multiple)', 'has multiple')
+    t.match(stdout[8], 'Option three (optional, multiple)',
       'has optional multiple')
-    t.match(stdout[8], '--four <s>', 'has <s>')
-    t.match(stdout[8], 'Option four (optional)', 'has optional')
+    t.match(stdout[9], '--four <s>', 'has <s>')
+    t.match(stdout[9], 'Option four (optional)', 'has optional')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -605,11 +649,13 @@ test('wtest-long-name -h (lib)', async (t) => {
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[19], 'wtest-long-name -h|--help            Quick help',
+    t.match(stdout[20], 'wtest-long-name -h|--help            Quick help',
       'has long name')
-    t.match(stdout[5], '  five-long-command,', 'has command five')
-    t.match(stdout[6], '  two-long-command', 'has command two')
+    t.match(stdout[6], '  five-long-command,', 'has command five')
+    t.match(stdout[7], '  two-long-command', 'has command two')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -626,12 +672,14 @@ test('xtest gen (lib)', async (t) => {
       'gen'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    t.true(stdout.length > 0, 'has stdout')
+
     // console.log(stdout.length)
+    t.true(stdout.length > 0, 'has stdout')
     const str = stdout.join('\n')
     // console.log(str)
     t.match(str, 'generators:', 'stdout has generators')
     t.match(str, `homepage: '${pack.homepage}'`)
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -648,7 +696,9 @@ test('xtest unim (lib)', async (t) => {
       'unim'
     ])
     t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
+
     t.equal(stdout.length, 0, 'stdout is empty')
+
     t.true(stderr.length > 1, 'stderr has lines')
     t.match(stderr[0], 'AssertionError', 'stdout has assertion')
   } catch (err) {
@@ -665,8 +715,10 @@ test('xtest (lib)', async (t) => {
     const { code, stdout, stderr } = await Common.libRunXtest([
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[2], 'Usage: xtest <command>', 'stdout has usage')
+    t.match(stdout[3], 'Usage: xtest <command>', 'stdout has usage')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.equal(stderr[0], 'error: Missing mandatory command.', 'stdout has error')
   } catch (err) {
@@ -685,8 +737,10 @@ test('xtest -- xx (lib)', async (t) => {
       'xx'
     ])
     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[2], 'Usage: xtest <command>', 'stdout has usage')
+    t.match(stdout[3], 'Usage: xtest <command>', 'stdout has usage')
+
     t.equal(stderr.length, 1, 'stderr has 1 line')
     t.equal(stderr[0], 'error: Missing mandatory command.',
       'stdout has error')
@@ -707,8 +761,10 @@ test('xtest cwd -C /tmp/xx (lib)', async (t) => {
       '/tmp/xx'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 4, 'stdout has 4 lines')
     t.match(stdout[1], '/tmp/xx', 'stdout has path')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -729,6 +785,7 @@ test('xtest cwd -C /tmp/xx -C yy (lib)', async (t) => {
       'yy'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     t.equal(stdout.length, 4, 'stdout has 4 lines')
     const absPath = path.resolve('/tmp/xx', 'yy')
     if (os.platform() === 'win32') {
@@ -736,6 +793,7 @@ test('xtest cwd -C /tmp/xx -C yy (lib)', async (t) => {
     } else {
       t.match(stdout[1], absPath, 'stdout has path')
     }
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)
@@ -753,9 +811,11 @@ test('xtest noopts (lib)', async (t) => {
       '-h'
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
     // console.log(stdout)
     t.true(stdout.length > 0, 'has stdout')
-    t.match(stdout[2], 'Usage: xtest noopts [<options>...]', 'stdout has usage')
+    t.match(stdout[3], 'Usage: xtest noopts [<options>...]', 'stdout has usage')
+
     t.equal(stderr.length, 0, 'stderr is empty')
   } catch (err) {
     t.fail(err.message)

@@ -56,8 +56,6 @@ class Multi extends CliCommand {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'Multiple subcommands'
     this.cliOptions.addOptionsGroups(
       [
         {
@@ -123,12 +121,10 @@ class MultiFirst extends Multi {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'Multiple first'
     this.cliOptions.addOptionsGroups(
       [
         {
-          title: 'Multi first',
+          title: 'Multi first options',
           insertInFront: true,
           optionsDefs: [
             {
@@ -193,12 +189,10 @@ class MultiSecond extends Multi {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'Multiple second'
     this.cliOptions.addOptionsGroups(
       [
         {
-          title: 'Multi second',
+          title: 'Multi second options',
           insertInFront: true,
           optionsDefs: [
             {

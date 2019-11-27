@@ -47,18 +47,6 @@ class Verbosity extends CliCommand {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Constructor, to set help definitions.
-   *
-   * @param {Object} params The generic parameters object.
-   */
-  constructor (params) {
-    super(params)
-
-    // Title displayed with the help message.
-    this.helpTitle = 'Exercise verbosity'
-  }
-
-  /**
    * @summary Execute the `verbosity` command.
    *
    * @param {string[]} args Command line arguments.

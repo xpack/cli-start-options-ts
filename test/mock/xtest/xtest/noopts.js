@@ -54,8 +54,6 @@ class NoOpts extends CliCommand {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'No options'
     this.cliOptions.addOptionsGroups(
       [
         {

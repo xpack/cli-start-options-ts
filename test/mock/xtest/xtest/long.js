@@ -54,9 +54,6 @@ class Long extends CliCommand {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'Test long options'
-
     this.cliOptions.addOptionsGroups(
       [
         {
@@ -84,9 +81,6 @@ class Long extends CliCommand {
 
     this.cliOptions.hasForwardableArgs = true
     this.cliOptions.hasNoCustomOptions = true
-
-    this.helpOptions.usageMoreOptions =
-      '[<name>...] [-- <very-long-long-long-params>...]'
   }
 
   /**

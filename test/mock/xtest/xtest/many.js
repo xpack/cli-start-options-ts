@@ -54,8 +54,6 @@ class Many extends CliCommand {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'Test many options'
     this.cliOptions.addOptionsGroups(
       [
         {

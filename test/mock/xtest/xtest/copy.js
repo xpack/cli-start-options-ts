@@ -73,8 +73,6 @@ class Copy extends CliCommand {
   constructor (params) {
     super(params)
 
-    // Title displayed with the help message.
-    this.helpTitle = 'Copy a file to another file'
     this.cliOptions.addOptionsGroups(
       [
         {

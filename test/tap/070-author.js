@@ -63,12 +63,13 @@ test('ytest -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
       t.true(stdout.length > 0, 'has stdout')
-      // console.log(errLines)
       const str = stdout.join('\n')
-      t.match(stdout[2], 'Usage: ytest <command>', 'has Usage')
+      t.match(stdout[3], 'Usage: ytest <command>', 'has Usage')
       t.match(str, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
+
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
@@ -88,12 +89,13 @@ test('ztest -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
       t.true(stdout.length > 0, 'has stdout')
       const str = stdout.join('\n')
-      // console.log(errLines)
-      t.match(stdout[2], 'Usage: ztest <command>', 'has Usage')
+      t.match(stdout[3], 'Usage: ztest <command>', 'has Usage')
       t.match(str, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
+
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
@@ -113,12 +115,13 @@ test('dtest -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
       t.true(stdout.length > 0, 'has stdout')
-      // console.log(errLines)
       const str = stdout.join('\n')
-      t.match(stdout[2], 'Usage: dtest [<options>...]', 'has Usage')
+      t.match(stdout[3], 'Usage: dtest [<options>...]', 'has Usage')
       t.notMatch(str, 'Bug reports:',
         'has no Bug reports')
+
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {
@@ -138,12 +141,13 @@ test('etest -h',
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+
       t.true(stdout.length > 0, 'has stdout')
-      // console.log(errLines)
       const str = stdout.join('\n')
-      t.match(stdout[2], 'Usage: etest [<options>...]', 'has Usage')
+      t.match(stdout[3], 'Usage: etest [<options>...]', 'has Usage')
       t.notMatch(str, 'Bug reports:',
         'has no Bug reports')
+
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
     } catch (err) {

@@ -81,7 +81,10 @@ class Xtest extends CliApplication {
     const commands = {
       copy: {
         aliases: ['c'],
-        modulePath: 'xtest/copy.js'
+        modulePath: 'xtest/copy.js',
+        helpOptions: {
+          title: 'Copy a file to another file'
+        }
       },
       notclass: {
         modulePath: 'xtest/not-class.js'
@@ -91,39 +94,71 @@ class Xtest extends CliApplication {
       },
       verbosity: {
         aliases: ['vb'],
-        modulePath: 'xtest/verbosity.js'
+        modulePath: 'xtest/verbosity.js',
+        helpOptions: {
+          title: 'Exercise verbosity'
+        }
       },
       long: {
-        modulePath: 'xtest/long.js'
+        modulePath: 'xtest/long.js',
+        helpOptions: {
+          title: 'Test long options',
+          usageMoreOptions:
+            '[<name>...] [-- <very-long-long-long-params>...]'
+        }
       },
       many: {
-        modulePath: 'xtest/many.js'
+        modulePath: 'xtest/many.js',
+        helpOptions: {
+          title: 'Test many options'
+        }
       },
       gen: {
-        modulePath: 'xtest/generator.js'
+        modulePath: 'xtest/generator.js',
+        helpOptions: {
+          title: 'Test generator options'
+        }
       },
       unimpl: {
-        modulePath: 'xtest/unimpl.js'
+        modulePath: 'xtest/unimpl.js',
+        helpOptions: {
+          title: 'Test unimpl options'
+        }
       },
       cwd: {
-        modulePath: 'xtest/cwd.js'
+        modulePath: 'xtest/cwd.js',
+        helpOptions: {
+          title: 'CWD options'
+        }
       },
       multi: {
         modulePath: 'xtest/multi.js',
         className: 'Multi',
+        helpOptions: {
+          title: 'Multiple subcommands'
+        },
         subCommands: {
           first: {
             modulePath: 'xtest/multi.js',
-            className: 'MultiFirst'
+            className: 'MultiFirst',
+            helpOptions: {
+              title: 'Multiple first'
+            }
           },
           second: {
             modulePath: 'xtest/multi.js',
-            className: 'MultiSecond'
+            className: 'MultiSecond',
+            helpOptions: {
+              title: 'Multiple second'
+            }
           }
         }
       },
       noopts: {
-        modulePath: 'xtest/noopts.js'
+        modulePath: 'xtest/noopts.js',
+        helpOptions: {
+          title: 'No options'
+        }
       }
     }
     this.cmdsTree.addCommands(commands)
