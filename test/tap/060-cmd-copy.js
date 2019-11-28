@@ -117,14 +117,15 @@ test('xtest copy -h',
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
 
+      // console.log(stdout)
       t.true(stdout.length > 0, 'has stdout')
-      // console.log(outLines)
+      const str = stdout.join('\n')
       t.equal(stdout[1], 'Copy a file to another file',
         'has title')
       t.match(stdout[3], 'Usage: xtest copy [<options>...]', 'has Usage')
-      t.match(stdout[5], 'Copy options:', 'has copy options')
-      t.match(stdout[6], '  --file <file>  ', 'has --file')
-      t.match(stdout[7], '  --output <file>  ', 'has --output')
+      t.match(str, 'Copy options:', 'has copy options')
+      t.match(str, '  --file <file>  ', 'has --file')
+      t.match(str, '  --output <file>  ', 'has --output')
 
       // There should be no error messages.
       t.equal(stderr.length, 0, 'stderr is empty')
@@ -147,8 +148,8 @@ test('xtest cop -h',
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
 
+      // console.log(stdout)
       t.true(stdout.length > 0, 'has stdout')
-      // console.log(outLines)
       t.match(stdout[1], 'Copy a file to another file',
         'has title')
       t.match(stdout[3], 'Usage: xtest copy [<options>...]', 'has Usage')
