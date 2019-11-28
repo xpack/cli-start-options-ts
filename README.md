@@ -14,7 +14,7 @@ It support batch (single shot, one command per invocation),
 interactive (one invocation that accepts a sequence of
 commands) and server like operations (multiple instances in parallel).
 
-The module exports several classes (like CliApplication, CliCommand, ...)
+The module exports several classes (like `CliApplication`, `CliCommand`, ...)
 that can be used as base classes for CLI applications.
 
 ## Prerequisites
