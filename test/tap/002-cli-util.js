@@ -75,4 +75,14 @@ test('formatDuration', (t) => {
   t.end()
 })
 
+test('formatSize', (t) => {
+  t.equal(CliUtils.formatSize(1), '1 B', '1 B')
+  t.equal(CliUtils.formatSize(1024 + 512 - 1), '1535 B', '1535 B')
+  t.equal(CliUtils.formatSize(1024 + 512), '2 kB', '2 kB')
+  t.equal(CliUtils.formatSize(1024 * (1024 + 512) - 1), '1536 kB', '1536 kB')
+  t.equal(CliUtils.formatSize(1024 * (1024 + 512)), '2 MB', '2 MB')
+
+  t.end()
+})
+
 // ----------------------------------------------------------------------------
