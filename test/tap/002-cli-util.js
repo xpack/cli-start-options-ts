@@ -39,11 +39,33 @@
 
 // const assert = require('assert')
 const path = require('path')
+const os = require('os')
+const fs = require('fs')
 
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
 
+// https://www.npmjs.com/package/del
+const del = require('del')
+
+// https://www.npmjs.com/package/mkdirp-promise
+const mkdir = require('mkdirp-promise')
+
 const CliUtils = require('../../index.js').CliUtils
+
+// ----------------------------------------------------------------------------
+
+const Promisifier = require('@xpack/es6-promisifier').Promisifier
+
+// Promisify functions from the Node.js callbacks library.
+// New functions have similar names, but belong to `promises_`.
+Promisifier.promisifyInPlace(fs, 'lstat')
+Promisifier.promisifyInPlace(fs, 'stat')
+Promisifier.promisifyInPlace(fs, 'readdir')
+
+// For easy migration, inspire from the Node 10 experimental API.
+// Do not use `fs.promises` yet, to avoid the warning.
+const fsPromises = fs.promises_
 
 // ----------------------------------------------------------------------------
 
@@ -81,6 +103,58 @@ test('formatSize', (t) => {
   t.equal(CliUtils.formatSize(1024 + 512), '2 kB', '2 kB')
   t.equal(CliUtils.formatSize(1024 * (1024 + 512) - 1), '1536 kB', '1536 kB')
   t.equal(CliUtils.formatSize(1024 * (1024 + 512)), '2 MB', '2 MB')
+
+  t.end()
+})
+
+test('createFolderLink', async (t) => {
+  const tmpFolderPath = os.tmpdir()
+  const tmpUtilsFolderPath = path.join(tmpFolderPath, 'utils')
+  await del(tmpUtilsFolderPath, { force: true })
+
+  await mkdir(tmpUtilsFolderPath)
+
+  const linkName = 'link'
+  const linkPath = path.join(tmpUtilsFolderPath, linkName)
+
+  const sourcePath = path.join(tmpFolderPath, 'source')
+  await mkdir(sourcePath)
+
+  try {
+    await CliUtils.createFolderLink({ linkPath, sourcePath })
+    t.pass('link created')
+
+    try {
+      const stats = await fsPromises.stat(linkPath)
+
+      t.true(stats.isDirectory(), 'stat is folder')
+    } catch (err) {
+      t.fail('stat failed ' + err.message)
+    }
+
+    try {
+      const stats = await fsPromises.lstat(linkPath)
+
+      t.true(stats.isSymbolicLink(), 'lstat is symlink')
+    } catch (err) {
+      t.fail('lstat failed ' + err.message)
+    }
+
+    try {
+      const dirents = await fsPromises.readdir(
+        tmpUtilsFolderPath, { withFileTypes: true })
+      // console.log(dirents)
+      for (const dirent of dirents) {
+        if (dirent.name === linkName) {
+          t.true(dirent.isSymbolicLink(), 'dirent is symlink')
+        }
+      }
+    } catch (err) {
+      t.fail('readdir failed ' + err.message)
+    }
+  } catch (err) {
+    t.fail('link failed ' + err.message)
+  }
 
   t.end()
 })
