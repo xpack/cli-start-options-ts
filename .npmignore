@@ -40,11 +40,16 @@
 # VS Code
 /.vscode/
 
+# GitHub
+/.github/
+
 # CI
-/.github/workflows/
 /.travis.yml
 /.appveyor.yml
 
-/README-MAINTAINER.md
+# Project specific
+/README-*.md
+/NOTES*.md
+/docs/
 
 #end
