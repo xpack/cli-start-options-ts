@@ -93,6 +93,12 @@ test('types', (t) => {
 test('exitCodes', (t) => {
   t.test('CliError', (t) => {
     try {
+      throw new CliError()
+    } catch (err) {
+      t.equal(err.message, '', 'message is empty')
+      t.equal(err.exitCode, undefined, 'exit code is undefined')
+    }
+    try {
       throw new CliError('one')
     } catch (err) {
       t.equal(err.message, 'one', 'message is one')
