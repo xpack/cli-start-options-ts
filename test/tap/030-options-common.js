@@ -319,6 +319,27 @@ test('xtest long --long value --xx -q (lib)', async (t) => {
 })
 
 /**
+ * Test if -q shows errors.
+ */
+test('xtest long with missing --long (lib)', async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.libRunXtest([
+      'long'
+    ])
+    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
+    t.true(stdout.length > 1, 'stdout has content')
+
+    t.equal(stderr.length, 1, 'stderr has 1 line')
+    t.equal(stderr[0], 'error: Very long option must be present',
+      'stderr is custom message')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
+
+/**
  * Test if default verbosity is none.
  */
 test('xtest verb (lib)', async (t) => {
@@ -525,6 +546,7 @@ test('xtest long -h (lib)', async (t) => {
     ])
     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
 
+    // console.log(stdout)
     t.true(stdout.length > 0, 'has stdout')
     t.match(stdout[6], '--long|--very-long|--extra-very-long <name>',
       'stdout has long options')

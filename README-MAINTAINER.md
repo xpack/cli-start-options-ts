@@ -205,12 +205,13 @@ $ npm run tap-coverage test/tap/021-dm-commands.js
 
 #### Coverage exceptions
 
-Use `/* istanbul ignore next <something> */` before the code to be ignored
-(https://github.com/gotwarlost/istanbul/blob/master/ignoring-code-for-coverage.md)
+Use `/* istanbul ignore next */` before the code to be ignored
+(https://github.com/gotwarlost/istanbul/blob/master/ignoring-code-for-coverage.md):
 
 - in some CliApplication option definitions
 - in CliApplication.main() for some exceptions
 - in `CmdBaseNode_.findCommands()` for an additional assert
+- in `CliUtils.createFolderLink()` for windows 'junction' case
 
 ### Continuous Integration (CI)
 

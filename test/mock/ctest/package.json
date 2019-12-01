@@ -4,6 +4,7 @@
   "description": "Mock Test",
   "homepage": "https://github.com/xpack/cli-start-options-js",
   "bugs": {
-    "url": "https://github.com/xpack/xyz-js/issues"
-  }
+    "xurl": "https://github.com/xpack/xyz-js/issues"
+  },
+  "author": 42
 }

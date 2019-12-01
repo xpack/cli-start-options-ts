@@ -72,7 +72,8 @@ class Long extends CliCommand {
               },
               msg: 'Very long option',
               param: 'name',
-              isMandatory: true
+              isMandatory: true,
+              mandatoryMessage: 'Very long option must be present'
             }
           ]
         }

@@ -393,6 +393,7 @@ test('xtest multi first 1 2', async (t) => {
   t.end()
 })
 
+// Test without insertInFront
 test('xtest multi second --help', async (t) => {
   try {
     const { code, stdout, stderr } = await Common.libRunXtest([
@@ -409,11 +410,13 @@ test('xtest multi second --help', async (t) => {
     t.match(stdout[3], 'Usage: xtest multi second [<options>...] ...',
       'has Usage')
 
-    t.match(stdout[5], 'Multi second options:', 'has second group')
-    t.match(stdout[6], ' --second <int>', 'has --second')
+    t.match(stdout[9], ' --more-common <int>', 'has --more')
 
-    t.match(stdout[8], 'Multi options:', 'has multi group')
-    t.match(stdout[9], ' -m|--multi <name>', 'has --multi')
+    t.match(stdout[24], 'Multi second options:', 'has second group')
+    t.match(stdout[25], ' --second <int>', 'has --second')
+
+    t.match(stdout[5], 'Multi options:', 'has multi group')
+    t.match(stdout[6], ' -m|--multi <name>', 'has --multi')
 
     // There should be no error messages.
     t.equal(stderr.length, 0, 'stderr is empty')

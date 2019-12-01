@@ -193,7 +193,8 @@ class MultiSecond extends Multi {
       [
         {
           title: 'Multi second options',
-          insertInFront: true,
+          // Disabled on purpose, for coverage.
+          // insertInFront: true,
           optionsDefs: [
             {
               options: ['--second'],
@@ -204,6 +205,24 @@ class MultiSecond extends Multi {
                 config.multiSecond = val
               },
               msg: 'Multi second option',
+              param: 'int',
+              isMandatory: false
+            }
+          ]
+        },
+        {
+          title: 'Common options',
+          insertInFront: true,
+          optionsDefs: [
+            {
+              options: ['--more-common'],
+              init: ({ config }) => {
+                config.moreCommon = undefined
+              },
+              action: ({ config }, val) => {
+                config.moreCommon = val
+              },
+              msg: 'More common second option',
               param: 'int',
               isMandatory: false
             }
