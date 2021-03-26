@@ -44,15 +44,8 @@ to derive application classes.
 ```javascript
 // Equivalent of import { CliApplication, CliCommand, CliHelp, CliOptions } from 'cli-start-options'
 
-const CliApplication = require('@ilg/cli-start-options').CliApplication
-const CliCommand = require('@ilg/cli-start-options').CliCommand
-const CliHelp = require('@ilg/cli-start-options').CliHelp
-const CliOptions = require('@ilg/cli-start-options').CliOptions
-const CliOptions = require('@ilg/cli-start-options').CliOptions
-const CliError = require('@ilg/cli-start-options').CliError
-const CliErrorSyntax = require('@ilg/cli-start-options').CliErrorSyntax
-const CliErrorApplication = require('@ilg/cli-start-options').CliErrorApplication
-const CliExitCodes = require('@ilg/cli-start-options').CliExitCodes
+const { CliApplication, CliCommand, CliHelp, CliOptions,
+  CliError, CliExitCodes } = require('@ilg/cli-start-options')
 ```
 
 ## Developer info
@@ -85,7 +78,7 @@ The tests use the [`node-tap`](http://www.node-tap.org) framework
 As for any `npm` package, the standard way to run the project tests is via 
 `npm test`:
 
-```bash
+```console
 $ cd cli-start-options-js.git
 $ npm install
 $ npm test
@@ -93,7 +86,7 @@ $ npm test
 
 A typical test result looks like:
 
-```
+```console
 $ npm run test
 
 > @ilg/cli-start-options@0.1.15 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
@@ -115,7 +108,7 @@ total ............................................. 362/362
 
 To run a specific test with more verbose output, use `npm run tap`:
 
-```
+```console
 $ npm run tap test/tap/cmd-copy.js -s
 
 test/tap/cmd-copy.js
@@ -189,7 +182,7 @@ for all 4 criteria (statements, branches, functions, lines).
 
 To run the coverage tests, use `npm run test-coverage`:
 
-```
+```console
 $ npm run test-coverage
 
 > @ilg/cli-start-options@0.1.15 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
@@ -245,7 +238,7 @@ deprecated `domain` module
 
 To manually fix compliance with the style guide (where possible):
 
-```
+```console
 $ npm run fix
 
 > @ilg/cli-start-options@0.1.12 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
@@ -260,7 +253,7 @@ The documentation metadata follows the [JSdoc](http://usejsdoc.org) tags.
 To enforce checking at file level, add the following comments right after 
 the `use strict`:
 
-```
+```js
 'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
@@ -271,13 +264,13 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 
 ### How to publish
 
-* commit all changes
-* `npm run test` (`fix` included)
-* update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.1.2_
-* `npm version patch`
-* push all changes to GitHub; this should trigger CI
-* wait for CI tests to complete
-* `npm publish`
+- commit all changes
+- `npm run test` (`fix` included)
+- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.1_
+- `npm version patch`
+- push all changes to GitHub; this should trigger CI
+- wait for CI tests to complete
+- `npm publish`
 
 ## License
 

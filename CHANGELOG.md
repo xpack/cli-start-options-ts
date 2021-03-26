@@ -1,8 +1,14 @@
-## Change log
+# Change log
 
 Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues).
+
+## 2021-03-26
+
+- v0.6.1
+- update for the new version of standard.js
+- bump dependencies
 
 ## v0.6.0 (2018-12-25)
 
