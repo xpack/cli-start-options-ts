@@ -1,6 +1,6 @@
 {
   "name": "@ilg/cli-start-options",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Classes to implement a command line Node.js application",
   "main": "./index.js",
   "directories": {
@@ -8,7 +8,6 @@
     "lib": "./lib",
     "test": "./test"
   },
-  "bin": {},
   "scripts": {
     "prepublishOnly": "standard && npm run test-tap -s",
     "test": "standard && npm run test-tap -s",
@@ -55,9 +54,9 @@
     "tar": "^6.1.0"
   },
   "peerDependencies": {},
-  "bundledDependencies": [],
   "optionalDependencies": {},
   "engines": {
     "node": ">7.7.0"
-  }
+  },
+  "bundleDependencies": []
 }
