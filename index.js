@@ -44,55 +44,24 @@
  * To import classes from this module into Node.js applications, use:
  *
  * ```javascript
- * const CliOptions = require('@ilg/cli-start-options').CliOptions
- * const CliCommand = require('./lib/cli-command.js').CliCommand
- * const CliHelp = require('./lib/cli-help.js').CliHelp
- * const CliOptions = require('./lib/cli-options.js').CliOptions
+ * const { CliOptions, CliCommand } =
+ *   require('@ilg/cli-start-options')
  * ```
  */
-
-// ES6: `import { CliApplication } from './lib/cli-application.js'
-const CliApplication = require('./lib/cli-application.js').CliApplication
-
-// ES6: `import { CliCommand } from './lib/cli-command.js'
-const CliCommand = require('./lib/cli-command.js').CliCommand
-
-// ES6: `import { CliHelp } from './lib/cli-help.js'
-const CliHelp = require('./lib/cli-help.js').CliHelp
-
-// ES6: `import { CliOptions } from './lib/cli-options.js'
-const CliOptions = require('./lib/cli-options.js').CliOptions
-
-// ES6: `import { CliExitCodes } from './lib/cli-error.js'
-const CliExitCodes = require('./lib/cli-error.js').CliExitCodes
-
-// ES6: `import { CliError } from './lib/cli-error.js'
-const CliError = require('./lib/cli-error.js').CliError
-
-// ES6: `import { CliErrorSyntax } from './lib/cli-error.js'
-const CliErrorSyntax = require('./lib/cli-error.js').CliErrorSyntax
-
-// ES6: `import { CliErrorApplication } from './lib/cli-error.js'
-const CliErrorApplication = require('./lib/cli-error.js').CliErrorApplication
-
-// ES6: `import { CliLogger } from './lib/cli-error.js'
-const CliLogger = require('./lib/cli-logger.js').CliLogger
 
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
 // By default, `module.exports = {}`.
-// The Main class is added as a property with the same name to this object.
 
-module.exports.CliApplication = CliApplication
-module.exports.CliCommand = CliCommand
-module.exports.CliHelp = CliHelp
-module.exports.CliOptions = CliOptions
-module.exports.CliExitCodes = CliExitCodes
-module.exports.CliError = CliError
-module.exports.CliErrorSyntax = CliErrorSyntax
-module.exports.CliErrorApplication = CliErrorApplication
-module.exports.CliLogger = CliLogger
+module.exports = {
+  ...(require('./lib/cli-application.js')),
+  ...(require('./lib/cli-command.js')),
+  ...(require('./lib/cli-help.js')),
+  ...(require('./lib/cli-options.js')),
+  ...(require('./lib/cli-error.js')),
+  ...(require('./lib/cli-logger.js'))
+}
 
 // In ES6, it would be:
 // export class CliApplication { ... }
