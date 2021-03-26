@@ -39,3 +39,9 @@ coverage/
 # VS Code
 .vscode/
 vscode.mac.command
+
+.appveyor.yml
+.travis.yml
+
+examples/
+test/
