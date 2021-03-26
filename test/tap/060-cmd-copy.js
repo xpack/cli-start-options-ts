@@ -45,6 +45,12 @@ const fs = require('fs')
 // The `[node-tap](http://www.node-tap.org)` framework.
 const test = require('tap').test
 
+// https://www.npmjs.com/package/make-dir
+const makeDir = require('make-dir')
+
+// https://www.npmjs.com/package/del
+const del = require('del')
+
 const skipSomeTests = true
 
 // ----------------------------------------------------------------------------
@@ -63,8 +69,6 @@ assert(CliExitCodes)
 
 const fixtures = path.resolve(__dirname, '../fixtures')
 const workFolder = path.resolve(os.tmpdir(), 'xtest-copy')
-const rimrafPromise = Promisifier.promisify(require('rimraf'))
-const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
 
 // Promisified functions from the Node.js callbacks library.
 Promisifier.promisifyInPlace(fs, 'chmod')

@@ -489,7 +489,7 @@ test('logger error exception', (t) => {
   // console.log(mc.stderr)
   const errLines = mc.stderr.split(/\r?\n/)
   t.equal(errLines[0], 'Error: msg', 'stderr[0] is msg')
-  t.match(errLines[1], 'at Test.test', 'stderr[1] is at Test')
+  t.match(errLines[1], 'at Test.', 'stderr[1] is at Test')
 
   t.end()
 })

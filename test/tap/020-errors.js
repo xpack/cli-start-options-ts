@@ -55,9 +55,12 @@ assert(CliErrorApplication)
 // ----------------------------------------------------------------------------
 
 test('types', (t) => {
-  t.ok(Error.isPrototypeOf(CliError), 'CliError is Error')
-  t.ok(Error.isPrototypeOf(CliErrorSyntax), 'CliErrorSyntax is Error')
-  t.ok(Error.isPrototypeOf(CliErrorApplication), 'CliErrorApplication is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, CliError),
+    'CliError is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, CliErrorSyntax),
+    'CliErrorSyntax is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, CliErrorApplication),
+    'CliErrorApplication is Error')
 
   t.ok(CliExitCodes instanceof Object, 'CliExitCodes is Object')
   t.ok(CliExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')

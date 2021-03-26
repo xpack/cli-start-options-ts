@@ -178,7 +178,7 @@ test('xtest -i (spawn)', (t) => {
           ostr = 'xyz'
         } else if (count === 6) {
           t.test('xyz', (t) => {
-            t.match(stdout, `Command 'xyz' not supported.`,
+            t.match(stdout, 'Command \'xyz\' not supported.',
               'xyz is not supported')
             t.match(stdout, 'Usage: xtest <command> [<subcommand>...]',
               'has Usage')

@@ -32,9 +32,7 @@
 // ----------------------------------------------------------------------------
 
 const assert = require('assert')
-const fs = require('fs')
 const path = require('path')
-const zlib = require('zlib')
 const tar = require('tar')
 const spawn = require('child_process').spawn
 const Console = require('console').Console
@@ -43,11 +41,10 @@ const Writable = require('stream').Writable
 // ES6: `import { CliHelp } from './utils/cli-helps.js'
 const Xtest = require('./mock/xtest/main.js').Xtest
 
-const Promisifier = require('@ilg/es6-promisifier').Promisifier
-
 // ----------------------------------------------------------------------------
 
-const mkdirpPromise = Promisifier.promisify(require('mkdirp'))
+// https://www.npmjs.com/package/make-dir
+const makeDir = require('make-dir')
 
 // ----------------------------------------------------------------------------
 
@@ -206,15 +203,10 @@ class Common {
    * @returns {undefined} Nothing.
    */
   static async extractTgz (tgzPath, destPath) {
-    await mkdirpPromise(destPath)
-    return new Promise((resolve, reject) => {
-      fs.createReadStream(tgzPath)
-        .on('error', (er) => { reject(er) })
-        .pipe(zlib.createGunzip())
-        .on('error', (er) => { reject(er) })
-        .pipe(tar.extract({ cwd: destPath }))
-        .on('error', (er) => { reject(er) })
-        .on('end', () => { resolve() })
+    await makeDir(destPath)
+    return tar.extract({
+      file: tgzPath,
+      cwd: destPath
     })
   }
 }
