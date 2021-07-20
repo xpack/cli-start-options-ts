@@ -1,0 +1,16 @@
+{
+  "name": "myapp",
+  "version": "1.2.3",
+  "description": "Basic CLI example",
+  "main": "./index.js",
+  "bin": {
+    "myapp": "./bin/myapp.js"
+  },
+  "bugs": {
+    "url": "https://github.com/xpack/my-app-js/issues/"
+  },
+  "homepage": "https://github.com/xpack/my-app-js/",
+  "dependencies": {
+    "@xpack/cli-start-options": "^1.0.0"
+  }
+}
