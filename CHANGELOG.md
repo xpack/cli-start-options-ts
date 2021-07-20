@@ -4,6 +4,11 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2021-07-21
+
+- release v0.6.2
+- [#18] - process errors while retrieving latest version
+- [#17] - deprecate reference to package user-home
 
 ## 2021-03-26
 

@@ -3,14 +3,14 @@
 [![Standard](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com/)
 [![Travis](https://img.shields.io/travis/xpack/cli-start-options-js.svg?label=linux)](https://travis-ci.org/xpack/cli-start-options-js)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/rydiijfkxr11essq?svg=true)](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js) 
-[![GitHub issues](https://img.shields.io/github/issues/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/issues)
+[![GitHub issues](https://img.shields.io/github/issues/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/issues/)
 [![GitHub pulls](https://img.shields.io/github/issues-pr/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/pulls)
 
 ## CLI startup and options processing
 
 A Node.js module with classes to implement a command line Node.js application.
 
-The module exports several classes (like CliApplication, CliCommand, ...) 
+The module exports several classes (like CliApplication, CliCommand, ...)
 that can be used as base classes for CLI applications.
 
 ## Prerequisites
@@ -25,8 +25,8 @@ The module is available as
 from the public repository, use `npm` to install it inside the module where 
 it is needed:
 
-```bash
-$ npm install @ilg/cli-start-options --save
+```sh
+npm install @ilg/cli-start-options --save
 ```
 
 The module does not provide any executables, and generally there are few 
@@ -52,12 +52,12 @@ const { CliApplication, CliCommand, CliHelp, CliOptions,
 
 ### Git repo
 
-```console
-$ git clone https://github.com/xpack/cli-start-options-js.git cli-start-options-js.git
-$ cd cli-start-options-js.git
-$ npm install
-$ sudo npm link 
-$ ls -l /usr/local/lib/node_modules/@ilg
+```sh
+git clone https://github.com/xpack/cli-start-options-js.git cli-start-options-js.git
+cd cli-start-options-js.git
+npm install
+sudo npm link 
+ls -l /usr/local/lib/node_modules/@ilg
 ```
 
 A link to the development folder should be present in the system
@@ -66,8 +66,8 @@ A link to the development folder should be present in the system
 In projects that use this module under development, link back from the
 global location:
 
-```console
-$ npm link @ilg/cli-start-options
+```sh
+npm link @ilg/cli-start-options
 ```
 
 ### Tests
@@ -78,10 +78,10 @@ The tests use the [`node-tap`](http://www.node-tap.org) framework
 As for any `npm` package, the standard way to run the project tests is via 
 `npm test`:
 
-```console
-$ cd cli-start-options-js.git
-$ npm install
-$ npm test
+```sh
+cd cli-start-options-js.git
+npm install
+npm test
 ```
 
 A typical test result looks like:
@@ -262,18 +262,39 @@ the `use strict`:
 Note: be sure C style comments are used, C++ styles are not parsed by 
 [ESLint](http://eslint.org).
 
-### How to publish
+### Publish to npmjs.com
 
+- `npm run fix`
 - commit all changes
-- `npm run test` (`fix` included)
-- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.1_
-- `npm version patch`
+- `npm run test-coverage`
+- check the latest commits `npm run git-log`
+- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.2_
+- `npm version patch` (bug fixes), `npm version minor` (compatible API
+  additions), `npm version major` (incompatible API changes)
+- `npm pack` and check the content
 - push all changes to GitHub; this should trigger CI
-- wait for CI tests to complete
-- `npm publish`
+- **wait for CI tests to complete**
+- `npm publish --tag next` (use `--access public` when publishing for the first time)
+
+Check if the version is present at
+[@ilg/cli-start-options Versions](https://www.npmjs.com/package/@ilg/cli-start-options?activeTab=versions).
+
+Test it with:
+
+```bash
+npm install -global xpm@next
+```
+
+### Change tag to latest
+
+When stable:
+
+- `npm dist-tag ls @ilg/cli-start-options`
+- `npm dist-tag add @ilg/cli-start-options@0.6.2 latest`
+- `npm dist-tag ls @ilg/cli-start-options`
 
 ## License
 
 The original content is released under the 
 [MIT License](https://opensource.org/licenses/MIT), with all rights 
-reserved to [Liviu Ionescu](https://github.com/ilg-ul).
+reserved to [Liviu Ionescu](https://github.com/ilg-ul/).
