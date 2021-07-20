@@ -1,6 +1,6 @@
 {
   "name": "@ilg/cli-start-options",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Classes to implement a command line Node.js application",
   "main": "./index.js",
   "directories": {
