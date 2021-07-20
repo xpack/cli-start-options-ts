@@ -9,13 +9,21 @@
     "test": "./test"
   },
   "scripts": {
-    "prepublishOnly": "standard && npm run test-tap -s",
+    "fix": "standard --fix --verbose",
     "test": "standard && npm run test-tap -s",
-    "test-coverage": "tap --coverage --reporter=classic --timeout 600 --no-color \"test/tap/*.js\"",
-    "test-tap": "tap --reporter=classic --timeout 300 --no-color \"test/tap/*.js\"",
-    "tap": "tap --reporter=spec --timeout 300 --no-color",
-    "fix": "standard --fix",
-    "link": "npm link @ilg/es6-promisifier; npm link wscript-avoider"
+    "git-log": "git log --pretty='%cd * %h %s' --date=short",
+    "outdated": "npm outdated",
+    "update": "npm update",
+    "install ": "npm install",
+    "version-patch": "npm version patch",
+    "version-minor": "npm version minor",
+    "pack": "npm pack",
+    "test100": "standard && npm run test-tap100 -s",
+    "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
+    "test-tap": "tap --reporter=classic --timeout 300 --no-check-coverage \"test/tap/*.js\"",
+    "test-tap100": "tap --reporter=classic --timeout 300 --100 \"test/tap/*.js\"",
+    "tap": "tap --reporter=spec --timeout 300",
+    "prepublishOnly": "standard && npm run test-tap -s"
   },
   "repository": {
     "type": "git",
