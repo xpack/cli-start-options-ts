@@ -43,14 +43,14 @@
     "latest-version": "^5.1.0",
     "make-dir": "^3.1.0",
     "semver": "^7.3.5",
-    "semver-diff": "^3.1.1",
+    "semver-diff": "^4.0.0",
     "user-home": "^2.0.0",
     "wscript-avoider": "^3.0.2"
   },
   "devDependencies": {
     "should": "^13.2.3",
     "standard": "^16.0.3",
-    "tap": "^14.11.0",
+    "tap": "^15.0.9",
     "tar": "^6.1.0"
   },
   "peerDependencies": {},
