@@ -58,7 +58,7 @@
     "should": "^13.2.3",
     "standard": "^16.0.3",
     "tap": "^15.0.9",
-    "tar": "^6.1.0"
+    "tar": "^6.1.6"
   },
   "peerDependencies": {},
   "optionalDependencies": {},
