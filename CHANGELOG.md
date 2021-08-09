@@ -4,6 +4,11 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2021-08-09
+
+- release v0.6.3
+- [#19] - fix the missing --global on windows
+
 ## 2021-07-21
 
 - release v0.6.2

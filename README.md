@@ -268,7 +268,7 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 - commit all changes
 - `npm run test-coverage`
 - check the latest commits `npm run git-log`
-- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.2_
+- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.3_
 - `npm version patch` (bug fixes), `npm version minor` (compatible API
   additions), `npm version major` (incompatible API changes)
 - `npm pack` and check the content
@@ -290,7 +290,7 @@ npm install -global xpm@next
 When stable:
 
 - `npm dist-tag ls @ilg/cli-start-options`
-- `npm dist-tag add @ilg/cli-start-options@0.6.2 latest`
+- `npm dist-tag add @ilg/cli-start-options@0.6.3 latest`
 - `npm dist-tag ls @ilg/cli-start-options`
 
 ## License
