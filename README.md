@@ -279,12 +279,6 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 Check if the version is present at
 [@ilg/cli-start-options Versions](https://www.npmjs.com/package/@ilg/cli-start-options?activeTab=versions).
 
-Test it with:
-
-```bash
-npm install -global xpm@next
-```
-
 ### Change tag to latest
 
 When stable:
