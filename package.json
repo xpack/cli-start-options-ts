@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xpack/cli-start-options-js.git"
+    "url": "https://github.com/xpack/cli-start-options-js.git"
   },
   "keywords": [
     "cli",
@@ -36,13 +36,13 @@
   "author": {
     "name": "Liviu Ionescu",
     "email": "ilg@livius.net",
-    "url": "http://liviusdotnet.wordpress.com"
+    "url": "https://github.com/ilg-ul/"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/xpack/cli-start-options-js/issues"
+    "url": "https://github.com/xpack/cli-start-options-js/issues/"
   },
-  "homepage": "https://github.com/xpack/cli-start-options-js",
+  "homepage": "https://github.com/xpack/cli-start-options-js/",
   "dependencies": {
     "@ilg/es6-promisifier": "^0.3.1",
     "del": "^6.0.0",
@@ -55,15 +55,15 @@
     "wscript-avoider": "^3.0.2"
   },
   "devDependencies": {
+    "minimist": "^1.2.6",
     "should": "^13.2.3",
     "standard": "^16.0.3",
-    "tap": "^15.0.9",
+    "tap": "^16.0.1",
     "tar": "^6.1.6"
   },
   "peerDependencies": {},
   "optionalDependencies": {},
   "engines": {
-    "node": ">7.7.0"
-  },
-  "bundleDependencies": []
+    "node": ">=12"
+  }
 }
