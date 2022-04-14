@@ -1,8 +1,8 @@
-[![npm (scoped)](https://img.shields.io/npm/v/@ilg/cli-start-options.svg)](https://www.npmjs.com/package/@ilg/cli-start-options) 
-[![license](https://img.shields.io/github/license/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/blob/xpack/LICENSE) 
+[![npm (scoped)](https://img.shields.io/npm/v/@ilg/cli-start-options.svg)](https://www.npmjs.com/package/@ilg/cli-start-options)
+[![license](https://img.shields.io/github/license/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/blob/xpack/LICENSE)
 [![Standard](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com/)
 [![Travis](https://img.shields.io/travis/xpack/cli-start-options-js.svg?label=linux)](https://travis-ci.org/xpack/cli-start-options-js)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/rydiijfkxr11essq?svg=true)](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js) 
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/rydiijfkxr11essq?svg=true)](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js)
 [![GitHub issues](https://img.shields.io/github/issues/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/issues/)
 [![GitHub pulls](https://img.shields.io/github/issues-pr/xpack/cli-start-options-js.svg)](https://github.com/xpack/cli-start-options-js/pulls)
 
@@ -15,30 +15,30 @@ that can be used as base classes for CLI applications.
 
 ## Prerequisites
 
-A recent [Node.js](https://nodejs.org) (>=8.x), since the ECMAScript 6 class 
+A recent [Node.js](https://nodejs.org) (>=8.x), since the ECMAScript 6 class
 syntax is used.
 
 ## Easy install
 
-The module is available as 
-[`@ilg/cli-start-options`](https://www.npmjs.com/package/@ilg/cli-start-options) 
-from the public repository, use `npm` to install it inside the module where 
+The module is available as
+[`@ilg/cli-start-options`](https://www.npmjs.com/package/@ilg/cli-start-options)
+from the public repository, use `npm` to install it inside the module where
 it is needed:
 
 ```sh
 npm install @ilg/cli-start-options --save
 ```
 
-The module does not provide any executables, and generally there are few 
+The module does not provide any executables, and generally there are few
 reasons to install it globally.
 
-The development repository is available from the GitHub 
-[xpack/cli-start-options-js](https://github.com/xpack/cli-start-options-js) 
+The development repository is available from the GitHub
+[xpack/cli-start-options-js](https://github.com/xpack/cli-start-options-js)
 project.
 
 ## User info
 
-The module can be included in CLI applications and the classes can be used 
+The module can be included in CLI applications and the classes can be used
 to derive application classes.
 
 ```javascript
@@ -56,7 +56,7 @@ const { CliApplication, CliCommand, CliHelp, CliOptions,
 git clone https://github.com/xpack/cli-start-options-js.git cli-start-options-js.git
 cd cli-start-options-js.git
 npm install
-sudo npm link 
+sudo npm link
 ls -l /usr/local/lib/node_modules/@ilg
 ```
 
@@ -72,10 +72,10 @@ npm link @ilg/cli-start-options
 
 ### Tests
 
-The tests use the [`node-tap`](http://www.node-tap.org) framework 
+The tests use the [`node-tap`](http://www.node-tap.org) framework
 (_A Test-Anything-Protocol library for Node.js_, written by Isaac Schlueter).
 
-As for any `npm` package, the standard way to run the project tests is via 
+As for any `npm` package, the standard way to run the project tests is via
 `npm test`:
 
 ```sh
@@ -89,7 +89,7 @@ A typical test result looks like:
 ```console
 $ npm run test
 
-> @ilg/cli-start-options@0.1.15 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.4 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard && npm run test-tap -s
 
 test/tap/author.js .................................... 8/8
@@ -176,8 +176,8 @@ test/tap/cmd-copy.js
 
 ### Coverage tests
 
-Coverage tests are a good indication on how much of the source files is 
-exercised by the tests. Ideally all source files should be covered 100%, 
+Coverage tests are a good indication on how much of the source files is
+exercised by the tests. Ideally all source files should be covered 100%,
 for all 4 criteria (statements, branches, functions, lines).
 
 To run the coverage tests, use `npm run test-coverage`:
@@ -185,7 +185,7 @@ To run the coverage tests, use `npm run test-coverage`:
 ```console
 $ npm run test-coverage
 
-> @ilg/cli-start-options@0.1.15 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.4 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > tap --coverage --reporter=classic --timeout 600 --no-color "test/tap/*.js"
 
 test/tap/author.js .................................... 8/8
@@ -218,8 +218,8 @@ All files                     |      100 |    89.01 |    96.43 |      100 |     
 
 ### Continuous Integration (CI)
 
-The continuous integration tests are performed via 
-[Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and 
+The continuous integration tests are performed via
+[Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and
 [AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
 
 To speed up things, the `node_modules` folder is cached between builds.
@@ -228,12 +228,12 @@ To speed up things, the `node_modules` folder is cached between builds.
 
 The module uses ECMAScript 6 class definitions.
 
-As style, it uses the [JavaScript Standard Style](https://standardjs.com/), 
+As style, it uses the [JavaScript Standard Style](https://standardjs.com/),
 automatically checked at each commit via Travis CI.
 
 Known and accepted exceptions:
 
-- `// eslint-disable-line node/no-deprecated-api` to continue using the 
+- `// eslint-disable-line node/no-deprecated-api` to continue using the
 deprecated `domain` module
 
 To manually fix compliance with the style guide (where possible):
@@ -241,7 +241,7 @@ To manually fix compliance with the style guide (where possible):
 ```console
 $ npm run fix
 
-> @ilg/cli-start-options@0.1.12 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.4 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard --fix
 
 ```
@@ -250,7 +250,7 @@ $ npm run fix
 
 The documentation metadata follows the [JSdoc](http://usejsdoc.org) tags.
 
-To enforce checking at file level, add the following comments right after 
+To enforce checking at file level, add the following comments right after
 the `use strict`:
 
 ```js
@@ -259,7 +259,7 @@ the `use strict`:
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 ```
 
-Note: be sure C style comments are used, C++ styles are not parsed by 
+Note: be sure C style comments are used, C++ styles are not parsed by
 [ESLint](http://eslint.org).
 
 ### Publish to npmjs.com
@@ -268,7 +268,7 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 - commit all changes
 - `npm run test-coverage`
 - check the latest commits `npm run git-log`
-- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.3_
+- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.4_
 - `npm version patch` (bug fixes), `npm version minor` (compatible API
   additions), `npm version major` (incompatible API changes)
 - `npm pack` and check the content
@@ -284,11 +284,11 @@ Check if the version is present at
 When stable:
 
 - `npm dist-tag ls @ilg/cli-start-options`
-- `npm dist-tag add @ilg/cli-start-options@0.6.3 latest`
+- `npm dist-tag add @ilg/cli-start-options@0.6.4 latest`
 - `npm dist-tag ls @ilg/cli-start-options`
 
 ## License
 
-The original content is released under the 
-[MIT License](https://opensource.org/licenses/MIT), with all rights 
+The original content is released under the
+[MIT License](https://opensource.org/licenses/MIT), with all rights
 reserved to [Liviu Ionescu](https://github.com/ilg-ul/).

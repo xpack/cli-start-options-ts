@@ -4,6 +4,11 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2022-04-14
+
+- v0.6.4 released
+- a8861a2 #20 refer to version in update recommendation
+
 ## 2021-08-09
 
 - release v0.6.3
@@ -32,7 +37,7 @@ Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
 - release v0.5.1
 - [#8] cli-application.js, show assert stack
-  
+
 ## 2018-11-02
 
 - release v0.5.0
