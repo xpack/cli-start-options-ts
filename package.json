@@ -57,7 +57,7 @@
   "devDependencies": {
     "minimist": "^1.2.6",
     "should": "^13.2.3",
-    "standard": "^16.0.3",
+    "standard": "16.0.3",
     "tap": "^16.0.1",
     "tar": "^6.1.6"
   },
