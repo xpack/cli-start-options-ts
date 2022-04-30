@@ -11,5 +11,9 @@
     //  - 'on' (viewport wrapping),
     //  - 'wordWrapColumn' (wrap at `editor.wordWrapColumn`) or
     //  - 'bounded' (wrap at minimum of viewport and `editor.wordWrapColumn`).
-    "editor.wordWrap": "off"
+    "editor.wordWrap": "off",
+    "cSpell.ignoreWords": [
+      "promisifier",
+      "wscript"
+    ]
 }
