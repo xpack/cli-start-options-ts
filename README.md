@@ -89,7 +89,7 @@ A typical test result looks like:
 ```console
 $ npm run test
 
-> @ilg/cli-start-options@0.6.4 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.5 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard && npm run test-tap -s
 
 test/tap/author.js .................................... 8/8
@@ -185,7 +185,7 @@ To run the coverage tests, use `npm run test-coverage`:
 ```console
 $ npm run test-coverage
 
-> @ilg/cli-start-options@0.6.4 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.5 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > tap --coverage --reporter=classic --timeout 600 --no-color "test/tap/*.js"
 
 test/tap/author.js .................................... 8/8
@@ -241,7 +241,7 @@ To manually fix compliance with the style guide (where possible):
 ```console
 $ npm run fix
 
-> @ilg/cli-start-options@0.6.4 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.6.5 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard --fix
 
 ```
@@ -268,7 +268,7 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 - commit all changes
 - `npm run test-coverage`
 - check the latest commits `npm run git-log`
-- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.4_
+- update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.5_
 - `npm version patch` (bug fixes), `npm version minor` (compatible API
   additions), `npm version major` (incompatible API changes)
 - `npm pack` and check the content
@@ -284,7 +284,7 @@ Check if the version is present at
 When stable:
 
 - `npm dist-tag ls @ilg/cli-start-options`
-- `npm dist-tag add @ilg/cli-start-options@0.6.4 latest`
+- `npm dist-tag add @ilg/cli-start-options@0.6.5 latest`
 - `npm dist-tag ls @ilg/cli-start-options`
 
 ## License
