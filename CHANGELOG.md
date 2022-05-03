@@ -4,6 +4,11 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2022-05-03
+
+* v0.6.6 released
+* 98e606c #21: fix the missing apostrophe before the space
+
 ## 2022-04-30
 
 * v0.6.5 released
