@@ -218,11 +218,7 @@ All files                     |      100 |    89.01 |    96.43 |      100 |     
 
 ### Continuous Integration (CI)
 
-The continuous integration tests are performed via
-[Travis CI](https://travis-ci.org/xpack/cli-start-options-js) and
-[AppVeyor](https://ci.appveyor.com/project/ilg-ul/cli-start-options-js).
-
-To speed up things, the `node_modules` folder is cached between builds.
+TBD
 
 ### Standard compliance
 
@@ -266,14 +262,14 @@ Note: be sure C style comments are used, C++ styles are not parsed by
 
 - `npm run fix`
 - commit all changes
-- `npm run test-coverage`
+- `npm run test-coverage` (not 100% yet)
 - check the latest commits `npm run git-log`
 - update `CHANGELOG.md`; commit with a message like _CHANGELOG: prepare v0.6.6_
 - `npm version patch` (bug fixes), `npm version minor` (compatible API
   additions), `npm version major` (incompatible API changes)
 - `npm pack` and check the content
 - push all changes to GitHub; this should trigger CI
-- **wait for CI tests to complete**
+- **wait for CI tests to complete** (not yet)
 - `npm publish --tag next` (use `--access public` when publishing for the first time)
 
 Check if the version is present at
