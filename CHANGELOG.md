@@ -4,6 +4,14 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2023-02-08
+
+* v0.7.0 released
+* 5c30456 .vscode/settings.json: ignoreWords
+* bd5c3e6 package.json: engines >=14.13.1
+* 267911b package.json: bump deps
+* 2fabbae #22: use dynamic include instead of require()
+
 ## 2022-05-03
 
 * v0.6.6 released
@@ -129,7 +137,7 @@ Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 * add support for single command
 * add chdir() to -C path
 * update tsts for tar 4.x
-* update tests for node 8.5 AsserionError with cause
+* update tests for node 8.5 AssertionError with cause
 
 ## 2017-05-15
 
