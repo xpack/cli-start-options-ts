@@ -13,7 +13,24 @@
     //  - 'bounded' (wrap at minimum of viewport and `editor.wordWrapColumn`).
     "editor.wordWrap": "off",
     "cSpell.ignoreWords": [
+      "EACCES",
+      "ENOENT",
+      "Funcs",
+      "Ionescu",
+      "Liviu",
+      "Schlueter",
+      "Stmts",
+      "chdir",
+      "cleanup",
+      "cmds",
+      "kxqjc",
+      "npmjs",
       "promisifier",
-      "wscript"
+      "strerr",
+      "tmpdir",
+      "tsts",
+      "wscript",
+      "xpack",
+      "xtest"
     ]
 }
