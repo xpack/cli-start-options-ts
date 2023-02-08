@@ -6,7 +6,7 @@ Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
 ## 2023-02-08
 
-* v0.7.0 released
+* v0.8.0 released
 * 5c30456 .vscode/settings.json: ignoreWords
 * bd5c3e6 package.json: engines >=14.13.1
 * 267911b package.json: bump deps
