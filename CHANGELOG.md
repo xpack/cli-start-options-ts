@@ -4,6 +4,11 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2023-02-09
+
+* v0.8.1 released
+* 64b9f45 cli-options.js: explicit file:// for import
+
 ## 2023-02-08
 
 * v0.8.0 released
