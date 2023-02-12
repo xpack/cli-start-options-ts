@@ -123,7 +123,7 @@ test('xtest -i (spawn)', (t) => {
     child.stdout.on('data', (chunk) => {
       // console.log(chunk)
       stdout += chunk
-      let ostr = null
+      let outStr = null
       if (stdout.endsWith('xtest> ')) {
         stdout = stdout.replace('xtest> ', '')
         if (debug) {
@@ -138,14 +138,14 @@ test('xtest -i (spawn)', (t) => {
             t.end()
           })
 
-          ostr = '--version'
+          outStr = '--version'
         } else if (count === 1) {
           t.test('--version', (t) => {
             t.equal(stdout, pack.version + '\n', 'version value')
             t.end()
           })
 
-          ostr = '-h'
+          outStr = '-h'
         } else if (count === 2) {
           t.test('-h', (t) => {
             t.match(stdout, 'Usage: xtest <command> [<subcommand>...]',
@@ -154,14 +154,14 @@ test('xtest -i (spawn)', (t) => {
             t.end()
           })
 
-          ostr = '--version'
+          outStr = '--version'
         } else if (count === 3) {
           t.test('--version again', (t) => {
             t.equal(stdout, pack.version + '\n', 'version value')
             t.end()
           })
 
-          ostr = 'copy -h'
+          outStr = 'copy -h'
         } else if (count === 4) {
           t.test('copy -h', (t) => {
             // console.log(stdout)
@@ -171,7 +171,7 @@ test('xtest -i (spawn)', (t) => {
             t.end()
           })
 
-          ostr = 'copy'
+          outStr = 'copy'
         } else if (count === 5) {
           t.test('copy', (t) => {
             t.match(stdout, 'Usage: xtest copy [options...] --file <file> ' +
@@ -181,7 +181,7 @@ test('xtest -i (spawn)', (t) => {
             t.end()
           })
 
-          ostr = 'xyz'
+          outStr = 'xyz'
         } else if (count === 6) {
           t.test('xyz', (t) => {
             t.match(stdout, 'Command \'xyz\' not supported.',
@@ -192,13 +192,13 @@ test('xtest -i (spawn)', (t) => {
             t.end()
           })
 
-          ostr = '.exit'
+          outStr = '.exit'
         }
-        if (ostr) {
+        if (outStr) {
           if (debug) {
-            console.log(`sent ${ostr}`)
+            console.log(`sent ${outStr}`)
           }
-          child.stdin.write(ostr + '\n')
+          child.stdin.write(outStr + '\n')
         }
         count++
         if (debug) {
