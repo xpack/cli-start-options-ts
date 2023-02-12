@@ -1,0 +1,7 @@
+{
+  "name": "test",
+  "version": "2.3.4",
+  "description": "Mock YTest",
+  "type": "module",
+  "author": "Liviu Ionescu <ilg@livius.net>"
+}

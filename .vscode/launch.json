@@ -22,7 +22,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap xtest.js",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--help"
@@ -43,7 +43,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap errors.js",
-      "program": "${workspaceRoot}/test/tap/errors.js",
+      "program": "${workspaceRoot}/tests/tap/errors.js",
       "stopOnEntry": true,
       "args": [
       ],
@@ -63,7 +63,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap logger.js",
-      "program": "${workspaceRoot}/test/tap/logger.js",
+      "program": "${workspaceRoot}/tests/tap/logger.js",
       "stopOnEntry": true,
       "args": [
       ],
@@ -83,7 +83,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap options-common.js",
-      "program": "${workspaceRoot}/test/tap/options-common.js",
+      "program": "${workspaceRoot}/tests/tap/options-common.js",
       "stopOnEntry": true,
       "args": [
       ],
@@ -103,7 +103,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js notclass",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "notclass"
@@ -124,7 +124,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js co",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "co"
@@ -145,7 +145,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel debug",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -167,7 +167,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js xx",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "xx"
@@ -188,14 +188,14 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js cop --file input --output output -v",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "cop",
-        "--file", 
-        "input", 
-        "--output", 
-        "output", 
+        "--file",
+        "input",
+        "--output",
+        "output",
         "-v"
       ],
       "cwd": "${workspaceRoot}",
@@ -214,7 +214,7 @@
       "type": "node",
       "request": "launch",
       "name": "ztest.js -h",
-      "program": "${workspaceRoot}/test/mock/ztest/bin/ztest.js",
+      "program": "${workspaceRoot}/tests/mock/ztest/bin/ztest.js",
       "stopOnEntry": true,
       "args": [
         "-h"
@@ -235,7 +235,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel xx",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -257,11 +257,11 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js cwd -C /tmp/xx",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
-        "cwd", 
-        "-C", 
+        "cwd",
+        "-C",
         "/tmp/xx"
       ],
       "cwd": "${workspaceRoot}",
@@ -280,7 +280,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js long",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
       "stopOnEntry": true,
       "args": [
         "long",
