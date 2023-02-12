@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -38,58 +37,56 @@
 
 // ----------------------------------------------------------------------------
 
-const os = require('os')
-const assert = require('assert')
-const path = require('path')
-const fs = require('fs')
-
-const vm = require('vm')
-const repl = require('repl')
-
-const util = require('util')
-const process = require('process')
-
-const latestVersion = require('latest-version')
-const semver = require('semver')
-const semverDiff = require('semver-diff')
-const isInstalledGlobally = require('is-installed-globally')
-const isPathInside = require('is-path-inside')
-const isCi = require('is-ci')
-const makeDir = require('make-dir')
-const del = require('del')
-
-// ES6: `import { Promisifier} from 'es6-promisifier'
-const Promisifier = require('@ilg/es6-promisifier').Promisifier
-
-// ES6: `import { WscriptAvoider} from 'wscript-avoider'
-const WscriptAvoider = require('wscript-avoider').WscriptAvoider
-
-// ES6: `import { CliCommand } from './cli-options.js'
-const CliCommand = require('./cli-command.js').CliCommand
-
-// ES6: `import { CliOptions } from './cli-options.js'
-const CliOptions = require('./cli-options.js').CliOptions
-
-// ES6: `import { CliHelp } from './cli-help.js'
-const CliHelp = require('./cli-help.js').CliHelp
-
-// ES6: `import { CliLogger } from './cli-logger.js'
-const CliLogger = require('./cli-logger.js').CliLogger
-
-// ES6: `import { CliExitCodes } from './cli-error.js'
-const CliExitCodes = require('./cli-error.js').CliExitCodes
-
-// ES6: `import { CliError } from './cli-error.js'
-const CliError = require('./cli-error.js').CliError
-const CliErrorSyntax = require('./cli-error.js').CliErrorSyntax
+import { strict as assert } from 'node:assert'
+import * as fs from 'node:fs'
+import * as os from 'node:os'
+import * as path from 'node:path'
+import * as process from 'node:process'
+import * as repl from 'node:repl'
+import { fileURLToPath } from 'node:url'
+import * as util from 'node:util'
+import * as vm from 'node:vm'
 
 // ----------------------------------------------------------------------------
 
-// Promisify a function with callback from the Node.js standard library.
-Promisifier.promisifyInPlace(fs, 'readFile')
-Promisifier.promisifyInPlace(fs, 'open')
-Promisifier.promisifyInPlace(fs, 'close')
-Promisifier.promisifyInPlace(fs, 'stat')
+// https://www.npmjs.com/package/latest-version
+import latestVersion from 'latest-version'
+// https://www.npmjs.com/package/semver
+import * as semver from 'semver'
+// https://www.npmjs.com/package/semver-diff
+import semverDiff from 'semver-diff'
+
+// https://www.npmjs.com/package/is-installed-globally
+import * as isInstalledGlobally from 'is-installed-globally'
+
+// https://www.npmjs.com/package/is-path-inside
+// ES module with default
+import isPathInside from 'is-path-inside'
+
+// https://www.npmjs.com/package/is-ci
+import * as isCi from 'is-ci'
+
+// https://www.npmjs.com/package/make-dir
+import makeDir from 'make-dir'
+// https://www.npmjs.com/package/del
+import { deleteAsync } from 'del'
+
+// ----------------------------------------------------------------------------
+
+// import { WscriptAvoider } from 'wscript-avoider'
+
+import { CliCommand } from './cli-command.js'
+import { CliOptions } from './cli-options.js'
+
+import { CliHelp } from './cli-help.js'
+import { CliLogger } from './cli-logger.js'
+import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
+
+// ----------------------------------------------------------------------------
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+const fsPromises = fs.promises
 
 // ----------------------------------------------------------------------------
 
@@ -124,9 +121,12 @@ const defaultLogLevel = 'info'
  * @classdesc
  * Base class for a CLI application.
  */
-// export
-class CliApplication {
+export class CliApplication {
   // --------------------------------------------------------------------------
+
+  public context
+  public latestVersionPromise
+  static rootPath
 
   /**
    * @summary Application start().
@@ -147,12 +147,12 @@ class CliApplication {
    * triggered.
    */
   static async start () {
-    const Self = this
+    const Self: any = this
 
-    // The actual minimum is 7.7, but conservatively use 8.x.
-    if (semver.lt(process.version, '8.0.0')) {
-      console.error('Please use a newer node (at least 8.x).\n')
-      process.exit(CliError.ERROR.PREREQUISITES)
+    // TODO: use package.json engine field.
+    if (semver.lt(process.version, '14.0.0')) {
+      console.error('Please use a newer node (at least 14.x).\n')
+      process.exit(CliExitCodes.ERROR.PREREQUISITES)
     }
 
     let exitCode = 0
@@ -161,7 +161,7 @@ class CliApplication {
       const programName = path.basename(process.argv[1]).split('.')[0]
 
       // Avoid running on WScript. The journey may abruptly end here.
-      WscriptAvoider.quitIfWscript(programName)
+      // WscriptAvoider.quitIfWscript(programName)
 
       Self.log = new CliLogger(console)
 
@@ -232,7 +232,7 @@ class CliApplication {
    */
   static async doStart () {
     // Save the current class to be captured in the callbacks.
-    const Self = this
+    const Self: any = this
 
     // To differentiate between multiple invocations with different
     // names, extract the name from the last path element; ignore
@@ -240,7 +240,8 @@ class CliApplication {
     Self.programName = path.basename(process.argv[1]).split('.')[0]
 
     // Set the application name, to make `ps` output more readable.
-    process.title = Self.programName
+    // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
+    // process.title = Self.programName
 
     // Initialise the application, including commands and options.
     const context = await Self.initialiseContext(null, Self.programName,
@@ -286,14 +287,15 @@ class CliApplication {
         // Interactive mode. Use the REPL (Read-Eval-Print-Loop)
         // to get a shell like prompt to enter sequences of commands.
 
-        const domain = require('domain').create() // eslint-disable-line node/no-deprecated-api, max-len
-        domain.on('error', Self.replErrorCallback.bind(Self))
+        // Domains were deprecated.
+        // const domain: any = (await import('domain')).create() // eslint-disable-line node/no-deprecated-api, max-len
+        // domain.on('error', Self.replErrorCallback.bind(Self))
         repl.start(
           {
             prompt: Self.programName + '> ',
             eval: Self.replEvaluatorCallback.bind(Self),
-            completer: Self.replCompleter.bind(Self),
-            domain: domain
+            completer: Self.replCompleter.bind(Self)
+            // domain: domain
           }).on('exit', () => {
           console.log('Done.')
           process.exit(0)
@@ -309,8 +311,9 @@ class CliApplication {
 
       console.log(`Listening on localhost:${serverPort}...`)
 
-      const domainSock = require('domain').create() // eslint-disable-line node/no-deprecated-api, max-len
-      domainSock.on('error', Self.replErrorCallback.bind())
+      // Domains were deprecated.
+      // const domainSock = (await import('domain')).create() // eslint-disable-line node/no-deprecated-api, max-len
+      // domainSock.on('error', Self.replErrorCallback.bind())
 
       net.createServer((socket) => {
         console.log(`Connection opened from ${socket.address().address}.`)
@@ -320,8 +323,8 @@ class CliApplication {
           input: socket,
           output: socket,
           eval: Self.replEvaluatorCallback.bind(Self),
-          completer: Self.replCompleter.bind(Self),
-          domain: domainSock
+          completer: Self.replCompleter.bind(Self)
+          // domain: domainSock
         }).on('exit', () => {
           console.log('Connection closed.')
           socket.end()
@@ -346,7 +349,7 @@ class CliApplication {
    */
   static initialise () {
     // Make uppercase explicit, to know it is a static method.
-    const Self = this
+    const Self: any = this
 
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
@@ -532,7 +535,7 @@ class CliApplication {
    */
   static initialiseConfiguration (context) {
     // Make uppercase explicit, to know it is a static method.
-    const Self = this
+    const Self: any = this
     const config = context.config
     assert(config, 'Configuration')
 
@@ -579,7 +582,7 @@ class CliApplication {
   static async initialiseContext (ctx, programName, console_ = null,
     log_ = null, config = null) {
     // Make uppercase explicit, to know it is a static method.
-    const Self = this
+    const Self: any = this
 
     // Call the application initialisation callback, to prepare
     // the structure needed to manage the commands and option.
@@ -645,7 +648,7 @@ class CliApplication {
    */
   static async readPackageJson (rootPath = this.rootPath) {
     const filePath = path.join(rootPath, 'package.json')
-    const fileContent = await fs.readFilePromise(filePath)
+    const fileContent = await fsPromises.readFile(filePath)
     assert(fileContent !== null)
     return JSON.parse(fileContent.toString())
   }
@@ -704,7 +707,7 @@ class CliApplication {
     // REPL always sets the console to point to its input/output.
     // Be sure it is so.
     assert(context.console !== undefined)
-    const Self = this
+    const Self: any = this
 
     let app = null
 
@@ -795,7 +798,7 @@ class CliApplication {
    */
   help () {
     // Make uppercase explicit, to know it is a static method.
-    const Self = this.constructor
+    const Self: any = this.constructor
 
     const log = this.context.log
     log.trace(`${this.constructor.name}.help()`)
@@ -820,9 +823,9 @@ class CliApplication {
     const fpath = path.join(timestampsPath, context.package.name +
       timestampSuffix)
     try {
-      const stats = await fs.statPromise(fpath)
+      const stats = await fsPromises.stat(fpath)
       if (stats.mtime) {
-        const crtDelta = Date.now() - stats.mtime
+        const crtDelta = Date.now() - stats.mtime.getTime()
         if (crtDelta < (deltaSeconds * 1000)) {
           log.trace('update timeout did not expire ' +
             `${Math.floor(crtDelta / 1000)} < ${deltaSeconds}`)
@@ -836,7 +839,7 @@ class CliApplication {
   }
 
   async getLatestVersion () {
-    const Self = this.constructor
+    const Self: any = this.constructor
     const context = this.context
     const config = context.config
     const log = context.log
@@ -913,11 +916,11 @@ class CliApplication {
 
     const fpath = path.join(timestampsPath, context.package.name +
       timestampSuffix)
-    await del(fpath, { force: true })
+    await deleteAsync(fpath, { force: true })
 
     // Create an empty file, only the modified date is checked.
-    const fd = await fs.openPromise(fpath, 'w')
-    await fs.closePromise(fd)
+    const fd = await fsPromises.open(fpath, 'w')
+    await fd.close()
 
     log.debug('timestamp created')
   }
@@ -932,7 +935,7 @@ class CliApplication {
    * Override it in the application if custom behaviour is desired.
    */
   async main (argv) {
-    const Self = this.constructor
+    const Self: any = this.constructor
 
     const context = this.context
     context.startTime = Date.now()
@@ -1066,17 +1069,5 @@ class CliApplication {
     }
   }
 }
-
-// ----------------------------------------------------------------------------
-// Node.js specific export definitions.
-
-// By default, `module.exports = {}`.
-// The CliApplication class is added as a property of this object.
-module.exports.CliApplication = CliApplication
-
-// In ES6, it would be:
-// export class CliApplication { ... }
-// ...
-// import { CliApplication } from 'cli-application.js'
 
 // ----------------------------------------------------------------------------

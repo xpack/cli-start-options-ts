@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -38,24 +37,22 @@
 // ----------------------------------------------------------------------------
 // Exit codes:
 
-const ERROR = {}
-ERROR.NONE = 0 // OK
+const ERROR = {
+  NONE: 0, // OK
+  SYNTAX: 1,
+  APPLICATION: 2, // Any functional error.
+  INPUT: 3, // No file, no folder, wrong format, etc.
+  OUTPUT: 4, // Cannot create file, cannot write, etc.
+  CHILD: 5, // Child return error.
+  PREREQUISITES: 6, // Prerequisites not met.
+  // Mismatched type, usually in configurations error; unimplemented, unsupported
+  TYPE: 7
+}
 
-// Syntax error while parsing options; will show help().
-ERROR.SYNTAX = 1
-
-ERROR.APPLICATION = 2 // Any functional error.
-ERROR.INPUT = 3 // No file, no folder, wrong format, etc.
-ERROR.OUTPUT = 4 // Cannot create file, cannot write, etc.
-ERROR.CHILD = 5 // Child return error.
-ERROR.PREREQUISITES = 6 // Prerequisites not met.
-
-// Mismatched type, usually in configurations error; unimplemented, unsupported.
-ERROR.TYPE = 7
-
-const CliExitCodes = {}
-CliExitCodes.ERROR = ERROR
-CliExitCodes.SUCCESS = ERROR.NONE
+export const CliExitCodes = {
+  ERROR,
+  SUCCESS: ERROR.NONE
+}
 
 // ============================================================================
 
@@ -63,9 +60,10 @@ CliExitCodes.SUCCESS = ERROR.NONE
  * @classdesc
  * Base class for all CLI triggered errors.
  */
-// export
-class CliError extends Error {
+export class CliError extends Error {
   // --------------------------------------------------------------------------
+
+  public exitCode
 
   /**
    * @summary Create a new syntax error instance.
@@ -88,8 +86,7 @@ class CliError extends Error {
  * CLI triggered syntax error.
  * Will try to be helpful (using help())
  */
-// export
-class CliErrorSyntax extends CliError {
+export class CliErrorSyntax extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -112,8 +109,7 @@ class CliErrorSyntax extends CliError {
  * @deprecated
  * Use CliError without any error code.
  */
-// export
-class CliErrorApplication extends CliError {
+export class CliErrorApplication extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -133,8 +129,7 @@ class CliErrorApplication extends CliError {
  * @classdesc
  * CLI triggered type error.
  */
-// export
-class CliErrorType extends CliError {
+export class CliErrorType extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -154,8 +149,7 @@ class CliErrorType extends CliError {
  * @classdesc
  * CLI triggered input error.
  */
-// export
-class CliErrorInput extends CliError {
+export class CliErrorInput extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -171,8 +165,7 @@ class CliErrorInput extends CliError {
   }
 }
 
-// export
-class CliErrorOutput extends CliError {
+export class CliErrorOutput extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -187,24 +180,5 @@ class CliErrorOutput extends CliError {
     super(message, ERROR.OUTPUT)
   }
 }
-
-// ----------------------------------------------------------------------------
-// Node.js specific export definitions.
-
-// By default, `module.exports = {}`.
-// The CliApplication class is added as a property of this object.
-module.exports.CliError = CliError
-module.exports.CliErrorSyntax = CliErrorSyntax
-module.exports.CliErrorApplication = CliErrorApplication
-module.exports.CliErrorType = CliErrorType
-module.exports.CliErrorInput = CliErrorInput
-module.exports.CliErrorOutput = CliErrorOutput
-
-module.exports.CliExitCodes = CliExitCodes
-
-// In ES6, it would be:
-// export class CliApplication { ... }
-// ...
-// import { CliError } from 'cli-application.js'
 
 // ----------------------------------------------------------------------------

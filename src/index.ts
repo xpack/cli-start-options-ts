@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -41,11 +40,16 @@
  * This file does not define the classes itself, but imports them
  * from various implementation files, and re-exports them.
  *
- * To import classes from this module into Node.js applications, use:
+ * To import classes from this module into ES6 Node.js applications, use:
  *
  * ```javascript
- * const { CliOptions, CliCommand } =
- *   require('@ilg/cli-start-options')
+ * import { CliOptions, CliCommand } from '@ilg/cli-start-options'
+ * ```
+ *
+ * or, for CommonJS Node.js applications:
+ *
+ * ```javascript
+ * const { CliOptions, CliCommand } = require('@ilg/cli-start-options')
  * ```
  */
 
@@ -54,19 +58,11 @@
 
 // By default, `module.exports = {}`.
 
-module.exports = {
-  ...(require('./lib/cli-application.js')),
-  ...(require('./lib/cli-command.js')),
-  ...(require('./lib/cli-help.js')),
-  ...(require('./lib/cli-options.js')),
-  ...(require('./lib/cli-error.js')),
-  ...(require('./lib/cli-logger.js'))
-}
-
-// In ES6, it would be:
-// export class CliApplication { ... }
-// ...
-// import { CliApplication, CliCommand, CliHelp, CliOptions, ... }
-// from 'cli-start-options.js'
+export * from './lib/cli-application.js'
+export * from './lib/cli-command.js'
+export * from './lib/cli-help.js'
+export * from './lib/cli-options.js'
+export * from './lib/cli-error.js'
+export * from './lib/cli-logger.js'
 
 // ----------------------------------------------------------------------------

@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -46,18 +45,15 @@
 
 // ----------------------------------------------------------------------------
 
-const assert = require('assert')
-const util = require('util')
-const path = require('path')
+import { strict as assert } from 'node:assert'
+import * as path from 'node:path'
+import * as util from 'node:util'
 
-// ES6: `import { CliOptions } from 'cli-start-options'
-const CliOptions = require('./cli-options.js').CliOptions
+// ----------------------------------------------------------------------------
 
-// ES6: `import { CliHelp } from 'cli-start-options'
-const CliHelp = require('./cli-help').CliHelp
-
-// ES6: `import { CliExitCodes } from './cli-error.js'
-const CliExitCodes = require('./cli-error.js').CliExitCodes
+import { CliOptions } from './cli-options.js'
+import { CliHelp } from './cli-help.js'
+import { CliExitCodes } from './cli-error.js'
 
 // ============================================================================
 
@@ -65,9 +61,16 @@ const CliExitCodes = require('./cli-error.js').CliExitCodes
  * @classdesc
  * Base class for a CLI application command.
  */
-// export
-class CliCommand {
+export class CliCommand {
   // --------------------------------------------------------------------------
+
+  public context
+  public log
+  public commands
+  public unparsedArgs
+  public optionGroups
+  public commandArgs
+  public title
 
   /**
    * @summary Constructor, to remember the context.
@@ -107,7 +110,7 @@ class CliCommand {
     }
 
     const commandArgs = []
-    if (remaining.length) {
+    if (remaining.length > 0) {
       let i = 0
       for (; i < remaining.length; ++i) {
         const arg = remaining[i]
@@ -138,7 +141,7 @@ class CliCommand {
     log.trace(util.inspect(config))
     this.commandArgs = commandArgs
 
-    return this.doRun(commandArgs)
+    return await this.doRun(commandArgs)
   }
 
   /**
@@ -158,7 +161,7 @@ class CliCommand {
    * @returns {undefined} Nothing.
    */
   help () {
-    const help = new CliHelp(this.context)
+    const help: any = new CliHelp(this.context)
 
     help.outputCommandLine(this.title, this.optionGroups)
 
@@ -186,7 +189,7 @@ class CliCommand {
    * The default implementation does nothing. Override it in
    * the application if needed.
    */
-  doOutputHelpArgsDetails () {
+  doOutputHelpArgsDetails (more) {
     // Nothing.
   }
 
@@ -258,32 +261,21 @@ class CliCommand {
     }
 
     const context = this.context
-    const generator = {}
-    generator.tool = context.programName
-    generator.version = context.package.version
-    generator.command = [context.programName]
-      .concat(this.commands, this.unparsedArgs)
+    const generator = {
+      tool: context.programName,
+      version: context.package.version,
+      command: [context.programName].concat(this.commands, this.unparsedArgs),
+      homepage: undefined,
+      date: (new Date()).toISOString()
+    }
     if (context.package.homepage) {
       generator.homepage = context.package.homepage
     }
-    generator.date = (new Date()).toISOString()
 
     object.generators.push(generator)
 
     return object
   }
 }
-
-// ----------------------------------------------------------------------------
-// Node.js specific export definitions.
-
-// By default, `module.exports = {}`.
-// The CliCommand class is added as a property of this object.
-module.exports.CliCommand = CliCommand
-
-// In ES6, it would be:
-// export class CliCommand { ... }
-// ...
-// import { CliCommand } from 'cli-command.js'
 
 // ----------------------------------------------------------------------------

@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -76,11 +75,10 @@
  */
 // ----------------------------------------------------------------------------
 
-const assert = require('assert')
-const path = require('path')
+import { strict as assert } from 'node:assert'
+import * as path from 'node:path'
 
-// ES6: `import { CliExitCodes } from './cli-error.js'
-const CliErrorSyntax = require('./cli-error.js').CliErrorSyntax
+import { CliErrorSyntax } from './cli-error.js'
 
 // ----------------------------------------------------------------------------
 
@@ -99,6 +97,12 @@ const CliErrorSyntax = require('./cli-error.js').CliErrorSyntax
  */
 class Node {
   // --------------------------------------------------------------------------
+
+  public chr
+  public count
+  public path
+  public unaliased
+  public children
 
   /**
    * @summary Add a character to the commands tree.
@@ -133,7 +137,7 @@ class Node {
    * @param {string} unaliased Official command name (unaliased).
    * @returns {Node} The newly created node.
    */
-  constructor (chr, path, unaliased) {
+  constructor (chr, path, unaliased = null) {
     this.chr = chr ? chr.toLowerCase() : null
     this.count = 1
     this.path = path
@@ -149,8 +153,7 @@ class Node {
  * Manage CLI options and commands. Keep an array of options and a tree
  * of commands.
  */
-// export
-class CliOptions {
+export class CliOptions {
   // --------------------------------------------------------------------------
 
   /**
@@ -161,7 +164,7 @@ class CliOptions {
    */
   static initialise (context) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     Self.context = context
   }
@@ -180,7 +183,7 @@ class CliOptions {
    */
   static addCommand (cmds_, path) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     const cmdsArray = Array.isArray(cmds_) ? cmds_ : [cmds_]
     const unaliased = cmdsArray[0]
@@ -217,7 +220,7 @@ class CliOptions {
    */
   static setCommandFile (path) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     Self.moduleRelativePath = path
   }
@@ -233,7 +236,7 @@ class CliOptions {
    */
   static addOptionGroups (optionGroups) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     if (!Self._commonOptionGroups) {
       Self._commonOptionGroups = []
@@ -245,7 +248,7 @@ class CliOptions {
 
   static appendToOptionGroups (title, optionDefs) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     Self._commonOptionGroups.forEach((og) => {
       if (og.title === title) {
@@ -256,7 +259,7 @@ class CliOptions {
 
   static hasCommands () {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
     return Self._cmdFirstArray
   }
 
@@ -267,7 +270,7 @@ class CliOptions {
    */
   static getCommandsFirstArray () {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     return Self._cmdFirstArray
   }
@@ -279,7 +282,7 @@ class CliOptions {
    */
   static getCommonOptionGroups () {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     return Self._commonOptionGroups
   }
@@ -302,7 +305,7 @@ class CliOptions {
    */
   static parseOptions (args, context, optionGroups = null) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    const Self: any = this
 
     assert(Self.context, 'Context not initialised')
     const log = Self.context.log
@@ -480,9 +483,10 @@ class CliOptions {
    * Due to circular references, cannot import CliCommand here,
    * so it must be passed from the caller.
    */
-  static async findCommandClass (cmds, rootPath, cmdClass) {
+  static async findCommandClass (cmds: string[], rootPath, cmdClass) {
     // Explicit upper case to know it is a class.
-    const Self = this
+    /* eslint @typescript-eslint/no-this-alias: off */
+    const Self: any = this
 
     let fullCommands = ''
     let modRelPath = null
@@ -494,12 +498,12 @@ class CliOptions {
         'No commands defined yet.')
 
       // TODO: walk the tree.
-      const str = cmds.join(' ').trim() + ' '
+      const str: string = cmds.join(' ').trim() + ' '
 
       let node = Self._cmdTree
       const strArr = str.split('')
       fullCommands = ''
-      let ix
+      let ix: number
       for (ix = 0; ix < strArr.length; ++ix) {
         const chr = strArr[ix]
         fullCommands += chr
@@ -542,23 +546,25 @@ class CliOptions {
     }
 
     const modPath = path.join(rootPath, modRelPath)
-    // const modex = require(modPath.toString())
+
     // On Windows, absolute paths start with a drive letter, and the
     // explicit `file://` is mandatory.
-    const modex = await import(`file://${modPath.toString()}`)
+    const modClass = await import(`file://${modPath.toString()}`)
 
     // Return the first exported class derived from `CliCommand`.
-    for (const prop in modex) {
-      const obj = modex[prop]
+    for (const prop in modClass) {
+      const obj = modClass[prop]
+      /* eslint @typescript-eslint/strict-boolean-expressions: off */
       if (Object.prototype.isPrototypeOf.call(cmdClass, obj)) {
         return {
-          CmdClass: modex[prop],
+          CmdClass: modClass[prop],
           fullCommands: fullCommands.split(' '),
-          rest: rest
+          rest
         }
       }
     }
     // Module not found
+    /* eslint @typescript-eslint/restrict-template-expressions: off */
     assert(false, `A class derived from '${cmdClass.name}' not ` +
       `found in '${modPath}'.`)
   }
@@ -567,10 +573,10 @@ class CliOptions {
    * @summary Return args up to the first `--`.
    *
    * @param {string[]} args Array of strings.
-   * @returns {string[]} Posibly a shorter array.
+   * @returns {string[]} Possibly a shorter array.
    */
-  static filterOwnArguments (args) {
-    const ownArgs = []
+  static filterOwnArguments (args: string[]): string[] {
+    const ownArgs: string[] = []
     for (const arg of args) {
       if (arg === '--') {
         break
@@ -586,8 +592,8 @@ class CliOptions {
    * @param {string[]} args Array of strings.
    * @returns {string[]} A shorter array, possibly empty.
    */
-  static filterOtherArguments (args) {
-    const otherArgs = []
+  static filterOtherArguments (args: string[]): string[] {
+    const otherArgs: string[] = []
     let hasOther = false
     for (const arg of args) {
       if (hasOther) {
@@ -600,17 +606,5 @@ class CliOptions {
     return otherArgs
   }
 }
-
-// ----------------------------------------------------------------------------
-// Node.js specific export definitions.
-
-// By default, `module.exports = {}`.
-// The CliOptions class is added as a property of this object.
-module.exports.CliOptions = CliOptions
-
-// In ES6, it would be:
-// export class CliOptions { ... }
-// ...
-// import { CliOptions } from 'cli-options.js'
 
 // ----------------------------------------------------------------------------

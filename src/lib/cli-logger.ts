@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -48,7 +47,7 @@
 
 // ----------------------------------------------------------------------------
 
-const assert = require('assert')
+import { strict as assert } from 'node:assert'
 
 // ============================================================================
 
@@ -63,8 +62,11 @@ const numLevel = {
   all: Infinity
 }
 
-// export
-class CliLogger {
+export class CliLogger {
+  private readonly _console
+  private _level
+  private _numLevel
+
   // --------------------------------------------------------------------------
 
   /**
@@ -78,6 +80,7 @@ class CliLogger {
     assert(level_ in numLevel)
 
     this._console = console_
+    // Use the setter, to also set numLevel.
     this.level = level_
   }
 
@@ -99,7 +102,7 @@ class CliLogger {
     this._console.log(msg, ...args)
   }
 
-  error (msg = '', ...args) {
+  error (msg: any = '', ...args) {
     if (this._numLevel >= numLevel.error) {
       if (msg instanceof Error) {
         this._console.error(msg, ...args)
@@ -177,17 +180,5 @@ class CliLogger {
     return this._numLevel >= numLevel.trace
   }
 }
-
-// ----------------------------------------------------------------------------
-// Node.js specific export definitions.
-
-// By default, `module.exports = {}`.
-// The CliLogger class is added as a property of this object.
-module.exports.CliLogger = CliLogger
-
-// In ES6, it would be:
-// export class CliLogger { ... }
-// ...
-// import { CliLogger } from 'cli-logger.js'
 
 // ----------------------------------------------------------------------------

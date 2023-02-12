@@ -25,7 +25,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'use strict'
 /* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
@@ -38,9 +37,14 @@
 
 // ============================================================================
 
-// export
-class CliHelp {
+export class CliHelp {
   // --------------------------------------------------------------------------
+
+  public context
+  public middleLimit
+  public rightLimit
+  public commands
+  public more
 
   constructor (ctx) {
     this.context = ctx
@@ -330,7 +334,7 @@ class CliHelp {
     }
   }
 
-  outputMainHelp (cmds, optionGroups, description) {
+  outputMainHelp (cmds, optionGroups, description = undefined) {
     // Try to get a message from the first group.
     this.outputCommands(cmds, description, optionGroups[0].msg)
 
@@ -373,17 +377,5 @@ class CliHelp {
     return more
   }
 }
-
-// ----------------------------------------------------------------------------
-// Node.js specific export definitions.
-
-// By default, `module.exports = {}`.
-// The CliHelp class is added as a property of this object.
-module.exports.CliHelp = CliHelp
-
-// In ES6, it would be:
-// export class CliHelp { ... }
-// ...
-// import { CliHelp } from 'cli-help.js'
 
 // ----------------------------------------------------------------------------

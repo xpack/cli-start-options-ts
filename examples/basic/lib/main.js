@@ -31,15 +31,17 @@
 
 // ----------------------------------------------------------------------------
 
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const {
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+import {
   CliApplication,
   CliExitCodes,
   CliErrorSyntax,
   CliErrorApplication
-} = require('../../../index.js')
-// Use `require('@xpack/cli-start-options')` in a standalone application.
+} from '../../../dist/index.js'
 
 class MyApp extends CliApplication {
   constructor (params) {

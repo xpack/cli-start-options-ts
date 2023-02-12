@@ -2,12 +2,12 @@
   "name": "@ilg/cli-start-options",
   "version": "0.8.1",
   "description": "Classes to implement a command line Node.js application",
-  "main": "./index.js",
-  "directories": {
-    "bin": "./bin",
-    "lib": "./lib",
-    "test": "./test"
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.js"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "npm-install ": "npm install",
     "fix": "ts-standard --fix src && standard --fix tests",
