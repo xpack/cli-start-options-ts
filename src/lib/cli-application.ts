@@ -555,7 +555,7 @@ export class CliApplication {
   }
 
   /**
-   * @summary Custome initialiser for the configuration options.
+   * @summary Custom initialiser for the configuration options.
    *
    * @param {Object} context Reference to the context object.
    * @returns {undefined} Nothing.
@@ -982,7 +982,7 @@ export class CliApplication {
     }
 
     // Save the commands in the context, for possible later use, since
-    // they are skiped when calling the command implementation.
+    // they are skipped when calling the command implementation.
     context.commands = cmds
 
     // Must be executed before help().

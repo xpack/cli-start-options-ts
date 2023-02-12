@@ -82,9 +82,9 @@ class MyApp extends CliApplication {
     // The exit code is specific to each class.
     if (args[0] !== args[1]) {
       // Alternately, this top function can return the error code, but from
-      // deppely nested contexts it is more convenient to throw.
+      // deeply nested contexts it is more convenient to throw.
       throw new CliErrorApplication(
-        `The argumments '${args[0]}' and '${args[1]}' are not compatible.`)
+        `The arguments '${args[0]}' and '${args[1]}' are not compatible.`)
     }
 
     log.info('Doing myapp important things...')

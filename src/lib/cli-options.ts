@@ -412,7 +412,7 @@ export class CliOptions {
    * Processing the option means calling a function, that most probably
    * will add or update something in the configuration object.
    *
-   * If the option has a separae value, it consumes it and informs
+   * If the option has a separate value, it consumes it and informs
    * the caller to skip the next option.
    *
    * @todo process --opt=value syntax.
@@ -470,7 +470,7 @@ export class CliOptions {
    * @param {class} cmdClass The base class of all commands.
    * @returns {{CmdClass: class, fullCommands: string[], rest: string[]}|null}
    *  An object with a class that implements the given command,
-   *  the full command as a string array, and the remainings args.
+   *  the full command as a string array, and the remaining args.
    * @throws CliErrorSyntax The command was not recognised or
    *  is not unique, or the module does not implement CmdClass.
    *
