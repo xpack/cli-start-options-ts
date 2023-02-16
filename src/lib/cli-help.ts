@@ -14,6 +14,12 @@
 
 // ----------------------------------------------------------------------------
 
+import { CliContext } from './cli-context.js'
+import { CliLogger } from './cli-logger.js'
+import { CliOptionGroup, CliOptionDefinition } from './cli-options.js'
+
+// ----------------------------------------------------------------------------
+
 /*
  * This file provides support for displaying the application and
  * command specific help.
@@ -21,118 +27,158 @@
 
 // ============================================================================
 
+type CallableNoArgs = () => void
+
+export class CliMultiPass {
+  // --------------------------------------------------------------------------
+
+  public isFirstPass: boolean = true
+  public width: number = 0
+  public limit: number = 0
+
+  constructor (limit_: number) {
+    this.limit = limit_
+  }
+
+  updateWidth (width: number): void {
+    if (this.isFirstPass && width > this.width) {
+      this.width = width
+    }
+  }
+
+  secondPass (): void {
+    this.isFirstPass = false
+    // One more is implicit, so a total 2 spaces between columns.
+    this.width += 1
+    if (this.width > this.limit) {
+      this.width = this.limit
+    }
+  }
+}
+
 export class CliHelp {
   // --------------------------------------------------------------------------
 
-  public context
-  public middleLimit
-  public rightLimit
-  public commands
-  public more
+  public context: CliContext
+  public middleLimit: number
+  public rightLimit: number
+  public commands?: string[]
+  public multiPass: CliMultiPass
 
-  constructor (ctx) {
-    this.context = ctx
+  constructor (context: CliContext) {
+    this.context = context
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
   }
 
-  outputCommands (commands, description, msg = '[<args>...]') {
-    const log = this.context.log
-    const programName = this.context.programName
+  outputCommands (
+    commands: string[] | undefined,
+    description: string | undefined,
+    message: string = '[<args>...]'
+  ): void {
+    const log: CliLogger = this.context.log
+    const programName: string = this.context.programName
 
     log.output()
-    if (!description) {
-      const pkgJson = this.context.package
-      description = pkgJson.description
+    if (description === undefined) {
+      const packageJson = this.context.package
+      description = packageJson.description
     }
     log.output(`${description}`)
 
     this.commands = commands
-    if (commands) {
-      // Deep copy & sort
-      const cmds = commands.slice()
-      cmds.sort()
+    if (commands !== undefined) {
+      // Use slice() to do a deep copy & sort.
+      const commandsCopy: string[] = commands.slice()
+      commandsCopy.sort()
 
       log.output(`Usage: ${programName} <command> [<subcommand>...]` +
-        ` [<options> ...] ${msg}`)
+        ` [<options> ...] ${message}`)
       log.output()
       log.output('where <command> is one of:')
-      let buf = null
-      cmds.forEach((cmd, i) => {
-        if (buf === null) {
-          buf = '  '
+      let buffer: string = null
+      commandsCopy.forEach((cmd, i) => {
+        if (buffer === null) {
+          buffer = '  '
         }
-        buf += cmd
-        if (i !== (cmds.length - 1)) {
-          buf += ', '
+        buffer += cmd
+        if (i !== (commandsCopy.length - 1)) {
+          buffer += ', '
         }
-        if (buf.length > this.rightLimit) {
-          log.output(buf)
-          buf = null
+        if (buffer.length > this.rightLimit) {
+          log.output(buffer)
+          buffer = null
         }
       })
-      if (buf != null) {
-        log.output(buf)
-        buf = null
+      if (buffer != null) {
+        log.output(buffer)
+        buffer = null
       }
     } else {
-      log.output(`Usage: ${programName} ` + ` [<options> ...] ${msg}`)
+      log.output(`Usage: ${programName} ` + ` [<options> ...] ${message}`)
     }
   }
 
-  static padRight (str, n) {
-    str += ' '.repeat(n)
-    return str.substr(0, n)
+  static padRight (str: string, count: number): string {
+    str += ' '.repeat(count)
+    return str.substring(0, count)
   }
 
-  outputHelpDetails (options, more = this.more) {
-    const log = this.context.log
-    const programName = this.context.programName
+  outputHelpDetails (options, multiPass = this.multiPass): void {
+    const log: CliLogger = this.context.log
+    const programName: string = this.context.programName
 
-    const s1 = `${programName} -h|--help`
-    const s2 = `${programName} <command> -h|--help`
-    if (more.isFirstPass) {
-      if (s1.length > more.width) {
-        more.width = s1.length
+    const str1: string = `${programName} -h|--help`
+    const str2: string = `${programName} <command> -h|--help`
+    if (multiPass.isFirstPass) {
+      if (str1.length > multiPass.width) {
+        multiPass.width = str1.length
       }
-      if (this.commands) {
-        if (s2.length > more.width) {
-          more.width = s2.length
+      if (this.commands !== undefined) {
+        if (str2.length > multiPass.width) {
+          multiPass.width = str2.length
         }
       }
     } else {
       log.output()
-      this.outputMaybeLongLine(s1, 'Quick help', more)
-      if (this.commands) {
-        this.outputMaybeLongLine(s2, 'Quick help on command', more)
+      this.outputMaybeLongLine(str1, 'Quick help', multiPass)
+      if (this.commands !== undefined) {
+        this.outputMaybeLongLine(str2, 'Quick help on command', multiPass)
       }
     }
   }
 
-  outputMaybeLongLine (out, msg, more = this.more) {
-    const log = this.context.log
-    if (out.length >= more.limit) {
+  outputMaybeLongLine (
+    out: string,
+    message: string,
+    multiPass = this.multiPass
+  ): void {
+    const log: CliLogger = this.context.log
+    if (out.length >= multiPass.limit) {
       log.output(out)
       out = ''
     }
-    out += ' '.repeat(more.width)
-    let desc = ''
-    if (msg) {
-      desc = msg + ' '
+    out += ' '.repeat(multiPass.width)
+    let desc: string = ''
+    if (message !== undefined) {
+      desc = message + ' '
     }
-    log.output(`${CliHelp.padRight(out, more.width)} ${desc}`)
+    log.output(`${CliHelp.padRight(out, multiPass.width)} ${desc}`)
   }
 
-  outputEarlyDetails (optionGroups, more = this.more) {
+  outputEarlyDetails (
+    optionGroups: CliOptionGroup[],
+    multiPass = this.multiPass
+  ): void {
     const programName = this.context.programName
 
-    if (!more.isFirstPass) {
+    if (!multiPass.isFirstPass) {
       // log.output()
     }
 
     optionGroups.forEach((optionGroup) => {
       optionGroup.optionDefs.forEach((optionDef) => {
-        if (optionDef.msg && optionDef.doProcessEarly) {
+        if (optionDef.msg !== undefined && optionDef.doProcessEarly) {
           let out = `${programName} `
           optionDef.options.forEach((opt, index) => {
             out += opt
@@ -140,30 +186,38 @@ export class CliHelp {
               out += '|'
             }
           })
-          if (more.isFirstPass) {
-            if (out.length > more.width) {
-              more.width = out.length
+          if (multiPass.isFirstPass) {
+            if (out.length > multiPass.width) {
+              multiPass.width = out.length
             }
           } else {
-            this.outputMaybeLongLine(out, optionDef.msg, more)
+            this.outputMaybeLongLine(out, optionDef.msg, multiPass)
           }
         }
       })
     })
   }
 
-  outputOptionGroups (optionGroups, more = this.more) {
+  outputOptionGroups (
+    optionGroups: CliOptionGroup[],
+    multiPass = this.multiPass
+  ): void {
     optionGroups.forEach((optionGroup) => {
-      this.outputOptions(optionGroup.optionDefs, optionGroup.title, more)
+      this.outputOptions(optionGroup.optionDefs, optionGroup.title, multiPass)
     })
   }
 
-  outputOptions (optionDefs, title, more = this.more) {
+  outputOptions (
+    optionDefs: CliOptionDefinition[],
+    title: string | undefined,
+    multiPass = this.multiPass
+  ): void {
     const log = this.context.log
 
     let hasContent = false
     optionDefs.forEach((optionDef) => {
-      if (optionDef.msg && !optionDef.doProcessEarly && !optionDef.isHelp) {
+      if (optionDef.msg !== undefined && !optionDef.doProcessEarly &&
+        !optionDef.isHelp) {
         hasContent = true
       }
     })
@@ -171,13 +225,14 @@ export class CliHelp {
       return
     }
 
-    if (!more.isFirstPass && title) {
+    if (!multiPass.isFirstPass && title !== undefined) {
       log.output()
       log.output(title + ':')
     }
 
     optionDefs.forEach((optionDef) => {
-      if (optionDef.msg && !optionDef.doProcessEarly && !optionDef.isHelp) {
+      if (optionDef.msg !== undefined && !optionDef.doProcessEarly &&
+        !optionDef.isHelp) {
         let strOpts = '  '
         optionDef.options.forEach((opt, index) => {
           strOpts += opt
@@ -185,24 +240,25 @@ export class CliHelp {
             strOpts += '|'
           }
         })
-        if (optionDef.hasValue || optionDef.values || optionDef.param) {
-          if (optionDef.param) {
+        if (optionDef.hasValue || optionDef.values !== undefined ||
+          optionDef.param !== undefined) {
+          if (optionDef.param !== undefined) {
             strOpts += ` <${optionDef.param}>`
           } else {
             strOpts += ' <s>'
           }
         }
 
-        if (more.isFirstPass) {
-          if (strOpts.length > more.width) {
-            more.width = strOpts.length
+        if (multiPass.isFirstPass) {
+          if (strOpts.length > multiPass.width) {
+            multiPass.width = strOpts.length
           }
         } else {
-          if (strOpts.length >= more.limit) {
+          if (strOpts.length >= multiPass.limit) {
             log.output(strOpts)
             strOpts = ''
           }
-          strOpts += ' '.repeat(more.width)
+          strOpts += ' '.repeat(multiPass.width)
           let desc = ''
           if (optionDef.msg.length > 0) {
             desc = optionDef.msg + ' '
@@ -217,7 +273,7 @@ export class CliHelp {
             })
             desc += ') '
           }
-          const msgDefault = optionDef.msgDefault
+          const msgDefault = optionDef.msgDefault !== undefined
             ? `, default ${optionDef.msgDefault}`
             : ''
           if (optionDef.isOptional && optionDef.isMultiple) {
@@ -227,100 +283,108 @@ export class CliHelp {
           } else if (optionDef.isMultiple) {
             desc += '(multiple)'
           }
-          log.output(`${CliHelp.padRight(strOpts, more.width)} ${desc}`)
+          log.output(`${CliHelp.padRight(strOpts, multiPass.width)} ${desc}`)
         }
       }
     })
   }
 
-  outputCommandLine (title, optionGroups) {
+  outputCommandLine (
+    title: string,
+    optionGroups: CliOptionGroup[] | undefined
+  ): void {
     const log = this.context.log
-    const programName = this.context.programName
+    const programName: string = this.context.programName
 
     log.output()
     log.output(title)
-    const commands = this.context.fullCommands
+    const commands = this.context.fullCommands.join(' ')
     const usage = `Usage: ${programName} ${commands}`
-    let str = usage
+    let str: string = usage
 
-    let optionDefs = []
-    if (optionGroups && (optionGroups.length > 0) &&
-      optionGroups[0].preOptions) {
+    let optionDefs: CliOptionDefinition[] = []
+    if (optionGroups !== undefined && (optionGroups.length > 0) &&
+      optionGroups[0].preOptions !== undefined) {
       str += ' ' + optionGroups[0].preOptions
     }
     str += ' [options...]'
     optionGroups.forEach((optionGroup) => {
       optionDefs = optionDefs.concat(optionGroup.optionDefs)
     })
-    let optStr
+    let buffer: string
     optionDefs.forEach((optionDef) => {
-      optStr = ''
+      buffer = ''
       optionDef.options.forEach((val) => {
         // Assume the longest option is the more readable.
-        if (val.length > optStr.length) {
-          optStr = val
+        if (val.length > buffer.length) {
+          buffer = val
         }
       })
-      if (optionDef.param) {
-        optStr += ` <${optionDef.param}>`
+      if (optionDef.param !== undefined) {
+        buffer += ` <${optionDef.param}>`
       } else if (optionDef.hasValue) {
-        optStr += ' <s>'
+        buffer += ' <s>'
       }
       if (optionDef.isOptional) {
-        optStr = `[${optStr}]`
+        buffer = `[${buffer}]`
         if (optionDef.isMultiple) {
-          optStr += '*'
+          buffer += '*'
         }
       } else if (optionDef.isMultiple) {
-        optStr = `[${optStr}]+`
+        buffer = `[${buffer}]+`
       }
 
       // log.output(optStr)
-      if (str.length + optStr.length + 1 > this.rightLimit) {
+      if (str.length + buffer.length + 1 > this.rightLimit) {
         log.output(str)
         str = ' '.repeat(usage.length)
       }
-      str += ' ' + optStr
+      str += ' ' + buffer
     })
-    if (optionGroups && (optionGroups.length > 0) &&
-      optionGroups[0].postOptions) {
-      optStr = optionGroups[0].postOptions
-      if (str.length + optStr.length + 1 > this.rightLimit) {
+    if (optionGroups !== undefined && (optionGroups.length > 0) &&
+      optionGroups[0].postOptions !== undefined) {
+      buffer = optionGroups[0].postOptions
+      if (str.length + buffer.length + 1 > this.rightLimit) {
         log.output(str)
         str = ' '.repeat(usage.length)
       }
-      str += ' ' + optStr
+      str += ' ' + buffer
     }
     if (str.length > usage.length) {
       log.output(str)
     }
   }
 
-  outputFooter () {
-    const log = this.context.log
+  outputFooter (): void {
+    const log: CliLogger = this.context.log
     const pkgJson = this.context.package
 
     log.output()
     const pkgPath = this.context.rootPath
     log.output(`npm ${pkgJson.name}@${pkgJson.version} '${pkgPath}'`)
-    if (pkgJson.homepage) {
+    if (pkgJson.homepage !== undefined) {
       log.output(`Home page: <${pkgJson.homepage}>`)
     }
-    const br = 'Bug reports:'
-    if (pkgJson.bugs && pkgJson.bugs.url) {
-      log.output(`${br} <${pkgJson.bugs.url}>`)
-    } else if (pkgJson.author) {
+    const bugReports = 'Bug reports:'
+    if (pkgJson.bugs?.url !== undefined) {
+      log.output(`${bugReports} <${pkgJson.bugs.url}>`)
+    } else if (pkgJson.author !== undefined) {
       if (typeof pkgJson.author === 'object') {
-        log.output(`${br} ${pkgJson.author.name} <${pkgJson.author.email}>`)
+        log.output(
+          `${bugReports} ${pkgJson.author.name} <${pkgJson.author.email}>`)
       } else if (typeof pkgJson.author === 'string') {
-        log.output(`${br} ${pkgJson.author}`)
+        log.output(`${bugReports} ${pkgJson.author}`)
       }
     }
   }
 
-  outputMainHelp (cmds, optionGroups, description = undefined) {
+  outputMainHelp (
+    commands: string[],
+    optionGroups: CliOptionGroup[],
+    description = undefined
+  ): void {
     // Try to get a message from the first group.
-    this.outputCommands(cmds, description, optionGroups[0].msg)
+    this.outputCommands(commands, description, optionGroups[0].title)
 
     // The special trick here is how to align the right column.
     // For this two steps are needed, with the first to compute
@@ -335,30 +399,11 @@ export class CliHelp {
     this.outputFooter()
   }
 
-  twoPassAlign (f) {
-    const more = this.firstPass()
+  twoPassAlign (f: CallableNoArgs): void {
+    this.multiPass = new CliMultiPass(this.middleLimit)
     f()
-    this.secondPass(more)
+    this.multiPass.secondPass()
     f()
-  }
-
-  firstPass () {
-    this.more = {
-      isFirstPass: true,
-      width: 0,
-      limit: this.middleLimit
-    }
-    return this.more
-  }
-
-  secondPass (more = this.more) {
-    more.isFirstPass = false
-    // One more is implicit, so a total 2 spaces between columns.
-    more.width += 1
-    if (more.width > more.limit) {
-      more.width = more.limit
-    }
-    return more
   }
 }
 

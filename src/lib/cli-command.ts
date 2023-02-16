@@ -35,9 +35,11 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
-import { CliOptions } from './cli-options.js'
-import { CliHelp } from './cli-help.js'
+import { CliContext, CliConfig } from './cli-context.js'
 import { CliExitCodes } from './cli-error.js'
+import { CliHelp, CliMultiPass } from './cli-help.js'
+import { CliLogger } from './cli-logger.js'
+import { CliOptions, CliOptionGroup } from './cli-options.js'
 
 // ============================================================================
 
@@ -48,27 +50,27 @@ import { CliExitCodes } from './cli-error.js'
 export class CliCommand {
   // --------------------------------------------------------------------------
 
-  public context
-  public log
-  public commands
-  public unparsedArgs
-  public optionGroups
-  public commandArgs
-  public title
+  public context: CliContext
+  public log: CliLogger
+  public commands: string
+  public unparsedArgs: string[]
+  public optionGroups: CliOptionGroup[]
+  public commandArgs: string[]
+  public title: string
 
   /**
    * @summary Constructor, to remember the context.
    *
    * @param {Object} context Reference to a context.
    */
-  constructor (context) {
+  constructor (context: CliContext) {
     assert(context)
     assert(context.log)
     // assert(context.fullCommands)
 
     this.context = context
     this.log = context.log
-    this.commands = context.fullCommands
+    this.commands = context.fullCommands.join(' ')
   }
 
   /**
@@ -77,27 +79,27 @@ export class CliCommand {
    * @param {string[]} args Array of arguments.
    * @returns {number} Return code.
    */
-  async run (args) {
+  async run (args: string[]): Promise<number> {
     const log = this.log
     log.trace(`${this.constructor.name}.run()`)
 
-    const context = this.context
-    const config = context.config
+    const context: CliContext = this.context
+    const config: CliConfig = context.config
 
     this.unparsedArgs = args
-    const remaining = CliOptions.parseOptions(args, context,
-      this.optionGroups ? this.optionGroups : [])
+    const remainingArgs: string[] = CliOptions.parseOptions(args, context,
+      this.optionGroups !== undefined ? this.optionGroups : [])
 
     if (config.isHelpRequest) {
       this.help()
       return CliExitCodes.SUCCESS // Ok, command help explicitly called.
     }
 
-    const commandArgs = []
-    if (remaining.length > 0) {
+    const commandArgs: string[] = []
+    if (remainingArgs.length > 0) {
       let i = 0
-      for (; i < remaining.length; ++i) {
-        const arg = remaining[i]
+      for (; i < remainingArgs.length; ++i) {
+        const arg = remainingArgs[i]
         if (arg === '--') {
           break
         }
@@ -107,15 +109,15 @@ export class CliCommand {
           commandArgs.push(arg)
         }
       }
-      for (; i < remaining.length; ++i) {
-        const arg = remaining[i]
+      for (; i < remainingArgs.length; ++i) {
+        const arg = remainingArgs[i]
         commandArgs.push(arg)
       }
     }
 
-    const missing = CliOptions.checkMissing(this.optionGroups)
-    if (missing) {
-      missing.forEach((msg) => {
+    const missingErrors = CliOptions.checkMissing(this.optionGroups)
+    if (missingErrors != null) {
+      missingErrors.forEach((msg) => {
         log.error(msg)
       })
       this.help()
@@ -134,7 +136,7 @@ export class CliCommand {
    * @param {string[]} argv Array of arguments.
    * @returns {number} Return code.
    */
-  async doRun (argv) {
+  async doRun (argv: string[]): Promise<number> {
     assert(false,
       'Abstract CliCmd.doRun(), redefine it in your derived class.')
   }
@@ -144,14 +146,16 @@ export class CliCommand {
    *
    * @returns {undefined} Nothing.
    */
-  help () {
-    const help: any = new CliHelp(this.context)
+  help (): void {
+    const help: CliHelp = new CliHelp(this.context)
 
     help.outputCommandLine(this.title, this.optionGroups)
 
-    const commonOptionGroups = CliOptions.getCommonOptionGroups()
+    const commonOptionGroups: CliOptionGroup[] =
+      CliOptions.getCommonOptionGroups()
+
     help.twoPassAlign(() => {
-      this.doOutputHelpArgsDetails(help.more)
+      this.doOutputHelpArgsDetails(help.multiPass)
 
       this.optionGroups.forEach((optionGroup) => {
         help.outputOptions(optionGroup.optionDefs, optionGroup.title)
@@ -167,39 +171,40 @@ export class CliCommand {
   /**
    * @summary Output details about extra args.
    *
+   * @param {CliMultiPass} more Status for two pass.
    * @returns {undefined} Nothing.
    *
    * @description
    * The default implementation does nothing. Override it in
    * the application if needed.
    */
-  doOutputHelpArgsDetails (more) {
+  doOutputHelpArgsDetails (more: CliMultiPass): void {
     // Nothing.
   }
 
   /**
    * @summary Convert a duration in ms to seconds if larger than 1000.
-   * @param {number} n Duration in milliseconds.
+   * @param {number} millis Duration in milliseconds.
    * @returns {string} Value in ms or sec.
    */
-  formatDuration (n) {
-    if (n < 1000) {
-      return `${n} ms`
+  formatDuration (millis: number): string {
+    if (millis < 1000) {
+      return `${millis} ms`
     }
-    return `${(n / 1000).toFixed(3)} sec`
+    return `${(millis / 1000).toFixed(3)} sec`
   }
 
   /**
    * @summary Display Done and the durations.
    * @returns {undefined} Nothing.
    */
-  outputDoneDuration () {
+  outputDoneDuration (): void {
     const log = this.log
     const context = this.context
 
     log.info()
     const durationString = this.formatDuration(Date.now() - context.startTime)
-    const cmdDisplay = context.commands
+    const cmdDisplay = context.commands !== undefined
       ? [context.programName].concat(context.commands).join(' ')
       : context.programName
     log.info(`'${cmdDisplay}' completed in ${durationString}.`)
@@ -217,10 +222,11 @@ export class CliCommand {
    * make the path absolute, resolve it and return.
    * To 'resolve' means to process possible `.` or `..` segments.
    */
-  makePathAbsolute (inPath) {
+  makePathAbsolute (inPath: string): string {
     if (path.isAbsolute(inPath)) {
       return path.resolve(inPath)
     }
+    /* eslint @typescript-eslint/strict-boolean-expressions: off */
     return path.resolve(this.context.config.cwd || this.context.processCwd,
       inPath)
   }
@@ -238,8 +244,8 @@ export class CliCommand {
    * Multiple generators are possible, each call will append a new
    * element to the array.
    */
-  addGenerator (object) {
-    if (!object.generators) {
+  addGenerator (object: any): any { // TODO
+    if (object.generators === undefined) {
       const generators = []
       object.generators = generators
     }
@@ -252,7 +258,7 @@ export class CliCommand {
       homepage: undefined,
       date: (new Date()).toISOString()
     }
-    if (context.package.homepage) {
+    if (context.package.homepage !== undefined) {
       generator.homepage = context.package.homepage
     }
 

@@ -47,9 +47,9 @@ const numLevel = {
 }
 
 export class CliLogger {
-  private readonly _console
-  private _level
-  private _numLevel
+  private readonly _console: Console
+  private _level: string
+  private _numLevel: number
 
   // --------------------------------------------------------------------------
 
@@ -82,57 +82,57 @@ export class CliLogger {
    * Use this instead of console.log(), which in Node.js always
    * refers to the process console, not the possible REPL streams.
    */
-  always (msg = '', ...args) {
+  always (msg = '', ...args): void {
     this._console.log(msg, ...args)
   }
 
-  error (msg: any = '', ...args) {
+  error (msg: any = '', ...args): void {
     if (this._numLevel >= numLevel.error) {
       if (msg instanceof Error) {
         this._console.error(msg, ...args)
       } else {
-        this._console.error('error: ' + msg, ...args)
+        this._console.error('error: ' + (msg as string), ...args)
       }
     }
   }
 
-  output (msg = '', ...args) {
+  output (msg = '', ...args): void {
     if (this._numLevel >= numLevel.error) {
       this._console.log(msg, ...args)
     }
   }
 
-  warn (msg = '', ...args) {
+  warn (msg = '', ...args): void {
     if (this._numLevel >= numLevel.warn) {
       this._console.error('warning: ' + msg, ...args)
     }
   }
 
-  info (msg = '', ...args) {
+  info (msg = '', ...args): void {
     if (this._numLevel >= numLevel.info) {
       this._console.log(msg, ...args)
     }
   }
 
-  verbose (msg = '', ...args) {
+  verbose (msg = '', ...args): void {
     if (this._numLevel >= numLevel.verbose) {
       this._console.log(msg, ...args)
     }
   }
 
-  debug (msg = '', ...args) {
+  debug (msg = '', ...args): void {
     if (this._numLevel >= numLevel.debug) {
       this._console.log('debug: ' + msg, ...args)
     }
   }
 
-  trace (msg = '', ...args) {
+  trace (msg = '', ...args): void {
     if (this._numLevel >= numLevel.trace) {
       this._console.log('trace: ' + msg, ...args)
     }
   }
 
-  set level (level_) {
+  set level (level_: string) {
     assert(numLevel[level_] !== undefined,
       `Log level '${level_}' not supported.`)
 
@@ -140,27 +140,27 @@ export class CliLogger {
     this._level = level_
   }
 
-  get level () {
+  get level (): string {
     return this._level
   }
 
-  isWarn () {
+  isWarn (): boolean {
     return this._numLevel >= numLevel.warn
   }
 
-  isInfo () {
+  isInfo (): boolean {
     return this._numLevel >= numLevel.info
   }
 
-  isVerbose () {
+  isVerbose (): boolean {
     return this._numLevel >= numLevel.verbose
   }
 
-  isDebug () {
+  isDebug (): boolean {
     return this._numLevel >= numLevel.debug
   }
 
-  isTrace () {
+  isTrace (): boolean {
     return this._numLevel >= numLevel.trace
   }
 }

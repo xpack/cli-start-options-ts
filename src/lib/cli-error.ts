@@ -21,7 +21,7 @@
 // ----------------------------------------------------------------------------
 // Exit codes:
 
-const ERROR = {
+export const ERROR = {
   NONE: 0, // OK
   SYNTAX: 1,
   APPLICATION: 2, // Any functional error.
@@ -29,7 +29,8 @@ const ERROR = {
   OUTPUT: 4, // Cannot create file, cannot write, etc.
   CHILD: 5, // Child return error.
   PREREQUISITES: 6, // Prerequisites not met.
-  // Mismatched type, usually in configurations error; unimplemented, unsupported
+  // Mismatched type, usually in configurations error; unimplemented,
+  // unsupported
   TYPE: 7
 }
 
@@ -47,7 +48,7 @@ export const CliExitCodes = {
 export class CliError extends Error {
   // --------------------------------------------------------------------------
 
-  public exitCode
+  public exitCode: number
 
   /**
    * @summary Create a new syntax error instance.

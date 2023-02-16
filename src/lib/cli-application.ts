@@ -23,6 +23,7 @@
 
 import { strict as assert } from 'node:assert'
 import * as fs from 'node:fs'
+import * as net from 'node:net'
 import * as os from 'node:os'
 import * as path from 'node:path'
 import * as process from 'node:process'
@@ -35,13 +36,15 @@ import * as vm from 'node:vm'
 
 // https://www.npmjs.com/package/latest-version
 import latestVersion from 'latest-version'
+
 // https://www.npmjs.com/package/semver
 import * as semver from 'semver'
+
 // https://www.npmjs.com/package/semver-diff
 import semverDiff from 'semver-diff'
 
 // https://www.npmjs.com/package/is-installed-globally
-import * as isInstalledGlobally from 'is-installed-globally'
+import isInstalledGlobally from 'is-installed-globally'
 
 // https://www.npmjs.com/package/is-path-inside
 // ES module with default
@@ -52,6 +55,7 @@ import * as isCi from 'is-ci'
 
 // https://www.npmjs.com/package/make-dir
 import makeDir from 'make-dir'
+
 // https://www.npmjs.com/package/del
 import { deleteAsync } from 'del'
 
@@ -60,6 +64,7 @@ import { deleteAsync } from 'del'
 // import { WscriptAvoider } from 'wscript-avoider'
 
 import { CliCommand } from './cli-command.js'
+import { CliContext, CliConfig } from './cli-context.js'
 import { CliOptions } from './cli-options.js'
 
 import { CliHelp } from './cli-help.js'
@@ -68,6 +73,7 @@ import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
 
 // ----------------------------------------------------------------------------
 
+/* eslint @typescript-eslint/naming-convention: off */
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const fsPromises = fs.promises
@@ -102,15 +108,37 @@ const defaultLogLevel = 'info'
 // ============================================================================
 
 /**
+ * @summary Node.js REPL callback.
+ *
+ * @callback nodeReplCallback
+ * @param {number} responseCode
+ * @param {string} responseMessage
+ */
+type nodeReplCallback = (any) => {}
+
+// ----------------------------------------------------------------------------
+
+/**
  * @classdesc
  * Base class for a CLI application.
  */
 export class CliApplication {
   // --------------------------------------------------------------------------
 
-  public context
-  public latestVersionPromise
-  static rootPath
+  static rootPath: string
+  static log: CliLogger
+  static programName: string
+  static config: CliConfig
+  static hasInteractiveMode?: boolean
+  static isInitialised?: boolean
+  static command: CliCommand // actually an instance derived from it
+  static Command: typeof CliCommand // actually a class derived from it
+  static checkUpdatesIntervalSeconds?: number
+
+  // --------------------------------------------------------------------------
+
+  public context: CliContext
+  public latestVersionPromise: Promise<string>
 
   /**
    * @summary Application start().
@@ -130,8 +158,9 @@ export class CliApplication {
    * otherwise the `UnhandledPromiseRejectionWarning` is currently
    * triggered.
    */
-  static async start () {
-    const Self: any = this
+  static async start (): Promise<void> {
+    /* eslint @typescript-eslint/no-this-alias: off */
+    const staticThis = this
 
     // TODO: use package.json engine field.
     if (semver.lt(process.version, '14.0.0')) {
@@ -142,16 +171,16 @@ export class CliApplication {
     let exitCode = 0
     try {
       // Extract the name from the last path element; ignore extensions, if any.
-      const programName = path.basename(process.argv[1]).split('.')[0]
+      // const programName = path.basename(process.argv[1]).split('.')[0]
 
       // Avoid running on WScript. The journey may abruptly end here.
       // WscriptAvoider.quitIfWscript(programName)
 
-      Self.log = new CliLogger(console)
+      staticThis.log = new CliLogger(console)
 
       // Redirect to implementation code. After some common inits,
       // if not interactive, it'll call main().
-      await Self.doStart()
+      await staticThis.doStart()
       // Pass through. Do not exit, to allow REPL to run.
     } catch (ex) {
       // This should catch possible errors during inits, otherwise
@@ -161,7 +190,7 @@ export class CliApplication {
         : ex.exitCode
       if (ex instanceof CliError) {
         // CLI triggered error. Treat it gently.
-        Self.log.error(ex.message)
+        staticThis.log.error(ex.message)
       } else if (ex.constructor === Error ||
         ex.constructor === SyntaxError ||
         ex.constructor === TypeError) {
@@ -172,7 +201,7 @@ export class CliApplication {
         // Show the full stack trace.
         console.error(ex.stack)
       }
-      Self.log.verbose(`exit(${exitCode})`)
+      staticThis.log.verbose(`exit(${exitCode})`)
       process.exit(exitCode)
     }
     // Pass through. Do not exit, to allow REPL to run.
@@ -214,33 +243,37 @@ export class CliApplication {
    * the context object, which includes a logger, a configuration
    * object and a few more properties.
    */
-  static async doStart () {
-    // Save the current class to be captured in the callbacks.
-    const Self: any = this
+  static async doStart (): Promise<void> {
+    const staticThis = this
+    const ClassThis = this // To make it look like a class.
 
     // To differentiate between multiple invocations with different
     // names, extract the name from the last path element; ignore
     // extensions, if any.
-    Self.programName = path.basename(process.argv[1]).split('.')[0]
+    staticThis.programName = path.basename(process.argv[1]).split('.')[0]
 
     // Set the application name, to make `ps` output more readable.
     // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
-    // process.title = Self.programName
+    // TypeScript complains that it is not writable.
+    // process.title = staticThis.programName
 
     // Initialise the application, including commands and options.
-    const context = await Self.initialiseContext(null, Self.programName,
-      console, null, null)
+    const context = await staticThis.initialiseContext(
+      undefined,
+      staticThis.programName,
+      console
+    )
 
     const log = context.log
-    Self.log.level = log.level
+    staticThis.log.level = log.level
 
     // These are early messages, not shown immediately,
-    // are delayed until the log level is known.
+    // they are delayed until the log level is known.
     log.verbose(`${context.package.description}`)
     log.debug(`argv0: ${process.argv[1]}`)
 
     const config = context.config
-    Self.config = config
+    staticThis.config = config
 
     // Parse the common options, for example the log level.
     CliOptions.parseOptions(process.argv, context)
@@ -254,7 +287,7 @@ export class CliApplication {
     log.trace(util.inspect(config))
 
     const serverPort = config.interactiveServerPort
-    if (!serverPort) {
+    if (serverPort === undefined) {
       if (!config.isInteractive) {
         // Non interactive means single shot (batch mode);
         // execute the command received on the command line
@@ -262,23 +295,24 @@ export class CliApplication {
 
         config.invokedFromCli = true
         // App instances exist only within a given context.
-        const app = new Self(context)
+        const app = new ClassThis(context)
 
-        const code = await app.main(process.argv.slice(2))
+        const exitCode = await app.main(process.argv.slice(2))
         await app.checkUpdate()
-        process.exit(code)
+        process.exit(exitCode)
       } else {
         // Interactive mode. Use the REPL (Read-Eval-Print-Loop)
         // to get a shell like prompt to enter sequences of commands.
 
         // Domains were deprecated.
-        // const domain: any = (await import('domain')).create() // eslint-disable-line node/no-deprecated-api, max-len
-        // domain.on('error', Self.replErrorCallback.bind(Self))
+        // const domain: any = (await import('domain')).create()
+        // domain.on('error',
+        //   staticThis.replErrorCallback.bind(staticThis))
         repl.start(
           {
-            prompt: Self.programName + '> ',
-            eval: Self.replEvaluatorCallback.bind(Self),
-            completer: Self.replCompleter.bind(Self)
+            prompt: staticThis.programName + '> ',
+            eval: staticThis.replEvaluatorCallback.bind(staticThis),
+            completer: staticThis.replCompleter.bind(staticThis)
             // domain: domain
           }).on('exit', () => {
           console.log('Done.')
@@ -291,23 +325,24 @@ export class CliApplication {
       // Useful during development, to test if everything goes to the
       // correct stream.
 
-      const net = require('net')
+      // const net = await import('node:net')
 
       console.log(`Listening on localhost:${serverPort}...`)
 
       // Domains were deprecated.
-      // const domainSock = (await import('domain')).create() // eslint-disable-line node/no-deprecated-api, max-len
-      // domainSock.on('error', Self.replErrorCallback.bind())
+      // const domainSock = (await import('domain')).create()
+      // domainSock.on('error', staticThis.replErrorCallback.bind())
 
       net.createServer((socket) => {
-        console.log(`Connection opened from ${socket.address().address}.`)
+        const socketAddress = socket.address() as net.AddressInfo
+        console.log(`Connection opened from ${socketAddress.address}.`)
 
         repl.start({
-          prompt: Self.programName + '> ',
+          prompt: staticThis.programName + '> ',
           input: socket,
           output: socket,
-          eval: Self.replEvaluatorCallback.bind(Self),
-          completer: Self.replCompleter.bind(Self)
+          eval: staticThis.replEvaluatorCallback.bind(staticThis),
+          completer: staticThis.replCompleter.bind(staticThis)
           // domain: domainSock
         }).on('exit', () => {
           console.log('Connection closed.')
@@ -331,9 +366,8 @@ export class CliApplication {
    * @description
    * Must override it in the derived implementation.
    */
-  static initialise () {
-    // Make uppercase explicit, to know it is a static method.
-    const Self: any = this
+  static initialise (): void {
+    const staticThis = this
 
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
@@ -444,7 +478,7 @@ export class CliApplication {
                 const config = context.config
                 if (path.isAbsolute(val)) {
                   config.cwd = val
-                } else if (config.cwd) {
+                } else if (config.cwd !== undefined) {
                   config.cwd = path.resolve(config.cwd, val)
                 } else /* istanbul ignore next */ {
                   config.cwd = path.resolve(val)
@@ -461,9 +495,9 @@ export class CliApplication {
       ]
     )
 
-    Self.doInitialise()
+    staticThis.doInitialise()
 
-    if (Self.hasInteractiveMode) {
+    if (staticThis.hasInteractiveMode) {
       CliOptions.appendToOptionGroups('Common options',
         [
           {
@@ -480,7 +514,7 @@ export class CliApplication {
           {
             options: ['--interactive-server-port'],
             action: (context, val) => /* istanbul ignore next */ {
-              context.config.interactiveServerPort = val
+              context.config.interactiveServerPort = +val // as number
             },
             init: (context) => {
               context.config.interactiveServerPort = undefined
@@ -492,7 +526,7 @@ export class CliApplication {
       )
     }
 
-    assert(Self.rootPath, 'mandatory rootPath not set')
+    assert(staticThis.rootPath, 'mandatory rootPath not set')
   }
 
   /**
@@ -503,7 +537,7 @@ export class CliApplication {
    * @description
    * Override it in the derived implementation.
    */
-  static doInitialise () /* istanbul ignore next */ {
+  static doInitialise (): void /* istanbul ignore next */ {
     assert(false, 'Must override in derived implementation!')
   }
 
@@ -517,9 +551,9 @@ export class CliApplication {
    * If further inits are needed, override `doInitialiseConfiguration()`
    * in the derived implementation.
    */
-  static initialiseConfiguration (context) {
-    // Make uppercase explicit, to know it is a static method.
-    const Self: any = this
+  static initialiseConfiguration (context: CliContext): void {
+    const staticThis = this
+
     const config = context.config
     assert(config, 'Configuration')
 
@@ -535,7 +569,7 @@ export class CliApplication {
       })
     })
 
-    Self.doInitialiseConfiguration(context)
+    staticThis.doInitialiseConfiguration(context)
   }
 
   /**
@@ -547,7 +581,7 @@ export class CliApplication {
    * @description
    * Override it in the derived implementation.
    */
-  static doInitialiseConfiguration (context) {
+  static doInitialiseConfiguration (context: CliContext): void {
     const config = context.config
     assert(config, 'Configuration')
   }
@@ -555,7 +589,7 @@ export class CliApplication {
   /**
    * @summary Initialise a minimal context object.
    *
-   * @param {Object} ctx Reference to a context, or null to create an
+   * @param {Object} context_ Reference to a context, or null to create an
    *   empty context.
    * @param {string} programName The invocation name of the program.
    * @param {Object} console_ Reference to a node console.
@@ -563,27 +597,31 @@ export class CliApplication {
    * @param {Object} config Reference to a configuration.
    * @returns {Object} Reference to context.
    */
-  static async initialiseContext (ctx, programName, console_ = null,
-    log_ = null, config = null) {
-    // Make uppercase explicit, to know it is a static method.
-    const Self: any = this
+  static async initialiseContext (
+    context_: CliContext | undefined,
+    programName: string,
+    console_: Console = undefined,
+    log_: CliLogger = undefined,
+    config: CliConfig = undefined
+  ): Promise<CliContext> {
+    const staticThis = this
 
     // Call the application initialisation callback, to prepare
     // the structure needed to manage the commands and option.
-    if (!Self.isInitialised) {
-      Self.initialise()
+    if (!staticThis.isInitialised) {
+      staticThis.initialise()
 
-      Self.isInitialised = true
+      staticThis.isInitialised = true
     }
 
     // Use the given context, or create an empty one.
-    const context = ctx || vm.createContext()
+    const context = context_ ?? (vm.createContext() as CliContext)
 
     // REPL should always set the console, be careful not to
     // overwrite it.
-    if (!context.console) {
+    if (context.console === undefined) {
       // Cannot use || because REPL context has only a getter.
-      context.console = console_ || console
+      context.console = console_ ?? console
     }
 
     assert(context.console)
@@ -595,20 +633,21 @@ export class CliApplication {
     context.processArgv = process.argv
 
     // For convenience, copy root path from class to instance.
-    context.rootPath = Self.rootPath
+    context.rootPath = staticThis.rootPath
 
-    if (!context.package) {
-      context.package = await Self.readPackageJson()
+    if (context.package === undefined) {
+      context.package = await staticThis.readPackageJson()
     }
 
     // Initialise configuration.
-    context.config = config || {}
-    Self.initialiseConfiguration(context)
-    if (!context.config.cwd) /* istanbul ignore next */ {
+    /* eslint @typescript-eslint/consistent-type-assertions: off */
+    context.config = config ?? ({} as CliConfig)
+    staticThis.initialiseConfiguration(context)
+    if (context.config.cwd === undefined) /* istanbul ignore next */ {
       context.config.cwd = context.processCwd
     }
 
-    context.log = log_ || new CliLogger(context.console,
+    context.log = log_ ?? new CliLogger(context.console,
       context.config.logLevel)
 
     assert(context.log)
@@ -630,7 +669,7 @@ export class CliApplication {
    * stored in the class property during initialisation.
    * When called from tests, the path must be passed explicitly.
    */
-  static async readPackageJson (rootPath = this.rootPath) {
+  static async readPackageJson (rootPath = this.rootPath): Promise<any> {
     const filePath = path.join(rootPath, 'package.json')
     const fileContent = await fsPromises.readFile(filePath)
     assert(fileContent !== null)
@@ -638,14 +677,6 @@ export class CliApplication {
   }
 
   // --------------------------------------------------------------------------
-
-  /**
-   * @summary Node.js callback.
-   *
-   * @callback nodeCallback
-   * @param {number} responseCode
-   * @param {string} responseMessage
-   */
 
   /**
    * @summary A REPL completer.
@@ -657,7 +688,10 @@ export class CliApplication {
    * @description
    * TODO: Add code.
    */
-  static replCompleter (linePartial, callback) /* istanbul ignore next */ {
+  static replCompleter (
+    linePartial,
+    callback: nodeReplCallback
+  ): void /* istanbul ignore next */ {
     // callback(null, [['babu', 'riba'], linePartial])
     // console.log(linePartial)
     // If no completion available, return error (an empty string does it too).
@@ -666,41 +700,39 @@ export class CliApplication {
   }
 
   /**
-   * @summary REPL callback.
-   *
-   * @callback replCallback
-   * @param {number} responseCode or null
-   * @param {string} [responseMessage] If present, the string will
-   *  be displayed.
-   */
-
-  /**
    * @summary Callback used by REPL when a line is entered.
    *
    * @param {string} cmdLine The entire line, unparsed.
    * @param {Object} context Reference to a context.
    * @param {string} filename The name of the file.
-   * @param {replCallback} callback Called on completion or error.
+   * @param {nodeReplCallback} callback Called on completion or error.
    * @returns {undefined} Nothing
    *
    * @description
-   * The function is passed to REPL with `.bind(Self)`, so it'll have
-   * access to all class properties, like Self.programName.
+   * The function is passed to REPL with `.bind(staticThis)`, so it'll have
+   * access to all class properties, like staticThis.programName.
    */
-  static async replEvaluatorCallback (cmdLine, context, filename, callback) {
+  static async replEvaluatorCallback (
+    cmdLine: string,
+    context: CliContext,
+    filename: string,
+    callback: nodeReplCallback
+  ): Promise<void> {
+    const staticThis = this
+    const ClassThis = this // To make it look like a class.
+
     // REPL always sets the console to point to its input/output.
     // Be sure it is so.
     assert(context.console !== undefined)
-    const Self: any = this
 
     let app = null
 
     // It is mandatory to catch errors, this is an old style callback.
     try {
       // Fill in the given context, created by the REPL interpreter.
-      // Start with an empty config, not the Self.config.
+      // Start with an empty config, not the staticThis.config.
       // With the current non-reentrant log, use the global object.
-      await Self.initialiseContext(context, Self.programName, null, null, null)
+      await staticThis.initialiseContext(context, staticThis.programName)
 
       // Definitely an interactive session.
       context.config.isInteractive = true
@@ -710,7 +742,7 @@ export class CliApplication {
       context.config.invokedFromCli = true
 
       // Create an instance of the application class, for the given context.
-      app = new Self(context)
+      app = new ClassThis(context)
 
       // Split command line and remove any number of spaces.
       const args = cmdLine.trim().split(/\s+/)
@@ -739,7 +771,7 @@ export class CliApplication {
    * This is tricky and took some time to find a workaround to avoid
    * displaying the stack trace on error.
    */
-  static replErrorCallback (err) /* istanbul ignore next */ {
+  static replErrorCallback (err): void /* istanbul ignore next */ {
     // if (!(err instanceof SyntaxError)) {
     // System errors deserve their stack trace.
     if (!(err instanceof EvalError) && !(err instanceof SyntaxError) &&
@@ -760,7 +792,7 @@ export class CliApplication {
    *
    * @param {Object} context Reference to a context.
    */
-  constructor (context) {
+  constructor (context: CliContext) {
     assert(context)
     assert(context.console)
     assert(context.log)
@@ -780,27 +812,26 @@ export class CliApplication {
    * @description
    * Override it in the application if custom content is desired.
    */
-  help () {
-    // Make uppercase explicit, to know it is a static method.
-    const Self: any = this.constructor
+  help (): void {
+    const staticThis = this.constructor as typeof CliApplication
 
     const log = this.context.log
     log.trace(`${this.constructor.name}.help()`)
 
     const help = new CliHelp(this.context)
 
-    if (Self.command) {
-      const optionGroups = Self.command.optionGroups
+    if (staticThis.command !== undefined) {
+      const optionGroups = staticThis.command.optionGroups
         .concat(CliOptions.getCommonOptionGroups())
 
-      help.outputMainHelp(undefined, optionGroups, Self.command.title)
+      help.outputMainHelp(undefined, optionGroups, staticThis.command.title)
     } else {
       help.outputMainHelp(CliOptions.getCommandsFirstArray(),
         CliOptions.getCommonOptionGroups())
     }
   }
 
-  async didIntervalExpire (deltaSeconds) {
+  async didIntervalExpire (deltaSeconds: number): Promise<boolean> {
     const context = this.context
     const log = context.log
 
@@ -808,7 +839,7 @@ export class CliApplication {
       timestampSuffix)
     try {
       const stats = await fsPromises.stat(fpath)
-      if (stats.mtime) {
+      if (stats.mtime !== undefined) {
         const crtDelta = Date.now() - stats.mtime.getTime()
         if (crtDelta < (deltaSeconds * 1000)) {
           log.trace('update timeout did not expire ' +
@@ -822,15 +853,16 @@ export class CliApplication {
     return true
   }
 
-  async getLatestVersion () {
-    const Self: any = this.constructor
+  async getLatestVersion (): Promise<void> {
+    const staticThis = this.constructor as typeof CliApplication
+
     const context = this.context
     const config = context.config
     const log = context.log
 
-    if (!Self.checkUpdatesIntervalSeconds ||
-      Self.checkUpdatesIntervalSeconds === 0 ||
-      isCi ||
+    if (staticThis.checkUpdatesIntervalSeconds === undefined ||
+      staticThis.checkUpdatesIntervalSeconds === 0 ||
+      (isCi as boolean) ||
       config.isVersionRequest ||
       !process.stdout.isTTY ||
       'NO_UPDATE_NOTIFIER' in process.env ||
@@ -839,7 +871,8 @@ export class CliApplication {
       return
     }
 
-    if (await this.didIntervalExpire(Self.checkUpdatesIntervalSeconds)) {
+    if (await this.didIntervalExpire(
+      staticThis.checkUpdatesIntervalSeconds)) {
       log.trace('fetching latest version number...')
       // At this step only create the promise,
       // its result is checked before exit.
@@ -847,42 +880,46 @@ export class CliApplication {
     }
   }
 
-  async checkUpdate () {
+  async checkUpdate (): Promise<void> {
     const context = this.context
     const log = context.log
 
-    if (!this.latestVersionPromise) {
+    if (this.latestVersionPromise === undefined) {
       // If the promise was not created, no action.
       return
     }
 
-    let ver
+    let ver: string
     try {
       ver = await this.latestVersionPromise
       log.trace(`${context.package.version} → ${ver}`)
 
-      if (semverDiff(context.package.version, ver)) {
-      // If versions differ, notify user.
-        const isGlobal = isInstalledGlobally || (os.platform() === 'win32')
-          ? ' --global'
-          : ''
+      // The difference type between two semver versions, or undefined if
+      // they are identical or the second one is lower than the first.
+      if (semverDiff(context.package.version, ver) !== undefined) {
+        // If versions differ, notify user.
+        const globalOption: string =
+          (isInstalledGlobally || (os.platform() === 'win32'))
+            ? ' --global'
+            : ''
 
-        let msg = '\n'
-        msg += `>>> New version ${context.package.version} -> `
-        msg += `${ver} available. <<<\n`
-        msg += ">>> Run '"
+        let buffer = '\n'
+        buffer += `>>> New version ${context.package.version} -> `
+        buffer += `${ver} available. <<<\n`
+        buffer += ">>> Run '"
         if (os.platform() !== 'win32') {
           if (isInstalledGlobally && isPathInside(__dirname, '/usr/local')) {
             // May not be very reliable if installed in another system location.
-            msg += 'sudo '
+            buffer += 'sudo '
           }
         }
-        msg += `npm install${isGlobal} ${context.package.name}@${ver}`
-        msg += "' to update. <<<"
-        log.info(msg)
+        buffer += `npm install${globalOption} ${context.package.name}@${ver}`
+        buffer += "' to update. <<<"
+        log.info(buffer)
       }
 
-      if (process.geteuid && process.geteuid() !== process.getuid()) {
+      if ((process.geteuid !== undefined) &&
+        process.geteuid() !== process.getuid()) {
         // If running as root, skip writing the timestamp to avoid
         // later EACCES or EPERM.
         log.trace(`geteuid() ${process.geteuid()} != ${process.getuid()}`)
@@ -892,7 +929,7 @@ export class CliApplication {
       if (log.isDebug()) {
         log.debug(err)
       } else {
-        log.warning(err.message)
+        log.warn(err.message)
       }
     }
 
@@ -918,8 +955,8 @@ export class CliApplication {
    * @description
    * Override it in the application if custom behaviour is desired.
    */
-  async main (argv) {
-    const Self: any = this.constructor
+  async main (argv: string[]): Promise<number> {
+    const staticThis = this.constructor as typeof CliApplication
 
     const context = this.context
     context.startTime = Date.now()
@@ -933,8 +970,8 @@ export class CliApplication {
       log.trace(`main arg${index}: '${arg}'`)
     })
 
-    Self.doInitialiseConfiguration(context)
-    const remaining = CliOptions.parseOptions(argv, context)
+    staticThis.doInitialiseConfiguration(context)
+    const remainingArgs = CliOptions.parseOptions(argv, context)
 
     log.trace(util.inspect(context.config))
 
@@ -953,12 +990,12 @@ export class CliApplication {
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
-    const cmds = []
-    if (CliOptions.hasCommands()) {
+    const commands: string[] = []
+    if (CliOptions.hasCommands() != null) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
-        if (lowerCaseArg.match(/^[a-z][a-z-]*/)) {
-          cmds.push(lowerCaseArg)
+        if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
+          commands.push(lowerCaseArg)
         } else {
           break
         }
@@ -967,22 +1004,22 @@ export class CliApplication {
 
     // Save the commands in the context, for possible later use, since
     // they are skipped when calling the command implementation.
-    context.commands = cmds
+    context.commands = commands
 
     // Must be executed before help().
-    if (Self.Command) {
-      Self.command = new Self.Command(context)
+    if (staticThis.Command !== undefined) {
+      staticThis.command = new staticThis.Command(context)
     }
 
     // If no commands and -h, output help message.
-    if ((cmds.length === 0) && config.isHelpRequest) {
+    if ((commands.length === 0) && config.isHelpRequest) {
       this.help()
       return CliExitCodes.SUCCESS // Help explicitly called.
     }
 
-    if (CliOptions.hasCommands()) {
+    if (CliOptions.hasCommands() != null) {
       // If no commands, output help message and return error.
-      if (cmds.length === 0) {
+      if (commands.length === 0) {
         log.error('Missing mandatory command.')
         this.help()
         return CliExitCodes.ERROR.SYNTAX // No commands.
@@ -993,18 +1030,17 @@ export class CliApplication {
     process.chdir(config.cwd)
     log.debug(`cwd()='${process.cwd()}'`)
 
-    let exitCode = CliExitCodes.SUCCESS
+    let exitCode: number = CliExitCodes.SUCCESS
     try {
-      if (Self.command) {
-        log.debug(`'${context.programName}' ` +
-          'started')
+      if (staticThis.command !== undefined) {
+        log.debug(`'${context.programName}' started`)
 
-        exitCode = await Self.command.run(remaining)
+        exitCode = await staticThis.command.run(remainingArgs)
         log.debug(`'${context.programName}' - returned ${exitCode}`)
       } else {
-        const found = await CliOptions.findCommandClass(cmds, Self.rootPath,
-          CliCommand)
-        const CmdDerivedClass = found.CmdClass
+        const found = await CliOptions.findCommandClass(
+          commands, staticThis.rootPath, CliCommand)
+        const CmdDerivedClass = found.CommandClass
 
         // Full name commands, not the actual encountered shortcuts.
         context.fullCommands = found.fullCommands
@@ -1013,12 +1049,12 @@ export class CliApplication {
 
         // Use the original array, since we might have `--` options,
         // and skip already processed commands.
-        const cmdArgs = remaining.slice(cmds.length - found.rest.length)
+        const cmdArgs = remainingArgs.slice(commands.length - found.rest.length)
         cmdArgs.forEach((arg, index) => {
           log.trace(`cmd arg${index}: '${arg}'`)
         })
 
-        Self.doInitialiseConfiguration(context)
+        staticThis.doInitialiseConfiguration(context)
         const cmdImpl = new CmdDerivedClass(context)
 
         log.debug(`'${context.programName} ` +
