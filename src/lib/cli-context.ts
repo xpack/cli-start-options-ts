@@ -38,9 +38,6 @@ export interface CliConfig {
   cwd: string
   // Optional
   isHelpRequest?: boolean
-  isInteractive?: boolean
-  interactiveServerPort?: number
-  invokedFromCli?: boolean
   isVersionRequest?: boolean
   noUpdateNotifier?: boolean
 }
