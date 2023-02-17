@@ -4,6 +4,10 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2023-02-12
+
+* @xpack/cli-start-options
+
 ## 2023-02-09
 
 * v0.8.1 released
@@ -98,9 +102,6 @@ Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
 * release v0.4.8
 * split update message on two lines.
-
-## 2018-04-13
-
 * release v0.4.6
 * add force to delete
 
@@ -108,14 +109,8 @@ Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
 * release v0.4.5
 * improve logic to save the timestamp
-
-## 2018-04-07
-
 * release v0.4.4
 * add 'sudo' to message, if installed globally
-
-## 2018-04-07
-
 * release v0.4.3
 * cli-application: check for updates
 
