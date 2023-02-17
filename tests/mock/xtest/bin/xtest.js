@@ -45,6 +45,6 @@ import { Xtest } from '../main.js'
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Xtest.start()
+Xtest.start().then((code) => { process.exitCode = code })
 
 // ----------------------------------------------------------------------------

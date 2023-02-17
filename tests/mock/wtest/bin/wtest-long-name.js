@@ -45,6 +45,6 @@ import { Wtest } from '../main.js'
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Wtest.start()
+Wtest.start().then((code) => { process.exitCode = code })
 
 // ----------------------------------------------------------------------------

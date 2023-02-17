@@ -143,18 +143,24 @@ export class CliApplication {
    * and all functions returning promises, must be called with `await`
    * otherwise the `UnhandledPromiseRejectionWarning` is currently
    * triggered.
+   *
+   * To pass the exit code back to the system, use something like:
+   *
+   * ```
+   * Xpm.start().then((code) => { process.exitCode = code })
+   * ```
    */
-  static async start (): Promise<void> {
+  static async start (): Promise<number> {
     /* eslint @typescript-eslint/no-this-alias: off */
     const staticThis = this
 
     // TODO: use package.json engine field.
     if (semver.lt(process.version, '14.0.0')) {
       console.error('Please use a newer node (at least 14.x).\n')
-      process.exit(CliExitCodes.ERROR.PREREQUISITES)
+      return CliExitCodes.ERROR.PREREQUISITES
     }
 
-    let exitCode = 0
+    let exitCode = CliExitCodes.SUCCESS
     try {
       // Extract the name from the last path element; ignore extensions, if any.
       // const programName = path.basename(process.argv[1]).split('.')[0]
@@ -166,7 +172,7 @@ export class CliApplication {
 
       // Redirect to implementation code. After some common inits,
       // if not interactive, it'll call main().
-      await staticThis.doStart()
+      exitCode = await staticThis.doStart()
       // Pass through. Do not exit, to allow REPL to run.
     } catch (ex: any) {
       // This should catch possible errors during inits, otherwise
@@ -187,9 +193,10 @@ export class CliApplication {
         console.error(ex.stack)
       }
       staticThis.log.verbose(`exitCode = ${exitCode}`)
-      process.exitCode = exitCode
     }
-    // Pass through. Do not exit, to allow REPL to run.
+    // Pass through. Do not call exit(), to allow callbacks (or REPL) to run.
+
+    return exitCode
   }
 
   /**
@@ -228,7 +235,7 @@ export class CliApplication {
    * the context object, which includes a logger, a configuration
    * object and a few more properties.
    */
-  static async doStart (): Promise<void> {
+  static async doStart (): Promise<number> {
     const staticThis = this
     const ClassThis = this // To make it look like a class.
 
@@ -276,12 +283,13 @@ export class CliApplication {
 
     const exitCode = await app.main(process.argv.slice(2))
     await app.checkUpdate()
-    process.exitCode = exitCode
 
     // Be sure no exit() is called here, since it'll close the
     // process and prevent interactive usage, which is inherently
     // asynchronous.
     log.verbose(`doStart() returns ${exitCode}`)
+
+    return exitCode
   }
 
   /**
@@ -858,7 +866,6 @@ export class CliApplication {
         log.debug(`'${context.programName} ` +
           `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
       }
-      return exitCode
     } catch (err) {
       exitCode = CliExitCodes.ERROR.APPLICATION
       if (err instanceof CliErrorSyntax) {
@@ -876,8 +883,9 @@ export class CliApplication {
         log.error((err as Error).stack)
       }
       log.verbose(`exit(${exitCode})`)
-      return exitCode
     }
+
+    return exitCode
   }
 
   // Search for classes derived from CliCommand.

@@ -45,6 +45,6 @@ import { Ytest } from '../main.js'
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Ytest.start()
+Ytest.start().then((code) => { process.exitCode = code })
 
 // ----------------------------------------------------------------------------

@@ -45,6 +45,6 @@ import { Ztest } from '../main.js'
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Ztest.start()
+Ztest.start().then((code) => { process.exitCode = code })
 
 // ----------------------------------------------------------------------------
