@@ -29,7 +29,7 @@
  * two forwarders are automatically created in the
  * user `\AppData\Roaming\npm\node_modules\<name>\bin` folder:
  * - `<name>.cmd`, for invocations from the Windows command line
- * - `<name>` (a shell script), for invokations from an optional
+ * - `<name>` (a shell script), for invocations from an optional
  * POSIX environment like minGW-w64, msys2, git shell, etc.
  *
  * On all platforms, `process.argv[1]` will be the full path of
