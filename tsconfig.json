@@ -20,10 +20,6 @@
     ],
     "module": "node16",
     "moduleResolution": "node16",
-    "alwaysStrict": false,
-    "noImplicitAny": false
-  },
-  "$": {
     "strict": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
