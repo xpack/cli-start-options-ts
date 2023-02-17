@@ -28,7 +28,7 @@
  * two forwarders are automatically created in the
  * user `\AppData\Roaming\npm\node_modules\xtest\bin` folder:
  * - `xtest.cmd`, for invocation from the Windows command line
- * - `xtest` (a shell script), for invokations from an optional
+ * - `xtest` (a shell script), for invocations from an optional
  * POSIX environments like minGW-w64, msys2, git shell, etc.
  *
  * On all platforms, `process.argv[1]` will be the full path of
