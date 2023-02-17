@@ -26,7 +26,6 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-
 // The `[node-tap](http://www.node-tap.org)` framework.
 import { test } from 'tap'
 

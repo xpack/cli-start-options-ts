@@ -30,6 +30,7 @@ import { test } from 'tap'
 // ----------------------------------------------------------------------------
 
 import {
+  ERROR,
   CliExitCodes,
   CliError,
   CliErrorSyntax,
@@ -71,7 +72,7 @@ test('exitCodes', (t) => {
       throw new CliError('one')
     } catch (err) {
       t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, undefined, 'exit code is undefined')
+      t.equal(err.exitCode, ERROR.APPLICATION, 'exit code is APPLICATION')
     }
     try {
       throw new CliError('two', 7)

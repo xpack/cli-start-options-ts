@@ -43,6 +43,16 @@ import { CliOptions, CliOptionGroup } from './cli-options.js'
 
 // ============================================================================
 
+export interface CliGenerator {
+  tool: string // Program name.
+  version: string // Package semver.
+  command: string[] // Full command.
+  homepage?: string // Package homepage, if present.
+  date: string // ISO date
+}
+
+// ----------------------------------------------------------------------------
+
 /**
  * @classdesc
  * Base class for a CLI application command.
@@ -53,17 +63,25 @@ export class CliCommand {
   public context: CliContext
   public log: CliLogger
   public commands: string
-  public unparsedArgs: string[]
-  public optionGroups: CliOptionGroup[]
-  public commandArgs: string[]
   public title: string
+  public optionGroups: CliOptionGroup[]
+
+  // All args, as received from CliCommand.
+  public unparsedArgs: string[] = []
+  public commandArgs: string[] = []
 
   /**
    * @summary Constructor, to remember the context.
    *
    * @param {Object} context Reference to a context.
+   * @param {string} title The command one line description.
+   * @param {CliOptionGroup[]} optionGroups Array of option groups.
    */
-  constructor (context: CliContext) {
+  constructor (
+    context: CliContext,
+    title?: string,
+    optionGroups?: CliOptionGroup[]
+  ) {
     assert(context)
     assert(context.log)
     // assert(context.fullCommands)
@@ -71,6 +89,8 @@ export class CliCommand {
     this.context = context
     this.log = context.log
     this.commands = context.fullCommands.join(' ')
+    this.title = title ?? '(title not set)'
+    this.optionGroups = optionGroups ?? []
   }
 
   /**
@@ -86,16 +106,20 @@ export class CliCommand {
     const context: CliContext = this.context
     const config: CliConfig = context.config
 
+    // Remember the original args.
     this.unparsedArgs = args
-    const remainingArgs: string[] = CliOptions.parseOptions(args, context,
-      this.optionGroups !== undefined ? this.optionGroups : [])
 
-    if (config.isHelpRequest) {
+    // Parse the args and return the remaining args, like package names.
+    const remainingArgs: string[] = CliOptions.parseOptions(args, context,
+      this.optionGroups)
+
+    if (config.isHelpRequest !== undefined && config.isHelpRequest) {
       this.help()
       return CliExitCodes.SUCCESS // Ok, command help explicitly called.
     }
 
     const commandArgs: string[] = []
+
     if (remainingArgs.length > 0) {
       let i = 0
       for (; i < remainingArgs.length; ++i) {
@@ -115,7 +139,8 @@ export class CliCommand {
       }
     }
 
-    const missingErrors = CliOptions.checkMissing(this.optionGroups)
+    // Check if there are missing mandatory options.
+    const missingErrors = CliOptions.checkMissingMandatory(this.optionGroups)
     if (missingErrors != null) {
       missingErrors.forEach((msg) => {
         log.error(msg)
@@ -133,10 +158,12 @@ export class CliCommand {
   /**
    * @summary Abstract `doRun()` method.
    *
-   * @param {string[]} argv Array of arguments.
+   * @param {string[]} _argv Array of arguments.
    * @returns {number} Return code.
    */
-  async doRun (argv: string[]): Promise<number> {
+  async doRun (
+    _argv: string[] // Unused
+  ): Promise<number> {
     assert(false,
       'Abstract CliCmd.doRun(), redefine it in your derived class.')
   }
@@ -171,14 +198,14 @@ export class CliCommand {
   /**
    * @summary Output details about extra args.
    *
-   * @param {CliMultiPass} more Status for two pass.
+   * @param {CliMultiPass} _multiPass Status for two pass.
    * @returns {undefined} Nothing.
    *
    * @description
    * The default implementation does nothing. Override it in
    * the application if needed.
    */
-  doOutputHelpArgsDetails (more: CliMultiPass): void {
+  doOutputHelpArgsDetails (_multiPass: CliMultiPass): void {
     // Nothing.
   }
 
@@ -226,8 +253,7 @@ export class CliCommand {
     if (path.isAbsolute(inPath)) {
       return path.resolve(inPath)
     }
-    /* eslint @typescript-eslint/strict-boolean-expressions: off */
-    return path.resolve(this.context.config.cwd || this.context.processCwd,
+    return path.resolve(this.context.config.cwd ?? this.context.processCwd,
       inPath)
   }
 
@@ -244,20 +270,20 @@ export class CliCommand {
    * Multiple generators are possible, each call will append a new
    * element to the array.
    */
-  addGenerator (object: any): any { // TODO
+  addGenerator (object: any): CliGenerator { // TODO
     if (object.generators === undefined) {
-      const generators = []
+      const generators: CliGenerator[] = []
       object.generators = generators
     }
 
     const context = this.context
-    const generator = {
+    const generator: CliGenerator = {
       tool: context.programName,
       version: context.package.version,
       command: [context.programName].concat(this.commands, this.unparsedArgs),
-      homepage: undefined,
       date: (new Date()).toISOString()
     }
+
     if (context.package.homepage !== undefined) {
       generator.homepage = context.package.homepage
     }

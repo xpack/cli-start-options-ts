@@ -25,7 +25,6 @@
 // ----------------------------------------------------------------------------
 
 import { strict as assert } from 'node:assert'
-import * as path from 'node:path'
 
 // ----------------------------------------------------------------------------
 
@@ -104,6 +103,12 @@ export interface CliOptionGroup {
   optionDefs: CliOptionDefinition[]
 }
 
+export interface CliOptionFoundModule {
+  moduleRelativePath: string
+  matchedCommands: string[]
+  unusedCommands: string[]
+}
+
 // ----------------------------------------------------------------------------
 
 /**
@@ -116,10 +121,18 @@ export interface CliOptionGroup {
 class CliNode {
   // --------------------------------------------------------------------------
 
+  // Lowercase single letter;
+  // The root node has a null character, as a terminator for searches.
   public character: string | null
+  // Count how many paths this character is part of.
+  // (to detect non-uniquely identified paths)
   public count: number = 0
-  public relativeFilePath: string | null = null
-  public unaliasedCommand: string | null = null
+  // Path to file implementing the command.
+  // Nodes with multiple counts have the path removed, since
+  // they cannot be uniquely identified.
+  public relativeFilePath: string | undefined
+  // The full length command (the first in the list)
+  public unaliasedCommand: string | undefined
   public children: CliNode[] = []
 
   /**
@@ -129,26 +142,27 @@ class CliNode {
    * @param {string} character One char string.
    * @param {string} relativeFilePath Relative path to the file
    *   implementing the command.
-   * @param {string} unaliased Official command name (unaliased).
+   * @param {string} unaliasedCommand Official command name (unaliased).
    * @returns {CliNode} The new node added to the tree.
    */
   static add (
     parent: CliNode,
     character: string | null,
-    relativeFilePath: string | null,
-    unaliased: string
+    relativeFilePath: string,
+    unaliasedCommand: string
   ): CliNode {
     assert(parent !== null, 'Null parent.')
 
     for (const child of parent.children) {
       if (child.character === character) {
         child.count += 1
-        child.relativeFilePath = null
+        // If not unique, the file is unusable.
+        child.relativeFilePath = undefined
         return child
       }
     }
 
-    const node = new CliNode(character, relativeFilePath, unaliased)
+    const node = new CliNode(character, relativeFilePath, unaliasedCommand)
     parent.children.push(node)
     return node
   }
@@ -163,11 +177,11 @@ class CliNode {
    * @returns {CliNode} The newly created node.
    */
   constructor (
-    character: string,
-    relativeFilePath: string,
-    unaliasedCommand: string | null = null
+    character: string | null,
+    relativeFilePath?: string,
+    unaliasedCommand?: string
   ) {
-    this.character = character ? character.toLowerCase() : null
+    this.character = character != null ? character.toLowerCase() : null
     this.count = 1
     this.relativeFilePath = relativeFilePath
     this.unaliasedCommand = unaliasedCommand
@@ -181,17 +195,21 @@ class CliNode {
  * @classdesc
  * Manage CLI options and commands. Keep an array of options and a tree
  * of commands.
+ *
+ * This class is a bit unusual, since it has no instances, it is
+ * basically a namespace for some data and functions.
  */
+
 /* eslint @typescript-eslint/no-extraneous-class: off */
 export class CliOptions {
   // --------------------------------------------------------------------------
 
   static context: CliContext
-  static moduleRelativePath: string = undefined
+  static moduleRelativePath: string
 
-  private static commandsTree: CliNode | undefined = undefined
-  private static commandFirstArray: string[] | undefined = undefined
-  private static commonOptionGroups: CliOptionGroup[] | undefined = undefined
+  private static readonly commandsTree: CliNode = new CliNode(null)
+  private static readonly unaliasedCommands: string[] = []
+  private static readonly commonOptionGroups: CliOptionGroup[] = []
 
   /**
    * @summary Static initialiser.
@@ -227,36 +245,32 @@ export class CliOptions {
 
     const commandsArray: string[] =
       Array.isArray(commands) ? commands : [commands]
-    const unaliasedCommand: string = commandsArray[0]
 
-    commandsArray.forEach((command, index) => {
+    // The first command in the array should be the full length one.
+    const unaliasedCommand: string = commandsArray[0].trim()
+    staticThis.unaliasedCommands.push(unaliasedCommand)
+
+    const curedRelativeFilePath = relativeFilePath.trim()
+    commandsArray.forEach((command) => {
       // Be sure the commands end with a space, and
       // multiple spaces are collapsed.
       const curedCommand: string =
         (command + ' ').toLowerCase().replace(/\s+/, ' ')
-      // With empty parameter, split works at character level.
-      const commandsArray: string[] = curedCommand.split('')
 
-      if (!staticThis.commandsTree) {
-        staticThis.commandsTree = new CliNode(null, null)
-      }
+      // With empty parameter, split works at character level.
+      const characters: string[] = curedCommand.split('')
 
       let node = staticThis.commandsTree
-      commandsArray.forEach((val, ix) => {
-        node = CliNode.add(node, val, relativeFilePath, unaliasedCommand)
+      // Add children nodes for all characters, including the terminating space.
+      characters.forEach((character) => {
+        node = CliNode.add(
+          node, character, curedRelativeFilePath, unaliasedCommand)
       })
-
-      if (index === 0) {
-        if (!staticThis.commandFirstArray) {
-          staticThis.commandFirstArray = []
-        }
-        staticThis.commandFirstArray.push(curedCommand.split(' ')[0])
-      }
     })
   }
 
   /**
-   * @summary Define the file to implement the command.
+   * @summary Manually define the file to implement the command.
    * @param {string} moduleRelativePath Path to module that implements
    *   the command.
    *
@@ -271,7 +285,7 @@ export class CliOptions {
   /**
    * @summary Add option groups.
    *
-   * @param {Object|object[]} optionGroups One or more option groups.
+   * @param {object[]} optionGroups Array of option groups.
    * @returns {undefined} Nothing.
    *
    * @description
@@ -280,14 +294,18 @@ export class CliOptions {
   static addOptionGroups (optionGroups: CliOptionGroup[]): void {
     const staticThis = this
 
-    if (!staticThis.commonOptionGroups) {
-      staticThis.commonOptionGroups = []
-    }
-    optionGroups.forEach((od) => {
-      staticThis.commonOptionGroups.push(od)
+    optionGroups.forEach((optionGroup) => {
+      staticThis.commonOptionGroups.push(optionGroup)
     })
   }
 
+  /**
+   * @summary Add definitions to an existing group.
+   *
+   * @param {string} title Identifier of the option groups
+   * @param {CliOptionDefinition[]} optionDefinitions Array of definitions.
+   * @returns {undefined} Nothing.
+   */
   static appendToOptionGroups (
     title: string,
     optionDefinitions: CliOptionDefinition[]
@@ -305,9 +323,9 @@ export class CliOptions {
     })
   }
 
-  static hasCommands (): string[] | null {
+  static hasCommands (): boolean {
     const staticThis = this
-    return staticThis.commandFirstArray
+    return staticThis.unaliasedCommands.length > 0
   }
 
   /**
@@ -315,10 +333,10 @@ export class CliOptions {
    *
    * @returns {string[]} Array of strings with the commands.
    */
-  static getCommandsFirstArray (): string[] | undefined {
+  static getUnaliasedCommands (): string[] | undefined {
     const staticThis = this
 
-    return staticThis.commandFirstArray
+    return staticThis.unaliasedCommands
   }
 
   /**
@@ -357,12 +375,12 @@ export class CliOptions {
 
     assert(staticThis.context, 'CliContext not initialised')
     const log = staticThis.context.log
-    log.trace('parseOptions()')
+    log.trace(`${Function.prototype.name}()`)
 
     // In addition to common options, bring together all options from
     // all command option groups, if any.
-    let allOptionDefinitions = []
-    if (!optionGroups) {
+    let allOptionDefinitions: CliOptionDefinition[] = []
+    if (optionGroups == null) {
       staticThis.commonOptionGroups.forEach((optionGroup) => {
         assert(optionGroup.optionDefs !== undefined)
         allOptionDefinitions =
@@ -376,9 +394,9 @@ export class CliOptions {
       })
     }
 
-    allOptionDefinitions.forEach((optDef) => {
-      optDef.wasProcessed = false
-      optDef.init(context)
+    allOptionDefinitions.forEach((optionDefinition) => {
+      optionDefinition.wasProcessed = false
+      optionDefinition.init(context)
     })
 
     const remainingArgs: string[] = []
@@ -428,27 +446,32 @@ export class CliOptions {
    * @param {Object[]} optionGroups Array of option groups.
    * @returns {string[]|null} Array of errors or null if everything is ok.
    */
-  static checkMissing (optionGroups: CliOptionGroup[]): string[] | null {
+  static checkMissingMandatory (
+    optionGroups: CliOptionGroup[]
+  ): string[] | null {
     let allOptionDefinitions: CliOptionDefinition[] = []
-    if (optionGroups) {
-      optionGroups.forEach((optionGroup) => {
-        assert(optionGroup.optionDefs !== undefined)
-        allOptionDefinitions =
+    optionGroups.forEach((optionGroup) => {
+      assert(optionGroup.optionDefs !== undefined)
+      allOptionDefinitions =
           allOptionDefinitions.concat(optionGroup.optionDefs)
-      })
-    }
+    })
 
     const errors: string[] = []
-    allOptionDefinitions.forEach((optDef) => {
-      if (!optDef.isOptional && !optDef.wasProcessed) {
-        const opt = optDef.options.join(' ')
-        errors.push(`Mandatory '${opt}' not found`)
+    allOptionDefinitions.forEach((optionDefinition) => {
+      if (!(optionDefinition.isOptional !== undefined &&
+        optionDefinition.isOptional) &&
+      !(optionDefinition.wasProcessed !== undefined &&
+        optionDefinition.wasProcessed)) {
+        const option = optionDefinition.options.join(' ')
+        errors.push(`Mandatory '${option}' not found`)
       }
     })
 
     if (errors.length > 0) {
       return errors
     }
+
+    // Everything is fine, no errors.
     return null
   }
 
@@ -482,7 +505,9 @@ export class CliOptions {
     let value = null
     // Values can be only an array, or null.
     // An array means the option takes a value.
-    if (optionDefinition.hasValue || optionDefinition.param ||
+    if ((optionDefinition.hasValue !== undefined &&
+        optionDefinition.hasValue) ||
+      optionDefinition.param !== undefined ||
       Array.isArray(optionDefinition.values)) {
       if (index < (args.length - 1)) {
         // Not the last option; engulf the next arg.
@@ -542,22 +567,22 @@ export class CliOptions {
    * Due to circular references, cannot import CliCommand here,
    * so it must be passed from the caller.
    */
-  /* eslint @typescript-eslint/explicit-function-return-type: off */
-  static async findCommandClass (
-    commands: string[],
-    rootPath: string,
-    parentClass
-  ) {
+  static findCommandModule (
+    commands: string[]
+    // rootPath: string
+    // parentClass: typeof CliCommand
+  ): CliOptionFoundModule {
     const staticThis = this
 
     let fullCommands = ''
-    let moduleRelativePath = null
-    let remaining: string[] = []
+    let moduleRelativePath
+    let remainingCommands: string[] = []
 
-    if (staticThis.moduleRelativePath) {
+    if (staticThis.moduleRelativePath !== undefined) {
+      // Shortcut, for single command applications.
       moduleRelativePath = staticThis.moduleRelativePath
     } else {
-      assert((staticThis.commandFirstArray.length !== 0) &&
+      assert((staticThis.unaliasedCommands.length !== 0) &&
         (staticThis.commandsTree !== null),
       'No commands defined yet.')
 
@@ -578,7 +603,7 @@ export class CliOptions {
             break
           }
         }
-        if (!found) {
+        if (found == null) {
           if (chr === ' ') {
             break
           }
@@ -586,22 +611,23 @@ export class CliOptions {
           throw new CliErrorSyntax(`Command '${str.trim()}' not supported.`)
         }
         node = found
-        if (node.relativeFilePath) {
+        if (node.relativeFilePath !== undefined &&
+          node.unaliasedCommand !== undefined) {
           moduleRelativePath = node.relativeFilePath
           fullCommands = node.unaliasedCommand.trim()
           break
         }
       }
-      if (!moduleRelativePath) {
+      if (moduleRelativePath === undefined) {
         throw new CliErrorSyntax(`Command '${str.trim()}' is not unique.`)
       }
-      remaining = []
+      remainingCommands = []
       for (; i < strArr.length; ++i) {
         if (strArr[i] === ' ') {
           if (i + 1 <= strArr.length - 1) {
             const str = strArr.slice(i + 1, strArr.length - 1).join('')
             if (str.length > 0) {
-              remaining = str.split(' ')
+              remainingCommands = str.split(' ')
             }
           }
           break
@@ -609,28 +635,11 @@ export class CliOptions {
       }
     }
 
-    const modPath = path.join(rootPath, moduleRelativePath)
-
-    // On Windows, absolute paths start with a drive letter, and the
-    // explicit `file://` is mandatory.
-    const moduleExports = await import(`file://${modPath.toString()}`)
-
-    // Return the first exported class derived from parent class (`CliCommand`).
-    for (const property in moduleExports) {
-      const obj = moduleExports[property]
-      /* eslint @typescript-eslint/strict-boolean-expressions: off */
-      if (Object.prototype.isPrototypeOf.call(parentClass, obj)) {
-        return {
-          CommandClass: moduleExports[property],
-          fullCommands: fullCommands.split(' '),
-          rest: remaining
-        }
-      }
+    return {
+      moduleRelativePath,
+      matchedCommands: fullCommands.split(' '),
+      unusedCommands: remainingCommands
     }
-    // Module not found
-    /* eslint @typescript-eslint/restrict-template-expressions: off */
-    assert(false, `A class derived from '${parentClass.name}' not ` +
-      `found in '${modPath}'.`)
   }
 
   /**

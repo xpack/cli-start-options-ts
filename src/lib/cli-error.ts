@@ -59,7 +59,7 @@ export class CliError extends Error {
    * @description
    * Remember the exit code.
    */
-  constructor (message, exitCode = undefined) {
+  constructor (message: string, exitCode: number = ERROR.APPLICATION) {
     super(message)
 
     this.exitCode = exitCode
@@ -82,7 +82,7 @@ export class CliErrorSyntax extends CliError {
    * @description
    * Create a CliError instance with the ERROR.SYNTAX error code.
    */
-  constructor (message) {
+  constructor (message: string) {
     super(message, ERROR.SYNTAX)
   }
 }
@@ -105,7 +105,7 @@ export class CliErrorApplication extends CliError {
    * @description
    * Create a CliError instance with the ERROR.APPLICATION error code.
    */
-  constructor (message) {
+  constructor (message: string) {
     super(message, ERROR.APPLICATION)
   }
 }
@@ -125,7 +125,7 @@ export class CliErrorType extends CliError {
    * @description
    * Create a CliError instance with the ERROR.TYPE error code.
    */
-  constructor (message) {
+  constructor (message: string) {
     super(message, ERROR.TYPE)
   }
 }
@@ -145,7 +145,7 @@ export class CliErrorInput extends CliError {
    * @description
    * Create a CliError instance with the ERROR.INPUT error code.
    */
-  constructor (message) {
+  constructor (message: string) {
     super(message, ERROR.INPUT)
   }
 }
@@ -161,7 +161,7 @@ export class CliErrorOutput extends CliError {
    * @description
    * Create a CliError instance with the ERROR.OUTPUT error code.
    */
-  constructor (message) {
+  constructor (message: string) {
     super(message, ERROR.OUTPUT)
   }
 }

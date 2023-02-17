@@ -14,7 +14,7 @@
 
 // ----------------------------------------------------------------------------
 
-import { CliLogger } from './cli-logger.js'
+import { CliLogger, CliLogLevel } from './cli-logger.js'
 
 // ----------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ export interface NpmPackageJson {
 }
 
 export interface CliConfig {
-  logLevel: string
+  logLevel: CliLogLevel
   cwd: string
   // Optional
   isHelpRequest?: boolean

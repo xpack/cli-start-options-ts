@@ -174,7 +174,7 @@ export class Common {
 
     const _console = new Console(ostream, errstream)
     const context =
-      await Xtest.initialiseContext(ctx, xtest.programName, _console)
+      await Xtest.initialiseContext(xtest.programName, ctx, _console)
     const app = new Xtest(context)
     const code = await app.main(args)
     return { code, stdout, stderr }

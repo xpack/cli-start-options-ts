@@ -48,7 +48,7 @@ import isInstalledGlobally from 'is-installed-globally'
 import isPathInside from 'is-path-inside'
 
 // https://www.npmjs.com/package/is-ci
-import * as isCi from 'is-ci'
+import isCi from 'is-ci'
 
 // https://www.npmjs.com/package/make-dir
 import makeDir from 'make-dir'
@@ -62,10 +62,10 @@ import { deleteAsync } from 'del'
 
 import { CliCommand } from './cli-command.js'
 import { CliContext, CliConfig } from './cli-context.js'
-import { CliOptions } from './cli-options.js'
+import { CliOptions, CliOptionFoundModule } from './cli-options.js'
 
 import { CliHelp } from './cli-help.js'
-import { CliLogger } from './cli-logger.js'
+import { CliLogger, CliLogLevel } from './cli-logger.js'
 import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
 
 // ----------------------------------------------------------------------------
@@ -124,7 +124,7 @@ export class CliApplication {
   // --------------------------------------------------------------------------
 
   public context: CliContext
-  public latestVersionPromise: Promise<string>
+  public latestVersionPromise: Promise<string> | undefined = undefined
 
   /**
    * @summary Application start().
@@ -168,15 +168,14 @@ export class CliApplication {
       // if not interactive, it'll call main().
       await staticThis.doStart()
       // Pass through. Do not exit, to allow REPL to run.
-    } catch (ex) {
+    } catch (ex: any) {
       // This should catch possible errors during inits, otherwise
       // in main(), another catch will apply.
-      exitCode = isNaN(ex.exitCode)
-        ? CliExitCodes.ERROR.APPLICATION
-        : ex.exitCode
+      exitCode = CliExitCodes.ERROR.APPLICATION
       if (ex instanceof CliError) {
         // CLI triggered error. Treat it gently.
         staticThis.log.error(ex.message)
+        exitCode = ex.exitCode
       } else if (ex.constructor === Error ||
         ex.constructor === SyntaxError ||
         ex.constructor === TypeError) {
@@ -187,8 +186,8 @@ export class CliApplication {
         // Show the full stack trace.
         console.error(ex.stack)
       }
-      staticThis.log.verbose(`exit(${exitCode})`)
-      process.exit(exitCode)
+      staticThis.log.verbose(`exitCode = ${exitCode}`)
+      process.exitCode = exitCode
     }
     // Pass through. Do not exit, to allow REPL to run.
   }
@@ -245,9 +244,7 @@ export class CliApplication {
 
     // Initialise the application, including commands and options.
     const context = await staticThis.initialiseContext(
-      undefined,
-      staticThis.programName,
-      console
+      staticThis.programName
     )
 
     const log = context.log
@@ -255,7 +252,9 @@ export class CliApplication {
 
     // These are early messages, not shown immediately,
     // they are delayed until the log level is known.
-    log.verbose(`${context.package.description}`)
+    if (context.package.description !== undefined) {
+      log.verbose(`${context.package.description}`)
+    }
     log.debug(`argv0: ${process.argv[1]}`)
 
     const config = context.config
@@ -277,12 +276,12 @@ export class CliApplication {
 
     const exitCode = await app.main(process.argv.slice(2))
     await app.checkUpdate()
-    process.exit(exitCode)
+    process.exitCode = exitCode
 
     // Be sure no exit() is called here, since it'll close the
     // process and prevent interactive usage, which is inherently
     // asynchronous.
-    log.verbose('doStart() returns')
+    log.verbose(`doStart() returns ${exitCode}`)
   }
 
   /**
@@ -330,7 +329,8 @@ export class CliApplication {
               options: ['--loglevel'],
               msg: 'Set log level',
               action: (context, val) => {
-                context.config.logLevel = val
+                assert(val !== undefined)
+                context.config.logLevel = val as CliLogLevel
               },
               init: (context) => {
                 context.config.logLevel = defaultLogLevel
@@ -403,6 +403,7 @@ export class CliApplication {
               options: ['-C'],
               msg: 'Set current folder',
               action: (context, val) => {
+                assert(val !== undefined)
                 const config = context.config
                 if (path.isAbsolute(val)) {
                   config.cwd = val
@@ -485,39 +486,39 @@ export class CliApplication {
   /**
    * @summary Initialise a minimal context object.
    *
-   * @param {Object} context_ Reference to a context, or null to create an
-   *   empty context.
    * @param {string} programName The invocation name of the program.
-   * @param {Object} console_ Reference to a node console.
-   * @param {Object} log_ Reference to a npm log instance.
+   * @param {Object} _context Reference to a context, or null to create an
+   *   empty context.
+   * @param {Object} _console Reference to a node console.
+   * @param {Object} log Reference to a npm log instance.
    * @param {Object} config Reference to a configuration.
    * @returns {Object} Reference to context.
    */
   static async initialiseContext (
-    context_: CliContext | undefined,
     programName: string,
-    console_: Console = undefined,
-    log_: CliLogger = undefined,
-    config: CliConfig = undefined
+    _context?: CliContext, // Conflicting name
+    _console?: Console, // Conflicting name
+    log?: CliLogger,
+    config?: CliConfig
   ): Promise<CliContext> {
     const staticThis = this
 
     // Call the application initialisation callback, to prepare
     // the structure needed to manage the commands and option.
-    if (!staticThis.isInitialised) {
+    if (!(staticThis.isInitialised !== undefined && staticThis.isInitialised)) {
       staticThis.initialise()
 
       staticThis.isInitialised = true
     }
 
     // Use the given context, or create an empty one.
-    const context = context_ ?? (vm.createContext() as CliContext)
+    const context = _context ?? (vm.createContext() as CliContext)
 
     // REPL should always set the console, be careful not to
     // overwrite it.
     if (context.console === undefined) {
       // Cannot use || because REPL context has only a getter.
-      context.console = console_ ?? console
+      context.console = _console ?? console
     }
 
     assert(context.console)
@@ -543,7 +544,7 @@ export class CliApplication {
       context.config.cwd = context.processCwd
     }
 
-    context.log = log_ ?? new CliLogger(context.console,
+    context.log = log ?? new CliLogger(context.console,
       context.config.logLevel)
 
     assert(context.log)
@@ -613,7 +614,7 @@ export class CliApplication {
 
       help.outputMainHelp(undefined, optionGroups, staticThis.command.title)
     } else {
-      help.outputMainHelp(CliOptions.getCommandsFirstArray(),
+      help.outputMainHelp(CliOptions.getUnaliasedCommands(),
         CliOptions.getCommonOptionGroups())
     }
   }
@@ -634,7 +635,7 @@ export class CliApplication {
           return false
         }
       }
-    } catch (ex) {
+    } catch (err) {
       log.trace('no previous update timestamp')
     }
     return true
@@ -649,11 +650,11 @@ export class CliApplication {
 
     if (staticThis.checkUpdatesIntervalSeconds === undefined ||
       staticThis.checkUpdatesIntervalSeconds === 0 ||
-      (isCi as boolean) ||
-      config.isVersionRequest ||
-      !process.stdout.isTTY ||
-      'NO_UPDATE_NOTIFIER' in process.env ||
-      config.noUpdateNotifier) {
+      (isCi) ||
+      (config.isVersionRequest !== undefined && config.isVersionRequest) ||
+      (!process.stdout.isTTY) ||
+      ('NO_UPDATE_NOTIFIER' in process.env) ||
+      (config.noUpdateNotifier !== undefined && config.noUpdateNotifier)) {
       log.trace('do not fetch latest version number.')
       return
     }
@@ -714,9 +715,9 @@ export class CliApplication {
       }
     } catch (err) {
       if (log.isDebug()) {
-        log.debug(err)
+        log.debug((err as Error).toString())
       } else {
-        log.warn(err.message)
+        log.warn((err as Error).message)
       }
     }
 
@@ -766,7 +767,7 @@ export class CliApplication {
 
     // Early detection of `--version`, since it makes
     // all other irrelevant.
-    if (config.isVersionRequest) {
+    if (config.isVersionRequest !== undefined && config.isVersionRequest) {
       log.always(context.package.version)
       return CliExitCodes.SUCCESS
     }
@@ -778,7 +779,7 @@ export class CliApplication {
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
     const commands: string[] = []
-    if (CliOptions.hasCommands() != null) {
+    if (CliOptions.hasCommands()) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
@@ -799,12 +800,13 @@ export class CliApplication {
     }
 
     // If no commands and -h, output help message.
-    if ((commands.length === 0) && config.isHelpRequest) {
+    if ((commands.length === 0) &&
+      (config.isHelpRequest !== undefined && config.isHelpRequest)) {
       this.help()
       return CliExitCodes.SUCCESS // Help explicitly called.
     }
 
-    if (CliOptions.hasCommands() != null) {
+    if (CliOptions.hasCommands()) {
       // If no commands, output help message and return error.
       if (commands.length === 0) {
         log.error('Missing mandatory command.')
@@ -825,18 +827,23 @@ export class CliApplication {
         exitCode = await staticThis.command.run(remainingArgs)
         log.debug(`'${context.programName}' - returned ${exitCode}`)
       } else {
-        const found = await CliOptions.findCommandClass(
-          commands, staticThis.rootPath, CliCommand)
-        const CmdDerivedClass = found.CommandClass
+        const found: CliOptionFoundModule = CliOptions.findCommandModule(
+          commands)
+
+        const CmdDerivedClass = await this.findCommandClass(
+          context.rootPath,
+          found.moduleRelativePath
+        )
 
         // Full name commands, not the actual encountered shortcuts.
-        context.fullCommands = found.fullCommands
+        context.fullCommands = found.matchedCommands
 
         log.debug(`Command(s): '${context.fullCommands.join(' ')}'`)
 
         // Use the original array, since we might have `--` options,
         // and skip already processed commands.
-        const cmdArgs = remainingArgs.slice(commands.length - found.rest.length)
+        const cmdArgs = remainingArgs.slice(commands.length -
+          found.unusedCommands.length)
         cmdArgs.forEach((arg, index) => {
           log.trace(`cmd arg${index}: '${arg}'`)
         })
@@ -852,28 +859,52 @@ export class CliApplication {
           `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
       }
       return exitCode
-    } catch (ex) {
-      exitCode = isNaN(ex.exitCode)
-        ? CliExitCodes.ERROR.APPLICATION
-        : ex.exitCode
-      if (ex instanceof CliErrorSyntax) {
+    } catch (err) {
+      exitCode = CliExitCodes.ERROR.APPLICATION
+      if (err instanceof CliErrorSyntax) {
         // CLI triggered error. Treat it gently and try to be helpful.
-        log.error(ex.message)
+        log.error(err.message)
         this.help()
-        exitCode = isNaN(ex.exitCode)
-          ? CliExitCodes.ERROR.SYNTAX
-          : ex.exitCode
-      } else if (ex instanceof CliError) {
+        exitCode = err.exitCode
+      } else if (err instanceof CliError) {
         // Other CLI triggered error. Treat it gently.
-        log.error(ex.message)
+        log.error(err.message)
+        exitCode = err.exitCode
       } else {
         // System error, probably due to a bug (AssertionError).
         // Show the full stack trace.
-        log.error(ex.stack)
+        log.error((err as Error).stack)
       }
       log.verbose(`exit(${exitCode})`)
       return exitCode
     }
+  }
+
+  // Search for classes derived from CliCommand.
+  async findCommandClass (
+    rootPath: string,
+    moduleRelativePath: string
+  ): Promise<any> {
+    const parentClass = CliCommand
+
+    const modulePath = path.join(rootPath, moduleRelativePath)
+
+    // On Windows, absolute paths start with a drive letter, and the
+    // explicit `file://` is mandatory.
+    const moduleExports = await import(`file://${modulePath.toString()}`)
+
+    // Return the first exported class derived from parent class (`CliCommand`).
+    for (const property in moduleExports) {
+      const obj = moduleExports[property]
+      /* eslint @typescript-eslint/strict-boolean-expressions: off */
+      if (Object.prototype.isPrototypeOf.call(parentClass, obj)) {
+        return moduleExports[property]
+      }
+    }
+    // Module not found
+    /* eslint @typescript-eslint/restrict-template-expressions: off */
+    assert(false, `A class derived from '${parentClass.name}' not ` +
+      `found in '${modulePath}'.`)
   }
 }
 

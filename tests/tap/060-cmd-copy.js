@@ -29,7 +29,7 @@ import { fileURLToPath } from 'node:url'
 // ----------------------------------------------------------------------------
 
 // https://www.npmjs.com/package/del
-import {deleteAsync} from 'del'
+import { deleteAsync } from 'del'
 
 // https://www.npmjs.com/package/make-dir
 import makeDir from 'make-dir'

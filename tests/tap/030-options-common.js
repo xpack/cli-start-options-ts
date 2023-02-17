@@ -98,7 +98,6 @@ test('xtest -h (spawn)', async (t) => {
     t.match(stdout, 'xtest -h|--help', 'has -h|--help')
     t.match(stdout, 'xtest <command> -h|--help', 'has <command> -h|--help')
     t.match(stdout, 'xtest --version', 'has --version')
-    t.match(stdout, 'xtest -i|--interactive', 'has -i|--interactive')
     t.match(stdout, 'Set log level (silent|warn|info|verbose|debug|trace)',
       'has log levels')
     t.match(stdout, '-s|--silent', 'has -s|--silent')

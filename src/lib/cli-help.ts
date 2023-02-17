@@ -36,8 +36,8 @@ export class CliMultiPass {
   public width: number = 0
   public limit: number = 0
 
-  constructor (limit_: number) {
-    this.limit = limit_
+  constructor (limit: number) {
+    this.limit = limit
   }
 
   updateWidth (width: number): void {
@@ -69,6 +69,8 @@ export class CliHelp {
     this.context = context
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
+
+    this.multiPass = new CliMultiPass(this.middleLimit)
   }
 
   outputCommands (
@@ -84,8 +86,11 @@ export class CliHelp {
       const packageJson = this.context.package
       description = packageJson.description
     }
-    log.output(`${description}`)
+    if (description !== undefined) {
+      log.output(`${description}`)
+    }
 
+    // Remember for further possible usage.
     this.commands = commands
     if (commands !== undefined) {
       // Use slice() to do a deep copy & sort.
@@ -96,7 +101,7 @@ export class CliHelp {
         ` [<options> ...] ${message}`)
       log.output()
       log.output('where <command> is one of:')
-      let buffer: string = null
+      let buffer: string | null = null
       commandsCopy.forEach((cmd, i) => {
         if (buffer === null) {
           buffer = '  '
@@ -124,7 +129,10 @@ export class CliHelp {
     return str.substring(0, count)
   }
 
-  outputHelpDetails (options, multiPass = this.multiPass): void {
+  outputHelpDetails (
+    _optionGroups: CliOptionGroup[], // Unused
+    multiPass = this.multiPass
+  ): void {
     const log: CliLogger = this.context.log
     const programName: string = this.context.programName
 
@@ -178,7 +186,9 @@ export class CliHelp {
 
     optionGroups.forEach((optionGroup) => {
       optionGroup.optionDefs.forEach((optionDef) => {
-        if (optionDef.msg !== undefined && optionDef.doProcessEarly) {
+        if (optionDef.msg !== undefined &&
+          (optionDef.doProcessEarly !== undefined &&
+            optionDef.doProcessEarly)) {
           let out = `${programName} `
           optionDef.options.forEach((opt, index) => {
             out += opt
@@ -208,16 +218,19 @@ export class CliHelp {
   }
 
   outputOptions (
-    optionDefs: CliOptionDefinition[],
+    optionDefinitions: CliOptionDefinition[],
     title: string | undefined,
     multiPass = this.multiPass
   ): void {
     const log = this.context.log
 
     let hasContent = false
-    optionDefs.forEach((optionDef) => {
-      if (optionDef.msg !== undefined && !optionDef.doProcessEarly &&
-        !optionDef.isHelp) {
+    optionDefinitions.forEach((optionDefinition) => {
+      if (optionDefinition.msg !== undefined &&
+        !(optionDefinition.doProcessEarly !== undefined &&
+          optionDefinition.doProcessEarly) &&
+        !(optionDefinition.isHelp !== undefined &&
+          optionDefinition.isHelp)) {
         hasContent = true
       }
     })
@@ -230,9 +243,10 @@ export class CliHelp {
       log.output(title + ':')
     }
 
-    optionDefs.forEach((optionDef) => {
-      if (optionDef.msg !== undefined && !optionDef.doProcessEarly &&
-        !optionDef.isHelp) {
+    optionDefinitions.forEach((optionDef) => {
+      if (optionDef.msg !== undefined &&
+        !(optionDef.doProcessEarly !== undefined && optionDef.doProcessEarly) &&
+        !(optionDef.isHelp !== undefined && optionDef.isHelp)) {
         let strOpts = '  '
         optionDef.options.forEach((opt, index) => {
           strOpts += opt
@@ -240,7 +254,8 @@ export class CliHelp {
             strOpts += '|'
           }
         })
-        if (optionDef.hasValue || optionDef.values !== undefined ||
+        if ((optionDef.hasValue !== undefined && optionDef.hasValue) ||
+          optionDef.values !== undefined ||
           optionDef.param !== undefined) {
           if (optionDef.param !== undefined) {
             strOpts += ` <${optionDef.param}>`
@@ -267,7 +282,8 @@ export class CliHelp {
             desc += '('
             optionDef.values.forEach((value, index) => {
               desc += value
-              if (index < (optionDef.values.length - 1)) {
+              if (optionDef.values !== undefined &&
+                (index < (optionDef.values.length - 1))) {
                 desc += '|'
               }
             })
@@ -276,11 +292,16 @@ export class CliHelp {
           const msgDefault = optionDef.msgDefault !== undefined
             ? `, default ${optionDef.msgDefault}`
             : ''
-          if (optionDef.isOptional && optionDef.isMultiple) {
+          if (optionDef.isOptional !== undefined &&
+             optionDef.isOptional &&
+             optionDef.isMultiple !== undefined &&
+             optionDef.isMultiple) {
             desc += `(optional, multiple${msgDefault})`
-          } else if (optionDef.isOptional) {
+          } else if (optionDef.isOptional !== undefined &&
+            optionDef.isOptional) {
             desc += `(optional${msgDefault})`
-          } else if (optionDef.isMultiple) {
+          } else if (optionDef.isMultiple !== undefined &&
+              optionDef.isMultiple) {
             desc += '(multiple)'
           }
           log.output(`${CliHelp.padRight(strOpts, multiPass.width)} ${desc}`)
@@ -291,7 +312,7 @@ export class CliHelp {
 
   outputCommandLine (
     title: string,
-    optionGroups: CliOptionGroup[] | undefined
+    optionGroups: CliOptionGroup[]
   ): void {
     const log = this.context.log
     const programName: string = this.context.programName
@@ -322,15 +343,15 @@ export class CliHelp {
       })
       if (optionDef.param !== undefined) {
         buffer += ` <${optionDef.param}>`
-      } else if (optionDef.hasValue) {
+      } else if (optionDef.hasValue !== undefined && optionDef.hasValue) {
         buffer += ' <s>'
       }
-      if (optionDef.isOptional) {
+      if (optionDef.isOptional !== undefined && optionDef.isOptional) {
         buffer = `[${buffer}]`
-        if (optionDef.isMultiple) {
+        if (optionDef.isMultiple !== undefined && optionDef.isMultiple) {
           buffer += '*'
         }
-      } else if (optionDef.isMultiple) {
+      } else if (optionDef.isMultiple !== undefined && optionDef.isMultiple) {
         buffer = `[${buffer}]+`
       }
 
@@ -369,9 +390,15 @@ export class CliHelp {
     if (pkgJson.bugs?.url !== undefined) {
       log.output(`${bugReports} <${pkgJson.bugs.url}>`)
     } else if (pkgJson.author !== undefined) {
-      if (typeof pkgJson.author === 'object') {
+      if (typeof pkgJson.author === 'object' &&
+          pkgJson.author.name !== undefined &&
+          pkgJson.author.email !== undefined) {
         log.output(
           `${bugReports} ${pkgJson.author.name} <${pkgJson.author.email}>`)
+      } else if (typeof pkgJson.author === 'object' &&
+          pkgJson.author.email !== undefined) {
+        log.output(
+          `${bugReports} <${pkgJson.author.email}>`)
       } else if (typeof pkgJson.author === 'string') {
         log.output(`${bugReports} ${pkgJson.author}`)
       }
@@ -379,9 +406,9 @@ export class CliHelp {
   }
 
   outputMainHelp (
-    commands: string[],
+    commands: string[] | undefined,
     optionGroups: CliOptionGroup[],
-    description = undefined
+    description?: string
   ): void {
     // Try to get a message from the first group.
     this.outputCommands(commands, description, optionGroups[0].title)
