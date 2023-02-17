@@ -139,13 +139,9 @@ export class CliHelp {
     const str1: string = `${programName} -h|--help`
     const str2: string = `${programName} <command> -h|--help`
     if (multiPass.isFirstPass) {
-      if (str1.length > multiPass.width) {
-        multiPass.width = str1.length
-      }
+      multiPass.updateWidth(str1.length)
       if (this.commands !== undefined) {
-        if (str2.length > multiPass.width) {
-          multiPass.width = str2.length
-        }
+        multiPass.updateWidth(str2.length)
       }
     } else {
       log.output()
@@ -197,9 +193,7 @@ export class CliHelp {
             }
           })
           if (multiPass.isFirstPass) {
-            if (out.length > multiPass.width) {
-              multiPass.width = out.length
-            }
+            multiPass.updateWidth(out.length)
           } else {
             this.outputMaybeLongLine(out, optionDef.msg, multiPass)
           }
@@ -265,9 +259,7 @@ export class CliHelp {
         }
 
         if (multiPass.isFirstPass) {
-          if (strOpts.length > multiPass.width) {
-            multiPass.width = strOpts.length
-          }
+          multiPass.updateWidth(strOpts.length)
         } else {
           if (strOpts.length >= multiPass.limit) {
             log.output(strOpts)
