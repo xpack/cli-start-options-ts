@@ -28,7 +28,6 @@
         "--help"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -48,7 +47,6 @@
       "args": [
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -68,7 +66,6 @@
       "args": [
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -88,7 +85,6 @@
       "args": [
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -109,7 +105,6 @@
         "notclass"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -130,7 +125,6 @@
         "co"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -152,7 +146,6 @@
         "debug"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -173,7 +166,28 @@
         "xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js cop --help",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "cop",
+        "--help",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -199,7 +213,6 @@
         "-v"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -220,7 +233,27 @@
         "-h"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js --version",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "stopOnEntry": true,
+      "args": [
+        "--version",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -242,7 +275,6 @@
         "xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -265,7 +297,6 @@
         "/tmp/xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -287,7 +318,6 @@
         "--xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
