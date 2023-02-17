@@ -1,0 +1,9 @@
+{
+  "name": "test",
+  "version": "3.4.5",
+  "description": "Mock Test",
+  "type": "module",
+  "author": {
+    "email": "ilg@livius.net"
+  }
+}

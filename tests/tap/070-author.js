@@ -42,18 +42,18 @@ assert(CliExitCodes)
 // ----------------------------------------------------------------------------
 
 /**
- * Test if with empty line fails with mandatory error and displays help.
+ * Test if author is properly identified.
  */
-test('ytest -h',
+test('a1test -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.ytestCli([
+      const { code, stdout, stderr } = await Common.a1testCli([
         '-h'
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       // console.log(errLines)
-      t.match(stdout, 'Usage: ytest', 'has Usage')
+      t.match(stdout, 'Usage: a1test', 'has Usage')
       t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
       // There should be no error messages.
@@ -65,18 +65,18 @@ test('ytest -h',
   })
 
 /**
- * Test if with empty line fails with mandatory error and displays help.
+ * Test if author is properly identified.
  */
-test('ztest -h',
+test('a2test -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.ztestCli([
+      const { code, stdout, stderr } = await Common.a2testCli([
         '-h'
       ])
       // Check exit code.
       t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
       // console.log(errLines)
-      t.match(stdout, 'Usage: ztest', 'has Usage')
+      t.match(stdout, 'Usage: a2test', 'has Usage')
       t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
       // There should be no error messages.
@@ -86,5 +86,28 @@ test('ztest -h',
     }
     t.end()
   })
+
+/**
+ * Test if author is properly identified.
+ */
+test('a3test -h',
+async (t) => {
+  try {
+    const { code, stdout, stderr } = await Common.a3testCli([
+      '-h'
+    ])
+    // Check exit code.
+    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    // console.log(errLines)
+    t.match(stdout, 'Usage: a3test', 'has Usage')
+    t.match(stdout, 'Bug reports: <ilg@livius.net>',
+      'has Bug reports')
+    // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err) {
+    t.fail(err.message)
+  }
+  t.end()
+})
 
 // ----------------------------------------------------------------------------

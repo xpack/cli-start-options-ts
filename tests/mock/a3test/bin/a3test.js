@@ -39,12 +39,11 @@
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { Xtest } from 'main.js'
-import { Ztest } from '../main.js'
+import { Test } from '../main.js'
 
 // ----------------------------------------------------------------------------
 
 // TODO: use instances, not static classes.
-Ztest.start().then((code) => { process.exitCode = code })
+Test.start().then((code) => { process.exitCode = code })
 
 // ----------------------------------------------------------------------------
