@@ -88,6 +88,17 @@
     "typedoc": "^0.23.25",
     "typescript": "^4.9.5"
   },
+  "bundledDependencies": [],
+  "tap": {
+    "check-coverage": false,
+    "coverage": false,
+    "files": [
+      "tests/tap/*.js"
+    ],
+    "reporter": "classic",
+    "timeout": 30,
+    "ts": true
+  },
   "engines": {
     "node": " >=14.13.1 || >=15.3.0 || >=16.0.0"
   }
