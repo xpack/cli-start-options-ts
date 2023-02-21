@@ -1,0 +1,29 @@
+{
+  /* https://www.typescriptlang.org/tsconfig */
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 14",
+
+  "extends": "../tsconfig-common.json",
+
+  /* The maps are used for debugging only. */
+  "compilerOptions": {
+    "outDir": "../tests-out",
+    "sourceMap": true,
+    "typeRoots": [
+      "../node_modules/@types",
+      "../typings"
+    ]
+  },
+  "exclude": [
+    "dist"
+  ],
+  "include": [
+    "*.ts"
+    // "tap/*.ts"
+  ],
+  "reference": [
+    {
+      "path": "../src/tsconfig.json"
+    }
+  ]
+}
