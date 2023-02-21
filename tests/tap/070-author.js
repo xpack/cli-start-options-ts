@@ -91,23 +91,23 @@ test('a2test -h',
  * Test if author is properly identified.
  */
 test('a3test -h',
-async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.a3testCli([
-      '-h'
-    ])
-    // Check exit code.
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    // console.log(errLines)
-    t.match(stdout, 'Usage: a3test', 'has Usage')
-    t.match(stdout, 'Bug reports: <ilg@livius.net>',
-      'has Bug reports')
-    // There should be no error messages.
-    t.equal(stderr, '', 'stderr is empty')
-  } catch (err) {
-    t.fail(err.message)
-  }
-  t.end()
-})
+  async (t) => {
+    try {
+      const { code, stdout, stderr } = await Common.a3testCli([
+        '-h'
+      ])
+      // Check exit code.
+      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      // console.log(errLines)
+      t.match(stdout, 'Usage: a3test', 'has Usage')
+      t.match(stdout, 'Bug reports: <ilg@livius.net>',
+        'has Bug reports')
+      // There should be no error messages.
+      t.equal(stderr, '', 'stderr is empty')
+    } catch (err) {
+      t.fail(err.message)
+    }
+    t.end()
+  })
 
 // ----------------------------------------------------------------------------

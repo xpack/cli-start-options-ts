@@ -93,7 +93,7 @@ export class Common {
    * Spawn a separate process to run node with the given arguments and
    * return the exit code and the stdio streams captured in strings.
    */
-  static async cli(name, args, spawnOpts = {}) {
+  static async cli (name, args, spawnOpts = {}) {
     return new Promise((resolve, reject) => {
       spawnOpts.env = spawnOpts.env || process.env
 
@@ -128,27 +128,27 @@ export class Common {
 
   static xtest = xtest
 
-  static async xtestCli(args, spawnOpts = {}) {
+  static async xtestCli (args, spawnOpts = {}) {
     const Self = this
     return Self.cli(xtest.executableName, args, spawnOpts)
   }
 
-  static async a1testCli(args, spawnOpts = {}) {
+  static async a1testCli (args, spawnOpts = {}) {
     const Self = this
     return Self.cli(a1test.executableName, args, spawnOpts)
   }
 
-  static async a2testCli(args, spawnOpts = {}) {
+  static async a2testCli (args, spawnOpts = {}) {
     const Self = this
     return Self.cli(a2test.executableName, args, spawnOpts)
   }
 
-  static async a3testCli(args, spawnOpts = {}) {
+  static async a3testCli (args, spawnOpts = {}) {
     const Self = this
     return Self.cli(a3test.executableName, args, spawnOpts)
   }
 
-  static async wtestCli(args, spawnOpts = {}) {
+  static async wtestCli (args, spawnOpts = {}) {
     const Self = this
     return Self.cli(wtest.executableName, args, spawnOpts)
   }
@@ -166,12 +166,12 @@ export class Common {
    * Call the application directly, as a regular module, and return
    * the exit code and the stdio streams captured in strings.
    */
-  static async xtestLib(args, ctx = null) {
+  static async xtestLib (args, ctx = null) {
     assert(Xtest !== null, 'No application class')
     // Create two streams to local strings.
     let stdout = ''
     const ostream = new Writable({
-      write(chunk, encoding, callback) {
+      write (chunk, encoding, callback) {
         stdout += chunk.toString()
         callback()
       }
@@ -179,7 +179,7 @@ export class Common {
 
     let stderr = ''
     const errstream = new Writable({
-      write(chunk, encoding, callback) {
+      write (chunk, encoding, callback) {
         stderr += chunk.toString()
         callback()
       }
@@ -201,7 +201,7 @@ export class Common {
    * @param {string} destPath Path to destination folder.
    * @returns {undefined} Nothing.
    */
-  static async extractTgz(tgzPath, destPath) {
+  static async extractTgz (tgzPath, destPath) {
     await makeDir(destPath)
     return tar.extract({
       file: tgzPath,
