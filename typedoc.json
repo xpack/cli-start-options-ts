@@ -1,0 +1,9 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "githubPages": true,
+  "gaID": "341760653",
+  "includeVersion": true,
+  "out": "docs",
+  "tsconfig": "./src/tsconfig.json"
+}
