@@ -242,7 +242,20 @@ export class CliApplication {
     // To differentiate between multiple invocations with different
     // names, extract the name from the last path element; ignore
     // extensions, if any.
-    staticThis.programName = path.basename(process.argv[1]).split('.')[0]
+
+    const argv1 = process.argv[1]?.trim()
+    assert(argv1 !== undefined, 'Mandatory argv[1]')
+
+    const fileName: string = path.basename(argv1)
+    let programName
+    if (fileName.indexOf('.') !== undefined) {
+      programName = fileName.split('.')[0]?.trim()
+    } else {
+      programName = fileName?.trim()
+    }
+    assert(programName !== undefined && programName.length > 0,
+      '')
+    staticThis.programName = programName
 
     // Set the application name, to make `ps` output more readable.
     // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
@@ -532,7 +545,10 @@ export class CliApplication {
     assert(context.console)
     context.programName = programName
 
-    context.cmdPath = process.argv[1]
+    const argv1 = process.argv[1]?.trim()
+    assert(argv1 !== undefined, 'Mandatory argv[1]')
+
+    context.cmdPath = argv1
     context.processCwd = process.cwd()
     context.processEnv = process.env
     context.processArgv = process.argv

@@ -124,18 +124,22 @@ export class CliCommand {
       let i = 0
       for (; i < remainingArgs.length; ++i) {
         const arg = remainingArgs[i]
-        if (arg === '--') {
-          break
-        }
-        if (arg.startsWith('-')) {
-          log.warn(`Option '${arg}' not supported; ignored`)
-        } else {
-          commandArgs.push(arg)
+        if (arg !== undefined) {
+          if (arg === '--') {
+            break
+          }
+          if (arg.startsWith('-')) {
+            log.warn(`Option '${arg}' not supported; ignored`)
+          } else {
+            commandArgs.push(arg)
+          }
         }
       }
       for (; i < remainingArgs.length; ++i) {
         const arg = remainingArgs[i]
-        commandArgs.push(arg)
+        if (arg !== undefined) {
+          commandArgs.push(arg)
+        }
       }
     }
 

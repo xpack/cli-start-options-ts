@@ -90,9 +90,10 @@ export class CliHelp {
       log.output(`${description}`)
     }
 
-    // Remember for further possible usage.
-    this.commands = commands
     if (commands !== undefined) {
+      // Remember for further possible usage.
+      this.commands = commands
+
       // Use slice() to do a deep copy & sort.
       const commandsCopy: string[] = commands.slice()
       commandsCopy.sort()
@@ -317,7 +318,7 @@ export class CliHelp {
 
     let optionDefs: CliOptionDefinition[] = []
     if (optionGroups !== undefined && (optionGroups.length > 0) &&
-      optionGroups[0].preOptions !== undefined) {
+      optionGroups[0]?.preOptions !== undefined) {
       str += ' ' + optionGroups[0].preOptions
     }
     str += ' [options...]'
@@ -355,7 +356,7 @@ export class CliHelp {
       str += ' ' + buffer
     })
     if (optionGroups !== undefined && (optionGroups.length > 0) &&
-      optionGroups[0].postOptions !== undefined) {
+      optionGroups[0]?.postOptions !== undefined) {
       buffer = optionGroups[0].postOptions
       if (str.length + buffer.length + 1 > this.rightLimit) {
         log.output(str)
@@ -403,7 +404,7 @@ export class CliHelp {
     description?: string
   ): void {
     // Try to get a message from the first group.
-    this.outputCommands(commands, description, optionGroups[0].title)
+    this.outputCommands(commands, description, optionGroups[0]?.title)
 
     // The special trick here is how to align the right column.
     // For this two steps are needed, with the first to compute

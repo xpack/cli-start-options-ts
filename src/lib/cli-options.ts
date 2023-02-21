@@ -246,8 +246,13 @@ export class CliOptions {
     const commandsArray: string[] =
       Array.isArray(commands) ? commands : [commands]
 
+    assert(commandsArray.length > 0 && commandsArray[0] !== undefined,
+      'The command array must have at least one entry')
+
     // The first command in the array should be the full length one.
     const unaliasedCommand: string = commandsArray[0].trim()
+    assert(unaliasedCommand.length > 0, 'The command must be non empty')
+
     staticThis.unaliasedCommands.push(unaliasedCommand)
 
     const curedRelativeFilePath = relativeFilePath.trim()
@@ -403,7 +408,7 @@ export class CliOptions {
     let wasProcessed = false
     let i = 0
     for (; i < args.length; ++i) {
-      const arg = args[i]
+      const arg = args[i] ?? ''
       if (arg === '--') {
         break
       }
@@ -426,7 +431,7 @@ export class CliOptions {
           }
         }
       }
-      if (!wasProcessed) {
+      if (!wasProcessed && arg !== undefined) {
         remainingArgs.push(arg)
       }
     }
@@ -434,7 +439,9 @@ export class CliOptions {
     // copy the remaining arguments.
     for (; i < args.length; ++i) {
       const arg = args[i]
-      remainingArgs.push(arg)
+      if (arg !== undefined) {
+        remainingArgs.push(arg)
+      }
     }
 
     return remainingArgs
@@ -501,8 +508,8 @@ export class CliOptions {
     optionDefinition: CliOptionDefinition,
     context: CliContext
   ): number {
-    const arg: string = args[index]
-    let value = null
+    const arg: string = args[index] ?? ''
+    let value: string
     // Values can be only an array, or null.
     // An array means the option takes a value.
     if ((optionDefinition.hasValue !== undefined &&
@@ -511,7 +518,7 @@ export class CliOptions {
       Array.isArray(optionDefinition.values)) {
       if (index < (args.length - 1)) {
         // Not the last option; engulf the next arg.
-        value = args[index + 1]
+        value = args[index + 1] ?? ''
         // args[index + 1].processed = true
       } else {
         // Error, expected option value not available.
@@ -594,7 +601,7 @@ export class CliOptions {
       fullCommands = ''
       let i: number
       for (i = 0; i < strArr.length; ++i) {
-        const chr = strArr[i]
+        const chr = strArr[i] ?? ''
         fullCommands += chr
         let found: CliNode | null = null
         for (const child of node.children) {
