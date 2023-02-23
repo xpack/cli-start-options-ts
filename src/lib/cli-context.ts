@@ -59,4 +59,10 @@ export interface CliContext {
   processArgv: string[]
 }
 
+// Hack to prevent ts-standard complain
+// /Users/ilg/My Files/WKS Projects/xpack.github/npm-modules/
+//   cli-start-options-ts.git/src/index.ts:47:15: No named exports found
+//   in module './lib/cli-context.js'. (import/export)
+export const dummy = ''
+
 // ----------------------------------------------------------------------------
