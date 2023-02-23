@@ -3,6 +3,12 @@
   "version": "3.4.5",
   "description": "Mock Test",
   "type": "module",
+  "exports": {
+    "import": {
+      "default": "./dist/main.js",
+      "types": "./main.d.ts"
+    }
+  },
   "author": {
     "email": "ilg@livius.net"
   }
