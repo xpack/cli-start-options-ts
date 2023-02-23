@@ -96,7 +96,10 @@
     "check-coverage": false,
     "coverage": false,
     "files": [
-      "tests/tap/*.js"
+      "tests/tap/*.ts"
+    ],
+    "node-arg": [
+      "--loader=ts-node/esm"
     ],
     "reporter": "classic",
     "timeout": 30,
