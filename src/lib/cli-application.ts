@@ -274,7 +274,7 @@ export class CliApplication {
     if (context.package.description !== undefined) {
       log.verbose(`${context.package.description}`)
     }
-    log.debug(`argv0: ${process.argv[1]}`)
+    log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
 
     const config = context.config
     staticThis.config = config

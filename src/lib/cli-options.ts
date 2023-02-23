@@ -50,7 +50,7 @@ type InitOptionFunction = (context: CliContext) => void
  * @param {Object} context Reference to context.
  * @param {Object} value Value to set for the option.
  */
-type SetOptionFunction = (context: CliContext, value?: string) => void
+type SetOptionFunction = (context: CliContext, value: string) => void
 
 /**
  * @typedef {Object} OptionDef
@@ -89,7 +89,7 @@ export interface CliOptionDefinition {
   hasValue?: boolean
   values?: string[]
   param?: string
-  isOptional?: boolean
+  isOptional?: boolean // false means isMandatory
   isMultiple?: boolean
   msgDefault?: string
   wasProcessed?: boolean
@@ -553,9 +553,9 @@ export class CliOptions {
         return 1
       }
     } else {
-      // No list of allowed values defined, call the action
-      // to update the configuration.
-      optionDefinition.action(context)
+      // No list of allowed values defined, treat it as boolean true;
+      // call the action to update the configuration.
+      optionDefinition.action(context, 'true')
       optionDefinition.wasProcessed = true
       return 0
     }
