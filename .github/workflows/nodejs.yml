@@ -19,6 +19,8 @@ on:
       - '.gitignore'
       - '.npmignore'
       - '.vscode/**'
+      - '.github/FUNDING.yml'
+      - 'typedoc.json'
 
 jobs:
   npm-test:
@@ -37,17 +39,21 @@ jobs:
       uses: actions/checkout@v1
       with:
         fetch-depth: 3
+
     - name: Setup Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Show node & npm versions, environment
       run: |
         node --version
         npm --version
         env | sort
+
     - name: Install dependencies
       run: npm ci
+      
     - name: Run test
       run: npm run test
       env:
