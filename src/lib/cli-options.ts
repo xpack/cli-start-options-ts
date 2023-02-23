@@ -200,7 +200,7 @@ class CliNode {
  * basically a namespace for some data and functions.
  */
 
-/* eslint @typescript-eslint/no-extraneous-class: off */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class CliOptions {
   // --------------------------------------------------------------------------
 
@@ -218,7 +218,7 @@ export class CliOptions {
    * @returns {undefined} Nothing.
    */
   static initialise (context: CliContext): void {
-    /* eslint @typescript-eslint/no-this-alias: off */
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     staticThis.context = context
@@ -241,6 +241,7 @@ export class CliOptions {
     commands: string | string[],
     relativeFilePath: string
   ): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     const commandsArray: string[] =
@@ -282,6 +283,7 @@ export class CliOptions {
    * @returns {undefined} Nothing.
    */
   static setCommandFile (moduleRelativePath: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     staticThis.moduleRelativePath = moduleRelativePath
@@ -297,6 +299,7 @@ export class CliOptions {
    * Preliminary solution with array instead of tree.
    */
   static addOptionGroups (optionGroups: CliOptionGroup[]): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     optionGroups.forEach((optionGroup) => {
@@ -315,6 +318,7 @@ export class CliOptions {
     title: string,
     optionDefinitions: CliOptionDefinition[]
   ): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     staticThis.commonOptionGroups.forEach((optionGroup) => {
@@ -329,6 +333,7 @@ export class CliOptions {
   }
 
   static hasCommands (): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
     return staticThis.unaliasedCommands.length > 0
   }
@@ -339,6 +344,7 @@ export class CliOptions {
    * @returns {string[]} Array of strings with the commands.
    */
   static getUnaliasedCommands (): string[] | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     return staticThis.unaliasedCommands
@@ -350,6 +356,7 @@ export class CliOptions {
    * @returns {Object[]} Array of option groups.
    */
   static getCommonOptionGroups (): CliOptionGroup[] {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     return staticThis.commonOptionGroups
@@ -376,6 +383,7 @@ export class CliOptions {
     context: CliContext,
     optionGroups: CliOptionGroup[] | null = null
   ): string[] {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     assert(staticThis.context, 'CliContext not initialised')
@@ -579,6 +587,7 @@ export class CliOptions {
     // rootPath: string
     // parentClass: typeof CliCommand
   ): CliOptionFoundModule {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     let fullCommands = ''

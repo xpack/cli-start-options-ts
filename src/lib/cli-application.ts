@@ -151,7 +151,7 @@ export class CliApplication {
    * ```
    */
   static async start (): Promise<number> {
-    /* eslint @typescript-eslint/no-this-alias: off */
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     // TODO: use package.json engine field.
@@ -236,7 +236,9 @@ export class CliApplication {
    * object and a few more properties.
    */
   static async doStart (): Promise<number> {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const ClassThis = this // To make it look like a class.
 
     // To differentiate between multiple invocations with different
@@ -315,6 +317,7 @@ export class CliApplication {
    * Must override it in the derived implementation.
    */
   static initialise (): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     // ------------------------------------------------------------------------
@@ -473,6 +476,7 @@ export class CliApplication {
    * in the derived implementation.
    */
   static initialiseConfiguration (context: CliContext): void {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     const config = context.config
@@ -522,6 +526,7 @@ export class CliApplication {
     log?: CliLogger,
     config?: CliConfig
   ): Promise<CliContext> {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     // Call the application initialisation callback, to prepare
@@ -561,7 +566,7 @@ export class CliApplication {
     }
 
     // Initialise configuration.
-    /* eslint @typescript-eslint/consistent-type-assertions: off */
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     context.config = config ?? ({} as CliConfig)
     staticThis.initialiseConfiguration(context)
     if (context.config.cwd === undefined) /* istanbul ignore next */ {
@@ -920,13 +925,13 @@ export class CliApplication {
     // Return the first exported class derived from parent class (`CliCommand`).
     for (const property in moduleExports) {
       const obj = moduleExports[property]
-      /* eslint @typescript-eslint/strict-boolean-expressions: off */
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (Object.prototype.isPrototypeOf.call(parentClass, obj)) {
         return moduleExports[property]
       }
     }
     // Module not found
-    /* eslint @typescript-eslint/restrict-template-expressions: off */
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     assert(false, `A class derived from '${parentClass.name}' not ` +
       `found in '${modulePath}'.`)
   }
