@@ -1,9 +1,24 @@
 {
-  "entryPoints": ["src"],
-  "entryPointStrategy": "expand",
+  "cleanOutputDir": true,
+  "entryPoints": [
+    "./src/index.ts"
+  ],
+  "entryPointStrategy": "resolve",
+  "exclude": [
+    "**/*.d.ts",
+    "tests/**",
+    "node_modules/**"
+  ],
   "githubPages": true,
   "gaID": "341760653",
   "includeVersion": true,
+  "navigationLinks": {
+    "xPack": "https://xpack.github.io/",
+    "GitHub": "https://github.com/xpack/cli-start-options-ts/",
+    "Org": "https://github.com/xpack/"
+  },
   "out": "docs",
+  "sidebarLinks": {
+  },
   "tsconfig": "./src/tsconfig.json"
 }
