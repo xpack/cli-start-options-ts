@@ -105,6 +105,13 @@
     "timeout": 30,
     "ts": true
   },
+  "ts-standard": {
+    "ignore": [
+      "dist",
+      "**/*.d.ts",
+      "**/*.js"
+    ]
+  },
   "engines": {
     "node": " >=14.13.1 || >=15.3.0 || >=16.0.0"
   }
