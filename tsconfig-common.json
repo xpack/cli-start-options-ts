@@ -1,9 +1,7 @@
 {
   /* https://www.typescriptlang.org/tsconfig */
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Node 14",
 
-  /* The maps are used for debugging only. */
   "compilerOptions": {
     "sourceMap": true,
     "declaration": true,
@@ -34,6 +32,10 @@
     "removeComments": true,
     "skipLibCheck": true,
     "strict": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./typings"
+    ],
     "useUnknownInCatchVariables": true
   }
 }
