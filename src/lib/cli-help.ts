@@ -316,14 +316,14 @@ export class CliHelp {
     const usage = `Usage: ${programName} ${commands}`
     let str: string = usage
 
-    let optionDefs: CliOptionDefinition[] = []
+    const optionDefs: CliOptionDefinition[] = []
     if (optionGroups !== undefined && (optionGroups.length > 0) &&
       optionGroups[0]?.preOptions !== undefined) {
       str += ' ' + optionGroups[0].preOptions
     }
     str += ' [options...]'
     optionGroups.forEach((optionGroup) => {
-      optionDefs = optionDefs.concat(optionGroup.optionDefs)
+      optionDefs.push(...optionGroup.optionDefs)
     })
     let buffer: string
     optionDefs.forEach((optionDef) => {

@@ -326,8 +326,7 @@ export class CliOptions {
       assert(optionGroup.optionDefs !== undefined)
 
       if (optionGroup.title === title) {
-        optionGroup.optionDefs =
-          optionGroup.optionDefs.concat(optionDefinitions)
+        optionGroup.optionDefs.push(...optionDefinitions)
       }
     })
   }
@@ -392,18 +391,16 @@ export class CliOptions {
 
     // In addition to common options, bring together all options from
     // all command option groups, if any.
-    let allOptionDefinitions: CliOptionDefinition[] = []
+    const allOptionDefinitions: CliOptionDefinition[] = []
     if (optionGroups == null) {
       staticThis.commonOptionGroups.forEach((optionGroup) => {
         assert(optionGroup.optionDefs !== undefined)
-        allOptionDefinitions =
-          allOptionDefinitions.concat(optionGroup.optionDefs)
+        allOptionDefinitions.push(...optionGroup.optionDefs)
       })
     } else {
       optionGroups.forEach((optionGroup) => {
         assert(optionGroup.optionDefs !== undefined)
-        allOptionDefinitions =
-          allOptionDefinitions.concat(optionGroup.optionDefs)
+        allOptionDefinitions.push(...optionGroup.optionDefs)
       })
     }
 
@@ -464,11 +461,10 @@ export class CliOptions {
   static checkMissingMandatory (
     optionGroups: CliOptionGroup[]
   ): string[] | null {
-    let allOptionDefinitions: CliOptionDefinition[] = []
+    const allOptionDefinitions: CliOptionDefinition[] = []
     optionGroups.forEach((optionGroup) => {
       assert(optionGroup.optionDefs !== undefined)
-      allOptionDefinitions =
-          allOptionDefinitions.concat(optionGroup.optionDefs)
+      allOptionDefinitions.push(...optionGroup.optionDefs)
     })
 
     const errors: string[] = []
