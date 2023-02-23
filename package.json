@@ -16,9 +16,9 @@
     "dist"
   ],
   "scripts": {
-    "compile-watch": "tsc --build --verbose --watch src tests/mock/*test/src",
+    "compile-watch": "tsc --build --verbose --watch src tests",
     "fix": "ts-standard --fix src tests",
-    "compile": "tsc --build --verbose src tests/mock/*test/src",
+    "compile": "tsc --build --verbose src tests",
     "npm-install": "npm install",
     "npm-link": "npm link",
     "npm-outdated": "npm outdated",
