@@ -9,10 +9,5 @@
   ],
   "include": [
     "./mock/**/*.ts"
-  ],
-  "reference": [
-    {
-      "path": "../src/tsconfig.json"
-    }
   ]
 }

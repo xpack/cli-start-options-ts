@@ -7,10 +7,5 @@
   "exclude": [],
   "include": [
     "**/*.ts"
-  ],
-  "reference": [
-    {
-      "path": "../../../../src/tsconfig.json"
-    }
   ]
 }
