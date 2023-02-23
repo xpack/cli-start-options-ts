@@ -70,9 +70,6 @@ import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
 
 // ----------------------------------------------------------------------------
 
-/* eslint @typescript-eslint/naming-convention: off */
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
 const fsPromises = fs.promises
 
 // ----------------------------------------------------------------------------
@@ -725,7 +722,8 @@ export class CliApplication {
         buffer += `${ver} available. <<<\n`
         buffer += ">>> Run '"
         if (os.platform() !== 'win32') {
-          if (isInstalledGlobally && isPathInside(__dirname, '/usr/local')) {
+          if (isInstalledGlobally && isPathInside(
+            path.dirname(fileURLToPath(import.meta.url)), '/usr/local')) {
             // May not be very reliable if installed in another system location.
             buffer += 'sudo '
           }
