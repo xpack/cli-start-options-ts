@@ -21,8 +21,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "tap xtest.js",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "name": "tap xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "--help"
@@ -99,7 +99,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js notclass",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "notclass"
@@ -119,7 +119,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js co",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "co"
@@ -139,7 +139,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel debug",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -160,7 +160,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js xx",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "xx"
@@ -180,7 +180,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js cop --help",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "cop",
@@ -202,7 +202,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js cop --file input --output output -v",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "cop",
@@ -227,7 +227,7 @@
       "type": "node",
       "request": "launch",
       "name": "ztest.js -h",
-      "program": "${workspaceRoot}/tests/mock/ztest/bin/ztest.js",
+      "program": "${workspaceRoot}/tests/mock/ztest/bin/ztest.mjs",
       "stopOnEntry": true,
       "args": [
         "-h"
@@ -247,7 +247,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --version",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "--version",
@@ -268,7 +268,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel xx",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -289,7 +289,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js cwd -C /tmp/xx",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "cwd",
@@ -311,7 +311,7 @@
       "type": "node",
       "request": "launch",
       "name": "xtest.js long",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
       "stopOnEntry": true,
       "args": [
         "long",
