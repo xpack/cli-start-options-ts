@@ -33,7 +33,7 @@ import {
   CliError,
   CliContext,
   CliConfig
-} from '../../../../../src/index.js'
+} from '../../../../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 

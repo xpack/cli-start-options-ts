@@ -32,7 +32,7 @@ import { test } from 'tap'
 import { Common } from '../mock/common.js'
 
 // ES6: `import { CliExitCodes } from 'cli-start-options'
-import { CliExitCodes } from '../../src/index.js'
+import { CliExitCodes } from '../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 

@@ -33,7 +33,11 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import { CliApplication, CliConfig, CliOptions } from '../../../../src/index.js'
+import {
+  CliApplication,
+  CliConfig,
+  CliOptions
+} from '../../../../dist/index.js'
 
 // ============================================================================
 

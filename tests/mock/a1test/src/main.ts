@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import { CliApplication } from '../../../../src/index.js'
+import { CliApplication } from '../../../../dist/index.js'
 
 // ============================================================================
 

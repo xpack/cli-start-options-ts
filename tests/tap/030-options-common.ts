@@ -34,7 +34,7 @@ import {
   CliApplication,
   CliExitCodes,
   NpmPackageJson
-} from '../../src/index.js'
+} from '../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 

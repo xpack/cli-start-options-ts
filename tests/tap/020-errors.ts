@@ -35,7 +35,7 @@ import {
   CliError,
   CliErrorSyntax,
   CliErrorApplication
-} from '../../src/index.js'
+} from '../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 

@@ -32,7 +32,7 @@ import tar from 'tar'
 // ----------------------------------------------------------------------------
 
 import { Xtest } from './xtest/src/main.js'
-import { CliContext } from '../../src/index.js'
+import { CliContext } from '../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 
