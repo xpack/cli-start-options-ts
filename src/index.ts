@@ -44,6 +44,7 @@
 
 export * from './lib/cli-application.js'
 export * from './lib/cli-command.js'
+export * from './lib/cli-context.js'
 export * from './lib/cli-help.js'
 export * from './lib/cli-options.js'
 export * from './lib/cli-error.js'
