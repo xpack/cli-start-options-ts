@@ -4,9 +4,11 @@
   "extends": "../tsconfig-common.json",
   "compilerOptions": {
   },
-  "exclude": [],
+  "exclude": [
+    "./tap"
+  ],
   "include": [
-    "**/*.ts"
+    "./mock/**/*.ts"
   ],
   "reference": [
     {
