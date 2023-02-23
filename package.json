@@ -16,9 +16,9 @@
     "dist"
   ],
   "scripts": {
-    "compile-watch": "tsc --build --verbose --watch src tests",
-    "fix": "ts-standard --fix --project src/tsconfig.json src && ts-standard --fix --project tests/tsconfig.json tests",
-    "compile": "tsc --build --verbose src tests",
+    "compile-watch": "tsc --build --verbose --watch src tests/mock/*test/src",
+    "fix": "ts-standard --fix src tests",
+    "compile": "tsc --build --verbose src tests/mock/*test/src",
     "npm-install": "npm install",
     "npm-link": "npm link",
     "npm-outdated": "npm outdated",
@@ -28,11 +28,11 @@
     "postversion": "git push origin --all && git push origin --tags",
     "package": "npm pack",
     "git-log": "git log --pretty='%cd * %h %s' --date=short",
-    "lint": "echo ts-standard src",
-    "prepare": "npm run compile && npm run lint && npm run typedoc",
+    "lint": "ts-standard src tests",
+    "prepare": "npm run compile && npm run lint",
     "pretest": "npm run compile && npm run lint",
-    "pretest-100": "npm run compile",
-    "pretest-100-c8": "npm run compile",
+    "pretest-100": "npm run compile && npm run lint",
+    "pretest-100-c8": "npm run compile && npm run lint",
     "tap": "tap --reporter=spec",
     "test-tap": "tap",
     "test-tap-coverage": "tap --coverage",
@@ -43,7 +43,8 @@
     "test-100": "npm run test-tap-coverage-100 -s",
     "test-100-c8": "npm run test-tap-coverage-100-c8 -s",
     "typedoc": "typedoc",
-    "deep-clean": "rm -rf dist tests-out .nyc_output node_modules package-lock.json",
+    "clean": "del-cli dist 'tests/**/dist' 'src/**/*.d.ts' 'src/**/*.d.ts.map' 'src/**/*.js' 'src/**/*.js.map' 'tests/**/*.d.ts' 'tests/**/*.d.ts.map' 'tests/**/*.js' 'tests/**/*.js.map' '**/tsconfig.tsbuildinfo' .nyc_output coverage ",
+    "deep-clean": "npm run clean && rm -rf node_modules package-lock.json",
     "npm-version": "echo $(which node) $(node --version) && echo $(which npm) $(npm --version)"
   },
   "repository": {
