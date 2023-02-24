@@ -14,8 +14,12 @@
 
 // ----------------------------------------------------------------------------
 
+// https://www.npmjs.com/package/@xpack/logger
+import { Logger } from '@xpack/logger'
+
+// ----------------------------------------------------------------------------
+
 import { CliContext } from './cli-context.js'
-import { CliLogger } from './cli-logger.js'
 import { CliOptionGroup, CliOptionDefinition } from './cli-options.js'
 
 // ----------------------------------------------------------------------------
@@ -78,7 +82,7 @@ export class CliHelp {
     description: string | undefined,
     message: string = '[<args>...]'
   ): void {
-    const log: CliLogger = this.context.log
+    const log: Logger = this.context.log
     const programName: string = this.context.programName
 
     log.output()
@@ -134,7 +138,7 @@ export class CliHelp {
     _optionGroups: CliOptionGroup[], // Unused
     multiPass = this.multiPass
   ): void {
-    const log: CliLogger = this.context.log
+    const log: Logger = this.context.log
     const programName: string = this.context.programName
 
     const str1: string = `${programName} -h|--help`
@@ -158,7 +162,7 @@ export class CliHelp {
     message: string,
     multiPass = this.multiPass
   ): void {
-    const log: CliLogger = this.context.log
+    const log: Logger = this.context.log
     if (out.length >= multiPass.limit) {
       log.output(out)
       out = ''
@@ -370,7 +374,7 @@ export class CliHelp {
   }
 
   outputFooter (): void {
-    const log: CliLogger = this.context.log
+    const log: Logger = this.context.log
     const pkgJson = this.context.package
 
     log.output()

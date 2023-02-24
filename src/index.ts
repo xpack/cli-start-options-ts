@@ -40,14 +40,19 @@
 // ----------------------------------------------------------------------------
 // Node.js specific export definitions.
 
-// By default, `module.exports = {}`.
+// For consistency, re-export all Logger definitions.
+// Applications should not add @xpack/logger as an explicit dependency,
+// but use it from here.
+export * from '@xpack/logger'
 
+// ----------------------------------------------------------------------------
+
+// Re-export all local definitions.
 export * from './lib/cli-application.js'
 export * from './lib/cli-command.js'
 export * from './lib/cli-context.js'
+export * from './lib/cli-error.js'
 export * from './lib/cli-help.js'
 export * from './lib/cli-options.js'
-export * from './lib/cli-error.js'
-export * from './lib/cli-logger.js'
 
 // ----------------------------------------------------------------------------

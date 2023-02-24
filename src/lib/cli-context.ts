@@ -14,7 +14,8 @@
 
 // ----------------------------------------------------------------------------
 
-import { CliLogger, CliLogLevel } from './cli-logger.js'
+// https://www.npmjs.com/package/@xpack/logger
+import { Logger, LogLevel } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ export interface NpmPackageJson {
 }
 
 export interface CliConfig {
-  logLevel: CliLogLevel
+  logLevel: LogLevel
   cwd: string
   // Optional
   isHelpRequest?: boolean
@@ -43,7 +44,7 @@ export interface CliConfig {
 }
 
 export interface CliContext {
-  log: CliLogger
+  log: Logger
   programName: string
   // TODO: rename packageJson
   package: NpmPackageJson

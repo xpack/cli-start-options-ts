@@ -31,6 +31,9 @@ import * as vm from 'node:vm'
 
 // ----------------------------------------------------------------------------
 
+// https://www.npmjs.com/package/@xpack/logger
+import { Logger, LogLevel } from '@xpack/logger'
+
 // https://www.npmjs.com/package/latest-version
 import latestVersion from 'latest-version'
 
@@ -65,7 +68,6 @@ import { CliContext, CliConfig } from './cli-context.js'
 import { CliOptions, CliOptionFoundModule } from './cli-options.js'
 
 import { CliHelp } from './cli-help.js'
-import { CliLogger, CliLogLevel } from './cli-logger.js'
 import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
 
 // ----------------------------------------------------------------------------
@@ -109,7 +111,7 @@ export class CliApplication {
   // --------------------------------------------------------------------------
 
   static rootPath: string
-  static log: CliLogger
+  static log: Logger
   static programName: string
   static config: CliConfig
   static hasInteractiveMode?: boolean
@@ -165,7 +167,7 @@ export class CliApplication {
       // Avoid running on WScript. The journey may abruptly end here.
       // WscriptAvoider.quitIfWscript(programName)
 
-      staticThis.log = new CliLogger(console)
+      staticThis.log = new Logger({ level: 'info' })
 
       // Redirect to implementation code. After some common inits,
       // if not interactive, it'll call main().
@@ -351,7 +353,7 @@ export class CliApplication {
               msg: 'Set log level',
               action: (context, val) => {
                 assert(val !== undefined)
-                context.config.logLevel = val as CliLogLevel
+                context.config.logLevel = val as LogLevel
               },
               init: (context) => {
                 context.config.logLevel = defaultLogLevel
@@ -520,7 +522,7 @@ export class CliApplication {
     programName: string,
     _context?: CliContext, // Conflicting name
     _console?: Console, // Conflicting name
-    log?: CliLogger,
+    log?: Logger,
     config?: CliConfig
   ): Promise<CliContext> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -570,8 +572,10 @@ export class CliApplication {
       context.config.cwd = context.processCwd
     }
 
-    context.log = log ?? new CliLogger(context.console,
-      context.config.logLevel)
+    context.log = log ?? new Logger({
+      console: context.console,
+      level: context.config.logLevel
+    })
 
     assert(context.log)
 
@@ -741,7 +745,7 @@ export class CliApplication {
         return
       }
     } catch (err) {
-      if (log.isDebug()) {
+      if (log.isDebug) {
         log.debug((err as Error).toString())
       } else {
         log.warn((err as Error).message)

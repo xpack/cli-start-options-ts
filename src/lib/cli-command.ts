@@ -35,10 +35,14 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
+// https://www.npmjs.com/package/@xpack/logger
+import { Logger } from '@xpack/logger'
+
+// ----------------------------------------------------------------------------
+
 import { CliContext, CliConfig } from './cli-context.js'
 import { CliExitCodes } from './cli-error.js'
 import { CliHelp, CliMultiPass } from './cli-help.js'
-import { CliLogger } from './cli-logger.js'
 import { CliOptions, CliOptionGroup } from './cli-options.js'
 
 // ============================================================================
@@ -61,7 +65,7 @@ export class CliCommand {
   // --------------------------------------------------------------------------
 
   public context: CliContext
-  public log: CliLogger
+  public log: Logger
   public commands: string
   public title: string
   public optionGroups: CliOptionGroup[]
