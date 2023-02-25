@@ -9,7 +9,6 @@
  * be obtained from https://opensource.org/licenses/MIT/.
  */
 
-/* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
 // ----------------------------------------------------------------------------
