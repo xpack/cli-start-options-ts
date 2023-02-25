@@ -41,15 +41,15 @@ import { CliContext } from '../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 
-const nodeBin: string = process?.env['npm_node_execpath'] ??
+export const nodeBin: string = process?.env['npm_node_execpath'] ??
   process?.env['NODE'] ??
   process?.execPath
 
-const appAbsolutePath =
+export const appAbsolutePath =
   (programName: string, mockPath: string = programName): string => {
-    return path.join(path.dirname(
-      fileURLToPath(import.meta.url)),
-    mockPath, 'bin', programName + '.mjs')
+    return path.join(
+      path.dirname(fileURLToPath(import.meta.url)),
+      mockPath, 'bin', programName + '.js')
   }
 
 export const mockPath = (name: string): string => {
