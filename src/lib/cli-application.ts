@@ -118,6 +118,16 @@ type nodeReplCallback = (
   result?: readline.CompleterResult
 ) => void
 
+interface initialiseContextParameters {
+  programName: string
+  context?: CliContext | undefined
+  console?: Console | undefined
+  log?: Logger | undefined
+  config?: CliConfig | undefined
+}
+
+// ----------------------------------------------------------------------------
+
 /**
  * @classdesc
  * Base class for a CLI application.
@@ -279,9 +289,9 @@ export class CliApplication {
     // process.title = staticThis.programName
 
     // Initialise the application, including commands and options.
-    const context = await staticThis.initialiseContext(
-      staticThis.programName
-    )
+    const context = await staticThis.initialiseContext({
+      programName: staticThis.programName
+    })
 
     const log = context.log
     staticThis.log.level = log.level
@@ -655,11 +665,7 @@ export class CliApplication {
    * @returns {Object} Reference to context.
    */
   static async initialiseContext (
-    programName: string,
-    _context?: CliContext, // Conflicting name
-    _console?: Console, // Conflicting name
-    log?: Logger,
-    config?: CliConfig
+    params: initialiseContextParameters
   ): Promise<CliContext> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
@@ -673,17 +679,17 @@ export class CliApplication {
     }
 
     // Use the given context, or create an empty one.
-    const context = _context ?? (vm.createContext() as CliContext)
+    const context = params.context ?? (vm.createContext() as CliContext)
 
     // REPL should always set the console, be careful not to
     // overwrite it.
     if (context.console === undefined) {
       // Cannot use || because REPL context has only a getter.
-      context.console = _console ?? console
+      context.console = params.console ?? console
     }
 
     assert(context.console)
-    context.programName = programName
+    context.programName = params.programName
 
     const argv1 = process.argv[1]?.trim()
     assert(argv1 !== undefined, 'Mandatory argv[1]')
@@ -702,17 +708,13 @@ export class CliApplication {
 
     // Initialise configuration.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    context.config = config ?? ({} as CliConfig)
+    context.config = params.config ?? ({} as CliConfig)
     staticThis.initialiseConfiguration(context)
     if (context.config.cwd === undefined) /* istanbul ignore next */ {
       context.config.cwd = context.processCwd
     }
 
-    context.log = log ?? new Logger({
-      console: context.console,
-      level: context.config.logLevel
-    })
-
+    context.log = params.log ?? new Logger({ console: context.console })
     assert(context.log)
 
     CliOptions.initialise(context)
