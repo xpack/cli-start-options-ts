@@ -28,16 +28,9 @@
  * ```javascript
  * import { CliOptions, CliCommand } from '@ilg/cli-start-options'
  * ```
- *
- * or, for CommonJS Node.js applications:
- *
- * ```javascript
- * const { CliOptions, CliCommand } = require('@ilg/cli-start-options')
- * ```
  */
 
 // ----------------------------------------------------------------------------
-// Node.js specific export definitions.
 
 // For consistency, re-export all Logger definitions.
 // Applications should not add @xpack/logger as an explicit dependency,

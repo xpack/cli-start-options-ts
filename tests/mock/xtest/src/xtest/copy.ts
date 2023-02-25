@@ -25,7 +25,6 @@ import * as path from 'node:path'
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { CliCommand, CliExitCodes, CliError } from 'cli-start-options'
 import {
   CliCommand,
   CliExitCodes,
