@@ -275,7 +275,7 @@ export class CliApplication {
       programName = fileName?.trim()
     }
     assert(programName !== undefined && programName.length > 0,
-      '')
+      'Mandatory program name')
     staticThis.programName = programName
 
     // Set the application name, to make `ps` output more readable.
