@@ -21,8 +21,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "tap xtest.mjs",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "name": "tap xtest.ts",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--help"
@@ -36,13 +36,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap errors.js",
-      "program": "${workspaceRoot}/tests/tap/errors.js",
+      "name": "tap errors.ts",
+      "program": "${workspaceRoot}/tests/tap/020-errors.ts",
       "stopOnEntry": true,
       "args": [
       ],
@@ -55,13 +55,32 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap logger.js",
-      "program": "${workspaceRoot}/tests/tap/logger.js",
+      "name": "tap interactive.ts",
+      "program": "${workspaceRoot}/tests/tap/050-interactive.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap options-common.ts",
+      "program": "${workspaceRoot}/tests/tap/030-options-common.ts",
       "stopOnEntry": true,
       "args": [
       ],
@@ -74,15 +93,16 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap options-common.js",
-      "program": "${workspaceRoot}/tests/tap/options-common.js",
+      "name": "xtest.js -i",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
+        "-i"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
@@ -93,13 +113,34 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js 9999",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "--interactive-server-port", "9999",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js notclass",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "notclass"
@@ -113,13 +154,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js co",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "co"
@@ -133,13 +174,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel debug",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -154,13 +195,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js xx",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "xx"
@@ -174,13 +215,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js cop --help",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "cop",
@@ -196,13 +237,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js cop --file input --output output -v",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "cop",
@@ -221,13 +262,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "ztest.js -h",
-      "program": "${workspaceRoot}/tests/mock/ztest/bin/ztest.mjs",
+      "program": "${workspaceRoot}/tests/mock/ztest/bin/ztest.ts",
       "stopOnEntry": true,
       "args": [
         "-h"
@@ -241,13 +282,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js --version",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--version",
@@ -262,13 +303,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel xx",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
@@ -283,13 +324,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js cwd -C /tmp/xx",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "cwd",
@@ -305,13 +346,13 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js long",
-      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.mjs",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "long",
@@ -326,7 +367,7 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     }
 
   ]
