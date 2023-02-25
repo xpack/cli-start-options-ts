@@ -5,8 +5,8 @@
   "type": "module",
   "exports": {
     "import": {
-      "default": "./dist/main.js",
-      "types": "./main.d.ts"
+      "default": "./src/main.js",
+      "types": "./src/main.d.ts"
     }
   },
   "author": {

@@ -12,7 +12,6 @@
  * be obtained from https://opensource.org/licenses/MIT/.
  */
 
-/* eslint valid-jsdoc: "error" */
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
 // ----------------------------------------------------------------------------
@@ -39,12 +38,12 @@
 
 // ----------------------------------------------------------------------------
 
-// ES6: `import { Xtest } from 'main.js'
 import { Wtest } from '../src/main.js'
 
 // ----------------------------------------------------------------------------
 
-// TODO: use instances, not static classes.
-Wtest.start().then((code) => { process.exitCode = code })
+Wtest.start()
+  .then((code) => { process.exitCode = code })
+  .catch((err) => { console.log(err) })
 
 // ----------------------------------------------------------------------------
