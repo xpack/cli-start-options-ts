@@ -622,6 +622,8 @@ export class CliApplication {
     const config = context.config
     assert(config, 'Configuration')
 
+    config.invokedFromCli = false
+
     config.logLevel = defaultLogLevel
 
     const optionGroups = CliOptions.getCommonOptionGroups()
