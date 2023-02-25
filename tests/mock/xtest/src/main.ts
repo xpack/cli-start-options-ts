@@ -71,6 +71,10 @@ export class Xtest extends CliApplication {
     // Enable -i|--interactive
     staticThis.hasInteractiveMode = true
 
+    // To enable server mode: --interactive-server-port 9999
+    // or statically with:
+    // staticThis.interactiveServerPort = 9999
+
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
