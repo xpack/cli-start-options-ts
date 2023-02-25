@@ -188,23 +188,23 @@ export class CliApplication {
       // if not interactive, it'll call main().
       exitCode = await staticThis.doStart()
       // Pass through. Do not exit, to allow REPL to run.
-    } catch (ex: any) {
+    } catch (err: any) {
       // This should catch possible errors during inits, otherwise
       // in main(), another catch will apply.
       exitCode = CliExitCodes.ERROR.APPLICATION
-      if (ex instanceof CliError) {
+      if (err instanceof CliError) {
         // CLI triggered error. Treat it gently.
-        staticThis.log.error(ex.message)
-        exitCode = ex.exitCode
-      } else if (ex.constructor === Error ||
-        ex.constructor === SyntaxError ||
-        ex.constructor === TypeError) {
+        staticThis.log.error(err.message)
+        exitCode = err.exitCode
+      } else if (err.constructor === Error ||
+        err.constructor === SyntaxError ||
+        err.constructor === TypeError) {
         // Other error. Treat it gently too.
-        console.error(ex.message)
+        console.error(err.message)
       } else /* istanbul ignore next */ {
         // System error, probably due to a bug (AssertionError).
         // Show the full stack trace.
-        console.error(ex.stack)
+        console.error(err.stack)
       }
       staticThis.log.verbose(`exitCode = ${exitCode}`)
     }
@@ -935,7 +935,7 @@ export class CliApplication {
           return false
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       log.trace('no previous update timestamp')
     }
     return true
@@ -1014,7 +1014,7 @@ export class CliApplication {
         log.trace(`geteuid() ${process.geteuid()} != ${process.getuid()}`)
         return
       }
-    } catch (err) {
+    } catch (err: any) {
       if (log.isDebug) {
         log.debug((err as Error).toString())
       } else {
