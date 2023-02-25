@@ -186,19 +186,14 @@ export class CliApplication {
 
     let exitCode = CliExitCodes.SUCCESS
     try {
-      // Extract the name from the last path element; ignore extensions, if any.
-      // const programName = path.basename(process.argv[1]).split('.')[0]
-
-      // Avoid running on WScript. The journey may abruptly end here.
-      // WscriptAvoider.quitIfWscript(programName)
-
-      staticThis.log = new Logger({ level: 'info' })
-
       // Redirect to implementation code. After some common inits,
       // if not interactive, it'll call main().
       exitCode = await staticThis.doStart()
       // Pass through. Do not exit, to allow REPL to run.
     } catch (err: any) {
+      if (!staticThis.log.hasLevel) {
+        staticThis.log.level = defaultLogLevel
+      }
       // This should catch possible errors during inits, otherwise
       // in main(), another catch will apply.
       exitCode = CliExitCodes.ERROR.APPLICATION
@@ -294,7 +289,7 @@ export class CliApplication {
     })
 
     const log = context.log
-    staticThis.log.level = log.level
+    staticThis.log = log
 
     // These are early messages, not shown immediately,
     // they are delayed until the log level is known.
@@ -1063,7 +1058,7 @@ export class CliApplication {
 
     staticThis.doInitialiseConfiguration(context)
     const remainingArgs = CliOptions.parseOptions(argv, context)
-
+    log.level = config.logLevel
     log.trace(util.inspect(context.config))
 
     await this.getLatestVersion()
