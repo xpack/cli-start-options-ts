@@ -23,8 +23,12 @@
 
 import { strict as assert } from 'node:assert'
 import * as fs from 'node:fs'
+import * as net from 'node:net'
 import * as os from 'node:os'
 import * as path from 'node:path'
+// import * as process from 'node:process'
+import * as readline from 'node:readline'
+import * as repl from 'node:repl'
 import { fileURLToPath } from 'node:url'
 import * as util from 'node:util'
 import * as vm from 'node:vm'
@@ -102,6 +106,18 @@ const defaultLogLevel = 'info'
 // - 6 = Prerequisites (like node version)
 
 // ============================================================================
+
+/**
+ * @summary Node.js REPL callback.
+ *
+ * @callback nodeReplCallback
+ * @param {number} responseCode
+ * @param {string} responseMessage
+ */
+type nodeReplCallback = (
+  err?: null | Error,
+  result?: readline.CompleterResult
+) => void
 
 /**
  * @classdesc
@@ -292,16 +308,107 @@ export class CliApplication {
 
     log.trace(util.inspect(config))
 
-    // App instances exist only within a given context.
-    const app = new ClassThis(context)
+    const replTitle = context.package.description ?? programName
+    let exitCode = CliExitCodes.SUCCESS
 
-    const exitCode = await app.main(process.argv.slice(2))
-    await app.checkUpdate()
+    const serverPort = config.interactiveServerPort
+    if (serverPort === undefined) {
+      if (!config.isInteractive) {
+        // Non interactive means single shot (batch mode);
+        // execute the command received on the command line
+        // and quit. This is the most common usage.
 
-    // Be sure no exit() is called here, since it'll close the
-    // process and prevent interactive usage, which is inherently
-    // asynchronous.
-    log.verbose(`doStart() returns ${exitCode}`)
+        config.invokedFromCli = true
+        // App instances exist only within a given context.
+        const app = new ClassThis(context)
+
+        exitCode = await app.main(process.argv.slice(2))
+        await app.checkUpdate()
+
+        // Be sure no exit() is called here, since it'll close the
+        // process and prevent interactive usage, which is inherently
+        // asynchronous.
+        log.verbose(`doStart() returns ${exitCode}`)
+      } else {
+        // Interactive mode. Use the REPL (Read-Eval-Print-Loop)
+        // to get a shell like prompt to enter sequences of commands.
+        // https://nodejs.org/docs/latest-v14.x/api/repl.html
+
+        process.stdout.write(`\n${replTitle} REPL\n`)
+        process.stdout.write('(use .exit to quit)\n')
+
+        const terminalReplServer = repl.start({
+          prompt: staticThis.programName + '> ',
+          input: process.stdin,
+          output: process.stdout,
+          eval: staticThis.replEvaluator.bind(staticThis) as
+            unknown as repl.REPLEval
+          // completer: staticThis.nodeReplCompleter.bind(staticThis)
+        })
+
+        terminalReplServer.on('exit', () => {
+          process.exit(process.exitCode)
+        })
+        // Pass through to allow REPL to run...
+      }
+    } else /* istanbul ignore next */ {
+      // ----------------------------------------------------------------------
+      // Useful during development, to test if everything goes to the
+      // correct stream.
+
+      // const net = await import('node:net')
+
+      console.log(`Listening on localhost:${serverPort}...`)
+
+      // Domains were deprecated.
+      // const domainSock = (await import('domain')).create()
+      // domainSock.on('error', staticThis.replErrorCallback.bind())
+
+      // https://nodejs.org/docs/latest-v14.x/api/net.html#net_net_createserver_options_connectionlistener
+      const socket = net.createServer((socket) => {
+        // 'connection' listener.
+        const socketAddress = socket.address() as net.AddressInfo
+        console.log(`Connection from ${socketAddress.address} opened`)
+
+        socket.on('end', () => {
+          console.log(`Connection from ${socketAddress.address} closed`)
+        })
+
+        process.stdout.write(`\n${replTitle} REPL\n`)
+        process.stdout.write('(use .exit to quit)\n')
+
+        const socketReplServer = repl.start({
+          prompt: staticThis.programName + '> ',
+          input: socket,
+          output: socket,
+          eval: staticThis.replEvaluator.bind(staticThis) as
+            unknown as repl.REPLEval
+          // completer: staticThis.nodeReplCompleter.bind(staticThis)
+        })
+
+        socketReplServer.on('error', (err: any) => {
+          throw err
+        })
+
+        socketReplServer.on('exit', () => {
+          // console.log('Connection closed')
+          socket.end()
+        })
+      })
+
+      socket.on('error', (err: any) => {
+        throw err
+      })
+
+      socket.on('close', () => {
+        console.log('Socket closed')
+        process.exit(process.exitCode)
+      })
+
+      socket.listen(serverPort)
+
+      // Pass through to allow REPL to run...
+    }
 
     return exitCode
   }
@@ -448,6 +555,36 @@ export class CliApplication {
     )
 
     staticThis.doInitialise()
+
+    if (staticThis.hasInteractiveMode !== undefined &&
+        staticThis.hasInteractiveMode) {
+      CliOptions.appendToOptionGroups('Common options',
+        [
+          {
+            options: ['-i', '--interactive'],
+            msg: 'Enter interactive mode',
+            action: (context) => {
+              context.config.isInteractive = true
+            },
+            init: (context) => {
+              context.config.isInteractive = false
+            },
+            doProcessEarly: true
+          },
+          {
+            options: ['--interactive-server-port'],
+            action: (context, val) => /* istanbul ignore next */ {
+              context.config.interactiveServerPort = +val // as number
+            },
+            init: (context) => {
+              context.config.interactiveServerPort = undefined
+            },
+            hasValue: true,
+            doProcessEarly: true
+          }
+        ]
+      )
+    }
 
     assert(staticThis.rootPath, 'mandatory rootPath not set')
   }
@@ -601,6 +738,140 @@ export class CliApplication {
     const fileContent = await fsPromises.readFile(filePath)
     assert(fileContent !== null)
     return JSON.parse(fileContent.toString())
+  }
+
+  // --------------------------------------------------------------------------
+
+  // https://nodejs.org/docs/latest-v14.x/api/readline.html#readline_use_of_the_completer_function
+
+  /**
+   * @summary A Node REPL completer.
+   *
+   * @param _linePartial The incomplete line.
+   * @param callback Called on completion or error.
+   * @returns Nothing.
+   *
+   * @description
+   * The completer takes the current line entered by the user as an argument,
+   * and returns an Array with 2 entries:
+   * - An Array with matching entries for the completion.
+   * - The substring that was used for the matching.
+   *
+   * When using a callback, the completer can be called asynchronously.
+   */
+  static nodeReplCompleter (
+    _line: string,
+    callback: nodeReplCallback
+  ): any /* istanbul ignore next */ {
+    // console.log(linePartial)
+
+    // If no completion is available, return error (an empty string
+    // might do it too).
+
+    // callback(null, [[''], _line])
+    callback(new Error('no completion'))
+  }
+
+  /**
+   * @summary Callback used by REPL when a line is entered.
+   *
+   * @param cmdLine The entire line, unparsed.
+   * @param context Reference to a context.
+   * @param _filename The name of the file.
+   * @param callback Called on completion or error.
+   * @returns {void} Nothing
+   *
+   * @description
+   * The function is passed to REPL with `.bind(staticThis)`, so it'll have
+   * access to all class properties, like staticThis.programName.
+   *
+   * An eval function can error with repl.Recoverable to indicate the input
+   * was incomplete and prompt for additional lines.
+   */
+  static async replEvaluator (
+    cmdLine: string,
+    context: CliContext,
+    _filename: string,
+    callback: nodeReplCallback
+  ): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const staticThis = this
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const ClassThis = this // To make it look like a class.
+
+    // REPL always sets the console to point to its input/output.
+    // Be sure it is so.
+    assert(context.console !== undefined)
+
+    let app = null
+
+    // It is mandatory to catch errors, this is an old style callback.
+    try {
+      // Fill in the given context, created by the REPL interpreter.
+      // Start with an empty config, not the staticThis.config.
+      // With the current non-reentrant log, use the global object.
+      await staticThis.initialiseContext({
+        programName: staticThis.programName,
+        context
+      })
+
+      const log = context.log
+
+      // Definitely an interactive session.
+      context.config.isInteractive = true
+
+      // And definitely the module was invoked from CLI, not from
+      // another module.
+      context.config.invokedFromCli = true
+
+      // Create an instance of the application class, for the given context.
+      app = new ClassThis(context)
+
+      // Split command line and remove any number of spaces.
+      const args = cmdLine.trim().split(/\s+/)
+
+      const exitCode = await app.main(args)
+      log.verbose(`exit(${exitCode})`)
+
+      // The last executed command exit code is passed as process exit code.
+      process.exitCode = exitCode
+
+      app = null // Pale attempt to help the GC.
+
+      // Success, but do not return any value, since REPL thinks it
+      // is a string that must be displayed.
+      callback(null)
+    } catch (ex: any) /* istanbul ignore next */ {
+      app = null
+      // Failure, will display `Error: ${ex.message}`.
+      callback(ex)
+    }
+  }
+
+  /**
+   * @summary Error callback used by REPL.
+   *
+   * @param {Object} err Reference to error triggered inside REPL.
+   * @returns {undefined} Nothing.
+   *
+   * @description
+   * This is tricky and took some time to find a workaround to avoid
+   * displaying the stack trace on error.
+   *
+   * @deprecated
+   */
+  static replErrorCallback (err: any): void /* istanbul ignore next */ {
+    // if (!(err instanceof SyntaxError)) {
+    // System errors deserve their stack trace.
+    if (!(err instanceof EvalError) && !(err instanceof SyntaxError) &&
+      !(err instanceof RangeError) && !(err instanceof ReferenceError) &&
+      !(err instanceof TypeError) && !(err instanceof URIError)) {
+      // For regular errors it makes no sense to display the stack trace.
+      err.stack = null
+      console.log(err)
+      // The error message will be displayed shortly, in the next handler,
+      // registered by the REPL server.
+    }
   }
 
   // --------------------------------------------------------------------------

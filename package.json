@@ -98,7 +98,11 @@
     "check-coverage": false,
     "coverage": false,
     "files": [
-      "tests/tap/*.ts"
+      "tests/tap/020-*.ts",
+      "tests/tap/030-*.ts",
+      "tests/tap/040-*.ts",
+      "tests/tap/060-*.ts",
+      "tests/tap/070-*.ts"
     ],
     "node-arg": [
       "--loader=ts-node/esm"
@@ -111,7 +115,8 @@
     "ignore": [
       "dist",
       "**/*.d.ts",
-      "**/*.js"
+      "**/*.js",
+      "tests/tap/070-*.ts"
     ]
   },
   "engines": {
