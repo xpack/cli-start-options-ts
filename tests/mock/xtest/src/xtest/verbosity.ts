@@ -52,9 +52,9 @@ export class Copy extends CliCommand {
    *
    * @override
    */
-  override async doRun (_args: string[]): Promise<number> {
+  override async run (_args: string[]): Promise<number> {
     const log = this.log
-    log.trace(`${this.constructor.name}.doRun()`)
+    log.trace(`${this.constructor.name}.run()`)
 
     log.info(this.title)
 

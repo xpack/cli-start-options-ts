@@ -178,7 +178,7 @@ export class CliApplication {
       application = new ThisClass(context)
 
       // Redirect to the instance runner. It might start a REPL.
-      exitCode = await application.run()
+      exitCode = await application.prepareAndRun()
       // Pass through. Do not exit, to allow REPL to run.
     } catch (err: any) {
       // If the initialisation was completed, the log level must have been
@@ -463,7 +463,7 @@ export class CliApplication {
    * the context object, which includes a logger, a configuration
    * object and a few more properties.
    */
-  async run (): Promise<number> {
+  async prepareAndRun (): Promise<number> {
     const context = this.context
     const config = context.config
     const log = context.log
@@ -1030,7 +1030,7 @@ export class CliApplication {
         log.debug(`'${context.programName} ` +
           `${context.fullCommands.join(' ')}' started`)
 
-        exitCode = await commandInstance.run(commandArgs)
+        exitCode = await commandInstance.prepareAndRun(commandArgs)
         log.debug(`'${context.programName} ` +
           `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
       } else {
@@ -1043,7 +1043,7 @@ export class CliApplication {
 
         log.debug(`'${context.programName}' started`)
 
-        exitCode = await this.main(remainingArgs)
+        exitCode = await this.run(remainingArgs)
         log.debug(`'${context.programName}' - returned ${exitCode}`)
       }
     } catch (err) {
@@ -1099,9 +1099,9 @@ export class CliApplication {
       `found in '${modulePath}'.`)
   }
 
-  async main (_args: string[]): Promise<number> {
+  async run (_args: string[]): Promise<number> {
     assert(false, 'For applications that do not have sub-commands, ' +
-      'define a main() function in the CliApplication derived class')
+      'define a run() method in the CliApplication derived class')
   }
 }
 

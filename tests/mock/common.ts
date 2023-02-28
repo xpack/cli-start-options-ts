@@ -214,7 +214,7 @@ export class Common {
         log: mockLog
       })
     const app = new Xtest(context)
-    const code = await app.main(args)
+    const code = await app.run(args)
     return { code, stdout, stderr }
   }
 

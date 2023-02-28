@@ -103,7 +103,7 @@ export class CliCommand {
    * @param args Array of arguments.
    * @returns Return code.
    */
-  async run (args: string[]): Promise<number> {
+  async prepareAndRun (args: string[]): Promise<number> {
     const log = this.log
     log.trace(`${this.constructor.name}.run()`)
 
@@ -160,20 +160,20 @@ export class CliCommand {
     log.trace(util.inspect(config))
     this.commandArgs = commandArgs
 
-    return await this.doRun(commandArgs)
+    return await this.run(commandArgs)
   }
 
   /**
-   * @summary Abstract `doRun()` method.
+   * @summary Kind of abstract `run()` method.
    *
    * @param _argv Array of arguments.
-   * @returns Return code.
+   * @returns Exit code.
    */
-  async doRun (
+  async run (
     _argv: string[] // Unused
   ): Promise<number> {
     assert(false,
-      'Abstract CliCmd.doRun(), redefine it in your derived class.')
+      'Define a run() method in the CliCommand derived class.')
   }
 
   /**
