@@ -472,15 +472,25 @@ export class CliApplication {
     // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
     process.title = context.programName
 
+    // ------------------------------------------------------------------------
+    // Read package.json in.
+
     assert(context.rootPath)
     context.packageJson =
       await CliApplication.readPackageJson(context.rootPath)
 
-    // TODO: use package.json engine field.
-    if (semver.lt(process.version, '14.0.0')) {
-      console.error('Please use a newer node (at least 14.x).\n')
+    // ------------------------------------------------------------------------
+    // Validate the engine.
+
+    const nodeVersion = process.version // v14.21.2
+    const engines: string = context.packageJson.engines?.node ??
+      '>=14.13.1 || >=15.3.0 || >=16.0.0'
+    if (!semver.satisfies(nodeVersion, engines)) {
+      console.error(`Please use a newer node (at least ${engines}).\n`)
       return CliExitCodes.ERROR.PREREQUISITES
     }
+
+    // ------------------------------------------------------------------------
 
     // These are early messages, not shown immediately,
     // they are delayed until the log level is known.
@@ -516,12 +526,16 @@ export class CliApplication {
 
     log.trace(util.inspect(config))
 
+    // ------------------------------------------------------------------------
+
     // Very early detection of `--version`, since it makes
     // all other irrelevant. Checked again in dispatchCommands() for REPL.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
       log.always(context.packageJson.version)
       return CliExitCodes.SUCCESS
     }
+
+    // ------------------------------------------------------------------------
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
@@ -540,6 +554,8 @@ export class CliApplication {
         }
       }
     }
+
+    // ------------------------------------------------------------------------
 
     // If no commands and -h, output the application help message.
     if ((commands.length === 0) &&
@@ -576,6 +592,8 @@ export class CliApplication {
 
       log.verbose(`run() returns ${exitCode}`)
     }
+
+    // ------------------------------------------------------------------------
 
     return exitCode
   }

@@ -40,6 +40,9 @@ export interface NpmPackageJson {
     email?: string
     url?: string
   }
+  engines?: {
+    node?: string
+  }
 }
 
 export interface CliContextConstructorParameters {
