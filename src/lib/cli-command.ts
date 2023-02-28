@@ -118,7 +118,7 @@ export class CliCommand {
       this.optionGroups)
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
-      this.help()
+      this.outputHelp()
       return CliExitCodes.SUCCESS // Ok, command help explicitly called.
     }
 
@@ -153,7 +153,7 @@ export class CliCommand {
       missingErrors.forEach((msg) => {
         log.error(msg)
       })
-      this.help()
+      this.outputHelp()
       return CliExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
     }
 
@@ -181,7 +181,7 @@ export class CliCommand {
    *
    * @returns {undefined} Nothing.
    */
-  help (): void {
+  outputHelp (): void {
     const help: CliHelp = new CliHelp(this.context)
 
     help.outputCommandLine(this.title, this.optionGroups)
@@ -190,7 +190,7 @@ export class CliCommand {
       CliOptions.getCommonOptionGroups()
 
     help.twoPassAlign(() => {
-      this.doOutputHelpArgsDetails(help.multiPass)
+      this.outputHelpArgsDetails(help.multiPass)
 
       this.optionGroups.forEach((optionGroup) => {
         help.outputOptions(optionGroup.optionDefs, optionGroup.title)

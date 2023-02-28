@@ -1006,7 +1006,7 @@ export class CliApplication {
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {
           assert(context.CommandClass)
           // Show the command specific help.
-          commandInstance.help()
+          commandInstance.outputHelp()
           return CliExitCodes.SUCCESS // Help explicitly called.
         }
 
