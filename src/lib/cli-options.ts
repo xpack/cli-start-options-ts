@@ -206,9 +206,9 @@ export class CliOptions {
   static context: CliContext
   static moduleRelativePath: string
 
-  private static readonly commandsTree: CliNode = new CliNode(null)
-  private static readonly unaliasedCommands: string[] = []
-  private static readonly commonOptionGroups: CliOptionGroup[] = []
+  private static commandsTree: CliNode = new CliNode(null)
+  private static unaliasedCommands: string[]
+  private static commonOptionGroups: CliOptionGroup[]
 
   /**
    * @summary Static initialiser.
@@ -221,6 +221,10 @@ export class CliOptions {
     const staticThis = this
 
     staticThis.context = context
+
+    staticThis.commandsTree = new CliNode(null)
+    staticThis.unaliasedCommands = []
+    staticThis.commonOptionGroups = []
   }
 
   /**
