@@ -406,27 +406,6 @@ export class CliHelp {
     }
   }
 
-  outputMainHelp (
-    commands: string[] | undefined,
-    optionGroups: CliOptionGroup[],
-    description?: string
-  ): void {
-    // Try to get a message from the first group.
-    this.outputCommands(commands, description, optionGroups[0]?.title)
-
-    // The special trick here is how to align the right column.
-    // For this, two steps are needed, the first to compute the max
-    // width of the first column, and the second to output the text.
-
-    this.twoPassAlign(() => {
-      this.outputOptionGroups(optionGroups)
-      this.outputHelpDetails(optionGroups)
-      this.outputEarlyDetails(optionGroups)
-    })
-
-    this.outputFooter()
-  }
-
   twoPassAlign (f: CallableNoArgs): void {
     this.multiPass = new CliMultiPass(this.middleLimit)
     f()

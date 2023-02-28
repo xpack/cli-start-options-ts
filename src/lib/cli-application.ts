@@ -760,17 +760,34 @@ export class CliApplication {
   outputHelp (): void {
     const context = this.context
 
-    const log = this.context.log
+    const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help = new CliHelp(this.context)
+    const help = new CliHelp(context)
 
     // If there is a command, we should not get here, but in the command help.
     assert(context.commandInstance === undefined)
 
     // Show top (application) help.
-    help.outputMainHelp(CliOptions.getUnaliasedCommands(),
-      CliOptions.getCommonOptionGroups())
+
+    const commands = CliOptions.getUnaliasedCommands()
+    const optionGroups = CliOptions.getCommonOptionGroups()
+    const description = undefined
+
+    // Try to get a message from the first group.
+    help.outputCommands(commands, description, optionGroups[0]?.title)
+
+    // The special trick here is how to align the right column.
+    // For this, two steps are needed, the first to compute the max
+    // width of the first column, and the second to output the text.
+
+    help.twoPassAlign(() => {
+      help.outputOptionGroups(optionGroups)
+      help.outputHelpDetails(optionGroups)
+      help.outputEarlyDetails(optionGroups)
+    })
+
+    help.outputFooter()
   }
 
   // --------------------------------------------------------------------------
