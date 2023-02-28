@@ -32,7 +32,11 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import { CliApplication, CliOptions } from '../../../../dist/index.js'
+import {
+  CliApplication,
+  CliContext,
+  CliOptions
+} from '../../../../dist/index.js'
 
 // ============================================================================
 
@@ -42,7 +46,7 @@ export class Wtest extends CliApplication {
   /**
    * @summary Initialise the application class object.
    *
-   * @returns {undefined} Nothing.
+   * @returns Nothing.
    *
    * @description
    * Initialise the options manager with application
@@ -50,14 +54,13 @@ export class Wtest extends CliApplication {
    *
    * @override
    */
-  static override doInitialise (): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const Self = this
+  constructor (context: CliContext) {
+    super(context)
 
-    // ------------------------------------------------------------------------
-    // Mandatory, must be set here, not in the library, since it takes
-    // the shortcut of using `__dirname` of the main file.
-    Self.rootPath = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+    // Mandatory, must be set here, not in the library, since it computes
+    // the root path as relative to the path of this file..
+    this.context.rootPath =
+      path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
@@ -72,14 +75,6 @@ export class Wtest extends CliApplication {
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
   }
-
-  // --------------------------------------------------------------------------
-
-  // Constructor: use parent definition.
-  // main(): use parent definition
-  // help(): use parent definition.
-
-  // (isn't object oriented code reuse great?)
 }
 
 // ----------------------------------------------------------------------------

@@ -31,7 +31,7 @@ import tar from 'tar'
 // ----------------------------------------------------------------------------
 
 import { Xtest } from './xtest/src/main.js'
-import { CliContext } from '../../dist/index.js'
+import { CliContext, Logger } from '../../dist/index.js'
 
 // ----------------------------------------------------------------------------
 
@@ -74,10 +74,10 @@ export class Common {
    * @summary Run program in a separate process.
    *
    * @async
-   * @param {string} appAbsolutePath Program name.
-   * @param {string[]} args Command line arguments.
-   * @param {Object} spawnOpts Optional spawn options.
-   * @returns {{code: number, stdout: string, stderr: string}} Exit
+   * @param appAbsolutePath Program name.
+   * @param args Command line arguments.
+   * @param spawnOpts Optional spawn options.
+   * @returns Exit
    *  code and captured output/error streams.
    *
    * @description
@@ -177,19 +177,15 @@ export class Common {
   /**
    * @summary Run xtest as a library call.
    *
-   * @async
-   * @param {string[]} args Command line arguments
-   * @param {Object} ctx Optional context.
-   * @returns {{code: number, stdout: string, stderr: string}} Exit
-   *  code and captured output/error streams.
+   * @param args Command line arguments
+   * @returns Exit code and captured output/error streams.
    *
    * @description
    * Call the application directly, as a regular module, and return
    * the exit code and the stdio streams captured in strings.
    */
   static async xtestLib (
-    args: string[],
-    ctx: CliContext | undefined = undefined
+    args: string[]
   ): Promise<cliResult> {
     assert(Xtest !== null, 'No application class')
     // Create two streams to local strings.
@@ -209,12 +205,13 @@ export class Common {
       }
     })
 
-    const _console = new Console(ostream, errstream)
+    const mockConsole = new Console(ostream, errstream)
+    const mockLog = new Logger({ console: mockConsole })
     const context =
-      await Xtest.initialiseContext({
+      await new CliContext({
         programName: 'xtest',
-        context: ctx,
-        console: _console
+        console: mockConsole,
+        log: mockLog
       })
     const app = new Xtest(context)
     const code = await app.main(args)
@@ -225,9 +222,9 @@ export class Common {
    * @summary Extract files from a .tgz archive into a folder.
    *
    * @async
-   * @param {string} tgzPath Path to archive file.
-   * @param {string} destPath Path to destination folder.
-   * @returns {undefined} Nothing.
+   * @param tgzPath Path to archive file.
+   * @param destPath Path to destination folder.
+   * @returns Nothing.
    */
   static async extractTgz (tgzPath: string, destPath: string): Promise<void> {
     await makeDir(destPath)

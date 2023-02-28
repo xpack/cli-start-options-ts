@@ -18,21 +18,19 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import { CliApplication } from '../../../../dist/index.js'
+import { CliApplication, CliContext } from '../../../../dist/index.js'
 
 // ============================================================================
 
 export class Test extends CliApplication {
   // --------------------------------------------------------------------------
 
-  static override doInitialise (): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
+  constructor (context: CliContext) {
+    super(context)
 
-    // ------------------------------------------------------------------------
-    // Mandatory, must be set here, not in the library, since it
-    // refers to the main file.
-    staticThis.rootPath =
+    // Mandatory, must be set here, not in the library, since it computes
+    // the root path as relative to the path of this file..
+    this.context.rootPath =
       path.dirname(path.dirname(fileURLToPath(import.meta.url)))
   }
 

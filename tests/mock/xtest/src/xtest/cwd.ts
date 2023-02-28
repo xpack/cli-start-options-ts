@@ -33,7 +33,7 @@ export class Long extends CliCommand {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} context Reference to a context.
+   * @param context Reference to a context.
    */
   constructor (context: CliContext) {
     super(context)
@@ -45,8 +45,8 @@ export class Long extends CliCommand {
   /**
    * @summary Execute the `copy` command.
    *
-   * @param {string[]} _args Command line arguments.
-   * @returns {number} Return code.
+   * @param _args Command line arguments.
+   * @returns Return code.
    *
    * @override
    */

@@ -29,7 +29,7 @@ export class Unimpl extends CliCommand {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} context Reference to a context.
+   * @param context Reference to a context.
    */
   constructor (context: CliContext) {
     super(context)

@@ -34,42 +34,30 @@ import { fileURLToPath } from 'node:url'
 
 import {
   CliApplication,
-  CliConfig,
-  CliOptions
+  CliConfiguration,
+  CliOptions,
+  CliContext
 } from '../../../../dist/index.js'
 
 // ============================================================================
 
-interface XtestConfig extends CliConfig {
+interface XtestConfig extends CliConfiguration {
   extra: boolean
 }
 
 export class Xtest extends CliApplication {
   // --------------------------------------------------------------------------
 
-  /**
-   * @summary Initialise the application class object.
-   *
-   * @returns {undefined} Nothing.
-   *
-   * @description
-   * Initialise the options manager with application
-   * specific commands and common options.
-   *
-   * @override
-   */
-  static override doInitialise (): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
+  constructor (context: CliContext) {
+    super(context)
 
-    // ------------------------------------------------------------------------
-    // Mandatory, must be set here, not in the library, since it takes
-    // the shortcut of using `__dirname` of the main file.
-    staticThis.rootPath =
-        path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+    // Mandatory, must be set here, not in the library, since it computes
+    // the root path as relative to the path of this file..
+    this.context.rootPath =
+      path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 
-    // Enable -i|--interactive
-    staticThis.hasInteractiveMode = true
+    // Enable REPL
+    this.context.enableREPL = true
 
     // To enable server mode: --interactive-server-port 9999
     // or statically with:
@@ -111,14 +99,6 @@ export class Xtest extends CliApplication {
         }
       ])
   }
-
-  // --------------------------------------------------------------------------
-
-  // Constructor: use parent definition.
-  // main(): use parent definition
-  // help(): use parent definition.
-
-  // (isn't object oriented code reuse great?)
 }
 
 // ----------------------------------------------------------------------------
