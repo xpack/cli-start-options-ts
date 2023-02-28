@@ -213,7 +213,7 @@ export class CliCommand {
    * The default implementation does nothing. Override it in
    * the application if needed.
    */
-  doOutputHelpArgsDetails (_multiPass: CliMultiPass): void {
+  outputHelpArgsDetails (_multiPass: CliMultiPass): void {
     // Nothing.
   }
 
