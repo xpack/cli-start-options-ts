@@ -30,7 +30,7 @@ import * as readline from 'node:readline'
 import * as repl from 'node:repl'
 import { fileURLToPath } from 'node:url'
 import * as util from 'node:util'
-import * as vm from 'node:vm'
+// import * as vm from 'node:vm'
 
 // ----------------------------------------------------------------------------
 
@@ -67,11 +67,14 @@ import { deleteAsync } from 'del'
 // import { WscriptAvoider } from 'wscript-avoider'
 
 import { CliCommand } from './cli-command.js'
-import { CliContext, CliConfig } from './cli-context.js'
+import { CliContext, NpmPackageJson } from './cli-context.js'
+// import { CliConfiguration } from './cli-configuration.js'
 import { CliOptions, CliOptionFoundModule } from './cli-options.js'
 
 import { CliHelp } from './cli-help.js'
 import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
+import { Console } from 'node:console'
+import { Context } from 'node:vm'
 
 // ----------------------------------------------------------------------------
 
@@ -92,7 +95,7 @@ const timestampSuffix = '-update-check'
 // `-d`, '--debug': `--loglevel debug`
 // `-dd`, '--trace': `--loglevel trace`
 
-const defaultLogLevel = 'info'
+export const defaultLogLevel = 'info'
 
 // ----------------------------------------------------------------------------
 // Exit codes:
@@ -110,64 +113,43 @@ const defaultLogLevel = 'info'
  * @summary Node.js REPL callback.
  *
  * @callback nodeReplCallback
- * @param {number} responseCode
- * @param {string} responseMessage
  */
 type nodeReplCallback = (
   err?: null | Error,
   result?: readline.CompleterResult
 ) => void
 
-interface initialiseContextParameters {
-  programName: string
-  context?: CliContext | undefined
-  console?: Console | undefined
-  log?: Logger | undefined
-  config?: CliConfig | undefined
-}
-
 // ----------------------------------------------------------------------------
 
 /**
  * @classdesc
  * Base class for a CLI application.
+ *
+ * Normally there is only one instance of this class, but when a
+ * socket REPL is used, multiple instances can be created for multiple
+ * net clients, a good reason for not using static variables.
+ *
  */
 export class CliApplication {
   // --------------------------------------------------------------------------
 
-  static rootPath: string
-  static log: Logger
-  static programName: string
-  static config: CliConfig
-  static hasInteractiveMode?: boolean
-  static isInitialised?: boolean
-  static command: CliCommand // actually an instance derived from it
-  static Command: typeof CliCommand // actually a class derived from it
-  static checkUpdatesIntervalSeconds?: number
-
-  // --------------------------------------------------------------------------
-
-  public context: CliContext
-  public latestVersionPromise: Promise<string> | undefined = undefined
-
   /**
    * @summary Application start().
    *
-   * @returns {undefined} Does not return, it calls exit().
+   * @returns The process exit code.
    *
    * @description
-   * Start the CLI application, either in single shot
-   * mode or interactive. (similar to _start() in POSIX)
+   * Convenience code to create an application instance.
+   *
+   * Not much functionality here, just a wrapper to:
+   * - create the context
+   * - instantiate the derived application class
+   * - chain to the instance `run()`
+   * - catch global exceptions.
+   *
+   * Note: keep it as minimal as possible and let the instance do the work.
    *
    * Called by the executable script in the bin folder.
-   * Not much functionality here, just a wrapper to catch
-   * global exceptions and call the CLI start implementation.
-   *
-   * For the exceptions to reach this top layer, all async functions
-   * and all functions returning promises, must be called with `await`
-   * otherwise the `UnhandledPromiseRejectionWarning` is currently
-   * triggered.
-   *
    * To pass the exit code back to the system, use something like:
    *
    * ```
@@ -176,30 +158,41 @@ export class CliApplication {
    */
   static async start (): Promise<number> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
+    const ThisClass = this // Simply to make it look like a class.
 
-    // TODO: use package.json engine field.
-    if (semver.lt(process.version, '14.0.0')) {
-      console.error('Please use a newer node (at least 14.x).\n')
-      return CliExitCodes.ERROR.PREREQUISITES
-    }
-
+    // Create the log early, to have it in the exception handlers.
+    const log = new Logger({ console })
     let exitCode = CliExitCodes.SUCCESS
+    let application
     try {
-      // Redirect to implementation code. After some common inits,
-      // if not interactive, it'll call main().
-      exitCode = await staticThis.doStart()
+      const programName = CliApplication.getProgramName()
+
+      // Create the application context.
+      const context = new CliContext({
+        programName,
+        log,
+        console: log.console
+      })
+
+      // Instantiate the derived class.
+      application = new ThisClass(context)
+
+      // Redirect to the instance runner. It might start a REPL.
+      exitCode = await application.run()
       // Pass through. Do not exit, to allow REPL to run.
     } catch (err: any) {
-      if (!staticThis.log.hasLevel) {
-        staticThis.log.level = defaultLogLevel
+      // If the initialisation was completed, the log level must have been
+      // set, but for early quits the level might still be undefined.
+      if (!log.hasLevel) {
+        log.level = defaultLogLevel
+        // This is the moment when buffered logs are written out.
       }
       // This should catch possible errors during inits, otherwise
-      // in main(), another catch will apply.
+      // in run() there is another catch.
       exitCode = CliExitCodes.ERROR.APPLICATION
       if (err instanceof CliError) {
         // CLI triggered error. Treat it gently.
-        staticThis.log.error(err.message)
+        log.error(err.message)
         exitCode = err.exitCode
       } else if (err.constructor === Error ||
         err.constructor === SyntaxError ||
@@ -211,55 +204,13 @@ export class CliApplication {
         // Show the full stack trace.
         console.error(err.stack)
       }
-      staticThis.log.verbose(`exitCode = ${exitCode}`)
+      log.verbose(`exitCode = ${exitCode}`)
     }
     // Pass through. Do not call exit(), to allow callbacks (or REPL) to run.
-
     return exitCode
   }
 
-  /**
-   * @summary Implementation of a CLI starter.
-   *
-   * @returns {undefined} Nothing.
-   *
-   * @description
-   * As for any CLI application, the main input comes from the
-   * command line options, available in Node.js as the
-   * `process.argv` array of strings.
-   *
-   * One important aspect that must not be ignored, is how to
-   * differentiate when called from scripts with different names.
-   *
-   * `process.argv0`
-   * On POSIX, it is 'node' (uninteresting).
-   * On Windows, it is the node full path (uninteresting as well).
-   *
-   * `process.argv[0]` is the node full path.
-   * On macOS it looks like `/usr/local/bin/node`.
-   * On Ubuntu it looks like `/usr/bin/nodejs`
-   * On Windows it looks like `C:\Program Files\nodejs\node.exe`.
-   *
-   * `process.argv[1]` is the full path of the invoking script.
-   * On macOS it is either `/usr/local/bin/xyz` or `.../bin/xyz.js`.
-   * On Ubuntu it is either `/usr/bin/xyz` or `.../bin/xyz.js`.
-   * On Windows, it is a path inside the `AppData` folder
-   * like `C:\Users\ilg\AppData\Roaming\npm\node_modules\xyz\bin\xyz.js`
-   *
-   * To call a program with different names, create multiple
-   * executable scripts in the `bin` folder and by processing
-   * `argv[1]` it is possible to differentiate between them.
-   *
-   * The communication with the actual CLI implementation is done via
-   * the context object, which includes a logger, a configuration
-   * object and a few more properties.
-   */
-  static async doStart (): Promise<number> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const ClassThis = this // To make it look like a class.
-
+  static getProgramName (): string {
     // To differentiate between multiple invocations with different
     // names, extract the name from the last path element; ignore
     // extensions, if any.
@@ -276,160 +227,56 @@ export class CliApplication {
     }
     assert(programName !== undefined && programName.length > 0,
       'Mandatory program name')
-    staticThis.programName = programName
 
-    // Set the application name, to make `ps` output more readable.
-    // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
-    // TypeScript complains that it is not writable.
-    // process.title = staticThis.programName
-
-    // Initialise the application, including commands and options.
-    const context = await staticThis.initialiseContext({
-      programName: staticThis.programName
-    })
-
-    const log = context.log
-    staticThis.log = log
-
-    // These are early messages, not shown immediately,
-    // they are delayed until the log level is known.
-    if (context.package.description !== undefined) {
-      log.verbose(`${context.package.description}`)
-    }
-    log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
-
-    const config = context.config
-    staticThis.config = config
-
-    // Parse the common options, for example the log level.
-    CliOptions.parseOptions(process.argv, context)
-
-    log.level = config.logLevel
-
-    process.argv.forEach((arg, index) => {
-      log.debug(`start arg${index}: '${arg}'`)
-    })
-
-    log.trace(util.inspect(config))
-
-    const replTitle = context.package.description ?? programName
-    let exitCode = CliExitCodes.SUCCESS
-
-    const serverPort = config.interactiveServerPort
-    if (serverPort === undefined) {
-      if (!config.isInteractive) {
-        // Non interactive means single shot (batch mode);
-        // execute the command received on the command line
-        // and quit. This is the most common usage.
-
-        config.invokedFromCli = true
-        // App instances exist only within a given context.
-        const app = new ClassThis(context)
-
-        exitCode = await app.main(process.argv.slice(2))
-        await app.checkUpdate()
-
-        // Be sure no exit() is called here, since it'll close the
-        // process and prevent interactive usage, which is inherently
-        // asynchronous.
-        log.verbose(`doStart() returns ${exitCode}`)
-      } else {
-        // Interactive mode. Use the REPL (Read-Eval-Print-Loop)
-        // to get a shell like prompt to enter sequences of commands.
-        // https://nodejs.org/docs/latest-v14.x/api/repl.html
-
-        process.stdout.write(`\n${replTitle} REPL\n`)
-        process.stdout.write('(use .exit to quit)\n')
-
-        const terminalReplServer = repl.start({
-          prompt: staticThis.programName + '> ',
-          input: process.stdin,
-          output: process.stdout,
-          eval: staticThis.replEvaluator.bind(staticThis) as
-            unknown as repl.REPLEval
-          // completer: staticThis.nodeReplCompleter.bind(staticThis)
-        })
-
-        terminalReplServer.on('exit', () => {
-          process.exit(process.exitCode)
-        })
-        // Pass through to allow REPL to run...
-      }
-    } else /* istanbul ignore next */ {
-      // ----------------------------------------------------------------------
-      // Useful during development, to test if everything goes to the
-      // correct stream.
-
-      // const net = await import('node:net')
-
-      console.log(`Listening on localhost:${serverPort}...`)
-
-      // Domains were deprecated.
-      // const domainSock = (await import('domain')).create()
-      // domainSock.on('error', staticThis.replErrorCallback.bind())
-
-      // https://nodejs.org/docs/latest-v14.x/api/net.html#net_net_createserver_options_connectionlistener
-      const socket = net.createServer((socket) => {
-        // 'connection' listener.
-        const socketAddress = socket.address() as net.AddressInfo
-        console.log(`Connection from ${socketAddress.address} opened`)
-
-        socket.on('end', () => {
-          console.log(`Connection from ${socketAddress.address} closed`)
-        })
-
-        process.stdout.write(`\n${replTitle} REPL\n`)
-        process.stdout.write('(use .exit to quit)\n')
-
-        const socketReplServer = repl.start({
-          prompt: staticThis.programName + '> ',
-          input: socket,
-          output: socket,
-          eval: staticThis.replEvaluator.bind(staticThis) as
-            unknown as repl.REPLEval
-          // completer: staticThis.nodeReplCompleter.bind(staticThis)
-        })
-
-        socketReplServer.on('error', (err: any) => {
-          throw err
-        })
-
-        socketReplServer.on('exit', () => {
-          // console.log('Connection closed')
-          socket.end()
-        })
-      })
-
-      socket.on('error', (err: any) => {
-        throw err
-      })
-
-      socket.on('close', () => {
-        console.log('Socket closed')
-        process.exit(process.exitCode)
-      })
-
-      socket.listen(serverPort)
-
-      // Pass through to allow REPL to run...
-    }
-
-    return exitCode
+    return programName
   }
 
   /**
-   * @summary Explicit initialiser for the class object. Kind of a
-   *  static constructor.
+   * @summary Read package JSON file.
    *
-   * @returns {undefined}.
+   * @param rootPath The absolute path of the package.
+   * @returns The package definition, unmodified.
+   * @throws Error from `fs.readFile()` or `JSON.parse()`.
    *
    * @description
-   * Must override it in the derived implementation.
+   * By default, this function uses the package root path
+   * stored in the class property during initialisation.
+   * When called from tests, the path must be passed explicitly.
    */
-  static initialise (): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
+  static async readPackageJson (rootPath: string): Promise<NpmPackageJson> {
+    assert(rootPath)
+    const filePath = path.join(rootPath, 'package.json')
+    const fileContent = await fsPromises.readFile(filePath)
+    assert(fileContent !== null)
+    return JSON.parse(fileContent.toString())
+  }
 
+  // --------------------------------------------------------------------------
+
+  public context: CliContext
+  public latestVersionPromise: Promise<string> | undefined = undefined
+
+  /**
+   * @summary Constructor, to remember the context.
+   *
+   * @param context Reference to a context.
+   */
+  constructor (context: CliContext) {
+    assert(context)
+    assert(context.console)
+    assert(context.log)
+    assert(context.config)
+
+    this.context = context
+    const log = this.context.log
+
+    log.trace(`${this.constructor.name}.constructor()`)
+
+    CliOptions.initialise(context)
+    this.initializeCommonOptions()
+  }
+
+  initializeCommonOptions (): void {
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
@@ -557,24 +404,13 @@ export class CliApplication {
         }
       ]
     )
+  }
 
-    staticThis.doInitialise()
-
-    if (staticThis.hasInteractiveMode !== undefined &&
-        staticThis.hasInteractiveMode) {
+  initializeReplOptions (): void {
+    const context = this.context
+    if (context.enableREPL !== undefined && context.enableREPL) {
       CliOptions.appendToOptionGroups('Common options',
         [
-          {
-            options: ['-i', '--interactive'],
-            msg: 'Enter interactive mode',
-            action: (context) => {
-              context.config.isInteractive = true
-            },
-            init: (context) => {
-              context.config.isInteractive = false
-            },
-            doProcessEarly: true
-          },
           {
             options: ['--interactive-server-port'],
             action: (context, val) => /* istanbul ignore next */ {
@@ -589,43 +425,77 @@ export class CliApplication {
         ]
       )
     }
-
-    assert(staticThis.rootPath, 'mandatory rootPath not set')
   }
 
   /**
-   * @summary Default implementation for the static class initialiser.
+   * @summary Application instance runner.
    *
-   * @returns {undefined} Nothing.
-   *
-   * @description
-   * Override it in the derived implementation.
-   */
-  static doInitialise (): void /* istanbul ignore next */ {
-    assert(false, 'Must override in derived implementation!')
-  }
-
-  /**
-   * @summary Default initialiser for the configuration options.
-   *
-   * @param {Object} context Reference to the context object.
-   * @returns {undefined} Nothing
+   * @returns The process exit code.
    *
    * @description
-   * If further inits are needed, override `doInitialiseConfiguration()`
-   * in the derived implementation.
+   * As for any CLI application, the main input comes from the
+   * command line options, available in Node.js as the
+   * `process.argv` array of strings.
+   *
+   * One important aspect that must not be ignored, is how to
+   * differentiate when called from scripts with different names.
+   *
+   * `process.argv0`
+   * On POSIX, it is 'node' or possibly the full path (not very interesting).
+   * On Windows, it is the node full path (not interesting as well).
+   *
+   * `process.argv[0]` - the node full path.
+   * On macOS it looks like `/Users/ilg/.nvm/versions/node/v18.14.0/bin/node`
+   * On Ubuntu it looks like `/home/ilg/.nvm/versions/node/v18.14.2/bin/node`
+   * On Windows it looks like `C:\Program Files\nodejs\node.exe`.
+   *
+   * `process.argv[1]` - the full path of the invoking script.
+   * On macOS it is either `/usr/local/bin/xyz` or `.../bin/xyz.js`.
+   * On Ubuntu it is either `/usr/bin/xyz` or `.../bin/xyz.js`.
+   * On Windows, it is a path inside the `AppData` folder
+   * like `C:\Users\ilg\AppData\Roaming\npm\node_modules\xyz\bin\xyz.js`
+   *
+   * To call a program with different names, create multiple
+   * executable scripts in the `bin` folder and by processing
+   * `argv[1]` it is possible to differentiate between them.
+   *
+   * The communication with the actual CLI implementation is done via
+   * the context object, which includes a logger, a configuration
+   * object and a few more properties.
    */
-  static initialiseConfiguration (context: CliContext): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
+  async run (): Promise<number> {
+    const context = this.context
     const config = context.config
-    assert(config, 'Configuration')
+    const log = context.log
 
-    config.invokedFromCli = false
+    // Set the application name, to make `ps` output more readable.
+    // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
+    process.title = context.programName
 
-    config.logLevel = defaultLogLevel
+    assert(context.rootPath)
+    context.packageJson =
+      await CliApplication.readPackageJson(context.rootPath)
 
+    // TODO: use package.json engine field.
+    if (semver.lt(process.version, '14.0.0')) {
+      console.error('Please use a newer node (at least 14.x).\n')
+      return CliExitCodes.ERROR.PREREQUISITES
+    }
+
+    // These are early messages, not shown immediately,
+    // they are delayed until the log level is known.
+    if (context.packageJson?.description !== undefined) {
+      log.verbose(`${context.packageJson.description}`)
+    }
+    log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
+
+    process.argv.forEach((arg, index) => {
+      log.debug(`start arg${index}: '${arg}'`)
+    })
+
+    this.initializeReplOptions()
+
+    // Call the init() function of all defined options.
     const optionGroups = CliOptions.getCommonOptionGroups()
     optionGroups.forEach((optionGroup) => {
       optionGroup.optionDefs.forEach((optionDef) => {
@@ -633,296 +503,283 @@ export class CliApplication {
       })
     })
 
-    staticThis.doInitialiseConfiguration(context)
+    // Skip the first two arguments (the node path and the application path).
+    const argv = process.argv.slice(2)
+
+    // Parse the common options, for example the log level, and update
+    // the configuration, to know the log level, or if version/help.
+    CliOptions.parseOptions(argv, context)
+
+    // After parsing the options, the debug level is finally known,
+    // and the buffered messages are passed out.
+    log.level = config.logLevel
+
+    log.trace(util.inspect(config))
+
+    // Very early detection of `--version`, since it makes
+    // all other irrelevant. Checked again in dispatchCommands() for REPL.
+    if (config.isVersionRequest !== undefined && config.isVersionRequest) {
+      log.always(context.packageJson.version)
+      return CliExitCodes.SUCCESS
+    }
+
+    // Copy relevant args to local array.
+    // Start with 0, possibly end with `--`.
+    const mainArgs = CliOptions.filterOwnArguments(argv)
+
+    // Isolate commands as words with letters and inner dashes.
+    // First non word (probably option) ends the list.
+    const commands: string[] = []
+    if (CliOptions.hasCommands()) {
+      for (const arg of mainArgs) {
+        const lowerCaseArg = arg.toLowerCase()
+        if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
+          commands.push(lowerCaseArg)
+        } else {
+          break
+        }
+      }
+    }
+
+    // If no commands and -h, output the application help message.
+    if ((commands.length === 0) &&
+      (config.isHelpRequest !== undefined && config.isHelpRequest)) {
+      this.outputHelp()
+      return CliExitCodes.SUCCESS // Help explicitly called.
+    }
+
+    // ------------------------------------------------------------------------
+
+    let exitCode = CliExitCodes.SUCCESS
+
+    if ((commands.length === 0) && context.enableREPL) {
+      // If there are no commands on the command line and REPL is enabled,
+      // enter the loop. Each line will be evaluated with dispatchCommands().
+      exitCode = await this.enterRepl()
+      // The exit code at this point reflects only the
+      // initial command, later commands will all set the exit code,
+      // and the last one will be returned. (probably not very useful)
+    } else {
+      // For regular invocations, also check if an update is available.
+      let latestVersionPromise
+      if (await this.getLatestVersion()) {
+        // At this step only create the promise,
+        // its result is checked before exit.
+        latestVersionPromise = latestVersion(context.packageJson.name)
+      }
+
+      exitCode = await this.dispatchCommands(argv)
+
+      if (latestVersionPromise !== undefined) {
+        await this.checkUpdate(latestVersionPromise)
+      }
+
+      log.verbose(`run() returns ${exitCode}`)
+    }
+
+    return exitCode
   }
 
-  /**
-   * @summary Custom initialiser for the configuration options.
-   *
-   * @param {Object} context Reference to the context object.
-   * @returns {undefined} Nothing.
-   *
-   * @description
-   * Override it in the derived implementation.
-   */
-  static doInitialiseConfiguration (context: CliContext): void {
+  // https://nodejs.org/docs/latest-v14.x/api/repl.html
+  // Use the node REPL (Read-Eval-Print-Loop)
+  // to get a shell like prompt to enter sequences of commands.
+  // Be sure `exit()` is called only on the `close()` event, otherwise
+  // it'll abruptly terminate the process and prevent REPL usage, which
+  // is inherently asynchronous.
+  async enterRepl (): Promise<number> {
+    const ClassThis = this.constructor as typeof CliApplication
+
+    const context = this.context
     const config = context.config
-    assert(config, 'Configuration')
-  }
+    const log = context.log
 
-  /**
-   * @summary Initialise a minimal context object.
-   *
-   * @param {string} programName The invocation name of the program.
-   * @param {Object} _context Reference to a context, or null to create an
-   *   empty context.
-   * @param {Object} _console Reference to a node console.
-   * @param {Object} log Reference to a npm log instance.
-   * @param {Object} config Reference to a configuration.
-   * @returns {Object} Reference to context.
-   */
-  static async initialiseContext (
-    params: initialiseContextParameters
-  ): Promise<CliContext> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
+    const replTitle = context.packageJson.description ?? context.programName
+    const exitCode = CliExitCodes.SUCCESS
 
-    // Call the application initialisation callback, to prepare
-    // the structure needed to manage the commands and option.
-    if (!(staticThis.isInitialised !== undefined && staticThis.isInitialised)) {
-      staticThis.initialise()
+    const serverPort = config.interactiveServerPort
+    if (serverPort === undefined) {
+      // Terminal mode REPL.
+      process.stdout.write(`\n${replTitle} REPL\n`)
+      process.stdout.write('(use .exit to quit)\n')
 
-      staticThis.isInitialised = true
+      const terminalReplServer = repl.start({
+        prompt: context.programName + '> ',
+        input: process.stdin,
+        output: process.stdout,
+        eval: this.evaluateRepl.bind(this) as
+          unknown as repl.REPLEval
+      })
+
+      terminalReplServer.on('exit', () => {
+        process.exit(process.exitCode)
+      })
+      // Pass through to allow REPL to run...
+    } else /* istanbul ignore next */ {
+      // --------------------------------------------------------------------
+      // TCP/IP socket REPL.
+
+      // Useful during development, to test if everything goes to the
+      // correct stream.
+
+      console.log(`Listening on localhost:${serverPort}...`)
+
+      // https://nodejs.org/docs/latest-v14.x/api/net.html#net_net_createserver_options_connectionlistener
+      const server = net.createServer((socket) => {
+        // 'connection' listener.
+        // Called when someone connects to the server.
+        const socketAddress = socket.address() as net.AddressInfo
+        console.log(`Connection from ${socketAddress.address} opened`)
+
+        socket.on('end', () => {
+          console.log(`Connection from ${socketAddress.address} closed`)
+        })
+
+        socket.write(`\n${replTitle} REPL\n`)
+        socket.write('(use .exit to quit)\n')
+
+        const socketConsole = new Console({
+          stdout: socket,
+          stderr: socket
+        })
+
+        const socketLog = new Logger({
+          console: socketConsole
+        })
+
+        // Propagate the log level from the terminal to the socket.
+        socketLog.level = log.level
+
+        // Create the application context.
+        const socketContext = new CliContext({
+          programName: context.programName,
+          log: socketLog,
+          console: socketLog.console
+        })
+
+        // Instantiate the derived class.
+        const application = new ClassThis(socketContext)
+
+        assert(socketContext.rootPath)
+        // 'borrow' the package json from the terminal instance.
+        socketContext.packageJson = context.packageJson
+
+        const socketReplServer = repl.start({
+          prompt: context.programName + '> ',
+          input: socket,
+          output: socket,
+          eval: this.evaluateRepl.bind(application) as
+            unknown as repl.REPLEval
+        })
+
+        socketReplServer.on('error', (err: any) => {
+          throw err
+        })
+
+        socketReplServer.on('exit', () => {
+          // console.log('Connection closed')
+          socket.end()
+        })
+      })
+
+      server.on('error', (err: any) => {
+        throw err
+      })
+
+      server.on('close', () => {
+        console.log('Socket closed')
+        process.exit(process.exitCode)
+      })
+
+      // The code enters listen mode and returns, it does not wait for
+      // anything, connections are accepted asynchronously.
+      server.listen(serverPort)
+
+      // Pass through to allow REPL to run...
     }
-
-    // Use the given context, or create an empty one.
-    const context = params.context ?? (vm.createContext() as CliContext)
-
-    // REPL should always set the console, be careful not to
-    // overwrite it.
-    if (context.console === undefined) {
-      // Cannot use || because REPL context has only a getter.
-      context.console = params.console ?? console
-    }
-
-    assert(context.console)
-    context.programName = params.programName
-
-    const argv1 = process.argv[1]?.trim()
-    assert(argv1 !== undefined, 'Mandatory argv[1]')
-
-    context.cmdPath = argv1
-    context.processCwd = process.cwd()
-    context.processEnv = process.env
-    context.processArgv = process.argv
-
-    // For convenience, copy root path from class to instance.
-    context.rootPath = staticThis.rootPath
-
-    if (context.package === undefined) {
-      context.package = await staticThis.readPackageJson()
-    }
-
-    // Initialise configuration.
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    context.config = params.config ?? ({} as CliConfig)
-    staticThis.initialiseConfiguration(context)
-    if (context.config.cwd === undefined) /* istanbul ignore next */ {
-      context.config.cwd = context.processCwd
-    }
-
-    context.log = params.log ?? new Logger({ console: context.console })
-    assert(context.log)
-
-    CliOptions.initialise(context)
-
-    return context
-  }
-
-  /**
-   * @summary Read package JSON file.
-   *
-   * @param {string} rootPath The absolute path of the package.
-   * @returns {Object} The package definition, unmodified.
-   * @throws Error from `fs.readFile()` or `JSON.parse()`.
-   *
-   * @description
-   * By default, this function uses the package root path
-   * stored in the class property during initialisation.
-   * When called from tests, the path must be passed explicitly.
-   */
-  static async readPackageJson (rootPath = this.rootPath): Promise<any> {
-    const filePath = path.join(rootPath, 'package.json')
-    const fileContent = await fsPromises.readFile(filePath)
-    assert(fileContent !== null)
-    return JSON.parse(fileContent.toString())
+    return exitCode
   }
 
   // --------------------------------------------------------------------------
 
-  // https://nodejs.org/docs/latest-v14.x/api/readline.html#readline_use_of_the_completer_function
-
-  /**
-   * @summary A Node REPL completer.
-   *
-   * @param _linePartial The incomplete line.
-   * @param callback Called on completion or error.
-   * @returns Nothing.
-   *
-   * @description
-   * The completer takes the current line entered by the user as an argument,
-   * and returns an Array with 2 entries:
-   * - An Array with matching entries for the completion.
-   * - The substring that was used for the matching.
-   *
-   * When using a callback, the completer can be called asynchronously.
-   */
-  static nodeReplCompleter (
-    _line: string,
-    callback: nodeReplCallback
-  ): any /* istanbul ignore next */ {
-    // console.log(linePartial)
-
-    // If no completion is available, return error (an empty string
-    // might do it too).
-
-    // callback(null, [[''], _line])
-    callback(new Error('no completion'))
-  }
-
   /**
    * @summary Callback used by REPL when a line is entered.
    *
-   * @param cmdLine The entire line, unparsed.
+   * @param evalCmd The entire line, unparsed.
    * @param context Reference to a context.
    * @param _filename The name of the file.
    * @param callback Called on completion or error.
-   * @returns {void} Nothing
+   * @returns Nothing
    *
    * @description
-   * The function is passed to REPL with `.bind(staticThis)`, so it'll have
-   * access to all class properties, like staticThis.programName.
+   * The function is passed to REPL with `.bind(application)`, so it'll
+   * always have access to all instance properties.
    *
    * An eval function can error with repl.Recoverable to indicate the input
    * was incomplete and prompt for additional lines.
    */
-  static async replEvaluator (
-    cmdLine: string,
-    context: CliContext,
+  async evaluateRepl (
+    evalCmd: string,
+    _context: Context,
     _filename: string,
     callback: nodeReplCallback
   ): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const ClassThis = this // To make it look like a class.
+    // `this` is bound to the application class.
+    const context = this.context
+    const log = context.log
 
-    // REPL always sets the console to point to its input/output.
-    // Be sure it is so.
-    assert(context.console !== undefined)
-
-    let app = null
-
-    // It is mandatory to catch errors, this is an old style callback.
+    // Catch errors, this is an old style callback.
     try {
-      // Fill in the given context, created by the REPL interpreter.
-      // Start with an empty config, not the staticThis.config.
-      // With the current non-reentrant log, use the global object.
-      await staticThis.initialiseContext({
-        programName: staticThis.programName,
-        context
-      })
-
-      const log = context.log
-
-      // Definitely an interactive session.
-      context.config.isInteractive = true
-
-      // And definitely the module was invoked from CLI, not from
-      // another module.
-      context.config.invokedFromCli = true
-
-      // Create an instance of the application class, for the given context.
-      app = new ClassThis(context)
-
       // Split command line and remove any number of spaces.
-      const args = cmdLine.trim().split(/\s+/)
+      const args = evalCmd.trim().split(/\s+/)
 
-      const exitCode = await app.main(args)
+      const exitCode = await this.dispatchCommands(args)
       log.verbose(`exit(${exitCode})`)
 
       // The last executed command exit code is passed as process exit code.
       process.exitCode = exitCode
 
-      app = null // Pale attempt to help the GC.
-
       // Success, but do not return any value, since REPL thinks it
       // is a string that must be displayed.
       callback(null)
-    } catch (ex: any) /* istanbul ignore next */ {
-      app = null
+    } catch (err: any) /* istanbul ignore next */ {
       // Failure, will display `Error: ${ex.message}`.
-      callback(ex)
-    }
-  }
-
-  /**
-   * @summary Error callback used by REPL.
-   *
-   * @param {Object} err Reference to error triggered inside REPL.
-   * @returns {undefined} Nothing.
-   *
-   * @description
-   * This is tricky and took some time to find a workaround to avoid
-   * displaying the stack trace on error.
-   *
-   * @deprecated
-   */
-  static replErrorCallback (err: any): void /* istanbul ignore next */ {
-    // if (!(err instanceof SyntaxError)) {
-    // System errors deserve their stack trace.
-    if (!(err instanceof EvalError) && !(err instanceof SyntaxError) &&
-      !(err instanceof RangeError) && !(err instanceof ReferenceError) &&
-      !(err instanceof TypeError) && !(err instanceof URIError)) {
-      // For regular errors it makes no sense to display the stack trace.
-      err.stack = null
-      console.log(err)
-      // The error message will be displayed shortly, in the next handler,
-      // registered by the REPL server.
+      callback(err)
     }
   }
 
   // --------------------------------------------------------------------------
 
   /**
-   * Constructor, to remember the context.
+   * @summary Display the application help page.
    *
-   * @param {Object} context Reference to a context.
-   */
-  constructor (context: CliContext) {
-    assert(context)
-    assert(context.console)
-    assert(context.log)
-    assert(context.config)
-
-    this.context = context
-    const log = this.context.log
-
-    log.trace(`${this.constructor.name}.constructor()`)
-  }
-
-  /**
-   * @summary Display the main help page.
-   *
-   * @returns {undefined}
+   * @returns Nothing.
    *
    * @description
    * Override it in the application if custom content is desired.
    */
-  help (): void {
-    const staticThis = this.constructor as typeof CliApplication
+  outputHelp (): void {
+    const context = this.context
 
     const log = this.context.log
     log.trace(`${this.constructor.name}.help()`)
 
     const help = new CliHelp(this.context)
 
-    if (staticThis.command !== undefined) {
-      const optionGroups = staticThis.command.optionGroups
-        .concat(CliOptions.getCommonOptionGroups())
+    // If there is a command, we should not get here, but in the command help.
+    assert(context.commandInstance === undefined)
 
-      help.outputMainHelp(undefined, optionGroups, staticThis.command.title)
-    } else {
-      help.outputMainHelp(CliOptions.getUnaliasedCommands(),
-        CliOptions.getCommonOptionGroups())
-    }
+    // Show top (application) help.
+    help.outputMainHelp(CliOptions.getUnaliasedCommands(),
+      CliOptions.getCommonOptionGroups())
   }
+
+  // --------------------------------------------------------------------------
 
   async didIntervalExpire (deltaSeconds: number): Promise<boolean> {
     const context = this.context
     const log = context.log
 
-    const fpath = path.join(timestampsPath, context.package.name +
+    const fpath = path.join(timestampsPath, context.packageJson.name +
       timestampSuffix)
     try {
       const stats = await fsPromises.stat(fpath)
@@ -940,50 +797,47 @@ export class CliApplication {
     return true
   }
 
-  async getLatestVersion (): Promise<void> {
-    const staticThis = this.constructor as typeof CliApplication
-
+  async getLatestVersion (): Promise<boolean> {
     const context = this.context
     const config = context.config
     const log = context.log
 
-    if (staticThis.checkUpdatesIntervalSeconds === undefined ||
-      staticThis.checkUpdatesIntervalSeconds === 0 ||
+    if (context.checkUpdatesIntervalSeconds === 0 ||
       (isCi) ||
       (config.isVersionRequest !== undefined && config.isVersionRequest) ||
       (!process.stdout.isTTY) ||
       ('NO_UPDATE_NOTIFIER' in process.env) ||
       (config.noUpdateNotifier !== undefined && config.noUpdateNotifier)) {
       log.trace('do not fetch latest version number.')
-      return
+      return false
     }
 
     if (await this.didIntervalExpire(
-      staticThis.checkUpdatesIntervalSeconds)) {
+      context.checkUpdatesIntervalSeconds)) {
       log.trace('fetching latest version number...')
-      // At this step only create the promise,
-      // its result is checked before exit.
-      this.latestVersionPromise = latestVersion(context.package.name)
+      return true
     }
+
+    return false
   }
 
-  async checkUpdate (): Promise<void> {
+  async checkUpdate (latestVersionPromise: Promise<string>): Promise<void> {
     const context = this.context
     const log = context.log
 
-    if (this.latestVersionPromise === undefined) {
+    if (latestVersionPromise === undefined) {
       // If the promise was not created, no action.
       return
     }
 
     let ver: string
     try {
-      ver = await this.latestVersionPromise
-      log.trace(`${context.package.version} → ${ver}`)
+      ver = await latestVersionPromise
+      log.trace(`${context.packageJson.version} → ${ver}`)
 
       // The difference type between two semver versions, or undefined if
       // they are identical or the second one is lower than the first.
-      if (semverDiff(context.package.version, ver) !== undefined) {
+      if (semverDiff(context.packageJson.version, ver) !== undefined) {
         // If versions differ, notify user.
         const globalOption: string =
           (isInstalledGlobally || (os.platform() === 'win32'))
@@ -991,7 +845,7 @@ export class CliApplication {
             : ''
 
         let buffer = '\n'
-        buffer += `>>> New version ${context.package.version} -> `
+        buffer += `>>> New version ${context.packageJson.version} -> `
         buffer += `${ver} available. <<<\n`
         buffer += ">>> Run '"
         if (os.platform() !== 'win32') {
@@ -1001,7 +855,8 @@ export class CliApplication {
             buffer += 'sudo '
           }
         }
-        buffer += `npm install${globalOption} ${context.package.name}@${ver}`
+        buffer +=
+          `npm install${globalOption} ${context.packageJson.name}@${ver}`
         buffer += "' to update. <<<"
         log.info(buffer)
       }
@@ -1023,7 +878,7 @@ export class CliApplication {
 
     await makeDir(timestampsPath)
 
-    const fpath = path.join(timestampsPath, context.package.name +
+    const fpath = path.join(timestampsPath, context.packageJson.name +
       timestampSuffix)
     await deleteAsync(fpath, { force: true })
 
@@ -1034,18 +889,20 @@ export class CliApplication {
     log.debug('timestamp created')
   }
 
+  // --------------------------------------------------------------------------
+
   /**
-   * @summary The main entry point for the `xyz` command.
+   * @summary Dispatch commands to their implementations.
    *
-   * @param {string[]} argv Arguments array.
-   * @returns {number} The exit code.
+   * @param argv Arguments array.
+   * @returns The exit code.
    *
    * @description
-   * Override it in the application if custom behaviour is desired.
+   * Identify the command, find it's implementation and instantiate it.
+   *
+   * Called both from the top runner, or from REPL.
    */
-  async main (argv: string[]): Promise<number> {
-    const staticThis = this.constructor as typeof CliApplication
-
+  async dispatchCommands (argv: string[]): Promise<number> {
     const context = this.context
     context.startTime = Date.now()
 
@@ -1058,17 +915,16 @@ export class CliApplication {
       log.trace(`main arg${index}: '${arg}'`)
     })
 
-    staticThis.doInitialiseConfiguration(context)
     const remainingArgs = CliOptions.parseOptions(argv, context)
+
+    // After parsing the options, the debug level is finally known.
     log.level = config.logLevel
+
     log.trace(util.inspect(context.config))
 
-    await this.getLatestVersion()
-
-    // Early detection of `--version`, since it makes
-    // all other irrelevant.
+    // Done again here, for REPL invocations.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
-      log.always(context.package.version)
+      log.always(context.packageJson.version)
       return CliExitCodes.SUCCESS
     }
 
@@ -1094,46 +950,42 @@ export class CliApplication {
     // they are skipped when calling the command implementation.
     context.commands = commands
 
-    // Must be executed before help().
-    if (staticThis.Command !== undefined) {
-      staticThis.command = new staticThis.Command(context)
-    }
-
-    // If no commands and -h, output help message.
+    // If --help and no command, output the application help message.
     if ((commands.length === 0) &&
       (config.isHelpRequest !== undefined && config.isHelpRequest)) {
-      this.help()
+      this.outputHelp()
       return CliExitCodes.SUCCESS // Help explicitly called.
     }
 
-    if (CliOptions.hasCommands()) {
-      // If no commands, output help message and return error.
-      if (commands.length === 0) {
-        log.error('Missing mandatory command.')
-        this.help()
-        return CliExitCodes.ERROR.SYNTAX // No commands.
-      }
-    }
-
     await makeDir(config.cwd)
+    // This global setting makes running multiple applications
+    // in a server impossible.
     process.chdir(config.cwd)
     log.debug(`cwd()='${process.cwd()}'`)
 
     let exitCode: number = CliExitCodes.SUCCESS
     try {
-      if (staticThis.command !== undefined) {
-        log.debug(`'${context.programName}' started`)
+      // The complex application, with multiple commands.
+      if (CliOptions.hasCommands()) {
+        if (commands.length === 0) {
+          log.error('Missing mandatory command.')
+          this.outputHelp()
+          return CliExitCodes.ERROR.SYNTAX // No commands.
+        }
 
-        exitCode = await staticThis.command.run(remainingArgs)
-        log.debug(`'${context.programName}' - returned ${exitCode}`)
-      } else {
+        // Throws not supported or not unique.
         const found: CliOptionFoundModule = CliOptions.findCommandModule(
           commands)
 
-        const CmdDerivedClass = await this.findCommandClass(
+        assert(context.rootPath)
+        // Throws an assert if there is no command class.
+        const CommandClass = await this.findCommandClass(
           context.rootPath,
           found.moduleRelativePath
         )
+
+        context.CommandClass = CommandClass
+        // The command class is known at this point.
 
         // Full name commands, not the actual encountered shortcuts.
         context.fullCommands = found.matchedCommands
@@ -1142,28 +994,47 @@ export class CliApplication {
 
         // Use the original array, since we might have `--` options,
         // and skip already processed commands.
-        const cmdArgs = remainingArgs.slice(commands.length -
+        const commandArgs = remainingArgs.slice(commands.length -
           found.unusedCommands.length)
-        cmdArgs.forEach((arg, index) => {
+        commandArgs.forEach((arg, index) => {
           log.trace(`cmd arg${index}: '${arg}'`)
         })
 
-        staticThis.doInitialiseConfiguration(context)
-        const cmdImpl = new CmdDerivedClass(context)
+        const commandInstance = new CommandClass(context)
+        context.commandInstance = commandInstance
+
+        if (config.isHelpRequest !== undefined && config.isHelpRequest) {
+          assert(context.CommandClass)
+          // Show the command specific help.
+          commandInstance.help()
+          return CliExitCodes.SUCCESS // Help explicitly called.
+        }
 
         log.debug(`'${context.programName} ` +
           `${context.fullCommands.join(' ')}' started`)
 
-        exitCode = await cmdImpl.run(cmdArgs)
+        exitCode = await commandInstance.run(commandArgs)
         log.debug(`'${context.programName} ` +
           `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
+      } else {
+        // There are no sub-commands, there should be only one main().
+        if (config.isHelpRequest !== undefined && config.isHelpRequest) {
+          // Show the top (application) help.
+          this.outputHelp()
+          return CliExitCodes.SUCCESS // Help explicitly called.
+        }
+
+        log.debug(`'${context.programName}' started`)
+
+        exitCode = await this.main(remainingArgs)
+        log.debug(`'${context.programName}' - returned ${exitCode}`)
       }
     } catch (err) {
       exitCode = CliExitCodes.ERROR.APPLICATION
       if (err instanceof CliErrorSyntax) {
         // CLI triggered error. Treat it gently and try to be helpful.
         log.error(err.message)
-        this.help()
+        this.outputHelp()
         exitCode = err.exitCode
       } else if (err instanceof CliError) {
         // Other CLI triggered error. Treat it gently.
@@ -1176,6 +1047,10 @@ export class CliApplication {
       }
       log.verbose(`exit(${exitCode})`)
     }
+
+    context.commands = []
+    context.CommandClass = undefined
+    context.commandInstance = undefined
 
     return exitCode
   }
@@ -1205,6 +1080,11 @@ export class CliApplication {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     assert(false, `A class derived from '${parentClass.name}' not ` +
       `found in '${modulePath}'.`)
+  }
+
+  async main (_args: string[]): Promise<number> {
+    assert(false, 'For applications that do not have sub-commands, ' +
+      'define a main() function in the CliApplication derived class')
   }
 }
 
