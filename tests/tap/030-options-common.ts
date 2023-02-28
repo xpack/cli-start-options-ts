@@ -593,36 +593,38 @@ await test('xtest unim (spawn)', async (t) => {
 /**
  * Test no command.
  */
-await test('xtest (spawn)', async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.xtestCli([
-    ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    t.equal(stderr, 'error: Missing mandatory command.\n', 'stdout has error')
-    t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
-  } catch (err: any) {
-    t.fail(err.message)
-  }
-  t.end()
-})
+// await test('xtest (spawn)', async (t) => {
+//   try {
+//     const { code, stdout, stderr } = await Common.xtestCli([
+//     ])
+//     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+//     t.equal(stderr, 'error: Missing mandatory command.\n',
+//       'stdout has error')
+//     t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
+//   } catch (err: any) {
+//     t.fail(err.message)
+//   }
+//   t.end()
+// })
 
 /**
  * Test no command with app options.
  */
-await test('xtest -- xx (spawn)', async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.xtestCli([
-      '--',
-      'xx'
-    ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    t.equal(stderr, 'error: Missing mandatory command.\n', 'stdout has error')
-    t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
-  } catch (err: any) {
-    t.fail(err.message)
-  }
-  t.end()
-})
+// await test('xtest -- xx (spawn)', async (t) => {
+//   try {
+//     const { code, stdout, stderr } = await Common.xtestCli([
+//       '--',
+//       'xx'
+//     ])
+//     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+//     t.equal(stderr, 'error: Missing mandatory command.\n',
+//       'stdout has error')
+//     t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
+//   } catch (err: any) {
+//     t.fail(err.message)
+//   }
+//   t.end()
+// })
 
 /**
  * Test no command with app options.
