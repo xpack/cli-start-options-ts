@@ -368,6 +368,47 @@
       },
       "console": "internalConsole",
       "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js long -h",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "long",
+        "-h"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js -h",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "-h"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
     }
 
   ]
