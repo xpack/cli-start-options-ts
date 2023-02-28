@@ -39,10 +39,11 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliContext, CliConfig } from './cli-context.js'
+import { CliContext } from './cli-context.js'
 import { CliExitCodes } from './cli-error.js'
 import { CliHelp, CliMultiPass } from './cli-help.js'
 import { CliOptions, CliOptionGroup } from './cli-options.js'
+import { CliConfiguration } from './cli-configuration.js'
 
 // ============================================================================
 
@@ -107,7 +108,7 @@ export class CliCommand {
     log.trace(`${this.constructor.name}.run()`)
 
     const context: CliContext = this.context
-    const config: CliConfig = context.config
+    const config: CliConfiguration = context.config
 
     // Remember the original args.
     this.unparsedArgs = args
@@ -286,13 +287,13 @@ export class CliCommand {
     const context = this.context
     const generator: CliGenerator = {
       tool: context.programName,
-      version: context.package.version,
+      version: context.packageJson.version,
       command: [context.programName].concat(this.commands, this.unparsedArgs),
       date: (new Date()).toISOString()
     }
 
-    if (context.package.homepage !== undefined) {
-      generator.homepage = context.package.homepage
+    if (context.packageJson.homepage !== undefined) {
+      generator.homepage = context.packageJson.homepage
     }
 
     object.generators.push(generator)
