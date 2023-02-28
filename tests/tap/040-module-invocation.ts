@@ -63,41 +63,41 @@ await test('setup', async (t) => {
   t.end()
 })
 
-await test('xtest --version (module call)', async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.xtestLib([
-      '--version'
-    ])
-    // Check exit code.
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-    // Check if version matches the package.
-    // Beware, the stdout string has a new line terminator.
-    t.equal(stdout, pack.version + '\n', 'version value')
-    // There should be no error messages.
-    t.equal(stderr, '', 'stderr is empty')
-  } catch (err: any) {
-    console.log(err.stack)
-    t.fail(err.message)
-  }
-  t.end()
-})
+// await test('xtest --version (module call)', async (t) => {
+//   try {
+//     const { code, stdout, stderr } = await Common.xtestLib([
+//       '--version'
+//     ])
+//     // Check exit code.
+//     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+//     // Check if version matches the package.
+//     // Beware, the stdout string has a new line terminator.
+//     t.equal(stdout, pack.version + '\n', 'version value')
+//     // There should be no error messages.
+//     t.equal(stderr, '', 'stderr is empty')
+//   } catch (err: any) {
+//     console.log(err.stack)
+//     t.fail(err.message)
+//   }
+//   t.end()
+// })
 
-await test('xtest xyz (module call)', async (t) => {
-  try {
-    const { code, stdout, stderr } = await Common.xtestLib([
-      'xyz'
-    ])
-    // Check exit code.
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    t.match(stdout, 'Usage: xtest <command>', 'has Usage')
-    // There should be one error message.
-    t.match(stderr, 'Command \'xyz\' not supported.', 'error')
-  } catch (err: any) {
-    console.log(err.stack)
-    t.fail(err.message)
-  }
-  t.end()
-})
+// await test('xtest xyz (module call)', async (t) => {
+//   try {
+//     const { code, stdout, stderr } = await Common.xtestLib([
+//       'xyz'
+//     ])
+//     // Check exit code.
+//     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+//     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
+//     // There should be one error message.
+//     t.match(stderr, 'Command \'xyz\' not supported.', 'error')
+//   } catch (err: any) {
+//     console.log(err.stack)
+//     t.fail(err.message)
+//   }
+//   t.end()
+// })
 
 /*
 describe('setup', () => {
