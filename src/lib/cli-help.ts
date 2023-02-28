@@ -13,6 +13,10 @@
 
 // ----------------------------------------------------------------------------
 
+import { strict as assert } from 'node:assert'
+
+// ----------------------------------------------------------------------------
+
 // https://www.npmjs.com/package/@xpack/logger
 import { Logger } from '@xpack/logger'
 
@@ -86,7 +90,7 @@ export class CliHelp {
 
     log.output()
     if (description === undefined) {
-      const packageJson = this.context.package
+      const packageJson = this.context.packageJson
       description = packageJson.description
     }
     if (description !== undefined) {
@@ -374,9 +378,10 @@ export class CliHelp {
 
   outputFooter (): void {
     const log: Logger = this.context.log
-    const pkgJson = this.context.package
+    const pkgJson = this.context.packageJson
 
     log.output()
+    assert(this.context.rootPath)
     const pkgPath = this.context.rootPath
     log.output(`npm ${pkgJson.name}@${pkgJson.version} '${pkgPath}'`)
     if (pkgJson.homepage !== undefined) {
@@ -410,8 +415,8 @@ export class CliHelp {
     this.outputCommands(commands, description, optionGroups[0]?.title)
 
     // The special trick here is how to align the right column.
-    // For this two steps are needed, with the first to compute
-    // the max width of the first column, and then to output text.
+    // For this, two steps are needed, the first to compute the max
+    // width of the first column, and the second to output the text.
 
     this.twoPassAlign(() => {
       this.outputOptionGroups(optionGroups)
