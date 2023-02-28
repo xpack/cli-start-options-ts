@@ -40,14 +40,14 @@ import { CliContext } from './cli-context.js'
 
 /**
  * @callback InitOptionFunction
- * @param {Object} context Reference to context.
+ * @param context Reference to context.
  */
 type InitOptionFunction = (context: CliContext) => void
 
 /**
  * @callback SetOptionFunction
- * @param {Object} context Reference to context.
- * @param {Object} value Value to set for the option.
+ * @param context Reference to context.
+ * @param value Value to set for the option.
  */
 type SetOptionFunction = (context: CliContext, value: string) => void
 
@@ -137,12 +137,12 @@ class CliNode {
   /**
    * @summary Add a character to the commands tree.
    *
-   * @param {CliNode} parent The node to add the character as a child.
-   * @param {string} character One char string.
-   * @param {string} relativeFilePath Relative path to the file
+   * @param parent The node to add the character as a child.
+   * @param character One char string.
+   * @param relativeFilePath Relative path to the file
    *   implementing the command.
-   * @param {string} unaliasedCommand Official command name (unaliased).
-   * @returns {CliNode} The new node added to the tree.
+   * @param unaliasedCommand Official command name (unaliased).
+   * @returns The new node added to the tree.
    */
   static add (
     parent: CliNode,
@@ -169,11 +169,11 @@ class CliNode {
   /**
    * @summary Create a tree node to store the character and the children nodes.
    *
-   * @param {string} character One char string.
-   * @param {string} relativeFilePath Relative path to the file
+   * @param character One char string.
+   * @param relativeFilePath Relative path to the file
    *   implementing the command.
-   * @param {string} unaliasedCommand Official command name (unaliased).
-   * @returns {CliNode} The newly created node.
+   * @param unaliasedCommand Official command name (unaliased).
+   * @returns The newly created node.
    */
   constructor (
     character: string | null,
@@ -213,8 +213,8 @@ export class CliOptions {
   /**
    * @summary Static initialiser.
    *
-   * @param {Object} context Reference to context.
-   * @returns {undefined} Nothing.
+   * @param context Reference to context.
+   * @returns Nothing.
    */
   static initialise (context: CliContext): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -230,11 +230,11 @@ export class CliOptions {
   /**
    * @summary Add commands to the tree.
    *
-   * @param {string[]} commands Array of commands with possible aliases.
-   * @param {string} relativeFilePath Path to module that implements
+   * @param commands Array of commands with possible aliases.
+   * @param relativeFilePath Path to module that implements
    *   the command.
    *
-   * @returns {undefined} Nothing.
+   * @returns Nothing.
    *
    * @example
    * // Test with two aliases, one of them being also a shorthand.
@@ -280,10 +280,10 @@ export class CliOptions {
 
   /**
    * @summary Manually define the file to implement the command.
-   * @param {string} moduleRelativePath Path to module that implements
+   * @param moduleRelativePath Path to module that implements
    *   the command.
    *
-   * @returns {undefined} Nothing.
+   * @returns Nothing.
    */
   static setCommandFile (moduleRelativePath: string): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -295,8 +295,8 @@ export class CliOptions {
   /**
    * @summary Add option groups.
    *
-   * @param {object[]} optionGroups Array of option groups.
-   * @returns {undefined} Nothing.
+   * @param optionGroups Array of option groups.
+   * @returns Nothing.
    *
    * @description
    * Preliminary solution with array instead of tree.
@@ -313,9 +313,9 @@ export class CliOptions {
   /**
    * @summary Add definitions to an existing group.
    *
-   * @param {string} title Identifier of the option groups
-   * @param {CliOptionDefinition[]} optionDefinitions Array of definitions.
-   * @returns {undefined} Nothing.
+   * @param title Identifier of the option groups
+   * @param optionDefinitions Array of definitions.
+   * @returns Nothing.
    */
   static appendToOptionGroups (
     title: string,
@@ -343,7 +343,7 @@ export class CliOptions {
   /**
    * @summary Get array of commands.
    *
-   * @returns {string[]} Array of strings with the commands.
+   * @returns Array of strings with the commands.
    */
   static getUnaliasedCommands (): string[] | undefined {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -355,7 +355,7 @@ export class CliOptions {
   /**
    * @summary Get array of option groups.
    *
-   * @returns {Object[]} Array of option groups.
+   * @returns Array of option groups.
    */
   static getCommonOptionGroups (): CliOptionGroup[] {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -367,10 +367,10 @@ export class CliOptions {
   /**
    * @summary Parse options, common and specific to a command.
    *
-   * @param {string[]} args Array of arguments.
-   * @param {Object} context Reference to the context object
-   * @param {Array} optionGroups Optional reference to command specific options.
-   * @returns {string[]} Array of remaining arguments.
+   * @param args Array of arguments.
+   * @param context Reference to the context object
+   * @param optionGroups Optional reference to command specific options.
+   * @returns Array of remaining arguments.
    *
    * @description
    * Iterate argv, and try to match all known options.
@@ -458,8 +458,8 @@ export class CliOptions {
   /**
    * @summary Check if mandatory option is missing.
    *
-   * @param {Object[]} optionGroups Array of option groups.
-   * @returns {string[]|null} Array of errors or null if everything is ok.
+   * @param optionGroups Array of option groups.
+   * @returns Array of errors or null if everything is ok.
    */
   static checkMissingMandatory (
     optionGroups: CliOptionGroup[]
@@ -492,13 +492,13 @@ export class CliOptions {
   /**
    * @summary Process an option.
    *
-   * @param {string[]} args All input args.
-   * @param {number} index Index of the current arg.
-   * @param {Object} optionDefinition Reference to the current option
+   * @param args All input args.
+   * @param index Index of the current arg.
+   * @param optionDefinition Reference to the current option
    *   definition.
-   * @param {Object} context Reference to the context object, where to
+   * @param context Reference to the context object, where to
    *  store the configuration values.
-   * @returns {number} 1 if the next arg should be skipped.
+   * @returns 1 if the next arg should be skipped.
    *
    * @description
    * Processing the option means calling a function, that most probably
@@ -563,10 +563,10 @@ export class CliOptions {
   /**
    * @summary Find a class that implements the commands.
    *
-   * @param {string[]} commands The commands, as entered.
-   * @param {string} rootPath The absolute path of the package.
-   * @param {class} parentClass The base class of all commands.
-   * @returns {{CmdClass: class, fullCommands: string[], rest: string[]}|null}
+   * @param commands The commands, as entered.
+   * @param rootPath The absolute path of the package.
+   * @param parentClass The base class of all commands.
+   * @returns
    *  An object with a class that implements the given command,
    *  the full command as a string array, and the remaining args.
    * @throws CliErrorSyntax The command was not recognised or
@@ -660,8 +660,8 @@ export class CliOptions {
   /**
    * @summary Return args up to the first `--`.
    *
-   * @param {string[]} args Array of strings.
-   * @returns {string[]} Possibly a shorter array.
+   * @param args Array of strings.
+   * @returns Possibly a shorter array.
    */
   static filterOwnArguments (args: string[]): string[] {
     const ownArgs: string[] = []
@@ -677,8 +677,8 @@ export class CliOptions {
   /**
    * @summary Return args after the first `--`, if any.
    *
-   * @param {string[]} args Array of strings.
-   * @returns {string[]} A shorter array, possibly empty.
+   * @param args Array of strings.
+   * @returns A shorter array, possibly empty.
    */
   static filterOtherArguments (args: string[]): string[] {
     const otherArgs: string[] = []

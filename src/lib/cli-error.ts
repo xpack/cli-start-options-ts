@@ -52,8 +52,8 @@ export class CliError extends Error {
   /**
    * @summary Create a new syntax error instance.
    *
-   * @param {string} message Error description.
-   * @param {number} exitCode Integer value to be returned.
+   * @param message Error description.
+   * @param exitCode Integer value to be returned.
    *
    * @description
    * Remember the exit code.
@@ -76,7 +76,7 @@ export class CliErrorSyntax extends CliError {
   /**
    * @summary Create a new syntax error instance.
    *
-   * @param {string} message Error description.
+   * @param message Error description.
    *
    * @description
    * Create a CliError instance with the ERROR.SYNTAX error code.
@@ -99,7 +99,7 @@ export class CliErrorApplication extends CliError {
   /**
    * @summary Create a new application error instance.
    *
-   * @param {string} message Error description.
+   * @param message Error description.
    *
    * @description
    * Create a CliError instance with the ERROR.APPLICATION error code.
@@ -119,7 +119,7 @@ export class CliErrorType extends CliError {
   /**
    * @summary Create a new type error instance.
    *
-   * @param {string} message Error description.
+   * @param message Error description.
    *
    * @description
    * Create a CliError instance with the ERROR.TYPE error code.
@@ -139,7 +139,7 @@ export class CliErrorInput extends CliError {
   /**
    * @summary Create a new input error instance.
    *
-   * @param {string} message Error description.
+   * @param message Error description.
    *
    * @description
    * Create a CliError instance with the ERROR.INPUT error code.
@@ -155,7 +155,7 @@ export class CliErrorOutput extends CliError {
   /**
    * @summary Create a new output error instance.
    *
-   * @param {string} message Error description.
+   * @param message Error description.
    *
    * @description
    * Create a CliError instance with the ERROR.OUTPUT error code.

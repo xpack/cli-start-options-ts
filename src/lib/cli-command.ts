@@ -77,9 +77,9 @@ export class CliCommand {
   /**
    * @summary Constructor, to remember the context.
    *
-   * @param {Object} context Reference to a context.
-   * @param {string} title The command one line description.
-   * @param {CliOptionGroup[]} optionGroups Array of option groups.
+   * @param context Reference to a context.
+   * @param title The command one line description.
+   * @param optionGroups Array of option groups.
    */
   constructor (
     context: CliContext,
@@ -100,8 +100,8 @@ export class CliCommand {
   /**
    * @summary Execute the command.
    *
-   * @param {string[]} args Array of arguments.
-   * @returns {number} Return code.
+   * @param args Array of arguments.
+   * @returns Return code.
    */
   async run (args: string[]): Promise<number> {
     const log = this.log
@@ -166,8 +166,8 @@ export class CliCommand {
   /**
    * @summary Abstract `doRun()` method.
    *
-   * @param {string[]} _argv Array of arguments.
-   * @returns {number} Return code.
+   * @param _argv Array of arguments.
+   * @returns Return code.
    */
   async doRun (
     _argv: string[] // Unused
@@ -179,7 +179,7 @@ export class CliCommand {
   /**
    * @summary Output command help
    *
-   * @returns {undefined} Nothing.
+   * @returns Nothing.
    */
   outputHelp (): void {
     const help: CliHelp = new CliHelp(this.context)
@@ -206,8 +206,8 @@ export class CliCommand {
   /**
    * @summary Output details about extra args.
    *
-   * @param {CliMultiPass} _multiPass Status for two pass.
-   * @returns {undefined} Nothing.
+   * @param _multiPass Status for two pass.
+   * @returns Nothing.
    *
    * @description
    * The default implementation does nothing. Override it in
@@ -219,8 +219,8 @@ export class CliCommand {
 
   /**
    * @summary Convert a duration in ms to seconds if larger than 1000.
-   * @param {number} millis Duration in milliseconds.
-   * @returns {string} Value in ms or sec.
+   * @param millis Duration in milliseconds.
+   * @returns Value in ms or sec.
    */
   formatDuration (millis: number): string {
     if (millis < 1000) {
@@ -231,7 +231,7 @@ export class CliCommand {
 
   /**
    * @summary Display Done and the durations.
-   * @returns {undefined} Nothing.
+   * @returns Nothing.
    */
   outputDoneDuration (): void {
     const log = this.log
@@ -248,8 +248,8 @@ export class CliCommand {
   /**
    * @summary Make a path absolute.
    *
-   * @param {string} inPath A file or folder path.
-   * @returns {string} The absolute path.
+   * @param inPath A file or folder path.
+   * @returns The absolute path.
    *
    * @description
    * If the path is already absolute, resolve it and return.
@@ -268,8 +268,8 @@ export class CliCommand {
   /**
    * @Summary Add a generator record to the destination object.
    *
-   * @param {Object} object The destination object.
-   * @returns {Object} The same object.
+   * @param object The destination object.
+   * @returns The same object.
    *
    * @description
    * For traceability purposes, the command line used to invoke the
