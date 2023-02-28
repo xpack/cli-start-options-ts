@@ -33,18 +33,6 @@ export interface NpmPackageJson {
   }
 }
 
-export interface CliConfig {
-  logLevel: LogLevel
-  cwd: string
-  isHelpRequest: boolean
-  isVersionRequest: boolean
-  noUpdateNotifier: boolean
-  // REPL related.
-  isInteractive: boolean
-  interactiveServerPort?: number | undefined
-  invokedFromCli: boolean
-}
-
 export interface CliContext {
   log: Logger
   programName: string
