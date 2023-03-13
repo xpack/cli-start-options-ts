@@ -37,14 +37,11 @@ import * as util from 'node:util'
 // https://www.npmjs.com/package/@xpack/logger
 import { Logger, LogLevel } from '@xpack/logger'
 
-// https://www.npmjs.com/package/latest-version
-import latestVersion from 'latest-version'
+// https://www.npmjs.com/package/del
+import { deleteAsync } from 'del'
 
-// https://www.npmjs.com/package/semver
-import * as semver from 'semver'
-
-// https://www.npmjs.com/package/semver-diff
-import semverDiff from 'semver-diff'
+// https://www.npmjs.com/package/is-ci
+import isCi from 'is-ci'
 
 // https://www.npmjs.com/package/is-installed-globally
 import isInstalledGlobally from 'is-installed-globally'
@@ -53,14 +50,17 @@ import isInstalledGlobally from 'is-installed-globally'
 // ES module with default
 import isPathInside from 'is-path-inside'
 
-// https://www.npmjs.com/package/is-ci
-import isCi from 'is-ci'
+// https://www.npmjs.com/package/latest-version
+import latestVersion from 'latest-version'
 
 // https://www.npmjs.com/package/make-dir
 import makeDir from 'make-dir'
 
-// https://www.npmjs.com/package/del
-import { deleteAsync } from 'del'
+// https://www.npmjs.com/package/semver
+import * as semver from 'semver'
+
+// https://www.npmjs.com/package/semver-diff
+import semverDiff from 'semver-diff'
 
 // ----------------------------------------------------------------------------
 
