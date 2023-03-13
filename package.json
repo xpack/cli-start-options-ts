@@ -48,7 +48,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xpack/cli-start-options-js.git"
+    "url": "https://github.com/xpack/cli-start-options-ts.git"
   },
   "keywords": [
     "cli",
