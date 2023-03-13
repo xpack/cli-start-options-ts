@@ -57,13 +57,13 @@
   "author": {
     "name": "Liviu Ionescu",
     "email": "ilg@livius.net",
-    "url": "https://github.com/ilg-ul/"
+    "url": "https://github.com/ilg-ul"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/xpack/cli-start-options-js/issues/"
+    "url": "https://github.com/xpack/cli-start-options-ts/issues"
   },
-  "homepage": "https://github.com/xpack/cli-start-options-js/",
+  "homepage": "https://xpack.github.io/cli-start-options-ts/",
   "dependencies": {
     "@xpack/logger": "^5.0.4",
     "del": "^7.0.0",
