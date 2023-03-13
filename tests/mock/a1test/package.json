@@ -1,0 +1,13 @@
+{
+  "name": "test",
+  "version": "2.3.4",
+  "description": "Mock Test",
+  "type": "module",
+  "exports": {
+    "import": {
+      "default": "./src/main.js",
+      "types": "./src/main.d.ts"
+    }
+  },
+  "author": "Liviu Ionescu <ilg@livius.net>"
+}

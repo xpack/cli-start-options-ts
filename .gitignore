@@ -36,9 +36,16 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# --------------
-# VS Code
-vscode.mac.command
-
 # Archives
 /*.tgz
+
+**/*.js
+**/*.js.map
+**/*.d.ts
+**/*.d.ts.map
+
+/docs/
+
+tsconfig.tsbuildinfo
+
+#end

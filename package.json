@@ -1,29 +1,50 @@
 {
-  "name": "@ilg/cli-start-options",
-  "version": "0.8.1",
+  "name": "@xpack/cli-start-options",
+  "version": "0.10.0-pre",
   "description": "Classes to implement a command line Node.js application",
-  "main": "./index.js",
-  "directories": {
-    "bin": "./bin",
-    "lib": "./lib",
-    "test": "./test"
+  "type": "module",
+  "exports": {
+    "node": {
+      "import": "./esm/index.js"
+    },
+    "types": "./esm/index.d.ts",
+    "default": "./esm/index.js"
   },
+  "main": "./esm/index.js",
+  "module": "./esm/index.js",
+  "types": "./esm/index.d.ts",
   "scripts": {
-    "fix": "standard --fix --verbose",
-    "test": "standard && npm run test-tap -s",
+    "compile-watch": "tsc --build --verbose --watch src tests",
+    "fix": "ts-standard --fix src tests",
+    "compile": "tsc --build --verbose src tests",
+    "npm-install": "npm install",
+    "npm-link": "npm link",
+    "npm-link-deps": "npm link @xpack/logger",
+    "npm-outdated": "npm outdated",
+    "npm-update": "npm update",
+    "npm-version-patch": "npm version patch",
+    "npm-version-minor": "npm version minor",
+    "postversion": "git push origin --all && git push origin --tags",
+    "package": "npm pack",
     "git-log": "git log --pretty='%cd * %h %s' --date=short",
-    "outdated": "npm outdated",
-    "update": "npm update",
-    "install ": "npm install",
-    "version-patch": "npm version patch",
-    "version-minor": "npm version minor",
-    "pack": "npm pack",
-    "test100": "standard && npm run test-tap100 -s",
-    "test-coverage": "tap --coverage --reporter=classic --timeout 600 \"test/tap/*.js\"",
-    "test-tap": "tap --reporter=classic --timeout 300 --no-check-coverage \"test/tap/*.js\"",
-    "test-tap100": "tap --reporter=classic --timeout 300 --100 \"test/tap/*.js\"",
-    "tap": "tap --reporter=spec --timeout 300",
-    "prepublishOnly": "standard && npm run test-tap -s"
+    "lint": "ts-standard src tests",
+    "prepare": "npm run compile && npm run lint",
+    "pretest": "npm run compile && npm run lint",
+    "pretest-100": "npm run compile && npm run lint",
+    "pretest-100-c8": "npm run compile && npm run lint",
+    "tap": "tap --reporter=spec",
+    "test-tap": "tap",
+    "test-tap-coverage": "tap --coverage",
+    "test-tap-coverage-c8": "c8 -- tap",
+    "test-tap-coverage-100": "tap --coverage --100",
+    "test-tap-coverage-100-c8": "c8 --100 -- tap",
+    "test": "npm run test-tap -s",
+    "test-100": "npm run test-tap-coverage-100 -s",
+    "test-100-c8": "npm run test-tap-coverage-100-c8 -s",
+    "typedoc": "typedoc",
+    "clean": "del-cli docs  'tests/**/esm' 'src/**/*.d.ts' 'src/**/*.d.ts.map' 'src/**/*.js' 'src/**/*.js.map' 'tests/**/*.d.ts' 'tests/**/*.d.ts.map' 'tests/**/*.js' 'tests/**/*.js.map' '**/tsconfig.tsbuildinfo' .nyc_output coverage",
+    "deep-clean": "npm run clean && rm -rf node_modules package-lock.json",
+    "npm-version": "echo $(which node) $(node --version) && echo $(which npm) $(npm --version)"
   },
   "repository": {
     "type": "git",
@@ -36,32 +57,67 @@
   "author": {
     "name": "Liviu Ionescu",
     "email": "ilg@livius.net",
-    "url": "https://github.com/ilg-ul/"
+    "url": "https://github.com/ilg-ul"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/xpack/cli-start-options-js/issues/"
+    "url": "https://github.com/xpack/cli-start-options-ts/issues"
   },
-  "homepage": "https://github.com/xpack/cli-start-options-js/",
+  "homepage": "https://xpack.github.io/cli-start-options-ts/",
   "dependencies": {
-    "@ilg/es6-promisifier": "^0.3.1",
-    "del": "^6.1.1",
+    "@xpack/logger": "^5.0.4",
+    "del": "^7.0.0",
     "is-ci": "^3.0.0",
     "is-installed-globally": "^0.4.0",
-    "latest-version": "^5.1.0",
+    "is-path-inside": "^4.0.0",
+    "latest-version": "^7.0.0",
     "make-dir": "^3.1.0",
     "semver": "^7.3.8",
-    "semver-diff": "^3.1.1",
-    "wscript-avoider": "^3.0.2"
+    "semver-diff": "^4.0.0"
   },
   "devDependencies": {
+    "@types/is-ci": "^3.0.0",
+    "@types/node": "^16.18.14",
+    "@types/tap": "^15.0.8",
+    "@types/tar": "^6.1.4",
+    "c8": "^7.13.0",
+    "del-cli": "^5.0.0",
     "minimist": "^1.2.7",
-    "should": "^13.2.3",
-    "standard": "16.0.3",
+    "standard": "17.0.0",
     "tap": "^16.3.4",
-    "tar": "^6.1.13"
+    "tar": "^6.1.13",
+    "ts-node": "^10.9.1",
+    "ts-standard": "^12.0.2",
+    "typedoc": "^0.23.25",
+    "typescript": "^4.9.5"
+  },
+  "bundledDependencies": [],
+  "tap": {
+    "check-coverage": false,
+    "coverage": false,
+    "files": [
+      "tests/tap/020-*.ts",
+      "tests/tap/030-*.ts",
+      "tests/tap/040-*.ts",
+      "tests/tap/060-*.ts",
+      "tests/tap/070-*.ts"
+    ],
+    "node-arg": [
+      "--loader=ts-node/esm"
+    ],
+    "reporter": "classic",
+    "timeout": 30,
+    "ts": true
+  },
+  "ts-standard": {
+    "ignore": [
+      "esm",
+      "**/*.d.ts",
+      "**/*.js",
+      "tests/tap/070-*.ts"
+    ]
   },
   "engines": {
-    "node": " >=14.13.1 || >=15.3.0 || >=16.0.0"
+    "node": " >=16.0.0"
   }
 }

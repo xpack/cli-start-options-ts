@@ -31,17 +31,40 @@
 /*.tgz
 
 # tap
-coverage/
+/coverage/
+/tests/
+/tests-out/
 
 # nyc test coverage
-.nyc_output/
+/.nyc_output/
 
 # VS Code
-.vscode/
-vscode.mac.command
+/.vscode/
 
-.appveyor.yml
-.travis.yml
+# CI
+/.github/
+/.travis.yml
+/.appveyor.yml
 
-examples/
-test/
+README-*.md
+
+/src/
+**/tsconfig*.json
+
+*.ts
+lib/**/*.ts
+# The above removes all TypeScript including the .d.ts files.
+# Bring those later back.
+!*.d.ts
+!lib/*.d.ts
+
+tsconfig.tsbuildinfo
+
+/tests/
+
+typedoc.json
+/docs/
+/assets/
+/scripts/
+
+#end

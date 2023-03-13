@@ -21,14 +21,13 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "tap xtest.js",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "name": "tap xtest.ts",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--help"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -37,18 +36,17 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap errors.js",
-      "program": "${workspaceRoot}/test/tap/errors.js",
+      "name": "tap errors.ts",
+      "program": "${workspaceRoot}/tests/tap/020-errors.ts",
       "stopOnEntry": true,
       "args": [
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -57,38 +55,36 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap logger.js",
-      "program": "${workspaceRoot}/test/tap/logger.js",
+      "name": "tap interactive.ts",
+      "program": "${workspaceRoot}/tests/tap/050-interactive.ts",
       "stopOnEntry": true,
       "args": [
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
-        "--nolazy"
+        "--loader=ts-node/esm"
       ],
       "env": {
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "tap options-common.js",
-      "program": "${workspaceRoot}/test/tap/options-common.js",
+      "name": "tap options-common.ts",
+      "program": "${workspaceRoot}/tests/tap/030-options-common.ts",
       "stopOnEntry": true,
       "args": [
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -97,19 +93,59 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js -i",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "-i"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js 9999",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "--interactive-server-port", "9999",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js notclass",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "notclass"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -118,19 +154,18 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js co",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "co"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -139,20 +174,19 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel debug",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
         "debug"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -161,19 +195,18 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js xx",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -182,24 +215,45 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js cop --help",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "cop",
+        "--help",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js cop --file input --output output -v",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "cop",
-        "--file", 
-        "input", 
-        "--output", 
-        "output", 
+        "--file",
+        "input",
+        "--output",
+        "output",
         "-v"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -208,19 +262,18 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "ztest.js -h",
-      "program": "${workspaceRoot}/test/mock/ztest/bin/ztest.js",
+      "program": "${workspaceRoot}/tests/mock/ztest/bin/ztest.ts",
       "stopOnEntry": true,
       "args": [
         "-h"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -229,20 +282,40 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js --version",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "--version",
+        "-dd"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js --loglevel xx",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "--loglevel",
         "xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -251,21 +324,20 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js cwd -C /tmp/xx",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
-        "cwd", 
-        "-C", 
+        "cwd",
+        "-C",
         "/tmp/xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -274,20 +346,19 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
     },
     {
       "type": "node",
       "request": "launch",
       "name": "xtest.js long",
-      "program": "${workspaceRoot}/test/mock/xtest/bin/xtest.js",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,
       "args": [
         "long",
         "--xx"
       ],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -296,7 +367,48 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": false
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js long -h",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "long",
+        "-h"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "xtest.js -h",
+      "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
+      "stopOnEntry": true,
+      "args": [
+        "-h"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
     }
 
   ]

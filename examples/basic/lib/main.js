@@ -1,28 +1,12 @@
 /*
- * This file is part of the xPack distribution
- *   (http://xpack.github.io).
- * Copyright (c) 2019 Liviu Ionescu.
+ * This file is part of the xPack project (http://xpack.github.io).
+ * Copyright (c) 2019 Liviu Ionescu. All rights reserved.
  *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom
- * the Software is furnished to do so, subject to the following
- * conditions:
+ * Permission to use, copy, modify, and/or distribute this software
+ * for any purpose is hereby granted, under the terms of the MIT license.
  *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
+ * If a copy of the license was not distributed with this file, it can
+ * be obtained from https://opensource.org/licenses/MIT/.
  */
 
 'use strict'
@@ -31,15 +15,17 @@
 
 // ----------------------------------------------------------------------------
 
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const {
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+import {
   CliApplication,
   CliExitCodes,
   CliErrorSyntax,
   CliErrorApplication
-} = require('../../../index.js')
-// Use `require('@xpack/cli-start-options')` in a standalone application.
+} from '../../../dist/index.js'
 
 class MyApp extends CliApplication {
   constructor (params) {
@@ -80,9 +66,9 @@ class MyApp extends CliApplication {
     // The exit code is specific to each class.
     if (args[0] !== args[1]) {
       // Alternately, this top function can return the error code, but from
-      // deppely nested contexts it is more convenient to throw.
+      // deeply nested contexts it is more convenient to throw.
       throw new CliErrorApplication(
-        `The argumments '${args[0]}' and '${args[1]}' are not compatible.`)
+        `The arguments '${args[0]}' and '${args[1]}' are not compatible.`)
     }
 
     log.info('Doing myapp important things...')

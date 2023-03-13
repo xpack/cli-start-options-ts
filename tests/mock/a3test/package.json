@@ -1,0 +1,15 @@
+{
+  "name": "test",
+  "version": "3.4.5",
+  "description": "Mock Test",
+  "type": "module",
+  "exports": {
+    "import": {
+      "default": "./src/main.js",
+      "types": "./src/main.d.ts"
+    }
+  },
+  "author": {
+    "email": "ilg@livius.net"
+  }
+}
