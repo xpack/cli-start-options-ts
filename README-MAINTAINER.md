@@ -2,7 +2,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@xpack/cli-start-options.svg)](https://www.npmjs.com/package/@xpack/cli-start-options/)
 [![license](https://img.shields.io/github/license/xpack/cli-start-options-ts.svg)](https://github.com/xpack/cli-start-options-ts/blob/xpack/LICENSE)
 [![TS-Standard - TypeScript Standard Style Guide](https://badgen.net/badge/code%20style/ts-standard/blue?icon=typescript)](https://github.com/standard/ts-standard/)
-[![Actions Status](https://github.com/xpack/cli-start-options-ts/workflows/CI%20on%20Push/badge.svg)](https://github.com/xpack/cli-start-options-ts/actions)
+[![CI on Push](https://github.com/xpack/cli-start-options-ts/actions/workflows/nodejs.yml/badge.svg)](https://github.com/xpack/cli-start-options-ts/actions/workflows/nodejs.yml)
 [![GitHub issues](https://img.shields.io/github/issues/xpack/cli-start-options-ts.svg)](https://github.com/xpack/cli-start-options-ts/issues)
 [![GitHub pulls](https://img.shields.io/github/issues-pr/xpack/cli-start-options-ts.svg)](https://github.com/xpack/cli-start-options-ts/pulls/)
 
