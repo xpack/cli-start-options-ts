@@ -42,7 +42,7 @@
 /.vscode/
 
 # CI
-/.github/workflows/
+/.github/
 /.travis.yml
 /.appveyor.yml
 
@@ -64,6 +64,7 @@ tsconfig.tsbuildinfo
 
 typedoc.json
 /docs/
+/assets/
 /scripts/
 
 #end
