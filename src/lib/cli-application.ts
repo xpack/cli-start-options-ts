@@ -819,7 +819,7 @@ export class CliApplication {
     try {
       const stats = await fsPromises.stat(fpath)
       if (stats.mtime !== undefined) {
-        const crtDelta = Date.now() - stats.mtime.getTime()
+        const crtDelta = Date.now() - stats.mtime.valueOf()
         if (crtDelta < (deltaSeconds * 1000)) {
           log.trace('update timeout did not expire ' +
             `${Math.floor(crtDelta / 1000)} < ${deltaSeconds}`)
