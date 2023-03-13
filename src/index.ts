@@ -35,6 +35,9 @@
 // For consistency, re-export all Logger definitions.
 // Applications should not add @xpack/logger as an explicit dependency,
 // but use it from here.
+
+// No named exports found in module '@xpack/logger'. (import/export)
+// eslint-disable-next-line import/export
 export * from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
