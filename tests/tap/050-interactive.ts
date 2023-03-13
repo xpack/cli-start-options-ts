@@ -39,7 +39,7 @@ import {
   CliApplication,
   CliExitCodes,
   NpmPackageJson
-} from '../../dist/index.js'
+} from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 

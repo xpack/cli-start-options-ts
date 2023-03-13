@@ -40,7 +40,7 @@ import { test } from 'tap'
 
 import { Common } from '../mock/common.js'
 
-import { CliExitCodes } from '../../dist/index.js'
+import { CliExitCodes } from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 

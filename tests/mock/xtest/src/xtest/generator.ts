@@ -27,7 +27,7 @@ import {
   CliCommand,
   CliContext,
   CliExitCodes
-} from '../../../../../dist/index.js'
+} from '../../../../../esm/index.js'
 
 // ============================================================================
 

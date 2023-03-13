@@ -34,7 +34,7 @@ import {
   CliError,
   CliErrorSyntax,
   CliErrorApplication
-} from '../../dist/index.js'
+} from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 

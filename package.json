@@ -4,17 +4,15 @@
   "description": "Classes to implement a command line Node.js application",
   "type": "module",
   "exports": {
-    "import": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
+    "node": {
+      "import": "./esm/index.js"
+    },
+    "types": "./esm/index.d.ts",
+    "default": "./esm/index.js"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./esm/index.js",
+  "module": "./esm/index.js",
+  "types": "./esm/index.d.ts",
   "scripts": {
     "compile-watch": "tsc --build --verbose --watch src tests",
     "fix": "ts-standard --fix src tests",

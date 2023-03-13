@@ -31,7 +31,7 @@ import tar from 'tar'
 // ----------------------------------------------------------------------------
 
 import { Xtest } from './xtest/src/main.js'
-import { CliContext, Logger } from '../../dist/index.js'
+import { CliContext, Logger } from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 

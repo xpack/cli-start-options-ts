@@ -31,7 +31,7 @@ import {
   CliError,
   CliContext,
   CliConfiguration
-} from '../../../../../dist/index.js'
+} from '../../../../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 

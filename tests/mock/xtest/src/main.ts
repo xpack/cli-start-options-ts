@@ -37,7 +37,7 @@ import {
   CliConfiguration,
   CliOptions,
   CliContext
-} from '../../../../dist/index.js'
+} from '../../../../esm/index.js'
 
 // ============================================================================
 

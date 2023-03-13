@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import { CliApplication, CliContext } from '../../../../dist/index.js'
+import { CliApplication, CliContext } from '../../../../esm/index.js'
 
 // ============================================================================
 
