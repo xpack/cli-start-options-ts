@@ -484,7 +484,7 @@ export class CliApplication {
 
     const nodeVersion = process.version // v14.21.2
     const engines: string = context.packageJson.engines?.node ??
-      '>=14.13.1 || >=15.3.0 || >=16.0.0'
+      ' >=16.0.0'
     if (!semver.satisfies(nodeVersion, engines)) {
       console.error(`Please use a newer node (at least ${engines}).\n`)
       return CliExitCodes.ERROR.PREREQUISITES
