@@ -21,46 +21,29 @@
 // ----------------------------------------------------------------------------
 
 import { strict as assert } from 'node:assert'
+import { Console } from 'node:console'
 import * as fs from 'node:fs'
 import * as net from 'node:net'
-import * as os from 'node:os'
 import * as path from 'node:path'
 // import * as process from 'node:process'
 import * as readline from 'node:readline'
 import * as repl from 'node:repl'
-import { fileURLToPath } from 'node:url'
 import * as util from 'node:util'
-// import * as vm from 'node:vm'
+import * as vm from 'node:vm'
 
 // ----------------------------------------------------------------------------
 
 // https://www.npmjs.com/package/@xpack/logger
 import { Logger, LogLevel } from '@xpack/logger'
 
-// https://www.npmjs.com/package/del
-import { deleteAsync } from 'del'
-
-// https://www.npmjs.com/package/is-ci
-import isCi from 'is-ci'
-
-// https://www.npmjs.com/package/is-installed-globally
-import isInstalledGlobally from 'is-installed-globally'
-
-// https://www.npmjs.com/package/is-path-inside
-// ES module with default
-import isPathInside from 'is-path-inside'
-
-// https://www.npmjs.com/package/latest-version
-import latestVersion from 'latest-version'
+// https://www.npmjs.com/package/@xpack/update-checker
+import { UpdateChecker } from '@xpack/update-checker'
 
 // https://www.npmjs.com/package/make-dir
 import makeDir from 'make-dir'
 
 // https://www.npmjs.com/package/semver
 import * as semver from 'semver'
-
-// https://www.npmjs.com/package/semver-diff
-import semverDiff from 'semver-diff'
 
 // ----------------------------------------------------------------------------
 
@@ -73,17 +56,10 @@ import { CliOptions, CliOptionFoundModule } from './cli-options.js'
 
 import { CliHelp } from './cli-help.js'
 import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
-import { Console } from 'node:console'
-import { Context } from 'node:vm'
 
 // ----------------------------------------------------------------------------
 
 const fsPromises = fs.promises
-
-// ----------------------------------------------------------------------------
-
-const timestampsPath = path.join(os.homedir(), '.config', 'timestamps')
-const timestampSuffix = '-update-check'
 
 // ----------------------------------------------------------------------------
 // Logger configuration
@@ -479,11 +455,13 @@ export class CliApplication {
     context.packageJson =
       await CliApplication.readPackageJson(context.rootPath)
 
+    const packageJson = context.packageJson
+
     // ------------------------------------------------------------------------
     // Validate the engine.
 
     const nodeVersion = process.version // v14.21.2
-    const engines: string = context.packageJson.engines?.node ??
+    const engines: string = packageJson.engines?.node ??
       ' >=16.0.0'
     if (!semver.satisfies(nodeVersion, engines)) {
       console.error(`Please use a newer node (at least ${engines}).\n`)
@@ -494,8 +472,8 @@ export class CliApplication {
 
     // These are early messages, not shown immediately,
     // they are delayed until the log level is known.
-    if (context.packageJson?.description !== undefined) {
-      log.verbose(`${context.packageJson.description}`)
+    if (packageJson?.description !== undefined) {
+      log.verbose(`${packageJson.description}`)
     }
     log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
 
@@ -531,7 +509,7 @@ export class CliApplication {
     // Very early detection of `--version`, since it makes
     // all other irrelevant. Checked again in dispatchCommands() for REPL.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
-      log.always(context.packageJson.version)
+      log.always(packageJson.version)
       return CliExitCodes.SUCCESS
     }
 
@@ -577,18 +555,22 @@ export class CliApplication {
       // and the last one will be returned. (probably not very useful)
     } else {
       // For regular invocations, also check if an update is available.
-      let latestVersionPromise
-      if (await this.getLatestVersion()) {
-        // At this step only create the promise,
-        // its result is checked before exit.
-        latestVersionPromise = latestVersion(context.packageJson.name)
-      }
+      // Create on instance of notifier class, configured for the
+      // current package.
+      const updateChecker = new UpdateChecker({
+        log,
+        packageName: packageJson.name,
+        packageVersion: packageJson.version
+      })
+
+      // Start the update checker, as an asynchronous function
+      // running in parallel.
+      await updateChecker.initiateVersionRetrieval()
 
       exitCode = await this.dispatchCommands(argv)
 
-      if (latestVersionPromise !== undefined) {
-        await this.checkUpdate(latestVersionPromise)
-      }
+      // Before returning, possibly send a notification to the console.
+      await updateChecker.notifyIfUpdateIsAvailable()
 
       log.verbose(`run() returns ${exitCode}`)
     }
@@ -610,6 +592,7 @@ export class CliApplication {
     const context = this.context
     const config = context.config
     const log = context.log
+    const packageJson = context.packageJson
 
     const replTitle = context.packageJson.description ?? context.programName
     const exitCode = CliExitCodes.SUCCESS
@@ -679,7 +662,7 @@ export class CliApplication {
 
         assert(socketContext.rootPath)
         // 'borrow' the package json from the terminal instance.
-        socketContext.packageJson = context.packageJson
+        socketContext.packageJson = packageJson
 
         const socketReplServer = repl.start({
           prompt: context.programName + '> ',
@@ -737,7 +720,7 @@ export class CliApplication {
    */
   async evaluateRepl (
     evalCmd: string,
-    _context: Context,
+    _context: vm.Context,
     _filename: string,
     callback: nodeReplCallback
   ): Promise<void> {
@@ -810,122 +793,6 @@ export class CliApplication {
 
   // --------------------------------------------------------------------------
 
-  async didIntervalExpire (deltaSeconds: number): Promise<boolean> {
-    const context = this.context
-    const log = context.log
-
-    const fpath = path.join(timestampsPath, context.packageJson.name +
-      timestampSuffix)
-    try {
-      const stats = await fsPromises.stat(fpath)
-      if (stats.mtime !== undefined) {
-        const crtDelta = Date.now() - stats.mtime.valueOf()
-        if (crtDelta < (deltaSeconds * 1000)) {
-          log.trace('update timeout did not expire ' +
-            `${Math.floor(crtDelta / 1000)} < ${deltaSeconds}`)
-          return false
-        }
-      }
-    } catch (err: any) {
-      log.trace('no previous update timestamp')
-    }
-    return true
-  }
-
-  async getLatestVersion (): Promise<boolean> {
-    const context = this.context
-    const config = context.config
-    const log = context.log
-
-    if (context.checkUpdatesIntervalSeconds === 0 ||
-      (isCi) ||
-      (config.isVersionRequest !== undefined && config.isVersionRequest) ||
-      (!process.stdout.isTTY) ||
-      ('NO_UPDATE_NOTIFIER' in process.env) ||
-      (config.noUpdateNotifier !== undefined && config.noUpdateNotifier)) {
-      log.trace('do not fetch latest version number.')
-      return false
-    }
-
-    if (await this.didIntervalExpire(
-      context.checkUpdatesIntervalSeconds)) {
-      log.trace('fetching latest version number...')
-      return true
-    }
-
-    return false
-  }
-
-  async checkUpdate (latestVersionPromise: Promise<string>): Promise<void> {
-    const context = this.context
-    const log = context.log
-
-    if (latestVersionPromise === undefined) {
-      // If the promise was not created, no action.
-      return
-    }
-
-    let ver: string
-    try {
-      ver = await latestVersionPromise
-      log.trace(`${context.packageJson.version} → ${ver}`)
-
-      // The difference type between two semver versions, or undefined if
-      // they are identical or the second one is lower than the first.
-      if (semverDiff(context.packageJson.version, ver) !== undefined) {
-        // If versions differ, notify user.
-        const globalOption: string =
-          (isInstalledGlobally || (os.platform() === 'win32'))
-            ? ' --global'
-            : ''
-
-        let buffer = '\n'
-        buffer += `>>> New version ${context.packageJson.version} -> `
-        buffer += `${ver} available. <<<\n`
-        buffer += ">>> Run '"
-        if (os.platform() !== 'win32') {
-          if (isInstalledGlobally && isPathInside(
-            path.dirname(fileURLToPath(import.meta.url)), '/usr/local')) {
-            // May not be very reliable if installed in another system location.
-            buffer += 'sudo '
-          }
-        }
-        buffer +=
-          `npm install${globalOption} ${context.packageJson.name}@${ver}`
-        buffer += "' to update. <<<"
-        log.info(buffer)
-      }
-
-      if ((process.geteuid !== undefined) &&
-        process.geteuid() !== process.getuid()) {
-        // If running as root, skip writing the timestamp to avoid
-        // later EACCES or EPERM.
-        log.trace(`geteuid() ${process.geteuid()} != ${process.getuid()}`)
-        return
-      }
-    } catch (err: any) {
-      if (log.isDebug) {
-        log.debug((err as Error).toString())
-      } else {
-        log.warn((err as Error).message)
-      }
-    }
-
-    await makeDir(timestampsPath)
-
-    const fpath = path.join(timestampsPath, context.packageJson.name +
-      timestampSuffix)
-    await deleteAsync(fpath, { force: true })
-
-    // Create an empty file, only the modified date is checked.
-    const fd = await fsPromises.open(fpath, 'w')
-    await fd.close()
-
-    log.debug('timestamp created')
-  }
-
-  // --------------------------------------------------------------------------
-
   /**
    * @summary Dispatch commands to their implementations.
    *
@@ -939,6 +806,8 @@ export class CliApplication {
    */
   async dispatchCommands (argv: string[]): Promise<number> {
     const context = this.context
+    const packageJson = context.packageJson
+
     context.startTime = Date.now()
 
     const log = context.log
@@ -959,7 +828,7 @@ export class CliApplication {
 
     // Done again here, for REPL invocations.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
-      log.always(context.packageJson.version)
+      log.always(packageJson.version)
       return CliExitCodes.SUCCESS
     }
 

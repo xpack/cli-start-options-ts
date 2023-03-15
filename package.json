@@ -19,7 +19,7 @@
     "compile": "tsc --build --verbose src tests",
     "npm-install": "npm install",
     "npm-link": "npm link",
-    "npm-link-deps": "npm link @xpack/logger",
+    "npm-link-deps": "npm link @xpack/logger @xpack/update-checker",
     "npm-outdated": "npm outdated",
     "npm-update": "npm update",
     "npm-version-patch": "npm version patch",
@@ -66,14 +66,10 @@
   "homepage": "https://xpack.github.io/cli-start-options-ts/",
   "dependencies": {
     "@xpack/logger": "^5.0.4",
+    "@xpack/update-checker": "^1.2.0",
     "del": "^7.0.0",
-    "is-ci": "^3.0.0",
-    "is-installed-globally": "^0.4.0",
-    "is-path-inside": "^4.0.0",
-    "latest-version": "^7.0.0",
     "make-dir": "^3.1.0",
-    "semver": "^7.3.8",
-    "semver-diff": "^4.0.0"
+    "semver": "^7.3.8"
   },
   "devDependencies": {
     "@types/is-ci": "^3.0.0",
