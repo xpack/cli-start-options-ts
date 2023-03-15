@@ -27,8 +27,8 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-import { CliErrorSyntax } from './cli-error.js'
-import { CliContext } from './cli-context.js'
+import { CliErrorSyntax } from './error.js'
+import { CliContext } from './context.js'
 
 // ----------------------------------------------------------------------------
 

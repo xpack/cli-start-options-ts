@@ -22,8 +22,8 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliConfiguration } from './cli-configuration.js'
-import { CliOptions } from './cli-options.js'
+import { CliConfiguration } from './configuration.js'
+import { CliOptions } from './options.js'
 
 // ----------------------------------------------------------------------------
 

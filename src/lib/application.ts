@@ -49,13 +49,13 @@ import * as semver from 'semver'
 
 // import { WscriptAvoider } from 'wscript-avoider'
 
-import { CliCommand } from './cli-command.js'
-import { CliContext, NpmPackageJson } from './cli-context.js'
+import { CliCommand } from './command.js'
+import { CliContext, NpmPackageJson } from './context.js'
 // import { CliConfiguration } from './cli-configuration.js'
-import { CliOptions, CliOptionFoundModule } from './cli-options.js'
+import { CliOptions, CliOptionFoundModule } from './options.js'
 
-import { CliHelp } from './cli-help.js'
-import { CliExitCodes, CliError, CliErrorSyntax } from './cli-error.js'
+import { CliHelp } from './help.js'
+import { CliExitCodes, CliError, CliErrorSyntax } from './error.js'
 
 // ----------------------------------------------------------------------------
 

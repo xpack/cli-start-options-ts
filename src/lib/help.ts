@@ -22,8 +22,8 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliContext } from './cli-context.js'
-import { CliOptionGroup, CliOptionDefinition } from './cli-options.js'
+import { CliContext } from './context.js'
+import { CliOptionGroup, CliOptionDefinition } from './options.js'
 
 // ----------------------------------------------------------------------------
 

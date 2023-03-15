@@ -43,12 +43,12 @@ export * from '@xpack/logger'
 // ----------------------------------------------------------------------------
 
 // Re-export all local definitions.
-export * from './lib/cli-application.js'
-export * from './lib/cli-command.js'
-export * from './lib/cli-configuration.js'
-export * from './lib/cli-context.js'
-export * from './lib/cli-error.js'
-export * from './lib/cli-help.js'
-export * from './lib/cli-options.js'
+export * from './lib/application.js'
+export * from './lib/command.js'
+export * from './lib/configuration.js'
+export * from './lib/context.js'
+export * from './lib/error.js'
+export * from './lib/help.js'
+export * from './lib/options.js'
 
 // ----------------------------------------------------------------------------

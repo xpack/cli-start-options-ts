@@ -39,11 +39,11 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliContext } from './cli-context.js'
-import { CliExitCodes } from './cli-error.js'
-import { CliHelp, CliMultiPass } from './cli-help.js'
-import { CliOptions, CliOptionGroup } from './cli-options.js'
-import { CliConfiguration } from './cli-configuration.js'
+import { CliContext } from './context.js'
+import { CliExitCodes } from './error.js'
+import { CliHelp, CliMultiPass } from './help.js'
+import { CliOptions, CliOptionGroup } from './options.js'
+import { CliConfiguration } from './configuration.js'
 
 // ============================================================================
 
