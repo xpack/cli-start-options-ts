@@ -19,11 +19,11 @@
 
 // ----------------------------------------------------------------------------
 
-import { CliCommand, CliContext } from '../../../../../esm/index.js'
+import * as cli from '../../../../../esm/index.js'
 
 // ============================================================================
 
-export class Unimpl extends CliCommand {
+export class Unimpl extends cli.Command {
   // --------------------------------------------------------------------------
 
   /**
@@ -31,7 +31,7 @@ export class Unimpl extends CliCommand {
    *
    * @param context Reference to a context.
    */
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Title displayed with the help message.

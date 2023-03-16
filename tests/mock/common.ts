@@ -31,7 +31,8 @@ import tar from 'tar'
 // ----------------------------------------------------------------------------
 
 import { Xtest } from './xtest/src/main.js'
-import { CliContext, Logger } from '../../esm/index.js'
+import { Logger } from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
@@ -208,7 +209,7 @@ export class Common {
     const mockConsole = new Console(ostream, errstream)
     const mockLog = new Logger({ console: mockConsole })
     const context =
-      await new CliContext({
+      await new cli.Context({
         programName: 'xtest',
         console: mockConsole,
         log: mockLog

@@ -35,28 +35,24 @@ import { test } from 'tap'
 
 import { Common, mockPath } from '../mock/common.js'
 
-import {
-  CliApplication,
-  CliExitCodes,
-  NpmPackageJson
-} from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
 assert(Common)
-assert(CliApplication)
-assert(CliExitCodes)
+assert(cli.Application)
+assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
-let pack: NpmPackageJson
+let pack: cli.NpmPackageJson
 
 // ----------------------------------------------------------------------------
 
 await test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   const rootPath = mockPath('xtest')
-  pack = await CliApplication.readPackageJson(rootPath)
+  pack = await cli.Application.readPackageJson(rootPath)
   t.ok(pack, 'package parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)

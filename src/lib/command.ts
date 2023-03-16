@@ -39,15 +39,15 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliContext } from './context.js'
-import { CliExitCodes } from './error.js'
-import { CliHelp, CliMultiPass } from './help.js'
-import { CliOptions, CliOptionGroup } from './options.js'
-import { CliConfiguration } from './configuration.js'
+import { Context } from './context.js'
+import { ExitCodes } from './error.js'
+import { Help, MultiPass } from './help.js'
+import { Options, OptionGroup } from './options.js'
+import { Configuration } from './configuration.js'
 
 // ============================================================================
 
-export interface CliGenerator {
+export interface Generator {
   tool: string // Program name.
   version: string // Package semver.
   command: string[] // Full command.
@@ -61,14 +61,14 @@ export interface CliGenerator {
  * @classdesc
  * Base class for a CLI application command.
  */
-export class CliCommand {
+export class Command {
   // --------------------------------------------------------------------------
 
-  public context: CliContext
+  public context: Context
   public log: Logger
   public commands: string
   public title: string
-  public optionGroups: CliOptionGroup[]
+  public optionGroups: OptionGroup[]
 
   // All args, as received from CliCommand.
   public unparsedArgs: string[] = []
@@ -82,9 +82,9 @@ export class CliCommand {
    * @param optionGroups Array of option groups.
    */
   constructor (
-    context: CliContext,
+    context: Context,
     title?: string,
-    optionGroups?: CliOptionGroup[]
+    optionGroups?: OptionGroup[]
   ) {
     assert(context)
     assert(context.log)
@@ -107,19 +107,19 @@ export class CliCommand {
     const log = this.log
     log.trace(`${this.constructor.name}.run()`)
 
-    const context: CliContext = this.context
-    const config: CliConfiguration = context.config
+    const context: Context = this.context
+    const config: Configuration = context.config
 
     // Remember the original args.
     this.unparsedArgs = args
 
     // Parse the args and return the remaining args, like package names.
-    const remainingArgs: string[] = CliOptions.parseOptions(args, context,
+    const remainingArgs: string[] = Options.parseOptions(args, context,
       this.optionGroups)
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
       this.outputHelp()
-      return CliExitCodes.SUCCESS // Ok, command help explicitly called.
+      return ExitCodes.SUCCESS // Ok, command help explicitly called.
     }
 
     const commandArgs: string[] = []
@@ -148,13 +148,13 @@ export class CliCommand {
     }
 
     // Check if there are missing mandatory options.
-    const missingErrors = CliOptions.checkMissingMandatory(this.optionGroups)
+    const missingErrors = Options.checkMissingMandatory(this.optionGroups)
     if (missingErrors != null) {
       missingErrors.forEach((msg) => {
         log.error(msg)
       })
       this.outputHelp()
-      return CliExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
+      return ExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
     }
 
     log.trace(util.inspect(config))
@@ -182,12 +182,12 @@ export class CliCommand {
    * @returns Nothing.
    */
   outputHelp (): void {
-    const help: CliHelp = new CliHelp(this.context)
+    const help: Help = new Help(this.context)
 
     help.outputCommandLine(this.title, this.optionGroups)
 
-    const commonOptionGroups: CliOptionGroup[] =
-      CliOptions.getCommonOptionGroups()
+    const commonOptionGroups: OptionGroup[] =
+      Options.getCommonOptionGroups()
 
     help.twoPassAlign(() => {
       this.outputHelpArgsDetails(help.multiPass)
@@ -213,7 +213,7 @@ export class CliCommand {
    * The default implementation does nothing. Override it in
    * the application if needed.
    */
-  outputHelpArgsDetails (_multiPass: CliMultiPass): void {
+  outputHelpArgsDetails (_multiPass: MultiPass): void {
     // Nothing.
   }
 
@@ -278,14 +278,14 @@ export class CliCommand {
    * Multiple generators are possible, each call will append a new
    * element to the array.
    */
-  addGenerator (object: any): CliGenerator { // TODO
+  addGenerator (object: any): Generator { // TODO
     if (object.generators === undefined) {
-      const generators: CliGenerator[] = []
+      const generators: Generator[] = []
       object.generators = generators
     }
 
     const context = this.context
-    const generator: CliGenerator = {
+    const generator: Generator = {
       tool: context.programName,
       version: context.packageJson.version,
       command: [context.programName].concat(this.commands, this.unparsedArgs),

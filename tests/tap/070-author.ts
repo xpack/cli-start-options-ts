@@ -29,12 +29,12 @@ import { test } from 'tap'
 // ----------------------------------------------------------------------------
 
 import { Common } from '../mock/common.js'
-import { CliExitCodes } from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
 assert(Common)
-assert(CliExitCodes)
+assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ await test('a1test -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
       // console.log(errLines)
       t.match(stdout, 'Usage: a1test', 'has Usage')
       t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
@@ -71,7 +71,7 @@ await test('a2test -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
       // console.log(errLines)
       t.match(stdout, 'Usage: a2test', 'has Usage')
       t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
@@ -94,7 +94,7 @@ await test('a3test -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
       // console.log(errLines)
       t.match(stdout, 'Usage: a3test', 'has Usage')
       t.match(stdout, 'Bug reports: <ilg@livius.net>',

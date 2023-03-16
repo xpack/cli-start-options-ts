@@ -19,15 +19,11 @@
 
 // ----------------------------------------------------------------------------
 
-import {
-  CliCommand,
-  CliContext,
-  CliExitCodes
-} from '../../../../../esm/index.js'
+import * as cli from '../../../../../esm/index.js'
 
 // ============================================================================
 
-export class Long extends CliCommand {
+export class Long extends cli.Command {
   // --------------------------------------------------------------------------
 
   /**
@@ -35,7 +31,7 @@ export class Long extends CliCommand {
    *
    * @param context Reference to a context.
    */
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Title displayed with the help message.
@@ -59,7 +55,7 @@ export class Long extends CliCommand {
     log.always(config.cwd)
 
     log.info('Done.')
-    return CliExitCodes.SUCCESS
+    return cli.ExitCodes.SUCCESS
   }
 }
 

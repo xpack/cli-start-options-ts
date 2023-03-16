@@ -30,7 +30,7 @@ const defaultLogLevel = 'info'
 
 // ----------------------------------------------------------------------------
 
-export class CliConfiguration {
+export class Configuration {
   logLevel: LogLevel = defaultLogLevel
   cwd: string = process.cwd()
   isHelpRequest: boolean = false

@@ -35,16 +35,12 @@ import { test } from 'tap'
 // ----------------------------------------------------------------------------
 
 import { nodeBin, appAbsolutePath, mockPath } from '../mock/common.js'
-import {
-  CliApplication,
-  CliExitCodes,
-  NpmPackageJson
-} from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
-assert(CliApplication)
-assert(CliExitCodes)
+assert(cli.Application)
+assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
@@ -52,14 +48,14 @@ const debug = true
 
 // ----------------------------------------------------------------------------
 
-let pack: NpmPackageJson
+let pack: cli.NpmPackageJson
 
 // ----------------------------------------------------------------------------
 
 await test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   const rootPath: string = mockPath('xtest')
-  pack = await CliApplication.readPackageJson(rootPath)
+  pack = await cli.Application.readPackageJson(rootPath)
   t.ok(pack, 'package was parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
@@ -88,7 +84,7 @@ await test('xtest -i (spawn)', async (t) => {
     if (debug) {
       console.log('close')
     }
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code success')
     t.end()
   })
 

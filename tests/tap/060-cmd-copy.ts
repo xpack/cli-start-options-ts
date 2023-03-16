@@ -40,12 +40,12 @@ import { test } from 'tap'
 
 import { Common } from '../mock/common.js'
 
-import { CliExitCodes } from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
 assert(Common)
-assert(CliExitCodes)
+assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
@@ -69,7 +69,7 @@ await test('xtest copy',
         'copy'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+      t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
       const errLines = stderr.split(/\r?\n/)
       // console.log(errLines)
       t.equal(errLines.length, 2 + 1, 'has two errors')
@@ -97,7 +97,7 @@ await test('xtest copy -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -129,7 +129,7 @@ await test('xtest cop -h',
         '-h'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
       const outLines = stdout.split(/\r?\n/)
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
@@ -162,7 +162,7 @@ await test('xtest cop --file xxx --output yyy -q',
         '-q'
       ])
       // Check exit code.
-      t.equal(code, CliExitCodes.ERROR.INPUT, 'exit code is input')
+      t.equal(code, cli.ExitCodes.ERROR.INPUT, 'exit code is input')
       // There should be no output.
       t.equal(stdout, '', 'stdout is empty')
       t.match(stderr, 'ENOENT: no such file or directory', 'strerr is ENOENT')
@@ -207,7 +207,7 @@ if (!skipSomeTests) {
           outPath
         ])
         // Check exit code.
-        t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+        t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
         t.match(stdout, 'Done', 'stdout is done')
         // console.log(stdout)
         t.equal(stderr, '', 'stderr is empty')
@@ -238,7 +238,7 @@ if (!skipSomeTests) {
           '-v'
         ])
         // Check exit code.
-        t.equal(code, CliExitCodes.SUCCESS, 'exit code')
+        t.equal(code, cli.ExitCodes.SUCCESS, 'exit code')
         t.match(stdout, 'Done.', 'message is Done')
         // console.log(stdout)
         t.equal(stderr, '', 'stderr is empty')
@@ -267,7 +267,7 @@ if (!skipSomeTests) {
             '-v'
           ])
           // Check exit code.
-          t.equal(code, CliExitCodes.ERROR.OUTPUT, 'exit code is output')
+          t.equal(code, cli.ExitCodes.ERROR.OUTPUT, 'exit code is output')
           // Output should go up to Writing...
           // console.log(stdout)
           t.match(stdout, 'Writing ', 'up to writing')

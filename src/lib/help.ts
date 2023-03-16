@@ -22,8 +22,8 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliContext } from './context.js'
-import { CliOptionGroup, CliOptionDefinition } from './options.js'
+import { Context } from './context.js'
+import { OptionGroup, OptionDefinition } from './options.js'
 
 // ----------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ import { CliOptionGroup, CliOptionDefinition } from './options.js'
 
 type CallableNoArgs = () => void
 
-export class CliMultiPass {
+export class MultiPass {
   // --------------------------------------------------------------------------
 
   public isFirstPass: boolean = true
@@ -63,21 +63,21 @@ export class CliMultiPass {
   }
 }
 
-export class CliHelp {
+export class Help {
   // --------------------------------------------------------------------------
 
-  public context: CliContext
+  public context: Context
   public middleLimit: number
   public rightLimit: number
   public commands?: string[]
-  public multiPass: CliMultiPass
+  public multiPass: MultiPass
 
-  constructor (context: CliContext) {
+  constructor (context: Context) {
     this.context = context
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
 
-    this.multiPass = new CliMultiPass(this.middleLimit)
+    this.multiPass = new MultiPass(this.middleLimit)
   }
 
   outputCommands (
@@ -138,7 +138,7 @@ export class CliHelp {
   }
 
   outputHelpDetails (
-    _optionGroups: CliOptionGroup[], // Unused
+    _optionGroups: OptionGroup[], // Unused
     multiPass = this.multiPass
   ): void {
     const log: Logger = this.context.log
@@ -175,11 +175,11 @@ export class CliHelp {
     if (message !== undefined) {
       desc = message + ' '
     }
-    log.output(`${CliHelp.padRight(out, multiPass.width)} ${desc}`)
+    log.output(`${Help.padRight(out, multiPass.width)} ${desc}`)
   }
 
   outputEarlyDetails (
-    optionGroups: CliOptionGroup[],
+    optionGroups: OptionGroup[],
     multiPass = this.multiPass
   ): void {
     const programName = this.context.programName
@@ -211,7 +211,7 @@ export class CliHelp {
   }
 
   outputOptionGroups (
-    optionGroups: CliOptionGroup[],
+    optionGroups: OptionGroup[],
     multiPass = this.multiPass
   ): void {
     optionGroups.forEach((optionGroup) => {
@@ -220,7 +220,7 @@ export class CliHelp {
   }
 
   outputOptions (
-    optionDefinitions: CliOptionDefinition[],
+    optionDefinitions: OptionDefinition[],
     title: string | undefined,
     multiPass = this.multiPass
   ): void {
@@ -304,7 +304,7 @@ export class CliHelp {
               optionDef.isMultiple) {
             desc += '(multiple)'
           }
-          log.output(`${CliHelp.padRight(strOpts, multiPass.width)} ${desc}`)
+          log.output(`${Help.padRight(strOpts, multiPass.width)} ${desc}`)
         }
       }
     })
@@ -312,7 +312,7 @@ export class CliHelp {
 
   outputCommandLine (
     title: string,
-    optionGroups: CliOptionGroup[]
+    optionGroups: OptionGroup[]
   ): void {
     const log = this.context.log
     const programName: string = this.context.programName
@@ -323,7 +323,7 @@ export class CliHelp {
     const usage = `Usage: ${programName} ${commands}`
     let str: string = usage
 
-    const optionDefs: CliOptionDefinition[] = []
+    const optionDefs: OptionDefinition[] = []
     if (optionGroups !== undefined && (optionGroups.length > 0) &&
       optionGroups[0]?.preOptions !== undefined) {
       str += ' ' + optionGroups[0].preOptions
@@ -407,7 +407,7 @@ export class CliHelp {
   }
 
   twoPassAlign (f: CallableNoArgs): void {
-    this.multiPass = new CliMultiPass(this.middleLimit)
+    this.multiPass = new MultiPass(this.middleLimit)
     f()
     this.multiPass.secondPass()
     f()

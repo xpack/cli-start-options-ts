@@ -32,15 +32,11 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import {
-  CliApplication,
-  CliContext,
-  CliOptions
-} from '../../../../esm/index.js'
+import * as cli from '../../../../esm/index.js'
 
 // ============================================================================
 
-export class Wtest extends CliApplication {
+export class Wtest extends cli.Application {
   // --------------------------------------------------------------------------
 
   /**
@@ -54,7 +50,7 @@ export class Wtest extends CliApplication {
    *
    * @override
    */
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Mandatory, must be set here, not in the library, since it computes
@@ -65,12 +61,12 @@ export class Wtest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['one-long-command'], '')
-    CliOptions.addCommand(['two-long-command'], '')
-    CliOptions.addCommand(['three-long-command'], '')
-    CliOptions.addCommand(['four-long-command'], '')
-    CliOptions.addCommand(['five-long-command'], '')
-    CliOptions.addCommand(['six-long-command'], '')
+    cli.Options.addCommand(['one-long-command'], '')
+    cli.Options.addCommand(['two-long-command'], '')
+    cli.Options.addCommand(['three-long-command'], '')
+    cli.Options.addCommand(['four-long-command'], '')
+    cli.Options.addCommand(['five-long-command'], '')
+    cli.Options.addCommand(['six-long-command'], '')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

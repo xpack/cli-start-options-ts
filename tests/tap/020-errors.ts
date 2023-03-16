@@ -28,39 +28,33 @@ import { test } from 'tap'
 
 // ----------------------------------------------------------------------------
 
-import {
-  ERROR,
-  CliExitCodes,
-  CliError,
-  CliErrorSyntax,
-  CliErrorApplication
-} from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
-assert(CliExitCodes)
-assert(CliError)
-assert(CliErrorSyntax)
-assert(CliErrorApplication)
+assert(cli.ExitCodes)
+assert(cli.Error)
+assert(cli.SyntaxError)
+assert(cli.ApplicationError)
 
 // ----------------------------------------------------------------------------
 
 await test('types', (t) => {
-  t.ok(Object.prototype.isPrototypeOf.call(Error, CliError),
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.Error),
     'CliError is Error')
-  t.ok(Object.prototype.isPrototypeOf.call(Error, CliErrorSyntax),
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.SyntaxError),
     'CliErrorSyntax is Error')
-  t.ok(Object.prototype.isPrototypeOf.call(Error, CliErrorApplication),
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.ApplicationError),
     'CliErrorApplication is Error')
 
-  t.ok(CliExitCodes instanceof Object, 'CliExitCodes is Object')
-  t.ok(CliExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')
+  t.ok(cli.ExitCodes instanceof Object, 'CliExitCodes is Object')
+  t.ok(cli.ExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')
 
-  t.ok(!isNaN(CliExitCodes.SUCCESS), 'SUCCESS is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.SYNTAX), 'ERROR.SYNTAX is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.APPLICATION), 'ERROR.APPLICATION is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.INPUT), 'ERROR.INPUT is a number')
-  t.ok(!isNaN(CliExitCodes.ERROR.OUTPUT), 'ERROR.OUTPUT is a number')
+  t.ok(!isNaN(cli.ExitCodes.SUCCESS), 'SUCCESS is a number')
+  t.ok(!isNaN(cli.ExitCodes.ERROR.SYNTAX), 'ERROR.SYNTAX is a number')
+  t.ok(!isNaN(cli.ExitCodes.ERROR.APPLICATION), 'ERROR.APPLICATION is a number')
+  t.ok(!isNaN(cli.ExitCodes.ERROR.INPUT), 'ERROR.INPUT is a number')
+  t.ok(!isNaN(cli.ExitCodes.ERROR.OUTPUT), 'ERROR.OUTPUT is a number')
 
   t.end()
 })
@@ -68,13 +62,13 @@ await test('types', (t) => {
 await test('exitCodes', async (t) => {
   await t.test('CliError', (t) => {
     try {
-      throw new CliError('one')
+      throw new cli.Error('one')
     } catch (err: any) {
       t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, ERROR.APPLICATION, 'exit code is APPLICATION')
+      t.equal(err.exitCode, cli.ERROR.APPLICATION, 'exit code is APPLICATION')
     }
     try {
-      throw new CliError('two', 7)
+      throw new cli.Error('two', 7)
     } catch (err: any) {
       t.equal(err.message, 'two', 'message is two')
       t.equal(err.exitCode, 7, 'exit code is 7')
@@ -84,20 +78,20 @@ await test('exitCodes', async (t) => {
 
   await t.test('CliErrorSyntax', (t) => {
     try {
-      throw new CliErrorSyntax('one')
+      throw new cli.SyntaxError('one')
     } catch (err: any) {
       t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+      t.equal(err.exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     }
     t.end()
   })
 
   await t.test('CliErrorApplication', (t) => {
     try {
-      throw new CliErrorApplication('one')
+      throw new cli.ApplicationError('one')
     } catch (err: any) {
       t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, CliExitCodes.ERROR.APPLICATION,
+      t.equal(err.exitCode, cli.ExitCodes.ERROR.APPLICATION,
         'exit code is app')
     }
     t.end()

@@ -19,20 +19,18 @@
 
 // ----------------------------------------------------------------------------
 
-import {
-  CliCommand, CliConfiguration, CliContext, CliExitCodes
-} from '../../../../../esm/index.js'
+import * as cli from '../../../../../esm/index.js'
 
 // ============================================================================
 
-interface CliConfigMany extends CliConfiguration {
+interface CliConfigMany extends cli.Configuration {
   one: string | undefined
   two: string | undefined
   three: string | undefined
   four: string | undefined
 }
 
-export class Long extends CliCommand {
+export class Long extends cli.Command {
   // --------------------------------------------------------------------------
 
   /**
@@ -40,7 +38,7 @@ export class Long extends CliCommand {
    *
    * @param context Reference to a context.
    */
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Title displayed with the help message.
@@ -122,7 +120,7 @@ export class Long extends CliCommand {
     // const config = this.context.config
 
     log.info('Done.')
-    return CliExitCodes.SUCCESS
+    return cli.ExitCodes.SUCCESS
   }
 }
 

@@ -49,13 +49,14 @@ import * as semver from 'semver'
 
 // import { WscriptAvoider } from 'wscript-avoider'
 
-import { CliCommand } from './command.js'
-import { CliContext, NpmPackageJson } from './context.js'
+import { Command } from './command.js'
+import { Context, NpmPackageJson } from './context.js'
 // import { CliConfiguration } from './cli-configuration.js'
-import { CliOptions, CliOptionFoundModule } from './options.js'
+import { Options, OptionFoundModule } from './options.js'
 
-import { CliHelp } from './help.js'
-import { CliExitCodes, CliError, CliErrorSyntax } from './error.js'
+import { Help } from './help.js'
+import { ExitCodes } from './error.js'
+import * as cli from './error.js'
 
 // ----------------------------------------------------------------------------
 
@@ -106,7 +107,7 @@ type nodeReplCallback = (
  * net clients, a good reason for not using static variables.
  *
  */
-export class CliApplication {
+export class Application {
   // --------------------------------------------------------------------------
 
   /**
@@ -138,13 +139,13 @@ export class CliApplication {
 
     // Create the log early, to have it in the exception handlers.
     const log = new Logger({ console })
-    let exitCode = CliExitCodes.SUCCESS
+    let exitCode = ExitCodes.SUCCESS
     let application
     try {
-      const programName = CliApplication.getProgramName()
+      const programName = Application.getProgramName()
 
       // Create the application context.
-      const context = new CliContext({
+      const context = new Context({
         programName,
         log,
         console: log.console
@@ -165,8 +166,8 @@ export class CliApplication {
       }
       // This should catch possible errors during inits, otherwise
       // in run() there is another catch.
-      exitCode = CliExitCodes.ERROR.APPLICATION
-      if (err instanceof CliError) {
+      exitCode = ExitCodes.ERROR.APPLICATION
+      if (err instanceof cli.Error) {
         // CLI triggered error. Treat it gently.
         log.error(err.message)
         exitCode = err.exitCode
@@ -229,7 +230,7 @@ export class CliApplication {
 
   // --------------------------------------------------------------------------
 
-  public context: CliContext
+  public context: Context
   public latestVersionPromise: Promise<string> | undefined = undefined
 
   /**
@@ -237,7 +238,7 @@ export class CliApplication {
    *
    * @param context Reference to a context.
    */
-  constructor (context: CliContext) {
+  constructor (context: Context) {
     assert(context)
     assert(context.console)
     assert(context.log)
@@ -248,7 +249,7 @@ export class CliApplication {
 
     log.trace(`${this.constructor.name}.constructor()`)
 
-    CliOptions.initialise(context)
+    Options.initialise(context)
     this.initializeCommonOptions()
   }
 
@@ -256,7 +257,7 @@ export class CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
-    CliOptions.addOptionGroups(
+    Options.addOptionGroups(
       [
         {
           title: 'Common options',
@@ -385,7 +386,7 @@ export class CliApplication {
   initializeReplOptions (): void {
     const context = this.context
     if (context.enableREPL !== undefined && context.enableREPL) {
-      CliOptions.appendToOptionGroups('Common options',
+      Options.appendToOptionGroups('Common options',
         [
           {
             options: ['--interactive-server-port'],
@@ -453,7 +454,7 @@ export class CliApplication {
 
     assert(context.rootPath)
     context.packageJson =
-      await CliApplication.readPackageJson(context.rootPath)
+      await Application.readPackageJson(context.rootPath)
 
     const packageJson = context.packageJson
 
@@ -465,7 +466,7 @@ export class CliApplication {
       ' >=16.0.0'
     if (!semver.satisfies(nodeVersion, engines)) {
       console.error(`Please use a newer node (at least ${engines}).\n`)
-      return CliExitCodes.ERROR.PREREQUISITES
+      return ExitCodes.ERROR.PREREQUISITES
     }
 
     // ------------------------------------------------------------------------
@@ -484,7 +485,7 @@ export class CliApplication {
     this.initializeReplOptions()
 
     // Call the init() function of all defined options.
-    const optionGroups = CliOptions.getCommonOptionGroups()
+    const optionGroups = Options.getCommonOptionGroups()
     optionGroups.forEach((optionGroup) => {
       optionGroup.optionDefs.forEach((optionDef) => {
         optionDef.init(context)
@@ -496,7 +497,7 @@ export class CliApplication {
 
     // Parse the common options, for example the log level, and update
     // the configuration, to know the log level, or if version/help.
-    CliOptions.parseOptions(argv, context)
+    Options.parseOptions(argv, context)
 
     // After parsing the options, the debug level is finally known,
     // and the buffered messages are passed out.
@@ -510,19 +511,19 @@ export class CliApplication {
     // all other irrelevant. Checked again in dispatchCommands() for REPL.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
       log.always(packageJson.version)
-      return CliExitCodes.SUCCESS
+      return ExitCodes.SUCCESS
     }
 
     // ------------------------------------------------------------------------
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
-    const mainArgs = CliOptions.filterOwnArguments(argv)
+    const mainArgs = Options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
     const commands: string[] = []
-    if (CliOptions.hasCommands()) {
+    if (Options.hasCommands()) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
@@ -539,12 +540,12 @@ export class CliApplication {
     if ((commands.length === 0) &&
       (config.isHelpRequest !== undefined && config.isHelpRequest)) {
       this.outputHelp()
-      return CliExitCodes.SUCCESS // Help explicitly called.
+      return ExitCodes.SUCCESS // Help explicitly called.
     }
 
     // ------------------------------------------------------------------------
 
-    let exitCode = CliExitCodes.SUCCESS
+    let exitCode = ExitCodes.SUCCESS
 
     if ((commands.length === 0) && context.enableREPL) {
       // If there are no commands on the command line and REPL is enabled,
@@ -587,7 +588,7 @@ export class CliApplication {
   // it'll abruptly terminate the process and prevent REPL usage, which
   // is inherently asynchronous.
   async enterRepl (): Promise<number> {
-    const ClassThis = this.constructor as typeof CliApplication
+    const ClassThis = this.constructor as typeof Application
 
     const context = this.context
     const config = context.config
@@ -595,7 +596,7 @@ export class CliApplication {
     const packageJson = context.packageJson
 
     const replTitle = context.packageJson.description ?? context.programName
-    const exitCode = CliExitCodes.SUCCESS
+    const exitCode = ExitCodes.SUCCESS
 
     const serverPort = config.interactiveServerPort
     if (serverPort === undefined) {
@@ -651,7 +652,7 @@ export class CliApplication {
         socketLog.level = log.level
 
         // Create the application context.
-        const socketContext = new CliContext({
+        const socketContext = new Context({
           programName: context.programName,
           log: socketLog,
           console: socketLog.console
@@ -764,15 +765,15 @@ export class CliApplication {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help = new CliHelp(context)
+    const help = new Help(context)
 
     // If there is a command, we should not get here, but in the command help.
     assert(context.commandInstance === undefined)
 
     // Show top (application) help.
 
-    const commands = CliOptions.getUnaliasedCommands()
-    const optionGroups = CliOptions.getCommonOptionGroups()
+    const commands = Options.getUnaliasedCommands()
+    const optionGroups = Options.getCommonOptionGroups()
     const description = undefined
 
     // Try to get a message from the first group.
@@ -819,7 +820,7 @@ export class CliApplication {
       log.trace(`main arg${index}: '${arg}'`)
     })
 
-    const remainingArgs = CliOptions.parseOptions(argv, context)
+    const remainingArgs = Options.parseOptions(argv, context)
 
     // After parsing the options, the debug level is finally known.
     log.level = config.logLevel
@@ -829,17 +830,17 @@ export class CliApplication {
     // Done again here, for REPL invocations.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
       log.always(packageJson.version)
-      return CliExitCodes.SUCCESS
+      return ExitCodes.SUCCESS
     }
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
-    const mainArgs = CliOptions.filterOwnArguments(argv)
+    const mainArgs = Options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
     const commands: string[] = []
-    if (CliOptions.hasCommands()) {
+    if (Options.hasCommands()) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
@@ -858,7 +859,7 @@ export class CliApplication {
     if ((commands.length === 0) &&
       (config.isHelpRequest !== undefined && config.isHelpRequest)) {
       this.outputHelp()
-      return CliExitCodes.SUCCESS // Help explicitly called.
+      return ExitCodes.SUCCESS // Help explicitly called.
     }
 
     await makeDir(config.cwd)
@@ -867,18 +868,18 @@ export class CliApplication {
     process.chdir(config.cwd)
     log.debug(`cwd()='${process.cwd()}'`)
 
-    let exitCode: number = CliExitCodes.SUCCESS
+    let exitCode: number = ExitCodes.SUCCESS
     try {
       // The complex application, with multiple commands.
-      if (CliOptions.hasCommands()) {
+      if (Options.hasCommands()) {
         if (commands.length === 0) {
           log.error('Missing mandatory command.')
           this.outputHelp()
-          return CliExitCodes.ERROR.SYNTAX // No commands.
+          return ExitCodes.ERROR.SYNTAX // No commands.
         }
 
         // Throws not supported or not unique.
-        const found: CliOptionFoundModule = CliOptions.findCommandModule(
+        const found: OptionFoundModule = Options.findCommandModule(
           commands)
 
         assert(context.rootPath)
@@ -911,7 +912,7 @@ export class CliApplication {
           assert(context.CommandClass)
           // Show the command specific help.
           commandInstance.outputHelp()
-          return CliExitCodes.SUCCESS // Help explicitly called.
+          return ExitCodes.SUCCESS // Help explicitly called.
         }
 
         log.debug(`'${context.programName} ` +
@@ -925,7 +926,7 @@ export class CliApplication {
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {
           // Show the top (application) help.
           this.outputHelp()
-          return CliExitCodes.SUCCESS // Help explicitly called.
+          return ExitCodes.SUCCESS // Help explicitly called.
         }
 
         log.debug(`'${context.programName}' started`)
@@ -934,13 +935,13 @@ export class CliApplication {
         log.debug(`'${context.programName}' - returned ${exitCode}`)
       }
     } catch (err) {
-      exitCode = CliExitCodes.ERROR.APPLICATION
-      if (err instanceof CliErrorSyntax) {
+      exitCode = ExitCodes.ERROR.APPLICATION
+      if (err instanceof cli.SyntaxError) {
         // CLI triggered error. Treat it gently and try to be helpful.
         log.error(err.message)
         this.outputHelp()
         exitCode = err.exitCode
-      } else if (err instanceof CliError) {
+      } else if (err instanceof cli.Error) {
         // Other CLI triggered error. Treat it gently.
         log.error(err.message)
         exitCode = err.exitCode
@@ -964,7 +965,7 @@ export class CliApplication {
     rootPath: string,
     moduleRelativePath: string
   ): Promise<any> {
-    const parentClass = CliCommand
+    const parentClass = Command
 
     const modulePath = path.join(rootPath, moduleRelativePath)
 
@@ -992,4 +993,4 @@ export class CliApplication {
   }
 }
 
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------Â

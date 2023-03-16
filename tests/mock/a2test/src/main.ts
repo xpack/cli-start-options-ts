@@ -18,14 +18,14 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import { CliApplication, CliContext } from '../../../../esm/index.js'
+import * as cli from '../../../../esm/index.js'
 
 // ============================================================================
 
-export class Test extends CliApplication {
+export class Test extends cli.Application {
   // --------------------------------------------------------------------------
 
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Mandatory, must be set here, not in the library, since it computes

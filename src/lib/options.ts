@@ -27,8 +27,8 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-import { CliErrorSyntax } from './error.js'
-import { CliContext } from './context.js'
+import { SyntaxError as CliSyntaxError } from './error.js'
+import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
 
@@ -42,14 +42,14 @@ import { CliContext } from './context.js'
  * @callback InitOptionFunction
  * @param context Reference to context.
  */
-type InitOptionFunction = (context: CliContext) => void
+type InitOptionFunction = (context: Context) => void
 
 /**
  * @callback SetOptionFunction
  * @param context Reference to context.
  * @param value Value to set for the option.
  */
-type SetOptionFunction = (context: CliContext, value: string) => void
+type SetOptionFunction = (context: Context, value: string) => void
 
 /**
  * @typedef {Object} OptionDef
@@ -76,7 +76,7 @@ type SetOptionFunction = (context: CliContext, value: string) => void
  *  followed by an asterisk.
  */
 
-export interface CliOptionDefinition {
+export interface OptionDefinition {
   options: string[]
   init: InitOptionFunction
   action: SetOptionFunction
@@ -94,15 +94,15 @@ export interface CliOptionDefinition {
   wasProcessed?: boolean
 }
 
-export interface CliOptionGroup {
+export interface OptionGroup {
   title: string
   preOptions?: string
   postOptions?: string
   // TODO: rename optionDefinitions
-  optionDefs: CliOptionDefinition[]
+  optionDefs: OptionDefinition[]
 }
 
-export interface CliOptionFoundModule {
+export interface OptionFoundModule {
   moduleRelativePath: string
   matchedCommands: string[]
   unusedCommands: string[]
@@ -117,7 +117,7 @@ export interface CliOptionFoundModule {
  * The tree includes nodes for each character in the commands.
  * Leaves are always a space character.
  */
-class CliNode {
+class Node {
   // --------------------------------------------------------------------------
 
   // Lowercase single letter;
@@ -132,7 +132,7 @@ class CliNode {
   public relativeFilePath: string | undefined
   // The full length command (the first in the list)
   public unaliasedCommand: string | undefined
-  public children: CliNode[] = []
+  public children: Node[] = []
 
   /**
    * @summary Add a character to the commands tree.
@@ -145,11 +145,11 @@ class CliNode {
    * @returns The new node added to the tree.
    */
   static add (
-    parent: CliNode,
+    parent: Node,
     character: string | null,
     relativeFilePath: string,
     unaliasedCommand: string
-  ): CliNode {
+  ): Node {
     assert(parent !== null, 'Null parent.')
 
     for (const child of parent.children) {
@@ -161,7 +161,7 @@ class CliNode {
       }
     }
 
-    const node = new CliNode(character, relativeFilePath, unaliasedCommand)
+    const node = new Node(character, relativeFilePath, unaliasedCommand)
     parent.children.push(node)
     return node
   }
@@ -200,15 +200,15 @@ class CliNode {
  */
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class CliOptions {
+export class Options {
   // --------------------------------------------------------------------------
 
-  static context: CliContext
+  static context: Context
   static moduleRelativePath: string
 
-  private static commandsTree: CliNode = new CliNode(null)
+  private static commandsTree: Node = new Node(null)
   private static unaliasedCommands: string[]
-  private static commonOptionGroups: CliOptionGroup[]
+  private static commonOptionGroups: OptionGroup[]
 
   /**
    * @summary Static initialiser.
@@ -216,13 +216,13 @@ export class CliOptions {
    * @param context Reference to context.
    * @returns Nothing.
    */
-  static initialise (context: CliContext): void {
+  static initialise (context: Context): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
     staticThis.context = context
 
-    staticThis.commandsTree = new CliNode(null)
+    staticThis.commandsTree = new Node(null)
     staticThis.unaliasedCommands = []
     staticThis.commonOptionGroups = []
   }
@@ -272,7 +272,7 @@ export class CliOptions {
       let node = staticThis.commandsTree
       // Add children nodes for all characters, including the terminating space.
       characters.forEach((character) => {
-        node = CliNode.add(
+        node = Node.add(
           node, character, curedRelativeFilePath, unaliasedCommand)
       })
     })
@@ -301,7 +301,7 @@ export class CliOptions {
    * @description
    * Preliminary solution with array instead of tree.
    */
-  static addOptionGroups (optionGroups: CliOptionGroup[]): void {
+  static addOptionGroups (optionGroups: OptionGroup[]): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
@@ -319,7 +319,7 @@ export class CliOptions {
    */
   static appendToOptionGroups (
     title: string,
-    optionDefinitions: CliOptionDefinition[]
+    optionDefinitions: OptionDefinition[]
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
@@ -357,7 +357,7 @@ export class CliOptions {
    *
    * @returns Array of option groups.
    */
-  static getCommonOptionGroups (): CliOptionGroup[] {
+  static getCommonOptionGroups (): OptionGroup[] {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
@@ -382,8 +382,8 @@ export class CliOptions {
    */
   static parseOptions (
     args: string[],
-    context: CliContext,
-    optionGroups: CliOptionGroup[] | null = null
+    context: Context,
+    optionGroups: OptionGroup[] | null = null
   ): string[] {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
@@ -394,7 +394,7 @@ export class CliOptions {
 
     // In addition to common options, bring together all options from
     // all command option groups, if any.
-    const allOptionDefinitions: CliOptionDefinition[] = []
+    const allOptionDefinitions: OptionDefinition[] = []
     if (optionGroups == null) {
       staticThis.commonOptionGroups.forEach((optionGroup) => {
         assert(optionGroup.optionDefs !== undefined)
@@ -462,9 +462,9 @@ export class CliOptions {
    * @returns Array of errors or null if everything is ok.
    */
   static checkMissingMandatory (
-    optionGroups: CliOptionGroup[]
+    optionGroups: OptionGroup[]
   ): string[] | null {
-    const allOptionDefinitions: CliOptionDefinition[] = []
+    const allOptionDefinitions: OptionDefinition[] = []
     optionGroups.forEach((optionGroup) => {
       assert(optionGroup.optionDefs !== undefined)
       allOptionDefinitions.push(...optionGroup.optionDefs)
@@ -512,8 +512,8 @@ export class CliOptions {
   private static processOption (
     args: string[],
     index: number,
-    optionDefinition: CliOptionDefinition,
-    context: CliContext
+    optionDefinition: OptionDefinition,
+    context: Context
   ): number {
     const arg: string = args[index] ?? ''
     let value: string
@@ -529,7 +529,7 @@ export class CliOptions {
         // args[index + 1].processed = true
       } else {
         // Error, expected option value not available.
-        throw new CliErrorSyntax(`'${arg}' expects a value`)
+        throw new CliSyntaxError(`'${arg}' expects a value`)
       }
       if (Array.isArray(optionDefinition.values)) {
         // If a list of allowed values is present,
@@ -544,7 +544,7 @@ export class CliOptions {
           }
         }
         // Error, illegal option value
-        throw new CliErrorSyntax(`Value '${value}' not allowed for '${arg}'`)
+        throw new CliSyntaxError(`Value '${value}' not allowed for '${arg}'`)
       } else {
         // Call the action to set the configuration value
         optionDefinition.action(context, value)
@@ -585,7 +585,7 @@ export class CliOptions {
     commands: string[]
     // rootPath: string
     // parentClass: typeof CliCommand
-  ): CliOptionFoundModule {
+  ): OptionFoundModule {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
@@ -604,14 +604,14 @@ export class CliOptions {
       // TODO: walk the tree.
       const str: string = commands.join(' ').trim() + ' '
 
-      let node: CliNode = staticThis.commandsTree
+      let node: Node = staticThis.commandsTree
       const strArr = str.split('')
       fullCommands = ''
       let i: number
       for (i = 0; i < strArr.length; ++i) {
         const chr = strArr[i] ?? ''
         fullCommands += chr
-        let found: CliNode | null = null
+        let found: Node | null = null
         for (const child of node.children) {
           if (chr === child.character) {
             found = child
@@ -623,7 +623,7 @@ export class CliOptions {
             break
           }
           // TODO: suggest unique commands.
-          throw new CliErrorSyntax(`Command '${str.trim()}' not supported.`)
+          throw new CliSyntaxError(`Command '${str.trim()}' not supported.`)
         }
         node = found
         if (node.relativeFilePath !== undefined &&
@@ -634,7 +634,7 @@ export class CliOptions {
         }
       }
       if (moduleRelativePath === undefined) {
-        throw new CliErrorSyntax(`Command '${str.trim()}' is not unique.`)
+        throw new CliSyntaxError(`Command '${str.trim()}' is not unique.`)
       }
       remainingCommands = []
       for (; i < strArr.length; ++i) {

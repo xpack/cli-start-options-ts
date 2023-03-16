@@ -29,21 +29,17 @@ import * as path from 'node:path'
 import { test } from 'tap'
 
 import { Common, mockPath } from '../mock/common.js'
-import {
-  CliApplication,
-  CliExitCodes,
-  NpmPackageJson
-} from '../../esm/index.js'
+import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
 assert(Common)
-assert(CliApplication)
-assert(CliExitCodes)
+assert(cli.Application)
+assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
-let pack: NpmPackageJson
+let pack: cli.NpmPackageJson
 
 // ----------------------------------------------------------------------------
 
@@ -53,7 +49,7 @@ let pack: NpmPackageJson
 await test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   const rootPath = mockPath('xtest')
-  pack = await CliApplication.readPackageJson(rootPath)
+  pack = await cli.Application.readPackageJson(rootPath)
   t.ok(pack, 'package ok')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
@@ -69,7 +65,7 @@ await test('xtest --version (spawn)', async (t) => {
       '--version'
     ])
     // Check exit code.
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
     t.equal(stdout, pack.version + '\n', 'version value')
@@ -89,7 +85,7 @@ await test('xtest -h (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '-h'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     // console.log(stdout)
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
 
@@ -118,7 +114,7 @@ await test('xtest --help (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '--help'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
     // There should be no error messages.
     t.equal(stderr, '', 'stderr is empty')
@@ -137,7 +133,7 @@ await test('xtest --version -d (spawn)', async (t) => {
       '--version',
       '-d'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.ok(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
@@ -159,7 +155,7 @@ await test('xtest --version -dd (spawn)', async (t) => {
       '--version',
       '-dd'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.ok(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
@@ -182,7 +178,7 @@ await test('xtest --version -d -d (spawn)', async (t) => {
       '-d',
       '-d'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.ok(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
@@ -203,7 +199,7 @@ await test('xtest notclass (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       'notclass'
     ])
-    t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
+    t.equal(code, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
     // console.log(stdout)
     t.equal(stdout, '', 'stdout is empty')
     // console.log(stderr)
@@ -222,7 +218,7 @@ await test('xtest co (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       'co'
     ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is app')
+    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is app')
     // console.log(stderr)
     t.equal(stderr, "error: Command 'co' is not unique.\n",
       'stderr is error')
@@ -243,7 +239,7 @@ await test('xtest --version --loglevel debug (spawn)', async (t) => {
       '--loglevel',
       'debug'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.ok(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
@@ -266,7 +262,7 @@ await test('xtest xx -s (spawn)', async (t) => {
       '-s',
       'debug'
     ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.equal(stdout, '', 'stdout is empty')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err: any) {
@@ -288,7 +284,7 @@ await test('xtest long --long value --xx -q (spawn)', async (t) => {
       '-q',
       'debug'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.equal(stdout, '', 'stdout is empty')
     t.equal(stderr, "warning: Option '--xx' not supported; ignored\n",
       'stderr is warning')
@@ -306,7 +302,7 @@ await test('xtest verb (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       'verb'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Done', 'stdout is done')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err: any) {
@@ -324,7 +320,7 @@ await test('xtest verb --informative (spawn)', async (t) => {
       'verb',
       '--informative'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Exercise verbosity', 'stdout is info')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err: any) {
@@ -342,7 +338,7 @@ await test('xtest verb -v (spawn)', async (t) => {
       'verb',
       '-v'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
     t.match(stdout, 'Verbose', 'stdout is verbose')
     t.equal(stderr, '', 'stderr is empty')
@@ -361,7 +357,7 @@ await test('xtest verb --verbose (spawn)', async (t) => {
       'verb',
       '--verbose'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
     t.match(stdout, 'Verbose', 'stdout is verbose')
     t.equal(stderr, '', 'stderr is empty')
@@ -380,7 +376,7 @@ await test('xtest --loglevel xxx (spawn)', async (t) => {
       '--loglevel',
       'xxx'
     ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.equal(stdout, '', 'stdout is empty')
     t.match(stderr, "error: Value 'xxx' not allowed for '--loglevel'",
       'stderr is message')
@@ -398,7 +394,7 @@ await test('xtest --loglevel (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '--loglevel'
     ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.equal(stdout, '', 'stdout is empty')
     t.match(stderr, "error: '--loglevel' expects a value",
       'stderr is message')
@@ -416,7 +412,7 @@ await test('xtest --loglevel -- (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '--loglevel'
     ])
-    t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.equal(stdout, '', 'stdout is empty')
     t.match(stderr, "error: '--loglevel' expects a value",
       'stderr is message')
@@ -437,7 +433,7 @@ await test('xtest --version -dd -- xx (spawn)', async (t) => {
       '--',
       'xx'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.ok(stdout.length > 0, 'has stdout')
     // Matching the whole string also checks that
     // the colour changes are not used.
@@ -459,7 +455,7 @@ await test('xtest long -h (spawn)', async (t) => {
       'long',
       '-h'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, '                  [-- <very-long-long-long-args>...]',
       'stdout has long post options')
     t.equal(stderr, '', 'stderr is empty')
@@ -480,7 +476,7 @@ await test('xtest long -xyz (spawn)', async (t) => {
       'value',
       '--xyz'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'Done', 'stdout is done')
     t.match(stderr, "warning: Option '--xyz' not supported; ignored\n",
       'stderr has error')
@@ -498,7 +494,7 @@ await test('xtest -h (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       '-h'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, '                                         Extra options',
       'stdout has long early options')
     t.equal(stderr, '', 'stderr is empty')
@@ -517,7 +513,7 @@ await test('xtest many -h (spawn)', async (t) => {
       'many',
       '-h'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, '                  [--two <name>]+',
       'stdout has many options')
     t.match(stdout, '[--four <s>]', 'has <s>')
@@ -541,7 +537,7 @@ await test('wtest-long-name -h (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.wtestCli([
       '-h'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, 'wtest-long-name -h|--help            Quick help',
       'has long name')
     t.match(stdout, '  five-long-command,', 'has command five')
@@ -561,7 +557,7 @@ await test('xtest gen (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       'gen'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     // console.log(stdout)
     t.match(stdout, 'generators:', 'stdout has generators')
     assert(pack?.homepage)
@@ -581,7 +577,7 @@ await test('xtest unim (spawn)', async (t) => {
     const { code, stdout, stderr } = await Common.xtestCli([
       'unim'
     ])
-    t.equal(code, CliExitCodes.ERROR.APPLICATION, 'exit code is app')
+    t.equal(code, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
     t.match(stderr, 'AssertionError', 'stdout has assertion')
     t.equal(stdout, '', 'stdout is empty')
   } catch (err: any) {
@@ -636,7 +632,7 @@ await test('xtest cwd -C /tmp/xx (spawn)', async (t) => {
       '-C',
       '/tmp/xx'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     t.match(stdout, '/tmp/xx\n', 'stdout has path')
     t.equal(stderr, '', 'stderr is empty')
   } catch (err: any) {
@@ -657,7 +653,7 @@ await test('xtest cwd -C /tmp/xx -C yy (spawn)', async (t) => {
       '-C',
       'yy'
     ])
-    t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
     const absPath = path.resolve('/tmp/xx', 'yy')
     if (os.platform() === 'win32') {
       t.match(stdout, absPath, 'stdout has path')

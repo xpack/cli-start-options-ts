@@ -25,13 +25,7 @@ import * as path from 'node:path'
 
 // ----------------------------------------------------------------------------
 
-import {
-  CliCommand,
-  CliExitCodes,
-  CliError,
-  CliContext,
-  CliConfiguration
-} from '../../../../../esm/index.js'
+import * as cli from '../../../../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
@@ -39,12 +33,12 @@ const fsPromises = fs.promises
 
 // ============================================================================
 
-interface CliConfigCopy extends CliConfiguration {
+interface CliConfigCopy extends cli.Configuration {
   inputPath: string | undefined
   outputPath: string | undefined
 }
 
-export class Copy extends CliCommand {
+export class Copy extends cli.Command {
   // --------------------------------------------------------------------------
 
   /**
@@ -52,7 +46,7 @@ export class Copy extends CliCommand {
    *
    * @param context Reference to a context.
    */
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Title displayed with the help message.
@@ -112,7 +106,7 @@ export class Copy extends CliCommand {
     try {
       inputData = await fsPromises.readFile(inputAbsolutePath, 'utf8')
     } catch (err: any) {
-      throw new CliError(err.message, CliExitCodes.ERROR.INPUT)
+      throw new cli.Error(err.message, cli.ExitCodes.ERROR.INPUT)
     }
 
     assert(config.outputPath) // Mandatory.
@@ -130,11 +124,11 @@ export class Copy extends CliCommand {
     try {
       await fsPromises.writeFile(outputAbsolutePath, inputData, 'utf8')
     } catch (err: any) {
-      throw new CliError(err.message, CliExitCodes.ERROR.OUTPUT)
+      throw new cli.Error(err.message, cli.ExitCodes.ERROR.OUTPUT)
     }
 
     log.info('Done.')
-    return CliExitCodes.SUCCESS
+    return cli.ExitCodes.SUCCESS
   }
 }
 

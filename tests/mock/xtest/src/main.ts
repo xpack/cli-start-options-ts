@@ -32,23 +32,18 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-import {
-  CliApplication,
-  CliConfiguration,
-  CliOptions,
-  CliContext
-} from '../../../../esm/index.js'
+import * as cli from '../../../../esm/index.js'
 
 // ============================================================================
 
-interface XtestConfig extends CliConfiguration {
+interface XtestConfig extends cli.Configuration {
   extra: boolean
 }
 
-export class Xtest extends CliApplication {
+export class Xtest extends cli.Application {
   // --------------------------------------------------------------------------
 
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Mandatory, must be set here, not in the library, since it computes
@@ -66,20 +61,20 @@ export class Xtest extends CliApplication {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    CliOptions.addCommand(['copy', 'c'], 'src/xtest/copy.js')
-    CliOptions.addCommand(['notclass'], 'src/xtest/not-class.js')
+    cli.Options.addCommand(['copy', 'c'], 'src/xtest/copy.js')
+    cli.Options.addCommand(['notclass'], 'src/xtest/not-class.js')
     // Non existent.
-    CliOptions.addCommand(['con'], 'src/xtest/con.js')
-    CliOptions.addCommand(['verbosity', 'c'], 'src/xtest/verbosity.js')
-    CliOptions.addCommand(['long'], 'src/xtest/long.js')
-    CliOptions.addCommand(['many'], 'src/xtest/many.js')
-    CliOptions.addCommand(['gen'], 'src/xtest/generator.js')
-    CliOptions.addCommand(['unimpl'], 'src/xtest/unimpl.js')
-    CliOptions.addCommand(['cwd'], 'src/xtest/cwd.js')
+    cli.Options.addCommand(['con'], 'src/xtest/con.js')
+    cli.Options.addCommand(['verbosity', 'c'], 'src/xtest/verbosity.js')
+    cli.Options.addCommand(['long'], 'src/xtest/long.js')
+    cli.Options.addCommand(['many'], 'src/xtest/many.js')
+    cli.Options.addCommand(['gen'], 'src/xtest/generator.js')
+    cli.Options.addCommand(['unimpl'], 'src/xtest/unimpl.js')
+    cli.Options.addCommand(['cwd'], 'src/xtest/cwd.js')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
-    CliOptions.addOptionGroups(
+    cli.Options.addOptionGroups(
       [
         {
           title: 'Extra options',

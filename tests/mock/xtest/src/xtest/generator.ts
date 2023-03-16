@@ -23,15 +23,11 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
-import {
-  CliCommand,
-  CliContext,
-  CliExitCodes
-} from '../../../../../esm/index.js'
+import * as cli from '../../../../../esm/index.js'
 
 // ============================================================================
 
-export class Generator extends CliCommand {
+export class Generator extends cli.Command {
   // --------------------------------------------------------------------------
 
   /**
@@ -39,7 +35,7 @@ export class Generator extends CliCommand {
    *
    * @param context Reference to a context.
    */
-  constructor (context: CliContext) {
+  constructor (context: cli.Context) {
     super(context)
 
     // Title displayed with the help message.
@@ -69,7 +65,7 @@ export class Generator extends CliCommand {
     log.output(util.inspect(object, { depth: 3 }))
 
     log.info('Done.')
-    return CliExitCodes.SUCCESS
+    return cli.ExitCodes.SUCCESS
   }
 }
 

@@ -22,8 +22,8 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { CliConfiguration } from './configuration.js'
-import { CliOptions } from './options.js'
+import { Configuration } from './configuration.js'
+import { Options } from './options.js'
 
 // ----------------------------------------------------------------------------
 
@@ -45,14 +45,9 @@ export interface NpmPackageJson {
   }
 }
 
-export interface CliContextConstructorParameters {
-  programName: string
-  console?: Console | undefined
-  log?: Logger | undefined
-  config?: CliConfiguration | undefined
-}
+export class Context {
+  // --------------------------------------------------------------------------
 
-export class CliContext {
   /** The invocation name of the program. */
   programName: string
   /** Reference to a node console. */
@@ -60,7 +55,7 @@ export class CliContext {
   /** Reference to an xPack Logger instance. */
   log: Logger
   /** Reference to a configuration. */
-  config: CliConfiguration
+  config: Configuration
   cmdPath: string
   processCwd: string
   processEnv: NodeJS.ProcessEnv
@@ -92,7 +87,12 @@ export class CliContext {
 
   // --------------------------------------------------------------------------
 
-  constructor (params: CliContextConstructorParameters) {
+  constructor (params: {
+    programName: string
+    console?: Console | undefined
+    log?: Logger | undefined
+    config?: Configuration | undefined
+  }) {
     this.programName = params.programName
 
     // REPL should always set the console to the REPL inout/output streams.
@@ -114,9 +114,9 @@ export class CliContext {
 
     // Initialise the configuration.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    this.config = params.config ?? new CliConfiguration()
+    this.config = params.config ?? new Configuration()
 
-    CliOptions.initialise(this)
+    Options.initialise(this)
   }
 }
 

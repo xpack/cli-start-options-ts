@@ -33,18 +33,22 @@ export const ERROR = {
   TYPE: 7
 }
 
-export const CliExitCodes = {
+export const ExitCodes = {
   ERROR,
   SUCCESS: ERROR.NONE
 }
 
 // ============================================================================
 
+// The local names are prefixed, to avoid confusion with system definitions.
+// The exported definitions are expected to be used as `cli.Error`, so no
+// confusions.
+
 /**
  * @classdesc
  * Base class for all CLI triggered errors.
  */
-export class CliError extends Error {
+class CliError extends Error {
   // --------------------------------------------------------------------------
 
   public exitCode: number
@@ -65,12 +69,14 @@ export class CliError extends Error {
   }
 }
 
+export { CliError as Error }
+
 /**
  * @classdesc
  * CLI triggered syntax error.
  * Will try to be helpful (using help())
  */
-export class CliErrorSyntax extends CliError {
+class CliSyntaxError extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -86,6 +92,8 @@ export class CliErrorSyntax extends CliError {
   }
 }
 
+export { CliSyntaxError as SyntaxError }
+
 /**
  * @classdesc
  * CLI triggered application error.
@@ -93,7 +101,7 @@ export class CliErrorSyntax extends CliError {
  * @deprecated
  * Use CliError without any error code.
  */
-export class CliErrorApplication extends CliError {
+class CliApplicationError extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -109,11 +117,13 @@ export class CliErrorApplication extends CliError {
   }
 }
 
+export { CliApplicationError as ApplicationError }
+
 /**
  * @classdesc
  * CLI triggered type error.
  */
-export class CliErrorType extends CliError {
+class CliTypeError extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -129,11 +139,13 @@ export class CliErrorType extends CliError {
   }
 }
 
+export { CliTypeError as TypeError }
+
 /**
  * @classdesc
  * CLI triggered input error.
  */
-export class CliErrorInput extends CliError {
+export class CliInputError extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -149,7 +161,9 @@ export class CliErrorInput extends CliError {
   }
 }
 
-export class CliErrorOutput extends CliError {
+export { CliInputError as InputError }
+
+class CliOutputError extends CliError {
   // --------------------------------------------------------------------------
 
   /**
@@ -164,5 +178,7 @@ export class CliErrorOutput extends CliError {
     super(message, ERROR.OUTPUT)
   }
 }
+
+export { CliOutputError as OutputError }
 
 // ----------------------------------------------------------------------------
