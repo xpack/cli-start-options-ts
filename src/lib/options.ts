@@ -33,8 +33,8 @@ import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
 
-// TODO: support --option=[value]
-// TODO: support abbreviations, as long as unique
+// TODO: support --option=[value] (#26)
+// TODO: support abbreviations, as long as unique (#27)
 // (GNU also recommends to support concatenated single letter options)
 
 // ============================================================================
