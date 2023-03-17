@@ -48,7 +48,7 @@ export const ExitCodes = {
  * @classdesc
  * Base class for all CLI triggered errors.
  */
-class CliError extends Error {
+class _Error extends Error {
   // --------------------------------------------------------------------------
 
   public exitCode: number
@@ -69,14 +69,14 @@ class CliError extends Error {
   }
 }
 
-export { CliError as Error }
+export { _Error as Error }
 
 /**
  * @classdesc
  * CLI triggered syntax error.
  * Will try to be helpful (using help())
  */
-class CliSyntaxError extends CliError {
+class _SyntaxError extends _Error {
   // --------------------------------------------------------------------------
 
   /**
@@ -85,23 +85,23 @@ class CliSyntaxError extends CliError {
    * @param message Error description.
    *
    * @description
-   * Create a CliError instance with the ERROR.SYNTAX error code.
+   * Create a cli.Error instance with the ERROR.SYNTAX error code.
    */
   constructor (message: string) {
     super(message, ERROR.SYNTAX)
   }
 }
 
-export { CliSyntaxError as SyntaxError }
+export { _SyntaxError as SyntaxError }
 
 /**
  * @classdesc
  * CLI triggered application error.
  *
  * @deprecated
- * Use CliError without any error code.
+ * Use cli.Error without any error code.
  */
-class CliApplicationError extends CliError {
+class _ApplicationError extends _Error {
   // --------------------------------------------------------------------------
 
   /**
@@ -110,20 +110,20 @@ class CliApplicationError extends CliError {
    * @param message Error description.
    *
    * @description
-   * Create a CliError instance with the ERROR.APPLICATION error code.
+   * Create a cli.Error instance with the ERROR.APPLICATION error code.
    */
   constructor (message: string) {
     super(message, ERROR.APPLICATION)
   }
 }
 
-export { CliApplicationError as ApplicationError }
+export { _ApplicationError as ApplicationError }
 
 /**
  * @classdesc
  * CLI triggered type error.
  */
-class CliTypeError extends CliError {
+class _TypeError extends _Error {
   // --------------------------------------------------------------------------
 
   /**
@@ -132,20 +132,20 @@ class CliTypeError extends CliError {
    * @param message Error description.
    *
    * @description
-   * Create a CliError instance with the ERROR.TYPE error code.
+   * Create a cli.Error instance with the ERROR.TYPE error code.
    */
   constructor (message: string) {
     super(message, ERROR.TYPE)
   }
 }
 
-export { CliTypeError as TypeError }
+export { _TypeError as TypeError }
 
 /**
  * @classdesc
  * CLI triggered input error.
  */
-export class CliInputError extends CliError {
+export class _InputError extends _Error {
   // --------------------------------------------------------------------------
 
   /**
@@ -154,16 +154,16 @@ export class CliInputError extends CliError {
    * @param message Error description.
    *
    * @description
-   * Create a CliError instance with the ERROR.INPUT error code.
+   * Create a cli.Error instance with the ERROR.INPUT error code.
    */
   constructor (message: string) {
     super(message, ERROR.INPUT)
   }
 }
 
-export { CliInputError as InputError }
+export { _InputError as InputError }
 
-class CliOutputError extends CliError {
+class _OutputError extends _Error {
   // --------------------------------------------------------------------------
 
   /**
@@ -172,13 +172,13 @@ class CliOutputError extends CliError {
    * @param message Error description.
    *
    * @description
-   * Create a CliError instance with the ERROR.OUTPUT error code.
+   * Create a cli.Error instance with the ERROR.OUTPUT error code.
    */
   constructor (message: string) {
     super(message, ERROR.OUTPUT)
   }
 }
 
-export { CliOutputError as OutputError }
+export { _OutputError as OutputError }
 
 // ----------------------------------------------------------------------------
