@@ -70,7 +70,7 @@ export class Command {
   public title: string
   public optionGroups: OptionGroup[]
 
-  // All args, as received from CliCommand.
+  // All args, as received from cli.Command.
   public unparsedArgs: string[] = []
   public commandArgs: string[] = []
 
@@ -173,7 +173,7 @@ export class Command {
     _argv: string[] // Unused
   ): Promise<number> {
     assert(false,
-      'Define a run() method in the CliCommand derived class.')
+      'Define a run() method in the cli.Command derived class.')
   }
 
   /**

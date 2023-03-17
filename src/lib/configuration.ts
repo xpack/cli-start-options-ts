@@ -22,7 +22,7 @@ import { LogLevel } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-// import { CliContext } from './cli-context.js'
+// import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export class Configuration {
 
   interactiveServerPort: number | undefined = undefined
 
-  // constructor (_context: CliContext) {
+  // constructor (_context: cli.Context) {
   //   // All members already initialised.
   // }
 }

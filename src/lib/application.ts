@@ -51,7 +51,7 @@ import * as semver from 'semver'
 
 import { Command } from './command.js'
 import { Context, NpmPackageJson } from './context.js'
-// import { CliConfiguration } from './cli-configuration.js'
+// import { Configuration } from './configuration.js'
 import { Options, OptionFoundModule } from './options.js'
 
 import { Help } from './help.js'
@@ -960,7 +960,7 @@ export class Application {
     return exitCode
   }
 
-  // Search for classes derived from CliCommand.
+  // Search for classes derived from cli.Command.
   async findCommandClass (
     rootPath: string,
     moduleRelativePath: string
@@ -973,7 +973,8 @@ export class Application {
     // explicit `file://` is mandatory.
     const moduleExports = await import(`file://${modulePath.toString()}`)
 
-    // Return the first exported class derived from parent class (`CliCommand`).
+    // Return the first exported class derived from parent
+    // class (`cli.Command`).
     for (const property in moduleExports) {
       const obj = moduleExports[property]
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -989,7 +990,7 @@ export class Application {
 
   async run (_args: string[]): Promise<number> {
     assert(false, 'For applications that do not have sub-commands, ' +
-      'define a run() method in the CliApplication derived class')
+      'define a run() method in the cli.Application derived class')
   }
 }
 

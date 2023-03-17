@@ -27,7 +27,8 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-import { SyntaxError as CliSyntaxError } from './error.js'
+// Hack to keep the cli.SyntaxError notation consistent.
+import * as cli from './error.js'
 import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
@@ -238,7 +239,7 @@ export class Options {
    *
    * @example
    * // Test with two aliases, one of them being also a shorthand.
-   * CliOptions.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
+   * cli.Options.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
    */
   static addCommand (
     commands: string | string[],
@@ -388,7 +389,7 @@ export class Options {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
-    assert(staticThis.context, 'CliContext not initialised')
+    assert(staticThis.context, 'cli.Context not initialised')
     const log = staticThis.context.log
     log.trace(`${Function.prototype.name}()`)
 
@@ -529,7 +530,7 @@ export class Options {
         // args[index + 1].processed = true
       } else {
         // Error, expected option value not available.
-        throw new CliSyntaxError(`'${arg}' expects a value`)
+        throw new cli.SyntaxError(`'${arg}' expects a value`)
       }
       if (Array.isArray(optionDefinition.values)) {
         // If a list of allowed values is present,
@@ -544,7 +545,7 @@ export class Options {
           }
         }
         // Error, illegal option value
-        throw new CliSyntaxError(`Value '${value}' not allowed for '${arg}'`)
+        throw new cli.SyntaxError(`Value '${value}' not allowed for '${arg}'`)
       } else {
         // Call the action to set the configuration value
         optionDefinition.action(context, value)
@@ -569,7 +570,7 @@ export class Options {
    * @returns
    *  An object with a class that implements the given command,
    *  the full command as a string array, and the remaining args.
-   * @throws CliErrorSyntax The command was not recognised or
+   * @throws cli.SyntaxError The command was not recognised or
    *  is not unique, or the module does not implement CmdClass.
    *
    * @description
@@ -578,13 +579,13 @@ export class Options {
    *
    * To get the full command name, continue the walk down to a space.
    *
-   * Due to circular references, cannot import CliCommand here,
+   * Due to circular references, cannot import cli.Command here,
    * so it must be passed from the caller.
    */
   static findCommandModule (
     commands: string[]
     // rootPath: string
-    // parentClass: typeof CliCommand
+    // parentClass: typeof cli.Command
   ): OptionFoundModule {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
@@ -623,7 +624,7 @@ export class Options {
             break
           }
           // TODO: suggest unique commands.
-          throw new CliSyntaxError(`Command '${str.trim()}' not supported.`)
+          throw new cli.SyntaxError(`Command '${str.trim()}' not supported.`)
         }
         node = found
         if (node.relativeFilePath !== undefined &&
@@ -634,7 +635,7 @@ export class Options {
         }
       }
       if (moduleRelativePath === undefined) {
-        throw new CliSyntaxError(`Command '${str.trim()}' is not unique.`)
+        throw new cli.SyntaxError(`Command '${str.trim()}' is not unique.`)
       }
       remainingCommands = []
       for (; i < strArr.length; ++i) {
