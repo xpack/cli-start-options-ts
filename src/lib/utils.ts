@@ -63,4 +63,16 @@ Promise<NpmPackageJson> {
   return JSON.parse(fileContent.toString())
 }
 
+/**
+ * @summary Convert a duration in ms to seconds if larger than 1000.
+ * @param millis Duration in milliseconds.
+ * @returns Value in ms or sec.
+ */
+export function formatDuration (millis: number): string {
+  if (millis < 1000) {
+    return `${millis} ms`
+  }
+  return `${(millis / 1000).toFixed(3)} sec`
+}
+
 // ----------------------------------------------------------------------------

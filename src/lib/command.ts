@@ -44,6 +44,7 @@ import { ExitCodes } from './error.js'
 import { Help, MultiPass } from './help.js'
 import { Options, OptionGroup } from './options.js'
 import { Configuration } from './configuration.js'
+import { formatDuration } from './utils.js'
 
 // ============================================================================
 
@@ -218,18 +219,6 @@ export class Command {
   }
 
   /**
-   * @summary Convert a duration in ms to seconds if larger than 1000.
-   * @param millis Duration in milliseconds.
-   * @returns Value in ms or sec.
-   */
-  formatDuration (millis: number): string {
-    if (millis < 1000) {
-      return `${millis} ms`
-    }
-    return `${(millis / 1000).toFixed(3)} sec`
-  }
-
-  /**
    * @summary Display Done and the durations.
    * @returns Nothing.
    */
@@ -238,7 +227,7 @@ export class Command {
     const context = this.context
 
     log.info()
-    const durationString = this.formatDuration(Date.now() - context.startTime)
+    const durationString = formatDuration(Date.now() - context.startTime)
     const cmdDisplay = context.commands !== undefined
       ? [context.programName].concat(context.commands).join(' ')
       : context.programName
