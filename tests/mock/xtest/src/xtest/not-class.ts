@@ -9,7 +9,6 @@
  * be obtained from https://opensource.org/licenses/mit/.
  */
 
-'use strict'
 /* eslint max-len: [ "error", 80, { "ignoreUrls": true } ] */
 
 // ----------------------------------------------------------------------------
