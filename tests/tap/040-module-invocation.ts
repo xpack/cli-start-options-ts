@@ -52,7 +52,7 @@ let pack: cli.NpmPackageJson
 await test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   const rootPath = mockPath('xtest')
-  pack = await cli.Application.readPackageJson(rootPath)
+  pack = await cli.readPackageJson(rootPath)
   t.ok(pack, 'package parsed')
   t.ok(pack.version.length > 0, 'version length > 0')
   t.pass(`package ${pack.name}@${pack.version}`)
@@ -99,7 +99,7 @@ await test('setup', async (t) => {
 describe('setup', () => {
   context('when reading package.json', async function () {
     // Read in the package.json, to later compare version.
-    pack = await CliApplication.readPackageJson()
+    pack = await cli.readPackageJson()
     it('json object exists', () => { pack.should.not.equal(null) })
     it('version string is not empty', () => {
       pack.version.should.be.type('string').and.not.be.empty() })

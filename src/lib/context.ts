@@ -24,26 +24,9 @@ import { Logger } from '@xpack/logger'
 
 import { Configuration } from './configuration.js'
 import { Options } from './options.js'
+import { NpmPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
-
-export interface NpmPackageJson {
-  name: string
-  version: string
-  description?: string
-  homepage?: string
-  bugs?: {
-    url?: string
-  }
-  author?: string | {
-    name?: string
-    email?: string
-    url?: string
-  }
-  engines?: {
-    node?: string
-  }
-}
 
 export class Context {
   // --------------------------------------------------------------------------

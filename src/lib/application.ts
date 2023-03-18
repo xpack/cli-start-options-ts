@@ -22,7 +22,6 @@
 
 import { strict as assert } from 'node:assert'
 import { Console } from 'node:console'
-import * as fs from 'node:fs'
 import * as net from 'node:net'
 import * as path from 'node:path'
 // import * as process from 'node:process'
@@ -50,17 +49,14 @@ import * as semver from 'semver'
 // import { WscriptAvoider } from 'wscript-avoider'
 
 import { Command } from './command.js'
-import { Context, NpmPackageJson } from './context.js'
+import { Context } from './context.js'
 // import { Configuration } from './configuration.js'
 import { Options, OptionFoundModule } from './options.js'
 
 import { Help } from './help.js'
 import { ExitCodes } from './error.js'
 import * as cli from './error.js'
-
-// ----------------------------------------------------------------------------
-
-const fsPromises = fs.promises
+import { readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
 // Logger configuration
@@ -206,26 +202,6 @@ export class Application {
       'Mandatory program name')
 
     return programName
-  }
-
-  /**
-   * @summary Read package JSON file.
-   *
-   * @param rootPath The absolute path of the package.
-   * @returns The package definition, unmodified.
-   * @throws Error from `fs.readFile()` or `JSON.parse()`.
-   *
-   * @description
-   * By default, this function uses the package root path
-   * stored in the class property during initialisation.
-   * When called from tests, the path must be passed explicitly.
-   */
-  static async readPackageJson (rootPath: string): Promise<NpmPackageJson> {
-    assert(rootPath)
-    const filePath = path.join(rootPath, 'package.json')
-    const fileContent = await fsPromises.readFile(filePath)
-    assert(fileContent !== null)
-    return JSON.parse(fileContent.toString())
   }
 
   // --------------------------------------------------------------------------
@@ -454,7 +430,7 @@ export class Application {
 
     assert(context.rootPath)
     context.packageJson =
-      await Application.readPackageJson(context.rootPath)
+      await readPackageJson(context.rootPath)
 
     const packageJson = context.packageJson
 

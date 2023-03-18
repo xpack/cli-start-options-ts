@@ -50,5 +50,6 @@ export * from './lib/context.js'
 export * from './lib/error.js'
 export * from './lib/help.js'
 export * from './lib/options.js'
+export * from './lib/utils.js'
 
 // ----------------------------------------------------------------------------
