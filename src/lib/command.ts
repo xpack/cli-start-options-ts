@@ -100,10 +100,10 @@ export class Command {
   /**
    * @summary Execute the command.
    *
-   * @param args Array of arguments.
+   * @param argv Array of arguments.
    * @returns Return code.
    */
-  async prepareAndRun (args: string[]): Promise<number> {
+  async prepareAndRun (argv: string[]): Promise<number> {
     const log = this.log
     log.trace(`${this.constructor.name}.run()`)
 
@@ -111,10 +111,10 @@ export class Command {
     const config: Configuration = context.config
 
     // Remember the original args.
-    this.unparsedArgs = args
+    this.unparsedArgs = argv
 
     // Parse the args and return the remaining args, like package names.
-    const remainingArgs: string[] = Options.parseOptions(args, context,
+    const remainingArgs: string[] = Options.parseOptions(argv, context,
       this.optionGroups)
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {

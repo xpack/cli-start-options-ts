@@ -368,7 +368,7 @@ export class Options {
   /**
    * @summary Parse options, common and specific to a command.
    *
-   * @param args Array of arguments.
+   * @param argv Array of arguments.
    * @param context Reference to the context object
    * @param optionGroups Optional reference to command specific options.
    * @returns Array of remaining arguments.
@@ -382,7 +382,7 @@ export class Options {
    * Arguments not identified as options are returned, in order.
    */
   static parseOptions (
-    args: string[],
+    argv: string[],
     context: Context,
     optionGroups: OptionGroup[] | null = null
   ): string[] {
@@ -416,8 +416,8 @@ export class Options {
     const remainingArgs: string[] = []
     let wasProcessed = false
     let i = 0
-    for (; i < args.length; ++i) {
-      const arg = args[i] ?? ''
+    for (; i < argv.length; ++i) {
+      const arg = argv[i] ?? ''
       if (arg === '--') {
         break
       }
@@ -430,7 +430,7 @@ export class Options {
           // Iterate all aliases.
           for (const alias of aliases) {
             if (arg === alias) {
-              i += staticThis.processOption(args, i, optionDefinition, context)
+              i += staticThis.processOption(argv, i, optionDefinition, context)
               wasProcessed = true
               break
             }
@@ -446,8 +446,8 @@ export class Options {
     }
     // If the previous look was terminated by a `--`,
     // copy the remaining arguments.
-    for (; i < args.length; ++i) {
-      const arg = args[i]
+    for (; i < argv.length; ++i) {
+      const arg = argv[i]
       if (arg !== undefined) {
         remainingArgs.push(arg)
       }
@@ -493,7 +493,7 @@ export class Options {
   /**
    * @summary Process an option.
    *
-   * @param args All input args.
+   * @param argv All input arguments.
    * @param index Index of the current arg.
    * @param optionDefinition Reference to the current option
    *   definition.
@@ -511,12 +511,12 @@ export class Options {
    * @todo process --opt=value syntax.
    */
   private static processOption (
-    args: string[],
+    argv: string[],
     index: number,
     optionDefinition: OptionDefinition,
     context: Context
   ): number {
-    const arg: string = args[index] ?? ''
+    const arg: string = argv[index] ?? ''
     let value: string
     // Values can be only an array, or null.
     // An array means the option takes a value.
@@ -524,10 +524,10 @@ export class Options {
         optionDefinition.hasValue) ||
       optionDefinition.param !== undefined ||
       Array.isArray(optionDefinition.values)) {
-      if (index < (args.length - 1)) {
+      if (index < (argv.length - 1)) {
         // Not the last option; engulf the next arg.
-        value = args[index + 1] ?? ''
-        // args[index + 1].processed = true
+        value = argv[index + 1] ?? ''
+        // argv[index + 1].processed = true
       } else {
         // Error, expected option value not available.
         throw new cli.SyntaxError(`'${arg}' expects a value`)
@@ -661,12 +661,12 @@ export class Options {
   /**
    * @summary Return args up to the first `--`.
    *
-   * @param args Array of strings.
+   * @param argv Array of strings.
    * @returns Possibly a shorter array.
    */
-  static filterOwnArguments (args: string[]): string[] {
+  static filterOwnArguments (argv: string[]): string[] {
     const ownArgs: string[] = []
-    for (const arg of args) {
+    for (const arg of argv) {
       if (arg === '--') {
         break
       }
@@ -678,13 +678,13 @@ export class Options {
   /**
    * @summary Return args after the first `--`, if any.
    *
-   * @param args Array of strings.
+   * @param argv Array of strings.
    * @returns A shorter array, possibly empty.
    */
-  static filterOtherArguments (args: string[]): string[] {
+  static filterOtherArguments (argv: string[]): string[] {
     const otherArgs: string[] = []
     let hasOther = false
-    for (const arg of args) {
+    for (const arg of argv) {
       if (hasOther) {
         otherArgs.push(arg)
       } else if (arg === '--') {

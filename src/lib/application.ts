@@ -732,9 +732,9 @@ export class Application {
     // Catch errors, this is an old style callback.
     try {
       // Split command line and remove any number of spaces.
-      const args = evalCmd.trim().split(/\s+/)
+      const argv = evalCmd.trim().split(/\s+/)
 
-      const exitCode = await this.dispatchCommands(args)
+      const exitCode = await this.dispatchCommands(argv)
       log.verbose(`exit(${exitCode})`)
 
       // The last executed command exit code is passed as process exit code.

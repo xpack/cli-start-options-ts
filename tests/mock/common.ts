@@ -76,7 +76,7 @@ export class Common {
    *
    * @async
    * @param appAbsolutePath Program name.
-   * @param args Command line arguments.
+   * @param argv Command line arguments.
    * @param spawnOpts Optional spawn options.
    * @returns Exit
    *  code and captured output/error streams.
@@ -87,7 +87,7 @@ export class Common {
    */
   static async cli (
     appAbsolutePath: string,
-    args: string[],
+    argv: string[],
     spawnOpts: SpawnOptionsWithoutStdio = {}
   ): Promise<cliResult> {
     return await new Promise((resolve, reject) => {
@@ -102,7 +102,7 @@ export class Common {
       let stdout: string = ''
       let stderr: string = ''
 
-      const cmd = [appAbsolutePath, ...args]
+      const cmd = [appAbsolutePath, ...argv]
 
       // console.log(`${nodeBin} ${cmd.join(' ')}`)
       const child = spawn(nodeBin, cmd, spawnOpts)
@@ -130,55 +130,55 @@ export class Common {
   }
 
   static async xtestCli (
-    args: string[],
+    argv: string[],
     spawnOpts: SpawnOptionsWithoutStdio = {}
   ): Promise<cliResult> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
-    return await staticThis.cli(appAbsolutePath('xtest'), args, spawnOpts)
+    return await staticThis.cli(appAbsolutePath('xtest'), argv, spawnOpts)
   }
 
   static async a1testCli (
-    args: string[],
+    argv: string[],
     spawnOpts: SpawnOptionsWithoutStdio = {}
   ): Promise<cliResult> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
-    return await staticThis.cli(appAbsolutePath('a1test'), args, spawnOpts)
+    return await staticThis.cli(appAbsolutePath('a1test'), argv, spawnOpts)
   }
 
   static async a2testCli (
-    args: string[],
+    argv: string[],
     spawnOpts: SpawnOptionsWithoutStdio = {}
   ): Promise<cliResult> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
-    return await staticThis.cli(appAbsolutePath('a2test'), args, spawnOpts)
+    return await staticThis.cli(appAbsolutePath('a2test'), argv, spawnOpts)
   }
 
   static async a3testCli (
-    args: string[],
+    argv: string[],
     spawnOpts: SpawnOptionsWithoutStdio = {}
   ): Promise<cliResult> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
-    return await staticThis.cli(appAbsolutePath('a3test'), args, spawnOpts)
+    return await staticThis.cli(appAbsolutePath('a3test'), argv, spawnOpts)
   }
 
   static async wtestCli (
-    args: string[],
+    argv: string[],
     spawnOpts: SpawnOptionsWithoutStdio = {}
   ): Promise<cliResult> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
     return await staticThis.cli(
-      appAbsolutePath('wtest-long-name', 'wtest'), args, spawnOpts)
+      appAbsolutePath('wtest-long-name', 'wtest'), argv, spawnOpts)
   }
 
   /**
    * @summary Run xtest as a library call.
    *
-   * @param args Command line arguments
+   * @param argv Command line arguments
    * @returns Exit code and captured output/error streams.
    *
    * @description
@@ -186,7 +186,7 @@ export class Common {
    * the exit code and the stdio streams captured in strings.
    */
   static async xtestLib (
-    args: string[]
+    argv: string[]
   ): Promise<cliResult> {
     assert(Xtest !== null, 'No application class')
     // Create two streams to local strings.
@@ -215,7 +215,7 @@ export class Common {
         log: mockLog
       })
     const app = new Xtest(context)
-    const code = await app.run(args)
+    const code = await app.run(argv)
     return { code, stdout, stderr }
   }
 
