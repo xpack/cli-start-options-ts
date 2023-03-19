@@ -61,16 +61,16 @@ export class Xtest extends cli.Application {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    cli.Options.addCommand(['copy', 'c'], 'src/xtest/copy.js')
-    cli.Options.addCommand(['notclass'], 'src/xtest/not-class.js')
+    this.commandsTree.addCommand(['copy', 'c'], 'src/xtest/copy.js')
+    this.commandsTree.addCommand(['notclass'], 'src/xtest/not-class.js')
     // Non existent.
-    cli.Options.addCommand(['con'], 'src/xtest/con.js')
-    cli.Options.addCommand(['verbosity', 'c'], 'src/xtest/verbosity.js')
-    cli.Options.addCommand(['long'], 'src/xtest/long.js')
-    cli.Options.addCommand(['many'], 'src/xtest/many.js')
-    cli.Options.addCommand(['gen'], 'src/xtest/generator.js')
-    cli.Options.addCommand(['unimpl'], 'src/xtest/unimpl.js')
-    cli.Options.addCommand(['cwd'], 'src/xtest/cwd.js')
+    this.commandsTree.addCommand(['con'], 'src/xtest/con.js')
+    this.commandsTree.addCommand(['verbosity', 'c'], 'src/xtest/verbosity.js')
+    this.commandsTree.addCommand(['long'], 'src/xtest/long.js')
+    this.commandsTree.addCommand(['many'], 'src/xtest/many.js')
+    this.commandsTree.addCommand(['gen'], 'src/xtest/generator.js')
+    this.commandsTree.addCommand(['unimpl'], 'src/xtest/unimpl.js')
+    this.commandsTree.addCommand(['cwd'], 'src/xtest/cwd.js')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

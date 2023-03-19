@@ -61,12 +61,12 @@ export class Wtest extends cli.Application {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    cli.Options.addCommand(['one-long-command'], '')
-    cli.Options.addCommand(['two-long-command'], '')
-    cli.Options.addCommand(['three-long-command'], '')
-    cli.Options.addCommand(['four-long-command'], '')
-    cli.Options.addCommand(['five-long-command'], '')
-    cli.Options.addCommand(['six-long-command'], '')
+    this.commandsTree.addCommand(['one-long-command'], '')
+    this.commandsTree.addCommand(['two-long-command'], '')
+    this.commandsTree.addCommand(['three-long-command'], '')
+    this.commandsTree.addCommand(['four-long-command'], '')
+    this.commandsTree.addCommand(['five-long-command'], '')
+    this.commandsTree.addCommand(['six-long-command'], '')
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

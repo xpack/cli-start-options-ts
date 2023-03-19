@@ -49,9 +49,10 @@ import * as semver from 'semver'
 // import { WscriptAvoider } from 'wscript-avoider'
 
 import { Command } from './command.js'
+import { CommandsTree, FoundCommandModule } from './commands-tree.js'
 import { Context } from './context.js'
 // import { Configuration } from './configuration.js'
-import { Options, OptionsGroup, OptionFoundModule } from './options.js'
+import { Options, OptionsGroup } from './options.js'
 
 import { Help, MultiPass } from './help.js'
 import { ExitCodes } from './error.js'
@@ -209,6 +210,8 @@ export class Application {
   public context: Context
   public latestVersionPromise: Promise<string> | undefined = undefined
   public optionsGroups: OptionsGroup[] = []
+
+  protected commandsTree: CommandsTree = new CommandsTree()
 
   /**
    * @summary Constructor, to remember the context.
@@ -500,7 +503,7 @@ export class Application {
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
     const commands: string[] = []
-    if (Options.hasCommands()) {
+    if (this.commandsTree.hasCommands()) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
@@ -749,7 +752,7 @@ export class Application {
 
     const packageJson = this.context.packageJson
     const commonOptionsGroups = Options.getCommonOptionsGroups()
-    const commands = Options.getUnaliasedCommands()
+    const commands = this.commandsTree.getUnaliasedCommands()
 
     // Show top (application) help.
 
@@ -823,7 +826,7 @@ export class Application {
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
     const commands: string[] = []
-    if (Options.hasCommands()) {
+    if (this.commandsTree.hasCommands()) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
@@ -854,7 +857,7 @@ export class Application {
     let exitCode: number = ExitCodes.SUCCESS
     try {
       // The complex application, with multiple commands.
-      if (Options.hasCommands()) {
+      if (this.commandsTree.hasCommands()) {
         if (commands.length === 0) {
           log.error('Missing mandatory command.')
           this.outputHelp()
@@ -862,7 +865,7 @@ export class Application {
         }
 
         // Throws not supported or not unique.
-        const found: OptionFoundModule = Options.findCommandModule(
+        const found: FoundCommandModule = this.commandsTree.findCommandModule(
           commands)
 
         assert(context.rootPath)

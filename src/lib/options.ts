@@ -29,7 +29,6 @@ import { strict as assert } from 'node:assert'
 
 // Hack to keep the cli.SyntaxError notation consistent.
 import * as cli from './error.js'
-import { Node } from './characters-node.js'
 import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
@@ -103,12 +102,6 @@ export interface OptionsGroup {
   optionsDefinitions: OptionDefinition[]
 }
 
-export interface OptionFoundModule {
-  moduleRelativePath: string
-  matchedCommands: string[]
-  unusedCommands: string[]
-}
-
 // ============================================================================
 
 /**
@@ -125,10 +118,7 @@ export class Options {
   // --------------------------------------------------------------------------
 
   static context: Context
-  static moduleRelativePath: string
 
-  private static commandsTree: Node = new Node(null)
-  private static unaliasedCommands: string[]
   private static commonOptionsGroups: OptionsGroup[]
 
   /**
@@ -143,74 +133,7 @@ export class Options {
 
     staticThis.context = context
 
-    staticThis.commandsTree = new Node(null)
-    staticThis.unaliasedCommands = []
     staticThis.commonOptionsGroups = []
-  }
-
-  /**
-   * @summary Add commands to the tree.
-   *
-   * @param commands Array of commands with possible aliases.
-   * @param relativeFilePath Path to module that implements
-   *   the command.
-   *
-   * @returns Nothing.
-   *
-   * @example
-   * // Test with two aliases, one of them being also a shorthand.
-   * cli.Options.addCommand(['test', 't', 'tst'], 'lib/xmake/test.js')
-   */
-  static addCommand (
-    commands: string | string[],
-    relativeFilePath: string
-  ): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    const commandsArray: string[] =
-      Array.isArray(commands) ? commands : [commands]
-
-    assert(commandsArray.length > 0 && commandsArray[0] !== undefined,
-      'The command array must have at least one entry')
-
-    // The first command in the array should be the full length one.
-    const unaliasedCommand: string = commandsArray[0].trim()
-    assert(unaliasedCommand.length > 0, 'The command must be non empty')
-
-    staticThis.unaliasedCommands.push(unaliasedCommand)
-
-    const curedRelativeFilePath = relativeFilePath.trim()
-    commandsArray.forEach((command) => {
-      // Be sure the commands end with a space, and
-      // multiple spaces are collapsed.
-      const curedCommand: string =
-        (command + ' ').toLowerCase().replace(/\s+/, ' ')
-
-      // With empty parameter, split works at character level.
-      const characters: string[] = curedCommand.split('')
-
-      let node = staticThis.commandsTree
-      // Add children nodes for all characters, including the terminating space.
-      characters.forEach((character) => {
-        node = Node.add(
-          node, character, curedRelativeFilePath, unaliasedCommand)
-      })
-    })
-  }
-
-  /**
-   * @summary Manually define the file to implement the command.
-   * @param moduleRelativePath Path to module that implements
-   *   the command.
-   *
-   * @returns Nothing.
-   */
-  static setCommandFile (moduleRelativePath: string): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    staticThis.moduleRelativePath = moduleRelativePath
   }
 
   /**
@@ -253,24 +176,6 @@ export class Options {
         optionsGroup.optionsDefinitions.push(...optionDefinitions)
       }
     })
-  }
-
-  static hasCommands (): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    return staticThis.unaliasedCommands.length > 0
-  }
-
-  /**
-   * @summary Get array of commands.
-   *
-   * @returns Array of strings with the commands.
-   */
-  static getUnaliasedCommands (): string[] {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    return staticThis.unaliasedCommands
   }
 
   /**
@@ -395,8 +300,8 @@ export class Options {
     allOptionDefinitions.forEach((optionDefinition) => {
       if (!(optionDefinition.isOptional !== undefined &&
         optionDefinition.isOptional) &&
-      !(optionDefinition.wasProcessed !== undefined &&
-        optionDefinition.wasProcessed)) {
+        !(optionDefinition.wasProcessed !== undefined &&
+          optionDefinition.wasProcessed)) {
         const option = optionDefinition.options.join(' ')
         errors.push(`Mandatory '${option}' not found`)
       }
@@ -441,7 +346,7 @@ export class Options {
     // Values can be only an array, or null.
     // An array means the option takes a value.
     if ((optionDefinition.hasValue !== undefined &&
-        optionDefinition.hasValue) ||
+      optionDefinition.hasValue) ||
       optionDefinition.param !== undefined ||
       Array.isArray(optionDefinition.values)) {
       if (index < (argv.length - 1)) {
@@ -478,103 +383,6 @@ export class Options {
       optionDefinition.action(context, 'true')
       optionDefinition.wasProcessed = true
       return 0
-    }
-  }
-
-  /**
-   * @summary Find a class that implements the commands.
-   *
-   * @param commands The commands, as entered.
-   * @param rootPath The absolute path of the package.
-   * @param parentClass The base class of all commands.
-   * @returns
-   *  An object with a class that implements the given command,
-   *  the full command as a string array, and the remaining args.
-   * @throws cli.SyntaxError The command was not recognised or
-   *  is not unique, or the module does not implement CmdClass.
-   *
-   * @description
-   * Walk down the commands tree and return the first module path encountered.
-   * This means when a substring is deemed unique.
-   *
-   * To get the full command name, continue the walk down to a space.
-   *
-   * Due to circular references, cannot import cli.Command here,
-   * so it must be passed from the caller.
-   */
-  static findCommandModule (
-    commands: string[]
-    // rootPath: string
-    // parentClass: typeof cli.Command
-  ): OptionFoundModule {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    let fullCommands = ''
-    let moduleRelativePath
-    let remainingCommands: string[] = []
-
-    if (staticThis.moduleRelativePath !== undefined) {
-      // Shortcut, for single command applications.
-      moduleRelativePath = staticThis.moduleRelativePath
-    } else {
-      assert((staticThis.unaliasedCommands.length !== 0) &&
-        (staticThis.commandsTree !== null),
-      'No commands defined yet.')
-
-      // TODO: walk the tree.
-      const str: string = commands.join(' ').trim() + ' '
-
-      let node: Node = staticThis.commandsTree
-      const strArr = str.split('')
-      fullCommands = ''
-      let i: number
-      for (i = 0; i < strArr.length; ++i) {
-        const chr = strArr[i] ?? ''
-        fullCommands += chr
-        let found: Node | null = null
-        for (const child of node.children) {
-          if (chr === child.character) {
-            found = child
-            break
-          }
-        }
-        if (found == null) {
-          if (chr === ' ') {
-            break
-          }
-          // TODO: suggest unique commands.
-          throw new cli.SyntaxError(`Command '${str.trim()}' not supported.`)
-        }
-        node = found
-        if (node.relativeFilePath !== undefined &&
-          node.unaliasedCommand !== undefined) {
-          moduleRelativePath = node.relativeFilePath
-          fullCommands = node.unaliasedCommand.trim()
-          break
-        }
-      }
-      if (moduleRelativePath === undefined) {
-        throw new cli.SyntaxError(`Command '${str.trim()}' is not unique.`)
-      }
-      remainingCommands = []
-      for (; i < strArr.length; ++i) {
-        if (strArr[i] === ' ') {
-          if (i + 1 <= strArr.length - 1) {
-            const str = strArr.slice(i + 1, strArr.length - 1).join('')
-            if (str.length > 0) {
-              remainingCommands = str.split(' ')
-            }
-          }
-          break
-        }
-      }
-    }
-
-    return {
-      moduleRelativePath,
-      matchedCommands: fullCommands.split(' '),
-      unusedCommands: remainingCommands
     }
   }
 
