@@ -183,25 +183,22 @@ export class Command {
    * @returns Nothing.
    */
   outputHelp (): void {
-    const help: Help = new Help(this.context)
+    const context = this.context
 
-    help.outputCommandLine(this.title, this.optionsGroups)
+    const log = context.log
+    log.trace(`${this.constructor.name}.help()`)
 
-    const commonOptionGroups: OptionsGroup[] =
-      Options.getCommonOptionsGroups()
+    const help: Help = new Help(context)
 
-    help.twoPassAlign(() => {
-      this.outputHelpArgsDetails(help.multiPass)
+    const commonOptionsGroups: OptionsGroup[] =
+    Options.getCommonOptionsGroups()
 
-      this.optionsGroups.forEach((optionsGroup) => {
-        help.outputOptions(optionsGroup.optionsDefinitions, optionsGroup.title)
-      })
-      help.outputOptionsGroups(commonOptionGroups)
-      help.outputHelpDetails(commonOptionGroups)
-      help.outputEarlyDetails(commonOptionGroups)
+    help.outputAll({
+      object: this,
+      title: this.title,
+      optionsGroups: commonOptionsGroups, // this.optionsGroups
+      isCommand: true
     })
-
-    help.outputFooter()
   }
 
   /**

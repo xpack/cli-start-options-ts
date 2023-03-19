@@ -22,6 +22,8 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
+import { Application } from './application.js'
+import { Command } from './command.js'
 import { Context } from './context.js'
 import { OptionsGroup, OptionDefinition } from './options.js'
 
@@ -80,22 +82,133 @@ export class Help {
     this.multiPass = new MultiPass(this.middleLimit)
   }
 
+  outputAll (params: {
+    object: Application | Command
+    title: string | undefined
+    optionsGroups: OptionsGroup[]
+    commands?: string[]
+    isCommand?: boolean
+  }): void {
+    assert(params)
+
+    const log = this.context.log
+
+    // Start with an empty line.
+    log.output()
+
+    this.outputTitle(params.title)
+
+    if (params.isCommand !== undefined && params.isCommand) {
+      // When called from commands.
+      this.outputCommandLine(params.object.optionsGroups)
+    } else {
+      // Try to get a message from the first group.
+      const message = params.optionsGroups[0]?.title
+      this.outputCommands(params.commands, message)
+    }
+
+    // The special trick here is how to align the right column.
+    // For this two steps are needed, with the first to compute
+    // the max width of the first column, and then to output text.
+
+    this.twoPassAlign(() => {
+      params.object.outputHelpArgsDetails(this.multiPass)
+
+      params.object.optionsGroups.forEach((optionsGroup) => {
+        this.outputOptions(optionsGroup.optionsDefinitions,
+          optionsGroup.title)
+      })
+
+      this.outputOptionsGroups(params.optionsGroups)
+      this.outputHelpDetails(params.optionsGroups)
+      this.outputEarlyDetails(params.optionsGroups)
+    })
+
+    this.outputFooter()
+  }
+
+  outputTitle (title: string | undefined): void {
+    const log = this.context.log
+
+    if (title !== undefined) {
+      log.output(`${title}`)
+    }
+  }
+
+  outputCommandLine (
+    optionsGroups: OptionsGroup[]
+  ): void {
+    const log = this.context.log
+    const programName: string = this.context.programName
+
+    const commands = this.context.fullCommands.join(' ')
+    const usage = `Usage: ${programName} ${commands}`
+    let str: string = usage
+
+    const optionDefinitions: OptionDefinition[] = []
+    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
+      optionsGroups[0]?.preOptions !== undefined) {
+      str += ' ' + optionsGroups[0].preOptions
+    }
+    str += ' [options...]'
+    optionsGroups.forEach((optionsGroup) => {
+      optionDefinitions.push(...optionsGroup.optionsDefinitions)
+    })
+    let buffer: string
+    optionDefinitions.forEach((optionDefinition) => {
+      buffer = ''
+      optionDefinition.options.forEach((val) => {
+        // Assume the longest option is the more readable.
+        if (val.length > buffer.length) {
+          buffer = val
+        }
+      })
+      if (optionDefinition.param !== undefined) {
+        buffer += ` <${optionDefinition.param}>`
+      } else if (optionDefinition.hasValue !== undefined &&
+        optionDefinition.hasValue) {
+        buffer += ' <s>'
+      }
+      if (optionDefinition.isOptional !== undefined &&
+        optionDefinition.isOptional) {
+        buffer = `[${buffer}]`
+        if (optionDefinition.isMultiple !== undefined &&
+          optionDefinition.isMultiple) {
+          buffer += '*'
+        }
+      } else if (optionDefinition.isMultiple !== undefined &&
+        optionDefinition.isMultiple) {
+        buffer = `[${buffer}]+`
+      }
+
+      // log.output(optStr)
+      if (str.length + buffer.length + 1 > this.rightLimit) {
+        log.output(str)
+        str = ' '.repeat(usage.length)
+      }
+      str += ' ' + buffer
+    })
+    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
+      optionsGroups[0]?.postOptions !== undefined) {
+      buffer = optionsGroups[0].postOptions
+      if (str.length + buffer.length + 1 > this.rightLimit) {
+        log.output(str)
+        str = ' '.repeat(usage.length)
+      }
+      str += ' ' + buffer
+    }
+    if (str.length > usage.length) {
+      log.output(str)
+    }
+  }
+
+  // TODO: check if message can have this default, or can be undefined.
   outputCommands (
     commands: string[] | undefined,
-    description: string | undefined,
     message: string = '[<args>...]'
   ): void {
     const log: Logger = this.context.log
     const programName: string = this.context.programName
-
-    log.output()
-    if (description === undefined) {
-      const packageJson = this.context.packageJson
-      description = packageJson.description
-    }
-    if (description !== undefined) {
-      log.output(`${description}`)
-    }
 
     if (commands !== undefined) {
       // Remember for further possible usage.
@@ -312,76 +425,6 @@ export class Help {
         }
       }
     })
-  }
-
-  outputCommandLine (
-    title: string,
-    optionsGroups: OptionsGroup[]
-  ): void {
-    const log = this.context.log
-    const programName: string = this.context.programName
-
-    log.output()
-    log.output(title)
-    const commands = this.context.fullCommands.join(' ')
-    const usage = `Usage: ${programName} ${commands}`
-    let str: string = usage
-
-    const optionDefinitions: OptionDefinition[] = []
-    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
-      optionsGroups[0]?.preOptions !== undefined) {
-      str += ' ' + optionsGroups[0].preOptions
-    }
-    str += ' [options...]'
-    optionsGroups.forEach((optionsGroup) => {
-      optionDefinitions.push(...optionsGroup.optionsDefinitions)
-    })
-    let buffer: string
-    optionDefinitions.forEach((optionDefinition) => {
-      buffer = ''
-      optionDefinition.options.forEach((val) => {
-        // Assume the longest option is the more readable.
-        if (val.length > buffer.length) {
-          buffer = val
-        }
-      })
-      if (optionDefinition.param !== undefined) {
-        buffer += ` <${optionDefinition.param}>`
-      } else if (optionDefinition.hasValue !== undefined &&
-        optionDefinition.hasValue) {
-        buffer += ' <s>'
-      }
-      if (optionDefinition.isOptional !== undefined &&
-        optionDefinition.isOptional) {
-        buffer = `[${buffer}]`
-        if (optionDefinition.isMultiple !== undefined &&
-          optionDefinition.isMultiple) {
-          buffer += '*'
-        }
-      } else if (optionDefinition.isMultiple !== undefined &&
-        optionDefinition.isMultiple) {
-        buffer = `[${buffer}]+`
-      }
-
-      // log.output(optStr)
-      if (str.length + buffer.length + 1 > this.rightLimit) {
-        log.output(str)
-        str = ' '.repeat(usage.length)
-      }
-      str += ' ' + buffer
-    })
-    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
-      optionsGroups[0]?.postOptions !== undefined) {
-      buffer = optionsGroups[0].postOptions
-      if (str.length + buffer.length + 1 > this.rightLimit) {
-        log.output(str)
-        str = ' '.repeat(usage.length)
-      }
-      str += ' ' + buffer
-    }
-    if (str.length > usage.length) {
-      log.output(str)
-    }
   }
 
   outputFooter (): void {

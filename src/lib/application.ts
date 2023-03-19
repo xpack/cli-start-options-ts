@@ -51,9 +51,9 @@ import * as semver from 'semver'
 import { Command } from './command.js'
 import { Context } from './context.js'
 // import { Configuration } from './configuration.js'
-import { Options, OptionFoundModule } from './options.js'
+import { Options, OptionsGroup, OptionFoundModule } from './options.js'
 
-import { Help } from './help.js'
+import { Help, MultiPass } from './help.js'
 import { ExitCodes } from './error.js'
 import * as cli from './error.js'
 import { readPackageJson } from './utils.js'
@@ -208,6 +208,7 @@ export class Application {
 
   public context: Context
   public latestVersionPromise: Promise<string> | undefined = undefined
+  public optionsGroups: OptionsGroup[] = []
 
   /**
    * @summary Constructor, to remember the context.
@@ -746,26 +747,32 @@ export class Application {
     // If there is a command, we should not get here, but in the command help.
     assert(context.commandInstance === undefined)
 
+    const packageJson = this.context.packageJson
+    const commonOptionsGroups = Options.getCommonOptionsGroups()
+    const commands = Options.getUnaliasedCommands()
+
     // Show top (application) help.
 
-    const commands = Options.getUnaliasedCommands()
-    const optionsGroups = Options.getCommonOptionsGroups()
-    const description = undefined
-
-    // Try to get a message from the first group.
-    help.outputCommands(commands, description, optionsGroups[0]?.title)
-
-    // The special trick here is how to align the right column.
-    // For this, two steps are needed, the first to compute the max
-    // width of the first column, and the second to output the text.
-
-    help.twoPassAlign(() => {
-      help.outputOptionsGroups(optionsGroups)
-      help.outputHelpDetails(optionsGroups)
-      help.outputEarlyDetails(optionsGroups)
+    help.outputAll({
+      object: this,
+      title: packageJson.description,
+      optionsGroups: commonOptionsGroups, // this.optionsGroups
+      commands
     })
+  }
 
-    help.outputFooter()
+  /**
+   * @summary Output details about extra args.
+   *
+   * @param _multiPass Status for two pass.
+   * @returns Nothing.
+   *
+   * @description
+   * The default implementation does nothing. Override it in
+   * the application if needed.
+   */
+  outputHelpArgsDetails (_multiPass: MultiPass): void {
+    // Nothing.
   }
 
   // --------------------------------------------------------------------------

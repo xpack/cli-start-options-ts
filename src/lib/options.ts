@@ -345,7 +345,7 @@ export class Options {
    *
    * @returns Array of strings with the commands.
    */
-  static getUnaliasedCommands (): string[] | undefined {
+  static getUnaliasedCommands (): string[] {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
