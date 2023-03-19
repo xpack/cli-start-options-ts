@@ -82,8 +82,7 @@ export interface OptionDefinition {
   init: InitOptionFunction
   action: SetOptionFunction
   // Optional.
-  // TODO: rename message
-  msg?: string
+  message?: string
   isHelp?: boolean
   doProcessEarly?: boolean
   hasValue?: boolean

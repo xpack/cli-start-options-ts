@@ -81,7 +81,7 @@ export class Xtest extends cli.Application {
           optionsDefinitions: [
             {
               options: ['--extra', '--very-extra', '--very-long-extra'],
-              msg: 'Extra options',
+              message: 'Extra options',
               action: (context) => {
                 (context.config as XtestConfig).extra = true
               },

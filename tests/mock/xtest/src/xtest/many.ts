@@ -56,7 +56,7 @@ export class Long extends cli.Command {
             init: (context) => {
               (context.config as CliConfigMany).one = undefined
             },
-            msg: 'Option one',
+            message: 'Option one',
             param: 'name',
             isOptional: false
           },
@@ -68,7 +68,7 @@ export class Long extends cli.Command {
             init: (context) => {
               (context.config as CliConfigMany).two = undefined
             },
-            msg: 'Option two',
+            message: 'Option two',
             param: 'name',
             isOptional: false,
             isMultiple: true
@@ -81,7 +81,7 @@ export class Long extends cli.Command {
             init: (context) => {
               (context.config as CliConfigMany).three = undefined
             },
-            msg: 'Option three',
+            message: 'Option three',
             param: 'name',
             isOptional: true,
             isMultiple: true
@@ -94,7 +94,7 @@ export class Long extends cli.Command {
             init: (context) => {
               (context.config as CliConfigMany).four = undefined
             },
-            msg: 'Option four',
+            message: 'Option four',
             // Has no param.
             hasValue: true,
             isOptional: true

@@ -54,7 +54,7 @@ export class Long extends cli.Command {
             init: (context) => {
               (context.config as CliConfigLong).long = undefined
             },
-            msg: 'Very long option',
+            message: 'Very long option',
             param: 'name',
             isOptional: false
           }

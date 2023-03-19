@@ -250,7 +250,7 @@ export class Application {
             },
             {
               options: ['--version'],
-              msg: 'Show version',
+              message: 'Show version',
               action: (context) => {
                 context.config.isVersionRequest = true
               },
@@ -261,7 +261,7 @@ export class Application {
             },
             {
               options: ['--loglevel'],
-              msg: 'Set log level',
+              message: 'Set log level',
               action: (context, val) => {
                 assert(val !== undefined)
                 context.config.logLevel = val as LogLevel
@@ -274,7 +274,7 @@ export class Application {
             },
             {
               options: ['-s', '--silent'],
-              msg: 'Disable all messages (--loglevel silent)',
+              message: 'Disable all messages (--loglevel silent)',
               action: (context) => {
                 context.config.logLevel = 'silent'
               },
@@ -282,7 +282,7 @@ export class Application {
             },
             {
               options: ['-q', '--quiet'],
-              msg: 'Mostly quiet, warnings and errors (--loglevel warn)',
+              message: 'Mostly quiet, warnings and errors (--loglevel warn)',
               action: (context) => {
                 context.config.logLevel = 'warn'
               },
@@ -290,7 +290,7 @@ export class Application {
             },
             {
               options: ['--informative'],
-              msg: 'Informative (--loglevel info)',
+              message: 'Informative (--loglevel info)',
               action: (context) => {
                 context.config.logLevel = 'info'
               },
@@ -298,7 +298,7 @@ export class Application {
             },
             {
               options: ['-v', '--verbose'],
-              msg: 'Verbose (--loglevel verbose)',
+              message: 'Verbose (--loglevel verbose)',
               action: (context) => {
                 context.config.logLevel = 'verbose'
               },
@@ -306,7 +306,7 @@ export class Application {
             },
             {
               options: ['-d', '--debug'],
-              msg: 'Debug messages (--loglevel debug)',
+              message: 'Debug messages (--loglevel debug)',
               action: (context) => {
                 const config = context.config
                 if (config.logLevel === 'debug') {
@@ -319,7 +319,7 @@ export class Application {
             },
             {
               options: ['-dd', '--trace'],
-              msg: 'Trace messages (--loglevel trace, -d -d)',
+              message: 'Trace messages (--loglevel trace, -d -d)',
               action: (context) => {
                 context.config.logLevel = 'trace'
               },
@@ -327,7 +327,7 @@ export class Application {
             },
             {
               options: ['--no-update-notifier'],
-              msg: 'Skip check for a more recent version',
+              message: 'Skip check for a more recent version',
               action: (context) => {
                 context.config.noUpdateNotifier = true
               },
@@ -335,7 +335,7 @@ export class Application {
             },
             {
               options: ['-C'],
-              msg: 'Set current folder',
+              message: 'Set current folder',
               action: (context, val) => {
                 assert(val !== undefined)
                 const config = context.config

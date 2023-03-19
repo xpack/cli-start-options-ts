@@ -190,7 +190,7 @@ export class Help {
 
     optionsGroups.forEach((optionsGroup) => {
       optionsGroup.optionsDefinitions.forEach((optionDef) => {
-        if (optionDef.msg !== undefined &&
+        if (optionDef.message !== undefined &&
           (optionDef.doProcessEarly !== undefined &&
             optionDef.doProcessEarly)) {
           let out = `${programName} `
@@ -203,7 +203,7 @@ export class Help {
           if (multiPass.isFirstPass) {
             multiPass.updateWidth(out.length)
           } else {
-            this.outputMaybeLongLine(out, optionDef.msg, multiPass)
+            this.outputMaybeLongLine(out, optionDef.message, multiPass)
           }
         }
       })
@@ -229,7 +229,7 @@ export class Help {
 
     let hasContent = false
     optionDefinitions.forEach((optionDefinition) => {
-      if (optionDefinition.msg !== undefined &&
+      if (optionDefinition.message !== undefined &&
         !(optionDefinition.doProcessEarly !== undefined &&
           optionDefinition.doProcessEarly) &&
         !(optionDefinition.isHelp !== undefined &&
@@ -247,9 +247,11 @@ export class Help {
     }
 
     optionDefinitions.forEach((optionDef) => {
-      if (optionDef.msg !== undefined &&
-        !(optionDef.doProcessEarly !== undefined && optionDef.doProcessEarly) &&
-        !(optionDef.isHelp !== undefined && optionDef.isHelp)) {
+      if (optionDef.message !== undefined &&
+        !(optionDef.doProcessEarly !== undefined &&
+          optionDef.doProcessEarly) &&
+        !(optionDef.isHelp !== undefined &&
+          optionDef.isHelp)) {
         let strOpts = '  '
         optionDef.options.forEach((opt, index) => {
           strOpts += opt
@@ -257,7 +259,8 @@ export class Help {
             strOpts += '|'
           }
         })
-        if ((optionDef.hasValue !== undefined && optionDef.hasValue) ||
+        if ((optionDef.hasValue !== undefined &&
+          optionDef.hasValue) ||
           optionDef.values !== undefined ||
           optionDef.param !== undefined) {
           if (optionDef.param !== undefined) {
@@ -276,8 +279,8 @@ export class Help {
           }
           strOpts += ' '.repeat(multiPass.width)
           let desc = ''
-          if (optionDef.msg.length > 0) {
-            desc = optionDef.msg + ' '
+          if (optionDef.message.length > 0) {
+            desc = optionDef.message + ' '
           }
           if (Array.isArray(optionDef.values)) {
             desc += '('
@@ -407,11 +410,16 @@ export class Help {
     }
   }
 
-  twoPassAlign (f: CallableNoArgs): void {
+  /**
+   * @summary Call the function twice.
+   * @param func Function to call.
+   * @returns Nothing.
+   */
+  twoPassAlign (func: CallableNoArgs): void {
     this.multiPass = new MultiPass(this.middleLimit)
-    f()
+    func()
     this.multiPass.secondPass()
-    f()
+    func()
   }
 }
 
