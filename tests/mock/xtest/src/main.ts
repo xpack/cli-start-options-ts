@@ -74,11 +74,11 @@ export class Xtest extends cli.Application {
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
-    cli.Options.addOptionGroups(
+    cli.Options.addOptionsGroups(
       [
         {
           title: 'Extra options',
-          optionDefs: [
+          optionsDefinitions: [
             {
               options: ['--extra', '--very-extra', '--very-long-extra'],
               msg: 'Extra options',

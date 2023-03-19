@@ -51,10 +51,10 @@ export class Copy extends cli.Command {
 
     // Title displayed with the help message.
     this.title = 'Copy a file to another file'
-    this.optionGroups = [
+    this.optionsGroups = [
       {
         title: 'Copy options',
-        optionDefs: [
+        optionsDefinitions: [
           {
             options: ['--file'],
             action: (context, val) => {

@@ -43,11 +43,11 @@ export class Long extends cli.Command {
 
     // Title displayed with the help message.
     this.title = 'Test many options'
-    this.optionGroups = [
+    this.optionsGroups = [
       {
         title: 'Long options',
         preOptions: '[<name1> <name2> <name3>...]',
-        optionDefs: [
+        optionsDefinitions: [
           {
             options: ['--one'],
             action: (context, val) => {

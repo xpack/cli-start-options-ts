@@ -40,12 +40,12 @@ export class Long extends cli.Command {
 
     // Title displayed with the help message.
     this.title = 'Test long options'
-    this.optionGroups = [
+    this.optionsGroups = [
       {
         title: 'Long options',
         preOptions: '[<name>...]', // Array of test names.
         postOptions: '[-- <very-long-long-long-args>...]',
-        optionDefs: [
+        optionsDefinitions: [
           {
             options: ['--long', '--very-long', '--extra-very-long'],
             action: (context, val) => {

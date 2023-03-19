@@ -42,7 +42,7 @@ import { Logger } from '@xpack/logger'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 import { Help, MultiPass } from './help.js'
-import { Options, OptionGroup } from './options.js'
+import { Options, OptionsGroup } from './options.js'
 import { Configuration } from './configuration.js'
 import { formatDuration } from './utils.js'
 
@@ -69,7 +69,7 @@ export class Command {
   public log: Logger
   public commands: string
   public title: string
-  public optionGroups: OptionGroup[]
+  public optionsGroups: OptionsGroup[]
 
   // All args, as received from cli.Command.
   public unparsedArgs: string[] = []
@@ -80,12 +80,12 @@ export class Command {
    *
    * @param context Reference to a context.
    * @param title The command one line description.
-   * @param optionGroups Array of option groups.
+   * @param optionsGroups Array of option groups.
    */
   constructor (
     context: Context,
     title?: string,
-    optionGroups?: OptionGroup[]
+    optionsGroups?: OptionsGroup[]
   ) {
     assert(context)
     assert(context.log)
@@ -95,7 +95,7 @@ export class Command {
     this.log = context.log
     this.commands = context.fullCommands.join(' ')
     this.title = title ?? '(title not set)'
-    this.optionGroups = optionGroups ?? []
+    this.optionsGroups = optionsGroups ?? []
   }
 
   /**
@@ -116,7 +116,7 @@ export class Command {
 
     // Parse the args and return the remaining args, like package names.
     const remainingArgs: string[] = Options.parseOptions(argv, context,
-      this.optionGroups)
+      this.optionsGroups)
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
       this.outputHelp()
@@ -149,7 +149,7 @@ export class Command {
     }
 
     // Check if there are missing mandatory options.
-    const missingErrors = Options.checkMissingMandatory(this.optionGroups)
+    const missingErrors = Options.checkMissingMandatory(this.optionsGroups)
     if (missingErrors != null) {
       missingErrors.forEach((msg) => {
         log.error(msg)
@@ -185,18 +185,18 @@ export class Command {
   outputHelp (): void {
     const help: Help = new Help(this.context)
 
-    help.outputCommandLine(this.title, this.optionGroups)
+    help.outputCommandLine(this.title, this.optionsGroups)
 
-    const commonOptionGroups: OptionGroup[] =
-      Options.getCommonOptionGroups()
+    const commonOptionGroups: OptionsGroup[] =
+      Options.getCommonOptionsGroups()
 
     help.twoPassAlign(() => {
       this.outputHelpArgsDetails(help.multiPass)
 
-      this.optionGroups.forEach((optionGroup) => {
-        help.outputOptions(optionGroup.optionDefs, optionGroup.title)
+      this.optionsGroups.forEach((optionsGroup) => {
+        help.outputOptions(optionsGroup.optionsDefinitions, optionsGroup.title)
       })
-      help.outputOptionGroups(commonOptionGroups)
+      help.outputOptionsGroups(commonOptionGroups)
       help.outputHelpDetails(commonOptionGroups)
       help.outputEarlyDetails(commonOptionGroups)
     })

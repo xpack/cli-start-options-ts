@@ -23,7 +23,7 @@ import { Logger } from '@xpack/logger'
 // ----------------------------------------------------------------------------
 
 import { Context } from './context.js'
-import { OptionGroup, OptionDefinition } from './options.js'
+import { OptionsGroup, OptionDefinition } from './options.js'
 
 // ----------------------------------------------------------------------------
 
@@ -138,7 +138,7 @@ export class Help {
   }
 
   outputHelpDetails (
-    _optionGroups: OptionGroup[], // Unused
+    _optionsGroups: OptionsGroup[], // Unused
     multiPass = this.multiPass
   ): void {
     const log: Logger = this.context.log
@@ -179,7 +179,7 @@ export class Help {
   }
 
   outputEarlyDetails (
-    optionGroups: OptionGroup[],
+    optionsGroups: OptionsGroup[],
     multiPass = this.multiPass
   ): void {
     const programName = this.context.programName
@@ -188,8 +188,8 @@ export class Help {
       // log.output()
     }
 
-    optionGroups.forEach((optionGroup) => {
-      optionGroup.optionDefs.forEach((optionDef) => {
+    optionsGroups.forEach((optionsGroup) => {
+      optionsGroup.optionsDefinitions.forEach((optionDef) => {
         if (optionDef.msg !== undefined &&
           (optionDef.doProcessEarly !== undefined &&
             optionDef.doProcessEarly)) {
@@ -210,12 +210,13 @@ export class Help {
     })
   }
 
-  outputOptionGroups (
-    optionGroups: OptionGroup[],
+  outputOptionsGroups (
+    optionsGroups: OptionsGroup[],
     multiPass = this.multiPass
   ): void {
-    optionGroups.forEach((optionGroup) => {
-      this.outputOptions(optionGroup.optionDefs, optionGroup.title, multiPass)
+    optionsGroups.forEach((optionsGroup) => {
+      this.outputOptions(
+        optionsGroup.optionsDefinitions, optionsGroup.title, multiPass)
     })
   }
 
@@ -312,7 +313,7 @@ export class Help {
 
   outputCommandLine (
     title: string,
-    optionGroups: OptionGroup[]
+    optionsGroups: OptionsGroup[]
   ): void {
     const log = this.context.log
     const programName: string = this.context.programName
@@ -324,13 +325,13 @@ export class Help {
     let str: string = usage
 
     const optionDefs: OptionDefinition[] = []
-    if (optionGroups !== undefined && (optionGroups.length > 0) &&
-      optionGroups[0]?.preOptions !== undefined) {
-      str += ' ' + optionGroups[0].preOptions
+    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
+      optionsGroups[0]?.preOptions !== undefined) {
+      str += ' ' + optionsGroups[0].preOptions
     }
     str += ' [options...]'
-    optionGroups.forEach((optionGroup) => {
-      optionDefs.push(...optionGroup.optionDefs)
+    optionsGroups.forEach((optionsGroup) => {
+      optionDefs.push(...optionsGroup.optionsDefinitions)
     })
     let buffer: string
     optionDefs.forEach((optionDef) => {
@@ -362,9 +363,9 @@ export class Help {
       }
       str += ' ' + buffer
     })
-    if (optionGroups !== undefined && (optionGroups.length > 0) &&
-      optionGroups[0]?.postOptions !== undefined) {
-      buffer = optionGroups[0].postOptions
+    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
+      optionsGroups[0]?.postOptions !== undefined) {
+      buffer = optionsGroups[0].postOptions
       if (str.length + buffer.length + 1 > this.rightLimit) {
         log.output(str)
         str = ' '.repeat(usage.length)

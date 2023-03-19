@@ -40,7 +40,7 @@ export class Generator extends cli.Command {
 
     // Title displayed with the help message.
     this.title = 'Test generator options'
-    this.optionGroups = [
+    this.optionsGroups = [
     ]
   }
 

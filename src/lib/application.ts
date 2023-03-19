@@ -233,11 +233,11 @@ export class Application {
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
-    Options.addOptionGroups(
+    Options.addOptionsGroups(
       [
         {
           title: 'Common options',
-          optionDefs: [
+          optionsDefinitions: [
             {
               options: ['-h', '--help'],
               action: (context) => {
@@ -362,7 +362,7 @@ export class Application {
   initializeReplOptions (): void {
     const context = this.context
     if (context.enableREPL !== undefined && context.enableREPL) {
-      Options.appendToOptionGroups('Common options',
+      Options.appendToOptionsGroups('Common options',
         [
           {
             options: ['--interactive-server-port'],
@@ -461,10 +461,10 @@ export class Application {
     this.initializeReplOptions()
 
     // Call the init() function of all defined options.
-    const optionGroups = Options.getCommonOptionGroups()
-    optionGroups.forEach((optionGroup) => {
-      optionGroup.optionDefs.forEach((optionDef) => {
-        optionDef.init(context)
+    const optionsGroups = Options.getCommonOptionsGroups()
+    optionsGroups.forEach((optionsGroup) => {
+      optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
+        optionDefinition.init(context)
       })
     })
 
@@ -749,20 +749,20 @@ export class Application {
     // Show top (application) help.
 
     const commands = Options.getUnaliasedCommands()
-    const optionGroups = Options.getCommonOptionGroups()
+    const optionsGroups = Options.getCommonOptionsGroups()
     const description = undefined
 
     // Try to get a message from the first group.
-    help.outputCommands(commands, description, optionGroups[0]?.title)
+    help.outputCommands(commands, description, optionsGroups[0]?.title)
 
     // The special trick here is how to align the right column.
     // For this, two steps are needed, the first to compute the max
     // width of the first column, and the second to output the text.
 
     help.twoPassAlign(() => {
-      help.outputOptionGroups(optionGroups)
-      help.outputHelpDetails(optionGroups)
-      help.outputEarlyDetails(optionGroups)
+      help.outputOptionsGroups(optionsGroups)
+      help.outputHelpDetails(optionsGroups)
+      help.outputEarlyDetails(optionsGroups)
     })
 
     help.outputFooter()

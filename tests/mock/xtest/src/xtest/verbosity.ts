@@ -36,7 +36,7 @@ export class Copy extends cli.Command {
 
     // Title displayed with the help message.
     this.title = 'Exercise verbosity'
-    this.optionGroups = [
+    this.optionsGroups = [
     ]
   }
 

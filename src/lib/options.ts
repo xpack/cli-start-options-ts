@@ -95,12 +95,12 @@ export interface OptionDefinition {
   wasProcessed?: boolean
 }
 
-export interface OptionGroup {
+export interface OptionsGroup {
   title: string
   preOptions?: string
   postOptions?: string
-  // TODO: rename optionDefinitions
-  optionDefs: OptionDefinition[]
+  // TODO: rename optionsDefinitions
+  optionsDefinitions: OptionDefinition[]
 }
 
 export interface OptionFoundModule {
@@ -209,7 +209,7 @@ export class Options {
 
   private static commandsTree: Node = new Node(null)
   private static unaliasedCommands: string[]
-  private static commonOptionGroups: OptionGroup[]
+  private static commonOptionsGroups: OptionsGroup[]
 
   /**
    * @summary Static initialiser.
@@ -225,7 +225,7 @@ export class Options {
 
     staticThis.commandsTree = new Node(null)
     staticThis.unaliasedCommands = []
-    staticThis.commonOptionGroups = []
+    staticThis.commonOptionsGroups = []
   }
 
   /**
@@ -296,18 +296,18 @@ export class Options {
   /**
    * @summary Add option groups.
    *
-   * @param optionGroups Array of option groups.
+   * @param optionsGroups Array of option groups.
    * @returns Nothing.
    *
    * @description
    * Preliminary solution with array instead of tree.
    */
-  static addOptionGroups (optionGroups: OptionGroup[]): void {
+  static addOptionsGroups (optionsGroups: OptionsGroup[]): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
-    optionGroups.forEach((optionGroup) => {
-      staticThis.commonOptionGroups.push(optionGroup)
+    optionsGroups.forEach((optionsGroup) => {
+      staticThis.commonOptionsGroups.push(optionsGroup)
     })
   }
 
@@ -318,19 +318,19 @@ export class Options {
    * @param optionDefinitions Array of definitions.
    * @returns Nothing.
    */
-  static appendToOptionGroups (
+  static appendToOptionsGroups (
     title: string,
     optionDefinitions: OptionDefinition[]
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
-    staticThis.commonOptionGroups.forEach((optionGroup) => {
-      assert(optionGroup.title !== undefined)
-      assert(optionGroup.optionDefs !== undefined)
+    staticThis.commonOptionsGroups.forEach((optionsGroup) => {
+      assert(optionsGroup.title !== undefined)
+      assert(optionsGroup.optionsDefinitions !== undefined)
 
-      if (optionGroup.title === title) {
-        optionGroup.optionDefs.push(...optionDefinitions)
+      if (optionsGroup.title === title) {
+        optionsGroup.optionsDefinitions.push(...optionDefinitions)
       }
     })
   }
@@ -358,11 +358,11 @@ export class Options {
    *
    * @returns Array of option groups.
    */
-  static getCommonOptionGroups (): OptionGroup[] {
+  static getCommonOptionsGroups (): OptionsGroup[] {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
 
-    return staticThis.commonOptionGroups
+    return staticThis.commonOptionsGroups
   }
 
   /**
@@ -370,7 +370,7 @@ export class Options {
    *
    * @param argv Array of arguments.
    * @param context Reference to the context object
-   * @param optionGroups Optional reference to command specific options.
+   * @param optionsGroups Optional reference to command specific options.
    * @returns Array of remaining arguments.
    *
    * @description
@@ -384,7 +384,7 @@ export class Options {
   static parseOptions (
     argv: string[],
     context: Context,
-    optionGroups: OptionGroup[] | null = null
+    optionsGroups: OptionsGroup[] | null = null
   ): string[] {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const staticThis = this
@@ -396,15 +396,15 @@ export class Options {
     // In addition to common options, bring together all options from
     // all command option groups, if any.
     const allOptionDefinitions: OptionDefinition[] = []
-    if (optionGroups == null) {
-      staticThis.commonOptionGroups.forEach((optionGroup) => {
-        assert(optionGroup.optionDefs !== undefined)
-        allOptionDefinitions.push(...optionGroup.optionDefs)
+    if (optionsGroups == null) {
+      staticThis.commonOptionsGroups.forEach((optionsGroup) => {
+        assert(optionsGroup.optionsDefinitions !== undefined)
+        allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
       })
     } else {
-      optionGroups.forEach((optionGroup) => {
-        assert(optionGroup.optionDefs !== undefined)
-        allOptionDefinitions.push(...optionGroup.optionDefs)
+      optionsGroups.forEach((optionsGroup) => {
+        assert(optionsGroup.optionsDefinitions !== undefined)
+        allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
       })
     }
 
@@ -459,16 +459,16 @@ export class Options {
   /**
    * @summary Check if mandatory option is missing.
    *
-   * @param optionGroups Array of option groups.
+   * @param optionsGroups Array of option groups.
    * @returns Array of errors or null if everything is ok.
    */
   static checkMissingMandatory (
-    optionGroups: OptionGroup[]
+    optionsGroups: OptionsGroup[]
   ): string[] | null {
     const allOptionDefinitions: OptionDefinition[] = []
-    optionGroups.forEach((optionGroup) => {
-      assert(optionGroup.optionDefs !== undefined)
-      allOptionDefinitions.push(...optionGroup.optionDefs)
+    optionsGroups.forEach((optionsGroup) => {
+      assert(optionsGroup.optionsDefinitions !== undefined)
+      allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
     })
 
     const errors: string[] = []
