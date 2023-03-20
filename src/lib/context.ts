@@ -22,8 +22,8 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
+import { Command } from './command.js'
 import { Configuration } from './configuration.js'
-import { Options } from './options.js'
 import { NpmPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ export class Context {
   commands: string[] = []
   // The class implementing the current command.
   CommandClass: any | undefined = undefined
-  commandInstance: any | undefined = undefined
+  commandInstance: Command | undefined = undefined
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.
@@ -98,8 +98,6 @@ export class Context {
     // Initialise the configuration.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.config = params.config ?? new Configuration()
-
-    Options.initialise(this)
   }
 }
 

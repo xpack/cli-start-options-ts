@@ -52,7 +52,7 @@ import { Command } from './command.js'
 import { CommandsTree, FoundCommandModule } from './commands-tree.js'
 import { Context } from './context.js'
 // import { Configuration } from './configuration.js'
-import { Options, OptionsGroup } from './options.js'
+import { Options } from './options.js'
 
 import { Help, MultiPass } from './help.js'
 import { ExitCodes } from './error.js'
@@ -208,9 +208,9 @@ export class Application {
   // --------------------------------------------------------------------------
 
   public context: Context
-  public latestVersionPromise: Promise<string> | undefined = undefined
-  public optionsGroups: OptionsGroup[] = []
+  public options: Options
 
+  protected latestVersionPromise: Promise<string> | undefined = undefined
   protected commandsTree: CommandsTree = new CommandsTree()
 
   /**
@@ -229,7 +229,8 @@ export class Application {
 
     log.trace(`${this.constructor.name}.constructor()`)
 
-    Options.initialise(context)
+    this.options = new Options({ context })
+
     this.initializeCommonOptions()
   }
 
@@ -237,80 +238,89 @@ export class Application {
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
-    Options.addOptionsGroups(
+    this.options.addGroups(
       [
         {
           title: 'Common options',
+          isCommon: true,
           optionsDefinitions: [
             {
               options: ['-h', '--help'],
-              action: (context) => {
-                context.config.isHelpRequest = true
-              },
               init: (context) => {
                 context.config.isHelpRequest = false
               },
+              action: (context) => {
+                context.config.isHelpRequest = true
+              },
+              isOptional: true,
               isHelp: true
             },
             {
               options: ['--version'],
               message: 'Show version',
-              action: (context) => {
-                context.config.isVersionRequest = true
-              },
               init: (context) => {
                 context.config.isVersionRequest = false
               },
-              doProcessEarly: true
+              action: (context) => {
+                context.config.isVersionRequest = true
+              },
+              isOptional: true,
+              isRequiredEarly: true
             },
             {
               options: ['--loglevel'],
               message: 'Set log level',
+              init: (context) => {
+                context.config.logLevel = defaultLogLevel
+              },
               action: (context, val) => {
                 assert(val !== undefined)
                 context.config.logLevel = val as LogLevel
               },
-              init: (context) => {
-                context.config.logLevel = defaultLogLevel
-              },
+              isOptional: true,
               values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
               param: 'level'
             },
             {
               options: ['-s', '--silent'],
               message: 'Disable all messages (--loglevel silent)',
+              init: () => { },
               action: (context) => {
                 context.config.logLevel = 'silent'
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['-q', '--quiet'],
               message: 'Mostly quiet, warnings and errors (--loglevel warn)',
+              init: () => { },
               action: (context) => {
                 context.config.logLevel = 'warn'
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['--informative'],
               message: 'Informative (--loglevel info)',
+              init: () => { },
               action: (context) => {
                 context.config.logLevel = 'info'
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['-v', '--verbose'],
               message: 'Verbose (--loglevel verbose)',
+              init: () => { },
               action: (context) => {
                 context.config.logLevel = 'verbose'
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['-d', '--debug'],
               message: 'Debug messages (--loglevel debug)',
+              init: () => { },
               action: (context) => {
                 const config = context.config
                 if (config.logLevel === 'debug') {
@@ -319,27 +329,32 @@ export class Application {
                   config.logLevel = 'debug'
                 }
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['-dd', '--trace'],
               message: 'Trace messages (--loglevel trace, -d -d)',
+              init: () => { },
               action: (context) => {
                 context.config.logLevel = 'trace'
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['--no-update-notifier'],
               message: 'Skip check for a more recent version',
+              init: () => { },
               action: (context) => {
                 context.config.noUpdateNotifier = true
               },
-              init: () => { }
+              isOptional: true
             },
             {
               options: ['-C'],
               message: 'Set current folder',
+              init: (context) => {
+                context.config.cwd = context.processCwd
+              },
               action: (context, val) => {
                 assert(val !== undefined)
                 const config = context.config
@@ -352,9 +367,7 @@ export class Application {
                 }
                 context.log.debug(`set cwd: '${config.cwd}'`)
               },
-              init: (context) => {
-                context.config.cwd = context.processCwd
-              },
+              isOptional: true,
               param: 'folder'
             }
           ]
@@ -366,18 +379,19 @@ export class Application {
   initializeReplOptions (): void {
     const context = this.context
     if (context.enableREPL !== undefined && context.enableREPL) {
-      Options.appendToOptionsGroups('Common options',
+      this.options.appendToGroup('Common options',
         [
           {
             options: ['--interactive-server-port'],
-            action: (context, val) => /* istanbul ignore next */ {
-              context.config.interactiveServerPort = +val // as number
-            },
             init: (context) => {
               context.config.interactiveServerPort = undefined
             },
+            action: (context, val) => /* istanbul ignore next */ {
+              context.config.interactiveServerPort = +val // as number
+            },
+            isOptional: true,
             hasValue: true,
-            doProcessEarly: true
+            isRequiredEarly: true
           }
         ]
       )
@@ -465,19 +479,14 @@ export class Application {
     this.initializeReplOptions()
 
     // Call the init() function of all defined options.
-    const optionsGroups = Options.getCommonOptionsGroups()
-    optionsGroups.forEach((optionsGroup) => {
-      optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
-        optionDefinition.init(context)
-      })
-    })
+    this.options.initializeConfiguration()
 
     // Skip the first two arguments (the node path and the application path).
     const argv = process.argv.slice(2)
 
     // Parse the common options, for example the log level, and update
     // the configuration, to know the log level, or if version/help.
-    Options.parseOptions(argv, context)
+    this.options.parse(argv)
 
     // After parsing the options, the debug level is finally known,
     // and the buffered messages are passed out.
@@ -498,7 +507,7 @@ export class Application {
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
-    const mainArgs = Options.filterOwnArguments(argv)
+    const mainArgs = this.options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
@@ -745,13 +754,12 @@ export class Application {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help = new Help(context)
+    const help = new Help({ context, options: this.options })
 
     // If there is a command, we should not get here, but in the command help.
     assert(context.commandInstance === undefined)
 
     const packageJson = this.context.packageJson
-    const commonOptionsGroups = Options.getCommonOptionsGroups()
     const commands = this.commandsTree.getUnaliasedCommands()
 
     // Show top (application) help.
@@ -759,7 +767,6 @@ export class Application {
     help.outputAll({
       object: this,
       title: packageJson.description,
-      optionsGroups: commonOptionsGroups, // this.optionsGroups
       commands
     })
   }
@@ -806,7 +813,7 @@ export class Application {
       log.trace(`main arg${index}: '${arg}'`)
     })
 
-    const remainingArgs = Options.parseOptions(argv, context)
+    const remainingArgs = this.options.parse(argv)
 
     // After parsing the options, the debug level is finally known.
     log.level = config.logLevel
@@ -821,7 +828,7 @@ export class Application {
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
-    const mainArgs = Options.filterOwnArguments(argv)
+    const mainArgs = this.options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
@@ -891,7 +898,7 @@ export class Application {
           log.trace(`cmd arg${index}: '${arg}'`)
         })
 
-        const commandInstance = new CommandClass(context)
+        const commandInstance: Command = new CommandClass(this)
         context.commandInstance = commandInstance
 
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {

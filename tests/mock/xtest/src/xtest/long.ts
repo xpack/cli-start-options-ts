@@ -35,12 +35,14 @@ export class Long extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (context: cli.Context) {
-    super(context)
+  constructor (application: cli.Application) {
+    super({
+      application,
+      // Title displayed by the help message.
+      title: 'Test long options'
+    })
 
-    // Title displayed with the help message.
-    this.title = 'Test long options'
-    this.optionsGroups = [
+    this.options.addGroups([
       {
         title: 'Long options',
         preOptions: '[<name>...]', // Array of test names.
@@ -56,11 +58,11 @@ export class Long extends cli.Command {
             },
             message: 'Very long option',
             param: 'name',
-            isOptional: false
+            isOptional: true
           }
         ]
       }
-    ]
+    ])
   }
 
   /**

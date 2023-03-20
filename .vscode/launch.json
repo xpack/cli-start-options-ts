@@ -30,6 +30,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -49,6 +50,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -87,6 +89,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -107,6 +110,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -128,6 +132,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -148,6 +153,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -168,6 +174,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -189,6 +196,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -209,6 +217,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -231,6 +240,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -256,6 +266,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -276,6 +287,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -297,6 +309,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -318,6 +331,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -340,6 +354,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -361,6 +376,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -382,6 +398,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {
@@ -402,6 +419,7 @@
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
+        "--loader=ts-node/esm",
         "--nolazy"
       ],
       "env": {

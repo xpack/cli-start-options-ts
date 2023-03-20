@@ -35,13 +35,12 @@ export class Generator extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (context: cli.Context) {
-    super(context)
-
-    // Title displayed with the help message.
-    this.title = 'Test generator options'
-    this.optionsGroups = [
-    ]
+  constructor (application: cli.Application) {
+    super({
+      application,
+      // Title displayed by the help message.
+      title: 'Test generator options'
+    })
   }
 
   /**

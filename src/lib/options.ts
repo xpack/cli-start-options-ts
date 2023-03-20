@@ -84,7 +84,7 @@ export interface OptionDefinition {
   // Optional.
   message?: string
   isHelp?: boolean
-  doProcessEarly?: boolean
+  isRequiredEarly?: boolean
   hasValue?: boolean
   values?: string[]
   param?: string
@@ -96,6 +96,7 @@ export interface OptionDefinition {
 
 export interface OptionsGroup {
   title: string
+  isCommon?: boolean
   preOptions?: string
   postOptions?: string
   // TODO: rename optionsDefinitions
@@ -117,23 +118,27 @@ export interface OptionsGroup {
 export class Options {
   // --------------------------------------------------------------------------
 
-  static context: Context
-
-  private static commonOptionsGroups: OptionsGroup[]
+  public groups: OptionsGroup[] = []
+  public commonGroups: OptionsGroup[] = []
+  protected context: Context
 
   /**
-   * @summary Static initialiser.
+   * @constructor
    *
    * @param context Reference to context.
-   * @returns Nothing.
    */
-  static initialise (context: Context): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
+  constructor (params: {
+    context: Context
+    optionsGroups?: OptionsGroup[]
+  }) {
+    assert(params)
+    assert(params.context)
 
-    staticThis.context = context
+    this.context = params.context
 
-    staticThis.commonOptionsGroups = []
+    if (params.optionsGroups !== undefined) {
+      this.addGroups(params.optionsGroups)
+    }
   }
 
   /**
@@ -145,12 +150,13 @@ export class Options {
    * @description
    * Preliminary solution with array instead of tree.
    */
-  static addOptionsGroups (optionsGroups: OptionsGroup[]): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
+  addGroups (optionsGroups: OptionsGroup[]): void {
     optionsGroups.forEach((optionsGroup) => {
-      staticThis.commonOptionsGroups.push(optionsGroup)
+      if (optionsGroup.isCommon !== undefined && optionsGroup.isCommon) {
+        this.commonGroups.push(optionsGroup)
+      } else {
+        this.groups.push(optionsGroup)
+      }
     })
   }
 
@@ -161,14 +167,11 @@ export class Options {
    * @param optionDefinitions Array of definitions.
    * @returns Nothing.
    */
-  static appendToOptionsGroups (
+  appendToGroup (
     title: string,
     optionDefinitions: OptionDefinition[]
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    staticThis.commonOptionsGroups.forEach((optionsGroup) => {
+    [...this.groups, ...this.commonGroups].forEach((optionsGroup) => {
       assert(optionsGroup.title !== undefined)
       assert(optionsGroup.optionsDefinitions !== undefined)
 
@@ -179,23 +182,21 @@ export class Options {
   }
 
   /**
-   * @summary Get array of option groups.
-   *
-   * @returns Array of option groups.
+   * @summary Initialise the configuration properties.
    */
-  static getCommonOptionsGroups (): OptionsGroup[] {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    return staticThis.commonOptionsGroups
+  initializeConfiguration (): void {
+    [...this.groups, ...this.commonGroups].forEach((optionsGroup) => {
+      optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
+        optionDefinition.init(this.context)
+        optionDefinition.wasProcessed = false
+      })
+    })
   }
 
   /**
    * @summary Parse options, common and specific to a command.
    *
    * @param argv Array of arguments.
-   * @param context Reference to the context object
-   * @param optionsGroups Optional reference to command specific options.
    * @returns Array of remaining arguments.
    *
    * @description
@@ -206,36 +207,30 @@ export class Options {
    *
    * Arguments not identified as options are returned, in order.
    */
-  static parseOptions (
-    argv: string[],
-    context: Context,
-    optionsGroups: OptionsGroup[] | null = null
+  parse (
+    argv: string[]
   ): string[] {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-
-    assert(staticThis.context, 'cli.Context not initialised')
-    const log = staticThis.context.log
+    assert(this.context, 'cli.Context not initialised')
+    const log = this.context.log
     log.trace(`${Function.prototype.name}()`)
 
     // In addition to common options, bring together all options from
     // all command option groups, if any.
     const allOptionDefinitions: OptionDefinition[] = []
-    if (optionsGroups == null) {
-      staticThis.commonOptionsGroups.forEach((optionsGroup) => {
-        assert(optionsGroup.optionsDefinitions !== undefined)
-        allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
-      })
-    } else {
-      optionsGroups.forEach((optionsGroup) => {
-        assert(optionsGroup.optionsDefinitions !== undefined)
-        allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
-      })
-    }
+
+    this.groups.forEach((optionsGroup) => {
+      assert(optionsGroup.optionsDefinitions !== undefined)
+      allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
+    })
+
+    this.commonGroups.forEach((optionsGroup) => {
+      assert(optionsGroup.optionsDefinitions !== undefined)
+      allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
+    })
 
     allOptionDefinitions.forEach((optionDefinition) => {
       optionDefinition.wasProcessed = false
-      optionDefinition.init(context)
+      optionDefinition.init(this.context)
     })
 
     const remainingArgs: string[] = []
@@ -255,7 +250,7 @@ export class Options {
           // Iterate all aliases.
           for (const alias of aliases) {
             if (arg === alias) {
-              i += staticThis.processOption(argv, i, optionDefinition, context)
+              i += this.processOption(argv, i, optionDefinition)
               wasProcessed = true
               break
             }
@@ -284,14 +279,11 @@ export class Options {
   /**
    * @summary Check if mandatory option is missing.
    *
-   * @param optionsGroups Array of option groups.
    * @returns Array of errors or null if everything is ok.
    */
-  static checkMissingMandatory (
-    optionsGroups: OptionsGroup[]
-  ): string[] | null {
+  checkMissingMandatory (): string[] | null {
     const allOptionDefinitions: OptionDefinition[] = []
-    optionsGroups.forEach((optionsGroup) => {
+    this.groups.forEach((optionsGroup) => {
       assert(optionsGroup.optionsDefinitions !== undefined)
       allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
     })
@@ -322,8 +314,6 @@ export class Options {
    * @param index Index of the current arg.
    * @param optionDefinition Reference to the current option
    *   definition.
-   * @param context Reference to the context object, where to
-   *  store the configuration values.
    * @returns 1 if the next arg should be skipped.
    *
    * @description
@@ -335,11 +325,10 @@ export class Options {
    *
    * @todo process --opt=value syntax.
    */
-  private static processOption (
+  protected processOption (
     argv: string[],
     index: number,
-    optionDefinition: OptionDefinition,
-    context: Context
+    optionDefinition: OptionDefinition
   ): number {
     const arg: string = argv[index] ?? ''
     let value: string
@@ -364,7 +353,7 @@ export class Options {
           if (value === allowedValue) {
             // If allowed, call the action to set the
             // configuration value
-            optionDefinition.action(context, value)
+            optionDefinition.action(this.context, value)
             optionDefinition.wasProcessed = true
             return 1
           }
@@ -373,14 +362,14 @@ export class Options {
         throw new cli.SyntaxError(`Value '${value}' not allowed for '${arg}'`)
       } else {
         // Call the action to set the configuration value
-        optionDefinition.action(context, value)
+        optionDefinition.action(this.context, value)
         optionDefinition.wasProcessed = true
         return 1
       }
     } else {
       // No list of allowed values defined, treat it as boolean true;
       // call the action to update the configuration.
-      optionDefinition.action(context, 'true')
+      optionDefinition.action(this.context, 'true')
       optionDefinition.wasProcessed = true
       return 0
     }
@@ -392,7 +381,7 @@ export class Options {
    * @param argv Array of strings.
    * @returns Possibly a shorter array.
    */
-  static filterOwnArguments (argv: string[]): string[] {
+  filterOwnArguments (argv: string[]): string[] {
     const ownArgs: string[] = []
     for (const arg of argv) {
       if (arg === '--') {
@@ -409,7 +398,7 @@ export class Options {
    * @param argv Array of strings.
    * @returns A shorter array, possibly empty.
    */
-  static filterOtherArguments (argv: string[]): string[] {
+  filterOtherArguments (argv: string[]): string[] {
     const otherArgs: string[] = []
     let hasOther = false
     for (const arg of argv) {

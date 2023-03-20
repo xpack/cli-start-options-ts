@@ -31,11 +31,12 @@ export class Unimpl extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (context: cli.Context) {
-    super(context)
-
-    // Title displayed with the help message.
-    this.title = 'Test unimpl options'
+  constructor (application: cli.Application) {
+    super({
+      application,
+      // Title displayed by the help message.
+      title: 'Test unimpl options'
+    })
   }
 }
 

@@ -31,11 +31,12 @@ export class Long extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (context: cli.Context) {
-    super(context)
-
-    // Title displayed with the help message.
-    this.title = 'CWD options'
+  constructor (application: cli.Application) {
+    super({
+      application,
+      // Title displayed by the help message.
+      title: 'CWD options'
+    })
   }
 
   /**

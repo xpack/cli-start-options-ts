@@ -39,10 +39,11 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
+import { Application } from './application.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 import { Help, MultiPass } from './help.js'
-import { Options, OptionsGroup } from './options.js'
+import { Options } from './options.js'
 import { Configuration } from './configuration.js'
 import { formatDuration } from './utils.js'
 
@@ -65,11 +66,12 @@ export interface Generator {
 export class Command {
   // --------------------------------------------------------------------------
 
+  public application: Application
   public context: Context
   public log: Logger
   public commands: string
   public title: string
-  public optionsGroups: OptionsGroup[]
+  public options: Options
 
   // All args, as received from cli.Command.
   public unparsedArgs: string[] = []
@@ -78,24 +80,31 @@ export class Command {
   /**
    * @summary Constructor, to remember the context.
    *
-   * @param context Reference to a context.
+   * @param application Reference to an Application.
    * @param title The command one line description.
-   * @param optionsGroups Array of option groups.
    */
-  constructor (
-    context: Context,
-    title?: string,
-    optionsGroups?: OptionsGroup[]
-  ) {
-    assert(context)
-    assert(context.log)
-    // assert(context.fullCommands)
+  constructor (params: {
+    application: Application
+    title: string
+  }) {
+    assert(params.application)
+    this.application = params.application
 
-    this.context = context
-    this.log = context.log
+    assert(this.application.context)
+    this.context = this.application.context
+
+    assert(this.context.log)
+    this.log = this.context.log
+
+    const { context } = this
     this.commands = context.fullCommands.join(' ')
-    this.title = title ?? '(title not set)'
-    this.optionsGroups = optionsGroups ?? []
+
+    this.title = params.title
+
+    this.options = new Options({
+      context,
+      optionsGroups: this.application.options.groups
+    })
   }
 
   /**
@@ -114,13 +123,27 @@ export class Command {
     // Remember the original args.
     this.unparsedArgs = argv
 
+    // Call the init() function of all defined options.
+    this.options.initializeConfiguration()
+
     // Parse the args and return the remaining args, like package names.
-    const remainingArgs: string[] = Options.parseOptions(argv, context,
-      this.optionsGroups)
+    const remainingArgs: string[] = this.options.parse(argv)
+
+    log.trace(util.inspect(config))
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
       this.outputHelp()
       return ExitCodes.SUCCESS // Ok, command help explicitly called.
+    }
+
+    // Check if there are missing mandatory options.
+    const missingErrors = this.options.checkMissingMandatory()
+    if (missingErrors != null) {
+      missingErrors.forEach((msg) => {
+        log.error(msg)
+      })
+      this.outputHelp()
+      return ExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
     }
 
     const commandArgs: string[] = []
@@ -148,17 +171,6 @@ export class Command {
       }
     }
 
-    // Check if there are missing mandatory options.
-    const missingErrors = Options.checkMissingMandatory(this.optionsGroups)
-    if (missingErrors != null) {
-      missingErrors.forEach((msg) => {
-        log.error(msg)
-      })
-      this.outputHelp()
-      return ExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
-    }
-
-    log.trace(util.inspect(config))
     this.commandArgs = commandArgs
 
     return await this.run(commandArgs)
@@ -188,15 +200,11 @@ export class Command {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help: Help = new Help(context)
-
-    const commonOptionsGroups: OptionsGroup[] =
-    Options.getCommonOptionsGroups()
+    const help: Help = new Help({ context, options: this.options })
 
     help.outputAll({
       object: this,
       title: this.title,
-      optionsGroups: commonOptionsGroups, // this.optionsGroups
       isCommand: true
     })
   }

@@ -46,12 +46,14 @@ export class Copy extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (context: cli.Context) {
-    super(context)
+  constructor (application: cli.Application) {
+    super({
+      application,
+      // Title displayed by the help message.
+      title: 'Copy a file to another file'
+    })
 
-    // Title displayed with the help message.
-    this.title = 'Copy a file to another file'
-    this.optionsGroups = [
+    this.options.addGroups([
       {
         title: 'Copy options',
         optionsDefinitions: [
@@ -81,7 +83,7 @@ export class Copy extends cli.Command {
           }
         ]
       }
-    ]
+    ])
   }
 
   /**

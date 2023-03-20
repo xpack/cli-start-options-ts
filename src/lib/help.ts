@@ -25,7 +25,7 @@ import { Logger } from '@xpack/logger'
 import { Application } from './application.js'
 import { Command } from './command.js'
 import { Context } from './context.js'
-import { OptionsGroup, OptionDefinition } from './options.js'
+import { Options, OptionDefinition } from './options.js'
 
 // ----------------------------------------------------------------------------
 
@@ -69,13 +69,22 @@ export class Help {
   // --------------------------------------------------------------------------
 
   public context: Context
+  public options: Options
+
   public middleLimit: number
   public rightLimit: number
   public commands?: string[]
   public multiPass: MultiPass
 
-  constructor (context: Context) {
-    this.context = context
+  constructor (params: {
+    context: Context
+    options: Options
+  }) {
+    assert(params)
+
+    this.context = params.context
+    this.options = params.options
+
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
 
@@ -85,7 +94,6 @@ export class Help {
   outputAll (params: {
     object: Application | Command
     title: string | undefined
-    optionsGroups: OptionsGroup[]
     commands?: string[]
     isCommand?: boolean
   }): void {
@@ -100,10 +108,11 @@ export class Help {
 
     if (params.isCommand !== undefined && params.isCommand) {
       // When called from commands.
-      this.outputCommandLine(params.object.optionsGroups)
+      this.outputCommandLine()
     } else {
       // Try to get a message from the first group.
-      const message = params.optionsGroups[0]?.title
+      const optionsGroups = params.object.options.groups
+      const message = optionsGroups[0]?.title
       this.outputCommands(params.commands, message)
     }
 
@@ -114,14 +123,9 @@ export class Help {
     this.twoPassAlign(() => {
       params.object.outputHelpArgsDetails(this.multiPass)
 
-      params.object.optionsGroups.forEach((optionsGroup) => {
-        this.outputOptions(optionsGroup.optionsDefinitions,
-          optionsGroup.title)
-      })
-
-      this.outputOptionsGroups(params.optionsGroups)
-      this.outputHelpDetails(params.optionsGroups)
-      this.outputEarlyDetails(params.optionsGroups)
+      this.outputOptionsGroups()
+      this.outputHelpDetails()
+      this.outputEarlyDetails()
     })
 
     this.outputFooter()
@@ -135,9 +139,7 @@ export class Help {
     }
   }
 
-  outputCommandLine (
-    optionsGroups: OptionsGroup[]
-  ): void {
+  outputCommandLine (): void {
     const log = this.context.log
     const programName: string = this.context.programName
 
@@ -145,10 +147,20 @@ export class Help {
     const usage = `Usage: ${programName} ${commands}`
     let str: string = usage
 
+    let preOptions = ''
+    let postOptions = ''
+    const optionsGroups = this.options.groups
+    for (let i = 0; i < optionsGroups.length; ++i) {
+      if (preOptions === '') {
+        preOptions = optionsGroups[i]?.preOptions ?? ''
+      }
+      if (postOptions === '') {
+        postOptions = optionsGroups[i]?.postOptions ?? ''
+      }
+    }
     const optionDefinitions: OptionDefinition[] = []
-    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
-      optionsGroups[0]?.preOptions !== undefined) {
-      str += ' ' + optionsGroups[0].preOptions
+    if (preOptions.length > 0) {
+      str += ' ' + preOptions
     }
     str += ' [options...]'
     optionsGroups.forEach((optionsGroup) => {
@@ -188,9 +200,8 @@ export class Help {
       }
       str += ' ' + buffer
     })
-    if (optionsGroups !== undefined && (optionsGroups.length > 0) &&
-      optionsGroups[0]?.postOptions !== undefined) {
-      buffer = optionsGroups[0].postOptions
+    if (postOptions.length > 0) {
+      buffer = postOptions
       if (str.length + buffer.length + 1 > this.rightLimit) {
         log.output(str)
         str = ' '.repeat(usage.length)
@@ -251,7 +262,6 @@ export class Help {
   }
 
   outputHelpDetails (
-    _optionsGroups: OptionsGroup[], // Unused
     multiPass = this.multiPass
   ): void {
     const log: Logger = this.context.log
@@ -292,10 +302,11 @@ export class Help {
   }
 
   outputEarlyDetails (
-    optionsGroups: OptionsGroup[],
     multiPass = this.multiPass
   ): void {
     const programName = this.context.programName
+
+    const optionsGroups = this.options.commonGroups
 
     if (!multiPass.isFirstPass) {
       // log.output()
@@ -304,8 +315,8 @@ export class Help {
     optionsGroups.forEach((optionsGroup) => {
       optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
         if (optionDefinition.message !== undefined &&
-          (optionDefinition.doProcessEarly !== undefined &&
-            optionDefinition.doProcessEarly)) {
+          (optionDefinition.isRequiredEarly !== undefined &&
+            optionDefinition.isRequiredEarly)) {
           let out = `${programName} `
           optionDefinition.options.forEach((opt, index) => {
             out += opt
@@ -324,9 +335,11 @@ export class Help {
   }
 
   outputOptionsGroups (
-    optionsGroups: OptionsGroup[],
     multiPass = this.multiPass
   ): void {
+    const optionsGroups =
+      [...this.options.groups, ...this.options.commonGroups]
+
     optionsGroups.forEach((optionsGroup) => {
       this.outputOptions(
         optionsGroup.optionsDefinitions, optionsGroup.title, multiPass)
@@ -343,8 +356,8 @@ export class Help {
     let hasContent = false
     optionDefinitions.forEach((optionDefinition) => {
       if (optionDefinition.message !== undefined &&
-        !(optionDefinition.doProcessEarly !== undefined &&
-          optionDefinition.doProcessEarly) &&
+        !(optionDefinition.isRequiredEarly !== undefined &&
+          optionDefinition.isRequiredEarly) &&
         !(optionDefinition.isHelp !== undefined &&
           optionDefinition.isHelp)) {
         hasContent = true
@@ -361,8 +374,8 @@ export class Help {
 
     optionDefinitions.forEach((optionDefinition) => {
       if (optionDefinition.message !== undefined &&
-        !(optionDefinition.doProcessEarly !== undefined &&
-          optionDefinition.doProcessEarly) &&
+        !(optionDefinition.isRequiredEarly !== undefined &&
+          optionDefinition.isRequiredEarly) &&
         !(optionDefinition.isHelp !== undefined &&
           optionDefinition.isHelp)) {
         let strOpts = '  '
@@ -410,15 +423,15 @@ export class Help {
             ? `, default ${optionDefinition.msgDefault}`
             : ''
           if (optionDefinition.isOptional !== undefined &&
-             optionDefinition.isOptional &&
-             optionDefinition.isMultiple !== undefined &&
-             optionDefinition.isMultiple) {
+            optionDefinition.isOptional &&
+            optionDefinition.isMultiple !== undefined &&
+            optionDefinition.isMultiple) {
             desc += `(optional, multiple${msgDefault})`
           } else if (optionDefinition.isOptional !== undefined &&
             optionDefinition.isOptional) {
             desc += `(optional${msgDefault})`
           } else if (optionDefinition.isMultiple !== undefined &&
-              optionDefinition.isMultiple) {
+            optionDefinition.isMultiple) {
             desc += '(multiple)'
           }
           log.output(`${Help.padRight(strOpts, multiPass.width)} ${desc}`)
@@ -443,12 +456,12 @@ export class Help {
       log.output(`${bugReports} <${pkgJson.bugs.url}>`)
     } else if (pkgJson.author !== undefined) {
       if (typeof pkgJson.author === 'object' &&
-          pkgJson.author.name !== undefined &&
-          pkgJson.author.email !== undefined) {
+        pkgJson.author.name !== undefined &&
+        pkgJson.author.email !== undefined) {
         log.output(
           `${bugReports} ${pkgJson.author.name} <${pkgJson.author.email}>`)
       } else if (typeof pkgJson.author === 'object' &&
-          pkgJson.author.email !== undefined) {
+        pkgJson.author.email !== undefined) {
         log.output(
           `${bugReports} <${pkgJson.author.email}>`)
       } else if (typeof pkgJson.author === 'string') {
