@@ -44,8 +44,6 @@ export class Context {
   processArgv: string[]
   startTime: number
 
-  // TODO: rename packageJson
-  // Set in initialize().
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   packageJson: NpmPackageJson = ({} as NpmPackageJson)
 

@@ -34,11 +34,6 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
-// https://www.npmjs.com/package/@xpack/logger
-import { Logger } from '@xpack/logger'
-
-// ----------------------------------------------------------------------------
-
 import { Application } from './application.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
@@ -68,8 +63,9 @@ export class Command {
 
   public application: Application
   public context: Context
-  public log: Logger
+
   public commands: string
+
   public title: string
   public options: Options
 
@@ -94,7 +90,6 @@ export class Command {
     this.context = this.application.context
 
     assert(this.context.log)
-    this.log = this.context.log
 
     const { context } = this
     this.commands = context.fullCommands.join(' ')
@@ -114,7 +109,7 @@ export class Command {
    * @returns Return code.
    */
   async prepareAndRun (argv: string[]): Promise<number> {
-    const log = this.log
+    const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
     const context: Context = this.context
@@ -227,7 +222,7 @@ export class Command {
    * @returns Nothing.
    */
   outputDoneDuration (): void {
-    const log = this.log
+    const log = this.context.log
     const context = this.context
 
     log.info()

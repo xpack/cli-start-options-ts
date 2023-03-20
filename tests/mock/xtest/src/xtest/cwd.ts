@@ -48,7 +48,7 @@ export class Long extends cli.Command {
    * @override
    */
   override async run (_args: string[]): Promise<number> {
-    const log = this.log
+    const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
     log.info(this.title)
