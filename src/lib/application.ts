@@ -756,9 +756,6 @@ export class Application {
 
     const help = new Help({ context, options: this.options })
 
-    // If there is a command, we should not get here, but in the command help.
-    assert(context.commandInstance === undefined)
-
     const packageJson = this.context.packageJson
     const commands = this.commandsTree.getUnaliasedCommands()
 
@@ -882,9 +879,6 @@ export class Application {
           found.moduleRelativePath
         )
 
-        context.CommandClass = CommandClass
-        // The command class is known at this point.
-
         // Full name commands, not the actual encountered shortcuts.
         context.fullCommands = found.matchedCommands
 
@@ -899,10 +893,9 @@ export class Application {
         })
 
         const commandInstance: Command = new CommandClass(this)
-        context.commandInstance = commandInstance
 
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {
-          assert(context.CommandClass)
+          assert(commandInstance)
           // Show the command specific help.
           commandInstance.outputHelp()
           return ExitCodes.SUCCESS // Help explicitly called.
@@ -947,8 +940,6 @@ export class Application {
     }
 
     context.commands = []
-    context.CommandClass = undefined
-    context.commandInstance = undefined
 
     return exitCode
   }

@@ -22,7 +22,6 @@ import { Logger } from '@xpack/logger'
 
 // ----------------------------------------------------------------------------
 
-import { Command } from './command.js'
 import { Configuration } from './configuration.js'
 import { NpmPackageJson } from './utils.js'
 
@@ -54,9 +53,6 @@ export class Context {
 
   // The commands used to select the current command.
   commands: string[] = []
-  // The class implementing the current command.
-  CommandClass: any | undefined = undefined
-  commandInstance: Command | undefined = undefined
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.
