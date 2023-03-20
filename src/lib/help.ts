@@ -95,7 +95,6 @@ export class Help {
     object: Application | Command
     title: string | undefined
     commands?: string[]
-    isCommand?: boolean
   }): void {
     assert(params)
 
@@ -106,14 +105,14 @@ export class Help {
 
     this.outputTitle(params.title)
 
-    if (params.isCommand !== undefined && params.isCommand) {
-      // When called from commands.
-      this.outputCommandLine()
-    } else {
+    if (params.object instanceof Application) {
       // Try to get a message from the first group.
       const optionsGroups = params.object.options.groups
       const message = optionsGroups[0]?.title
       this.outputCommands(params.commands, message)
+    } else {
+      // When called from commands.
+      this.outputCommandLine()
     }
 
     // The special trick here is how to align the right column.

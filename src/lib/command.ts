@@ -204,8 +204,7 @@ export class Command {
 
     help.outputAll({
       object: this,
-      title: this.title,
-      isCommand: true
+      title: this.title
     })
   }
 
