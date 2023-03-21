@@ -215,6 +215,9 @@ export class Application {
   // MAY BE set, to enable REPL mode.
   public enableREPL: boolean = false
 
+  // MAY BE set, to enable the update checker.
+  public checkUpdatesIntervalSeconds: number = 24 * 60 * 60
+
   protected latestVersionPromise: Promise<string> | undefined = undefined
   protected commandsTree: CommandsTree = new CommandsTree()
 
@@ -556,7 +559,8 @@ export class Application {
       const updateChecker = new UpdateChecker({
         log,
         packageName: packageJson.name,
-        packageVersion: packageJson.version
+        packageVersion: packageJson.version,
+        checkUpdatesIntervalSeconds: this.checkUpdatesIntervalSeconds
       })
 
       // Start the update checker, as an asynchronous function
