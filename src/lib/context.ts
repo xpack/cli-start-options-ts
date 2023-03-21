@@ -61,8 +61,6 @@ export class Context {
 
   // MUST be set to define the application root path.
   public rootPath: string | undefined = undefined
-  // MAY BE set, to enable REPL mode.
-  public enableREPL: boolean = false
   // MAY BE set, to enable the update checker.
   public checkUpdatesIntervalSeconds: number = 0
 

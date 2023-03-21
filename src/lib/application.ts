@@ -212,6 +212,9 @@ export class Application {
   public context: Context
   public options: Options
 
+  // MAY BE set, to enable REPL mode.
+  public enableREPL: boolean = false
+
   protected latestVersionPromise: Promise<string> | undefined = undefined
   protected commandsTree: CommandsTree = new CommandsTree()
 
@@ -379,8 +382,7 @@ export class Application {
   }
 
   initializeReplOptions (): void {
-    const context = this.context
-    if (context.enableREPL !== undefined && context.enableREPL) {
+    if (this.enableREPL) {
       this.options.appendToGroup('Common options',
         [
           {
@@ -540,7 +542,7 @@ export class Application {
 
     let exitCode = ExitCodes.SUCCESS
 
-    if ((commands.length === 0) && context.enableREPL) {
+    if ((commands.length === 0) && this.enableREPL) {
       // If there are no commands on the command line and REPL is enabled,
       // enter the loop. Each line will be evaluated with dispatchCommands().
       exitCode = await this.enterRepl()

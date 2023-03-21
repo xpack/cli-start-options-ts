@@ -52,7 +52,7 @@ export class Xtest extends cli.Application {
       path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 
     // Enable REPL
-    this.context.enableREPL = true
+    this.enableREPL = true
 
     // To enable server mode: --interactive-server-port 9999
     // or statically with:
