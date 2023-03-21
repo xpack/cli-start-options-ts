@@ -91,7 +91,11 @@ export class Context {
     this.processEnv = process.env
     this.processArgv = process.argv
 
-    this.title = ''
+    // Normally this should have been passed in the constructor, but
+    // for Application it is not available that early, since the rootPath
+    // is known only after the instance is created.
+    // Thus it must be set explicitly in Command/Application.
+    this.title = '(unset)'
     this.startTime = Date.now()
 
     // Initialise the configuration.

@@ -150,6 +150,8 @@ export class Application {
 
       // Instantiate the derived class.
       application = new ThisClass(context)
+      // The rootPath (required to read the package.json) is known
+      // only after the instance is created.
 
       // Redirect to the instance runner. It might start a REPL.
       exitCode = await application.prepareAndRun()
