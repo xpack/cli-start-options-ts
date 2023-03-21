@@ -31,36 +31,40 @@ export class Context {
   // --------------------------------------------------------------------------
 
   /** The invocation name of the program. */
-  programName: string
+  public programName: string
   /** Reference to a node console. */
-  console: Console
+  public console: Console
   /** Reference to an xPack Logger instance. */
-  log: Logger
+  public log: Logger
   /** Reference to a configuration. */
-  config: Configuration
-  cmdPath: string
-  processCwd: string
-  processEnv: NodeJS.ProcessEnv
-  processArgv: string[]
-  startTime: number
+  public config: Configuration
+
+  public startTime: number
+
+  public title: string
+
+  public cmdPath: string
+  public processCwd: string
+  public processEnv: NodeJS.ProcessEnv
+  public processArgv: string[]
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  packageJson: NpmPackageJson = ({} as NpmPackageJson)
+  public packageJson: NpmPackageJson = ({} as NpmPackageJson)
 
-  fullCommands: string[] = []
+  public fullCommands: string[] = []
 
   // The commands used to select the current command.
-  commands: string[] = []
+  public commands: string[] = []
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.
 
   // MUST be set to define the application root path.
-  rootPath: string | undefined = undefined
+  public rootPath: string | undefined = undefined
   // MAY BE set, to enable REPL mode.
-  enableREPL: boolean = false
+  public enableREPL: boolean = false
   // MAY BE set, to enable the update checker.
-  checkUpdatesIntervalSeconds: number = 0
+  public checkUpdatesIntervalSeconds: number = 0
 
   // --------------------------------------------------------------------------
 
@@ -87,6 +91,7 @@ export class Context {
     this.processEnv = process.env
     this.processArgv = process.argv
 
+    this.title = ''
     this.startTime = Date.now()
 
     // Initialise the configuration.

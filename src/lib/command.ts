@@ -64,10 +64,10 @@ export class Command {
   public application: Application
   public context: Context
 
-  public commands: string
-
-  public title: string
   public options: Options
+
+  // TODO: move to context.
+  public commands: string
 
   // All args, as received from cli.Command.
   public unparsedArgs: string[] = []
@@ -94,7 +94,7 @@ export class Command {
     const { context } = this
     this.commands = context.fullCommands.join(' ')
 
-    this.title = params.title
+    this.context.title = params.title
 
     this.options = new Options({
       context,
@@ -199,7 +199,7 @@ export class Command {
 
     help.outputAll({
       object: this,
-      title: this.title
+      title: this.context.title
     })
   }
 

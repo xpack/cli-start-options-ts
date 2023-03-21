@@ -452,6 +452,8 @@ export class Application {
 
     const packageJson = context.packageJson
 
+    context.title = packageJson.description ?? packageJson.name
+
     // ------------------------------------------------------------------------
     // Validate the engine.
 
@@ -756,14 +758,13 @@ export class Application {
 
     const help = new Help({ context, options: this.options })
 
-    const packageJson = this.context.packageJson
     const commands = this.commandsTree.getUnaliasedCommands()
 
     // Show top (application) help.
 
     help.outputAll({
       object: this,
-      title: packageJson.description,
+      title: this.context.title,
       commands
     })
   }

@@ -55,7 +55,7 @@ export class Generator extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    log.info(this.title)
+    log.info(this.context.title)
     // const config = this.context.config
 
     const object = {}
