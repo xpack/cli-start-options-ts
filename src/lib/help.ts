@@ -93,7 +93,6 @@ export class Help {
 
   outputAll (params: {
     object: Application | Command
-    title: string | undefined
     commands?: string[]
   }): void {
     assert(params)
@@ -103,7 +102,7 @@ export class Help {
     // Start with an empty line.
     log.output()
 
-    this.outputTitle(params.title)
+    this.outputTitle(this.context.title)
 
     if (params.object instanceof Application) {
       // Try to get a message from the first group.

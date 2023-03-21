@@ -198,8 +198,7 @@ export class Command {
     const help: Help = new Help({ context, options: this.options })
 
     help.outputAll({
-      object: this,
-      title: this.context.title
+      object: this
     })
   }
 

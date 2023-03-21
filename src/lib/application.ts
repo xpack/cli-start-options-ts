@@ -764,7 +764,6 @@ export class Application {
 
     help.outputAll({
       object: this,
-      title: this.context.title,
       commands
     })
   }
