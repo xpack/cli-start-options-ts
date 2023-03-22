@@ -29,7 +29,6 @@ import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 import { Help, MultiPass } from './help.js'
-import { Options } from './options.js'
 import { formatDuration } from './utils.js'
 
 // ============================================================================
@@ -53,8 +52,6 @@ export class Command {
 
   public context: Context
 
-  public options: Options
-
   /**
    * @summary Constructor, to remember the context.
    *
@@ -71,9 +68,6 @@ export class Command {
     assert(this.context.log)
 
     this.context.title = params.title
-
-    // Temporarily
-    this.options = this.context.options
   }
 
   /**
@@ -93,10 +87,10 @@ export class Command {
     this.context.unparsedArgs = [...argv]
 
     // Call the init() function of all defined options.
-    this.options.initializeConfiguration()
+    context.options.initializeConfiguration()
 
     // Parse the args and return the remaining args, like package names.
-    const remainingArgs: string[] = this.options.parse(argv)
+    const remainingArgs: string[] = context.options.parse(argv)
 
     log.trace(util.inspect(config))
 
@@ -106,7 +100,7 @@ export class Command {
     }
 
     // Check if there are missing mandatory options.
-    const missingErrors = this.options.checkMissingMandatory()
+    const missingErrors = context.options.checkMissingMandatory()
     if (missingErrors != null) {
       missingErrors.forEach((msg) => {
         log.error(msg)
@@ -169,7 +163,7 @@ export class Command {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help: Help = new Help({ context, options: this.options })
+    const help: Help = new Help({ context, options: context.options })
 
     help.outputAll({
       object: this

@@ -42,7 +42,7 @@ export class Long extends cli.Command {
       title: 'Test long options'
     })
 
-    this.options.addGroups([
+    this.context.options.addGroups([
       {
         title: 'Long options',
         preOptions: '[<name>...]', // Array of test names.

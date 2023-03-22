@@ -45,7 +45,7 @@ export class Long extends cli.Command {
       title: 'Test many options'
     })
 
-    this.options.addGroups([
+    this.context.options.addGroups([
       {
         title: 'Many options',
         preOptions: '[<name1> <name2> <name3>...]',

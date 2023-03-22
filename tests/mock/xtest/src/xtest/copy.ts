@@ -53,7 +53,7 @@ export class Copy extends cli.Command {
       title: 'Copy a file to another file'
     })
 
-    this.options.addGroups([
+    this.context.options.addGroups([
       {
         title: 'Copy options',
         optionsDefinitions: [
