@@ -210,8 +210,6 @@ export class Common {
     const mockLog = new Logger({ console: mockConsole })
     const context =
       await new cli.Context({
-        programName: 'xtest',
-        console: mockConsole,
         log: mockLog
       })
     const app = new Xtest(context)

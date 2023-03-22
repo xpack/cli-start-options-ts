@@ -48,7 +48,7 @@ import * as semver from 'semver'
 
 // import { WscriptAvoider } from 'wscript-avoider'
 
-import { Command } from './command.js'
+import { Command, DerivedCommand } from './command.js'
 import { CommandsTree, FoundCommandModule } from './commands-tree.js'
 import { Context } from './context.js'
 // import { Configuration } from './configuration.js'
@@ -850,13 +850,13 @@ export class Application {
           return ExitCodes.ERROR.SYNTAX // No commands.
         }
 
-        // May throw not supported or not unique.
+        // May throw 'not supported' or 'not unique'.
         const found: FoundCommandModule = this.commandsTree.findCommandModule(
           commands)
 
         assert(context.rootPath)
         // Throws an assert if there is no command class.
-        const CommandClass = await this.findCommandClass(
+        const CommandClass: typeof DerivedCommand = await this.findCommandClass(
           context.rootPath,
           found.moduleRelativePath
         )
@@ -875,7 +875,21 @@ export class Application {
           log.trace(`cmd arg${index}: '${arg}'`)
         })
 
-        const commandInstance: Command = new CommandClass(this)
+        // Create a new logger and copy the level from the application logger.
+        const commandLog = new Logger({ console: log.console })
+        commandLog.level = log.level
+
+        // Create a new context and copy the options & rootPath
+        // from the application context.
+        const commandContext = new Context({ log: commandLog })
+        commandContext.options.addGroups(this.options.groups)
+        commandContext.options.addGroups(this.options.commonGroups)
+        commandContext.rootPath = context.rootPath
+        commandContext.packageJson = context.packageJson
+        commandContext.fullCommands = context.fullCommands
+
+        const commandInstance: DerivedCommand =
+          new CommandClass({ context: commandContext })
 
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {
           assert(commandInstance)
@@ -934,7 +948,7 @@ export class Application {
   async findCommandClass (
     rootPath: string,
     moduleRelativePath: string
-  ): Promise<any> {
+  ): Promise<typeof DerivedCommand> {
     const parentClass = Command
 
     const modulePath = path.join(rootPath, moduleRelativePath)

@@ -25,12 +25,11 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
-import { Application } from './application.js'
+import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 import { Help, MultiPass } from './help.js'
 import { Options } from './options.js'
-import { Configuration } from './configuration.js'
 import { formatDuration } from './utils.js'
 
 // ============================================================================
@@ -52,7 +51,6 @@ export interface Generator {
 export class Command {
   // --------------------------------------------------------------------------
 
-  public application: Application
   public context: Context
 
   public options: Options
@@ -64,25 +62,18 @@ export class Command {
    * @param title The command one line description.
    */
   constructor (params: {
-    application: Application
+    context: Context
     title: string
   }) {
-    assert(params.application)
-    this.application = params.application
-
-    assert(this.application.context)
-    this.context = this.application.context
+    assert(params.context)
+    this.context = params.context
 
     assert(this.context.log)
 
-    const { context } = this
-
     this.context.title = params.title
 
-    this.options = new Options({
-      context,
-      optionsGroups: this.application.options.groups
-    })
+    // Temporarily
+    this.options = this.context.options
   }
 
   /**
@@ -270,6 +261,28 @@ export class Command {
     object.generators.push(generator)
 
     return object
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+/**
+ * @summary Type of derived command classes.
+ *
+ * @description
+ * Explicit definition to show how a user command class should look
+ * like, more specifically that should it also pass add a mandatory title
+ * to the constructor.
+ *
+ * It is also used to validate the call to instantiate the user class
+ * in the Application class.
+ */
+export class DerivedCommand extends Command {
+  constructor (params: { context: Context }) {
+    super({
+      context: params.context,
+      title: ''
+    })
   }
 }
 

@@ -23,6 +23,7 @@ import { Logger } from '@xpack/logger'
 // ----------------------------------------------------------------------------
 
 import { Configuration } from './configuration.js'
+import { Options } from './options.js'
 import { getProgramName, NpmPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -36,6 +37,8 @@ export class Context {
   public console: Console
   /** Reference to a configuration. */
   public config: Configuration
+
+  public options: Options
 
   /** The invocation name of the program. */
   public programName: string
@@ -103,6 +106,8 @@ export class Context {
 
     // Initialise the configuration.
     this.config = new Configuration()
+
+    this.options = new Options({ context: this })
   }
 }
 
