@@ -76,7 +76,6 @@ export class Context {
     programName: string
     console?: Console | undefined
     log?: Logger | undefined
-    config?: Configuration | undefined
   }) {
     this.programName = params.programName
 
@@ -103,8 +102,7 @@ export class Context {
     this.startTime = Date.now()
 
     // Initialise the configuration.
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    this.config = params.config ?? new Configuration()
+    this.config = new Configuration()
   }
 }
 
