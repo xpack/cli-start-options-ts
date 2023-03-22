@@ -153,7 +153,9 @@ export class Application {
       // Instantiate the derived class.
       application = new ThisClass(context)
       // The rootPath (required to read the package.json) is known
-      // only after the instance is created.
+      // only after the instance is created. Make sure it is defined.
+      assert(context.rootPath,
+        'The derived Application must define the rootPath')
 
       // Redirect to the instance runner. It might start a REPL.
       exitCode = await application.prepareAndRun()
