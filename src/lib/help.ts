@@ -65,11 +65,12 @@ export class MultiPass {
   }
 }
 
+// ----------------------------------------------------------------------------
+
 export class Help {
   // --------------------------------------------------------------------------
 
   public context: Context
-  public options: Options
 
   public middleLimit: number
   public rightLimit: number
@@ -78,12 +79,10 @@ export class Help {
 
   constructor (params: {
     context: Context
-    options: Options
   }) {
     assert(params)
 
     this.context = params.context
-    this.options = params.options
 
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
@@ -148,7 +147,8 @@ export class Help {
 
     let preOptions = ''
     let postOptions = ''
-    const optionsGroups = this.options.groups
+    const options: Options = this.context.options
+    const optionsGroups = options.groups
     for (let i = 0; i < optionsGroups.length; ++i) {
       if (preOptions === '') {
         preOptions = optionsGroups[i]?.preOptions ?? ''
@@ -305,7 +305,7 @@ export class Help {
   ): void {
     const programName = this.context.programName
 
-    const optionsGroups = this.options.commonGroups
+    const optionsGroups = this.context.options.commonGroups
 
     if (!multiPass.isFirstPass) {
       // log.output()
@@ -336,8 +336,9 @@ export class Help {
   outputOptionsGroups (
     multiPass = this.multiPass
   ): void {
+    const options: Options = this.context.options
     const optionsGroups =
-      [...this.options.groups, ...this.options.commonGroups]
+      [...options.groups, ...options.commonGroups]
 
     optionsGroups.forEach((optionsGroup) => {
       this.outputOptions(

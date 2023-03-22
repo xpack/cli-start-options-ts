@@ -163,7 +163,7 @@ export class Command {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help: Help = new Help({ context, options: context.options })
+    const help: Help = new Help({ context })
 
     help.outputAll({
       object: this

@@ -738,7 +738,7 @@ export class Application {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help = new Help({ context, options: this.context.options })
+    const help = new Help({ context })
 
     const commands = this.commandsTree.getUnaliasedCommands()
 
