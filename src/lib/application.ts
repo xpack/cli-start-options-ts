@@ -78,6 +78,7 @@ export const defaultLogLevel = 'info'
 // - 4 = Output error (cannot create file, cannot write, etc)
 // - 5 = Child return error
 // - 6 = Prerequisites (like node version)
+// - 7 = Mismatched type, usually in configurations error
 
 // ============================================================================
 
