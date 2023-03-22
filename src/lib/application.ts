@@ -57,7 +57,7 @@ import { Options } from './options.js'
 import { Help, MultiPass } from './help.js'
 import { ExitCodes } from './error.js'
 import * as cli from './error.js'
-import { getProgramName, readPackageJson } from './utils.js'
+import { readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
 // Logger configuration
@@ -141,11 +141,8 @@ export class Application {
     let exitCode = ExitCodes.SUCCESS
     let application
     try {
-      const programName = getProgramName()
-
       // Create the application context.
       const context = new Context({
-        programName,
         log
       })
 
@@ -549,6 +546,7 @@ export class Application {
       // running in parallel.
       await updateChecker.initiateVersionRetrieval()
 
+      // Pass the original process arguments (without node & program path).
       exitCode = await this.dispatchCommands(argv)
 
       // Before returning, possibly send a notification to the console.
@@ -634,7 +632,6 @@ export class Application {
 
         // Create the application context.
         const socketContext = new Context({
-          programName: context.programName,
           log: socketLog
         })
 
@@ -853,7 +850,7 @@ export class Application {
           return ExitCodes.ERROR.SYNTAX // No commands.
         }
 
-        // Throws not supported or not unique.
+        // May throw not supported or not unique.
         const found: FoundCommandModule = this.commandsTree.findCommandModule(
           commands)
 
@@ -864,7 +861,8 @@ export class Application {
           found.moduleRelativePath
         )
 
-        // Full name commands, not the actual encountered shortcuts.
+        // Full name commands, not the actual encountered,
+        // which may be shortcuts.
         context.fullCommands = found.matchedCommands
 
         log.debug(`Command(s): '${context.fullCommands.join(' ')}'`)

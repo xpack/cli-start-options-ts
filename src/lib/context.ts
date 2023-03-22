@@ -23,21 +23,22 @@ import { Logger } from '@xpack/logger'
 // ----------------------------------------------------------------------------
 
 import { Configuration } from './configuration.js'
-import { NpmPackageJson } from './utils.js'
+import { getProgramName, NpmPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
 
 export class Context {
   // --------------------------------------------------------------------------
 
-  /** The invocation name of the program. */
-  public programName: string
-  /** Reference to a node console. */
-  public console: Console
   /** Reference to an xPack Logger instance. */
   public log: Logger
+  /** Reference to a node console. */
+  public console: Console
   /** Reference to a configuration. */
   public config: Configuration
+
+  /** The invocation name of the program. */
+  public programName: string
 
   public startTime: number
 
@@ -73,16 +74,17 @@ export class Context {
   // --------------------------------------------------------------------------
 
   constructor (params: {
-    programName: string
     log: Logger
   }) {
-    this.programName = params.programName
+    assert(params)
 
     assert(params.log, 'Mandatory log')
     this.log = params.log
 
     // REPL should always set the console to the REPL inout/output streams.
     this.console = this.log.console
+
+    this.programName = getProgramName()
 
     const argv1 = process.argv[1]?.trim()
     assert(argv1 !== undefined, 'Mandatory argv[1]')
