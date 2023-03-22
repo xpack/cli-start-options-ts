@@ -46,7 +46,8 @@ export class Xtest extends cli.Application {
   constructor (params: cli.ApplicationConstructorParams) {
     super(params)
 
-    const context = this.context
+    const context: cli.Context = this.context
+
     // Mandatory, must be set here, not in the library, since it computes
     // the root path as relative to the path of this file..
     context.rootPath =

@@ -158,7 +158,7 @@ export class Command extends Context {
    * @returns Nothing.
    */
   outputHelp (): void {
-    const context = this.context
+    const context: Context = this.context
 
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
@@ -189,7 +189,7 @@ export class Command extends Context {
    * @returns Nothing.
    */
   outputDoneDuration (): void {
-    const context = this.context
+    const context: Context = this.context
 
     const log = context.log
 
@@ -214,7 +214,7 @@ export class Command extends Context {
    * To 'resolve' means to process possible `.` or `..` segments.
    */
   makePathAbsolute (inPath: string): string {
-    const context = this.context
+    const context: Context = this.context
 
     if (path.isAbsolute(inPath)) {
       return path.resolve(inPath)
@@ -237,7 +237,7 @@ export class Command extends Context {
    * element to the array.
    */
   addGenerator (object: any): Generator { // TODO
-    const context = this.context
+    const context: Context = this.context
 
     if (object.generators === undefined) {
       const generators: Generator[] = []
@@ -278,7 +278,8 @@ export class DerivedCommand extends Command {
   constructor (params: CommandConstructorParams) {
     super(params)
 
-    const context = this.context
+    const context: Context = this.context
+
     context.title = '...'
   }
 }

@@ -140,11 +140,11 @@ export class Application extends Context {
 
     // Create the log early, to have it in the exception handlers.
     const log = new Logger({ console })
+
     let exitCode = ExitCodes.SUCCESS
-    let application
     try {
       // Instantiate the derived class.
-      application = new DerivedApplicationClass({
+      const application = new DerivedApplicationClass({
         log
       })
 
@@ -205,18 +205,23 @@ export class Application extends Context {
   constructor (params: ApplicationConstructorParams) {
     super(params)
 
-    const log = this.context.log
+    const context: Context = this.context
 
+    const log = context.log
     log.trace(`${this.constructor.name}.constructor()`)
 
     this.initializeCommonOptions()
   }
 
+  /**
+   * @summary Initialise common options.
+   */
   initializeCommonOptions (): void {
-    // ------------------------------------------------------------------------
+    const context: Context = this.context
+
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
-    this.context.options.addGroups(
+    context.options.addGroups(
       [
         {
           title: 'Common options',
@@ -354,9 +359,14 @@ export class Application extends Context {
     )
   }
 
+  /**
+   * @summary Initialise REPL options.
+   */
   initializeReplOptions (): void {
+    const context: Context = this.context
+
     if (this.enableREPL) {
-      this.context.options.appendToGroup('Common options',
+      context.options.appendToGroup('Common options',
         [
           {
             options: ['--interactive-server-port'],
@@ -412,9 +422,10 @@ export class Application extends Context {
    * object and a few more properties.
    */
   async prepareAndRun (): Promise<number> {
-    const context = this.context
-    const config = context.config
+    const context: Context = this.context
+
     const log = context.log
+    const config = context.config
 
     // Set the application name, to make `ps` output more readable.
     // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
@@ -560,12 +571,10 @@ export class Application extends Context {
   // it'll abruptly terminate the process and prevent REPL usage, which
   // is inherently asynchronous.
   async enterRepl (): Promise<number> {
-    const DerivedApplicationClass =
-      this.constructor as typeof DerivedApplication
+    const context: Context = this.context
 
-    const context = this.context
-    const config = context.config
     const log = context.log
+    const config = context.config
     const packageJson = context.packageJson
 
     const replTitle = context.packageJson.description ?? context.programName
@@ -623,6 +632,9 @@ export class Application extends Context {
 
         // Propagate the log level from the terminal to the socket.
         socketLog.level = log.level
+
+        const DerivedApplicationClass =
+          this.constructor as typeof DerivedApplication
 
         // Instantiate the derived class.
         const application = new DerivedApplicationClass({
@@ -694,7 +706,8 @@ export class Application extends Context {
     callback: nodeReplCallback
   ): Promise<void> {
     // `this` is bound to the application class.
-    const context = this.context
+    const context: Context = this.context
+
     const log = context.log
 
     // Catch errors, this is an old style callback.
@@ -728,7 +741,7 @@ export class Application extends Context {
    * Override it in the application if custom content is desired.
    */
   outputHelp (): void {
-    const context = this.context
+    const context: Context = this.context
 
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
@@ -773,15 +786,15 @@ export class Application extends Context {
    * Called both from the top runner, or from REPL.
    */
   async dispatchCommands (argv: string[]): Promise<number> {
-    const context = this.context
-    const packageJson = context.packageJson
-
-    context.startTime = Date.now()
+    const context: Context = this.context
 
     const log = context.log
     log.trace(`${this.constructor.name}.main()`)
 
+    context.startTime = Date.now()
+
     const config = context.config
+    const packageJson = context.packageJson
 
     argv.forEach((arg, index) => {
       log.trace(`main arg${index}: '${arg}'`)
@@ -983,7 +996,8 @@ export class DerivedApplication extends Application {
   constructor (params: ApplicationConstructorParams) {
     super(params)
 
-    const context = this.context
+    const context: Context = this.context
+
     // Mandatory, must be set here, since it computes
     // the root path as relative to the path of this file..
     context.rootPath =
