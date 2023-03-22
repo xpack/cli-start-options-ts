@@ -28,6 +28,7 @@ import * as path from 'node:path'
 import * as readline from 'node:readline'
 import * as repl from 'node:repl'
 import * as util from 'node:util'
+import { fileURLToPath } from 'node:url'
 import * as vm from 'node:vm'
 
 // ----------------------------------------------------------------------------
@@ -92,6 +93,10 @@ type nodeReplCallback = (
 
 // ----------------------------------------------------------------------------
 
+export interface ApplicationConstructorParams {
+  log: Logger
+}
+
 /**
  * @classdesc
  * Base class for a CLI application.
@@ -101,7 +106,7 @@ type nodeReplCallback = (
  * net clients, a good reason for not using static variables.
  *
  */
-export class Application {
+export class Application extends Context {
   // --------------------------------------------------------------------------
   // For convenience, use a static method to create the instance and
   // bootstrap everything.
@@ -131,23 +136,21 @@ export class Application {
    */
   static async start (): Promise<number> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const ThisClass = this // Simply to make it look like a class.
+    const DerivedApplicationClass = this // Simply to make it look like a class.
 
     // Create the log early, to have it in the exception handlers.
     const log = new Logger({ console })
     let exitCode = ExitCodes.SUCCESS
     let application
     try {
-      // Create the application context.
-      const context = new Context({
+      // Instantiate the derived class.
+      application = new DerivedApplicationClass({
         log
       })
 
-      // Instantiate the derived class.
-      application = new ThisClass(context)
       // The rootPath (required to read the package.json) is known
       // only after the instance is created. Make sure it is defined.
-      assert(context.rootPath,
+      assert(application.context.rootPath,
         'The derived Application must define the rootPath')
 
       // Redirect to the instance runner. It might start a REPL.
@@ -185,8 +188,6 @@ export class Application {
 
   // --------------------------------------------------------------------------
 
-  public context: Context
-
   // MAY BE set, to enable REPL mode.
   public enableREPL: boolean = false
 
@@ -201,13 +202,9 @@ export class Application {
    *
    * @param context Reference to a context.
    */
-  constructor (context: Context) {
-    assert(context)
-    assert(context.console)
-    assert(context.log)
-    assert(context.config)
+  constructor (params: ApplicationConstructorParams) {
+    super(params)
 
-    this.context = context
     const log = this.context.log
 
     log.trace(`${this.constructor.name}.constructor()`)
@@ -563,7 +560,8 @@ export class Application {
   // it'll abruptly terminate the process and prevent REPL usage, which
   // is inherently asynchronous.
   async enterRepl (): Promise<number> {
-    const ClassThis = this.constructor as typeof Application
+    const DerivedApplicationClass =
+      this.constructor as typeof DerivedApplication
 
     const context = this.context
     const config = context.config
@@ -626,17 +624,14 @@ export class Application {
         // Propagate the log level from the terminal to the socket.
         socketLog.level = log.level
 
-        // Create the application context.
-        const socketContext = new Context({
+        // Instantiate the derived class.
+        const application = new DerivedApplicationClass({
           log: socketLog
         })
 
-        // Instantiate the derived class.
-        const application = new ClassThis(socketContext)
-
-        assert(socketContext.rootPath)
+        assert(application.context.rootPath)
         // 'borrow' the package json from the terminal instance.
-        socketContext.packageJson = packageJson
+        application.context.packageJson = packageJson
 
         const socketReplServer = repl.start({
           prompt: context.programName + '> ',
@@ -853,10 +848,11 @@ export class Application {
 
         assert(context.rootPath)
         // Throws an assert if there is no command class.
-        const CommandClass: typeof DerivedCommand = await this.findCommandClass(
-          context.rootPath,
-          found.moduleRelativePath
-        )
+        const DerivedCommandClass: typeof DerivedCommand =
+          await this.findCommandClass(
+            context.rootPath,
+            found.moduleRelativePath
+          )
 
         // Full name commands, not the actual encountered,
         // which may be shortcuts.
@@ -876,7 +872,7 @@ export class Application {
         const commandLog = new Logger({ console: log.console })
         commandLog.level = log.level
 
-        const commandInstance: DerivedCommand = new CommandClass({
+        const commandInstance: DerivedCommand = new DerivedCommandClass({
           log: commandLog,
           context
         })
@@ -968,6 +964,30 @@ export class Application {
   async run (_args: string[]): Promise<number> {
     assert(false, 'For applications that do not have sub-commands, ' +
       'define a run() method in the cli.Application derived class')
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+/**
+ * @summary Type of derived application classes.
+ *
+ * @description
+ * Explicit definition to show how a user Application class should look
+ * like, more specifically that should it also set a mandatory rootPath.
+ *
+ * It is also used to validate the call to instantiate the user class
+ * in the Application class.
+ */
+export class DerivedApplication extends Application {
+  constructor (params: ApplicationConstructorParams) {
+    super(params)
+
+    const context = this.context
+    // Mandatory, must be set here, since it computes
+    // the root path as relative to the path of this file..
+    context.rootPath =
+      path.dirname(path.dirname(fileURLToPath(import.meta.url)))
   }
 }
 

@@ -43,12 +43,13 @@ interface XtestConfig extends cli.Configuration {
 export class Xtest extends cli.Application {
   // --------------------------------------------------------------------------
 
-  constructor (context: cli.Context) {
-    super(context)
+  constructor (params: cli.ApplicationConstructorParams) {
+    super(params)
 
+    const context = this.context
     // Mandatory, must be set here, not in the library, since it computes
     // the root path as relative to the path of this file..
-    this.context.rootPath =
+    context.rootPath =
       path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 
     // Enable REPL
@@ -74,7 +75,7 @@ export class Xtest extends cli.Application {
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
-    this.context.options.addGroups(
+    context.options.addGroups(
       [
         {
           title: 'Extra options',
