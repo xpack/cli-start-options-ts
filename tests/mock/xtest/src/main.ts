@@ -74,7 +74,7 @@ export class Xtest extends cli.Application {
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
-    this.options.addGroups(
+    this.context.options.addGroups(
       [
         {
           title: 'Extra options',

@@ -46,17 +46,14 @@ import * as semver from 'semver'
 
 // ----------------------------------------------------------------------------
 
-// import { WscriptAvoider } from 'wscript-avoider'
-
 import { Command, DerivedCommand } from './command.js'
 import { CommandsTree, FoundCommandModule } from './commands-tree.js'
 import { Context } from './context.js'
-// import { Configuration } from './configuration.js'
-import { Options } from './options.js'
-
-import { Help, MultiPass } from './help.js'
 import { ExitCodes } from './error.js'
+// Hack to keep the cli.Error notation consistent.
 import * as cli from './error.js'
+import { Help, MultiPass } from './help.js'
+import { Options } from './options.js'
 import { readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -189,7 +186,6 @@ export class Application {
   // --------------------------------------------------------------------------
 
   public context: Context
-  public options: Options
 
   // MAY BE set, to enable REPL mode.
   public enableREPL: boolean = false
@@ -216,8 +212,6 @@ export class Application {
 
     log.trace(`${this.constructor.name}.constructor()`)
 
-    this.options = new Options({ context })
-
     this.initializeCommonOptions()
   }
 
@@ -225,7 +219,7 @@ export class Application {
     // ------------------------------------------------------------------------
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
-    this.options.addGroups(
+    this.context.options.addGroups(
       [
         {
           title: 'Common options',
@@ -365,7 +359,7 @@ export class Application {
 
   initializeReplOptions (): void {
     if (this.enableREPL) {
-      this.options.appendToGroup('Common options',
+      this.context.options.appendToGroup('Common options',
         [
           {
             options: ['--interactive-server-port'],
@@ -466,15 +460,17 @@ export class Application {
 
     this.initializeReplOptions()
 
+    const options: Options = this.context.options
+
     // Call the init() function of all defined options.
-    this.options.initializeConfiguration()
+    options.initializeConfiguration()
 
     // Skip the first two arguments (the node path and the application path).
     const argv = process.argv.slice(2)
 
     // Parse the common options, for example the log level, and update
     // the configuration, to know the log level, or if version/help.
-    this.options.parse(argv)
+    options.parse(argv)
 
     // After parsing the options, the debug level is finally known,
     // and the buffered messages are passed out.
@@ -495,7 +491,7 @@ export class Application {
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
-    const mainArgs = this.options.filterOwnArguments(argv)
+    const mainArgs = options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
@@ -742,7 +738,7 @@ export class Application {
     const log = context.log
     log.trace(`${this.constructor.name}.help()`)
 
-    const help = new Help({ context, options: this.options })
+    const help = new Help({ context, options: this.context.options })
 
     const commands = this.commandsTree.getUnaliasedCommands()
 
@@ -796,7 +792,8 @@ export class Application {
       log.trace(`main arg${index}: '${arg}'`)
     })
 
-    const remainingArgs = this.options.parse(argv)
+    const options: Options = this.context.options
+    const remainingArgs = options.parse(argv)
 
     // After parsing the options, the debug level is finally known.
     log.level = config.logLevel
@@ -811,7 +808,7 @@ export class Application {
 
     // Copy relevant args to local array.
     // Start with 0, possibly end with `--`.
-    const mainArgs = this.options.filterOwnArguments(argv)
+    const mainArgs = options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
@@ -882,8 +879,8 @@ export class Application {
         // Create a new context and copy the options & rootPath
         // from the application context.
         const commandContext = new Context({ log: commandLog })
-        commandContext.options.addGroups(this.options.groups)
-        commandContext.options.addGroups(this.options.commonGroups)
+        commandContext.options.addGroups(options.groups)
+        commandContext.options.addGroups(options.commonGroups)
         commandContext.rootPath = context.rootPath
         commandContext.packageJson = context.packageJson
         commandContext.fullCommands = context.fullCommands

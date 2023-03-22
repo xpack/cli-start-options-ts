@@ -106,7 +106,8 @@ export class Help {
 
     if (params.object instanceof Application) {
       // Try to get a message from the first group.
-      const optionsGroups = params.object.options.groups
+      const options: Options = params.object.context.options
+      const optionsGroups = options.groups
       const message = optionsGroups[0]?.title
       this.outputCommands(params.commands, message)
     } else {
