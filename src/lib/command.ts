@@ -57,9 +57,6 @@ export class Command {
 
   public options: Options
 
-  // TODO: move to context.
-  public commands: string
-
   /**
    * @summary Constructor, to remember the context.
    *
@@ -79,7 +76,6 @@ export class Command {
     assert(this.context.log)
 
     const { context } = this
-    this.commands = context.fullCommands.join(' ')
 
     this.context.title = params.title
 
@@ -213,8 +209,8 @@ export class Command {
 
     log.info()
     const durationString = formatDuration(Date.now() - context.startTime)
-    const cmdDisplay = context.commands !== undefined
-      ? [context.programName].concat(context.commands).join(' ')
+    const cmdDisplay = context.fullCommands.length > 0
+      ? context.programName + context.fullCommands.join(' ')
       : context.programName
     log.info(`'${cmdDisplay}' completed in ${durationString}.`)
   }
@@ -262,8 +258,8 @@ export class Command {
     const generator: Generator = {
       tool: context.programName,
       version: context.packageJson.version,
-      command: [context.programName].concat(this.commands,
-        this.context.unparsedArgs),
+      command: [context.programName, ...this.context.fullCommands,
+        ...this.context.unparsedArgs],
       date: (new Date()).toISOString()
     }
 

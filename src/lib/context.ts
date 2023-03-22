@@ -51,7 +51,8 @@ export class Context {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   public packageJson: NpmPackageJson = ({} as NpmPackageJson)
 
-  // ?
+  /** The commands used to select the current class, in full form.
+   * Set by the Application. */
   public fullCommands: string[] = []
 
   /** All args, as received from main, excluding the commands. */
@@ -62,9 +63,6 @@ export class Context {
    * if a `--` is encountered, everything else is also passed.
    */
   public actualArgs: string[] = []
-
-  // The commands used to select the current command.
-  public commands: string[] = []
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.

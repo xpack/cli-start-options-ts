@@ -849,10 +849,6 @@ export class Application {
       }
     }
 
-    // Save the commands in the context, for possible later use, since
-    // they are skipped when calling the command implementation.
-    context.commands = commands
-
     // If --help and no command, output the application help message.
     if ((commands.length === 0) &&
       (config.isHelpRequest !== undefined && config.isHelpRequest)) {
@@ -947,7 +943,10 @@ export class Application {
       log.verbose(`exit(${exitCode})`)
     }
 
-    context.commands = []
+    // Prevent spilling the current command into the next, in case of REPL.
+    context.fullCommands = []
+    context.unparsedArgs = []
+    context.actualArgs = []
 
     return exitCode
   }
