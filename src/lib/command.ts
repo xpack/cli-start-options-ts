@@ -15,15 +15,6 @@
 
 /*
  * This file provides the base class for application commands.
- *
- * The command object has the following properties:
- * - context
- * - log
- * - commands (string[])
- * - unparsedArgs (string[], all args received from main, excluding
- * the commands)
- * - commandArgs (string[], the args passed to the command after
- * parsing options)
  */
 
 // ----------------------------------------------------------------------------
@@ -69,10 +60,6 @@ export class Command {
   // TODO: move to context.
   public commands: string
 
-  // All args, as received from cli.Command.
-  public unparsedArgs: string[] = []
-  public commandArgs: string[] = []
-
   /**
    * @summary Constructor, to remember the context.
    *
@@ -115,8 +102,8 @@ export class Command {
     const context: Context = this.context
     const config: Configuration = context.config
 
-    // Remember the original args.
-    this.unparsedArgs = argv
+    // Make a copy of the original args.
+    this.context.unparsedArgs = [...argv]
 
     // Call the init() function of all defined options.
     this.options.initializeConfiguration()
@@ -141,7 +128,7 @@ export class Command {
       return ExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
     }
 
-    const commandArgs: string[] = []
+    const actualArgs: string[] = []
 
     if (remainingArgs.length > 0) {
       let i = 0
@@ -154,21 +141,21 @@ export class Command {
           if (arg.startsWith('-')) {
             log.warn(`Option '${arg}' not supported; ignored`)
           } else {
-            commandArgs.push(arg)
+            actualArgs.push(arg)
           }
         }
       }
       for (; i < remainingArgs.length; ++i) {
         const arg = remainingArgs[i]
         if (arg !== undefined) {
-          commandArgs.push(arg)
+          actualArgs.push(arg)
         }
       }
     }
 
-    this.commandArgs = commandArgs
+    this.context.actualArgs = actualArgs
 
-    return await this.run(commandArgs)
+    return await this.run(actualArgs)
   }
 
   /**
@@ -275,7 +262,8 @@ export class Command {
     const generator: Generator = {
       tool: context.programName,
       version: context.packageJson.version,
-      command: [context.programName].concat(this.commands, this.unparsedArgs),
+      command: [context.programName].concat(this.commands,
+        this.context.unparsedArgs),
       date: (new Date()).toISOString()
     }
 

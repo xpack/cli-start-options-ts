@@ -51,7 +51,17 @@ export class Context {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   public packageJson: NpmPackageJson = ({} as NpmPackageJson)
 
+  // ?
   public fullCommands: string[] = []
+
+  /** All args, as received from main, excluding the commands. */
+  public unparsedArgs: string[] = []
+  /**
+   * Arguments actually passed to the command run() method.
+   * Options must have been processed by Options.parse();
+   * if a `--` is encountered, everything else is also passed.
+   */
+  public actualArgs: string[] = []
 
   // The commands used to select the current command.
   public commands: string[] = []
