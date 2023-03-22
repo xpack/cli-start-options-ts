@@ -876,17 +876,13 @@ export class Application {
         const commandLog = new Logger({ console: log.console })
         commandLog.level = log.level
 
-        // Create a new context and copy the options & rootPath
-        // from the application context.
-        const commandContext = new Context({ log: commandLog })
-        commandContext.options.addGroups(options.groups)
-        commandContext.options.addGroups(options.commonGroups)
-        commandContext.rootPath = context.rootPath
-        commandContext.packageJson = context.packageJson
-        commandContext.fullCommands = context.fullCommands
+        const commandInstance: DerivedCommand = new CommandClass({
+          log: commandLog,
+          context
+        })
 
-        const commandInstance: DerivedCommand =
-          new CommandClass({ context: commandContext })
+        assert(commandInstance.context.title.length > 0,
+          'The derived command must define a mandatory title')
 
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {
           assert(commandInstance)

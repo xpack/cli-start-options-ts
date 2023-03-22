@@ -25,6 +25,11 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
+// https://www.npmjs.com/package/@xpack/logger
+import { Logger } from '@xpack/logger'
+
+// ----------------------------------------------------------------------------
+
 import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
@@ -43,31 +48,26 @@ export interface Generator {
 
 // ----------------------------------------------------------------------------
 
+export interface CommandConstructorParams {
+  log: Logger
+  context: Context
+}
+
 /**
  * @classdesc
  * Base class for a CLI application command.
  */
-export class Command {
+export class Command extends Context {
   // --------------------------------------------------------------------------
-
-  public context: Context
 
   /**
    * @summary Constructor, to remember the context.
    *
-   * @param application Reference to an Application.
-   * @param title The command one line description.
+   * @param params Reference to an object with constructor parameters.
    */
-  constructor (params: {
-    context: Context
-    title: string
-  }) {
-    assert(params.context)
-    this.context = params.context
-
-    assert(this.context.log)
-
-    this.context.title = params.title
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor (params: CommandConstructorParams) {
+    super(params)
   }
 
   /**
@@ -77,14 +77,13 @@ export class Command {
    * @returns Return code.
    */
   async prepareAndRun (argv: string[]): Promise<number> {
-    const log = this.context.log
+    const context: Context = this.context
+
+    const log = context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    const context: Context = this.context
-    const config: Configuration = context.config
-
     // Make a copy of the original args.
-    this.context.unparsedArgs = [...argv]
+    context.unparsedArgs = [...argv]
 
     // Call the init() function of all defined options.
     context.options.initializeConfiguration()
@@ -92,6 +91,7 @@ export class Command {
     // Parse the args and return the remaining args, like package names.
     const remainingArgs: string[] = context.options.parse(argv)
 
+    const config: Configuration = context.config
     log.trace(util.inspect(config))
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
@@ -134,7 +134,7 @@ export class Command {
       }
     }
 
-    this.context.actualArgs = actualArgs
+    context.actualArgs = actualArgs
 
     return await this.run(actualArgs)
   }
@@ -189,8 +189,9 @@ export class Command {
    * @returns Nothing.
    */
   outputDoneDuration (): void {
-    const log = this.context.log
     const context = this.context
+
+    const log = context.log
 
     log.info()
     const durationString = formatDuration(Date.now() - context.startTime)
@@ -213,10 +214,12 @@ export class Command {
    * To 'resolve' means to process possible `.` or `..` segments.
    */
   makePathAbsolute (inPath: string): string {
+    const context = this.context
+
     if (path.isAbsolute(inPath)) {
       return path.resolve(inPath)
     }
-    return path.resolve(this.context.config.cwd ?? this.context.processCwd,
+    return path.resolve(context.config.cwd ?? context.processCwd,
       inPath)
   }
 
@@ -234,17 +237,18 @@ export class Command {
    * element to the array.
    */
   addGenerator (object: any): Generator { // TODO
+    const context = this.context
+
     if (object.generators === undefined) {
       const generators: Generator[] = []
       object.generators = generators
     }
 
-    const context = this.context
     const generator: Generator = {
       tool: context.programName,
       version: context.packageJson.version,
-      command: [context.programName, ...this.context.fullCommands,
-        ...this.context.unparsedArgs],
+      command: [context.programName, ...context.fullCommands,
+        ...context.unparsedArgs],
       date: (new Date()).toISOString()
     }
 
@@ -264,19 +268,18 @@ export class Command {
  * @summary Type of derived command classes.
  *
  * @description
- * Explicit definition to show how a user command class should look
- * like, more specifically that should it also pass add a mandatory title
- * to the constructor.
+ * Explicit definition to show how a user Command class should look
+ * like, more specifically that should it also set a mandatory title.
  *
  * It is also used to validate the call to instantiate the user class
  * in the Application class.
  */
 export class DerivedCommand extends Command {
-  constructor (params: { context: Context }) {
-    super({
-      context: params.context,
-      title: ''
-    })
+  constructor (params: CommandConstructorParams) {
+    super(params)
+
+    const context = this.context
+    context.title = '...'
   }
 }
 

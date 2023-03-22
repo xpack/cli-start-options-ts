@@ -46,12 +46,11 @@ export class Copy extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (params: { context: cli.Context }) {
-    super({
-      context: params.context,
-      // Title displayed by the help message.
-      title: 'Copy a file to another file'
-    })
+  constructor (params: cli.CommandConstructorParams) {
+    super(params)
+
+    // Title displayed by the help message.
+    this.context.title = 'Copy a file to another file'
 
     this.context.options.addGroups([
       {

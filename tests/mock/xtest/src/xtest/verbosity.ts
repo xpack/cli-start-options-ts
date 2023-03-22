@@ -31,12 +31,11 @@ export class Copy extends cli.Command {
    *
    * @param context Reference to a context.
    */
-  constructor (params: { context: cli.Context }) {
-    super({
-      context: params.context,
-      // Title displayed by the help message.
-      title: 'Exercise verbosity'
-    })
+  constructor (params: cli.CommandConstructorParams) {
+    super(params)
+
+    // Title displayed by the help message.
+    this.context.title = 'Exercise verbosity'
   }
 
   /**

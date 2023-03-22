@@ -61,6 +61,7 @@ export class Context {
 
   /** All args, as received from main, excluding the commands. */
   public unparsedArgs: string[] = []
+
   /**
    * Arguments actually passed to the command run() method.
    * Options must have been processed by Options.parse();
@@ -78,6 +79,7 @@ export class Context {
 
   constructor (params: {
     log: Logger
+    context?: Context
   }) {
     assert(params)
 
@@ -101,13 +103,28 @@ export class Context {
     // for Application it is not available that early, since the rootPath
     // is known only after the instance is created.
     // Thus it must be set explicitly in Command/Application.
-    this.title = '(unset)'
+    this.title = ''
+
     this.startTime = Date.now()
 
     // Initialise the configuration.
     this.config = new Configuration()
 
     this.options = new Options({ context: this })
+
+    if (params.context !== undefined) {
+      // Copy the options & rootPath
+      // from the application context.
+      this.options.addGroups(params.context.options.groups)
+      this.options.addGroups(params.context.options.commonGroups)
+      this.rootPath = params.context.rootPath
+      this.packageJson = params.context.packageJson
+      this.fullCommands = params.context.fullCommands
+    }
+  }
+
+  public get context (): Context {
+    return this
   }
 }
 
