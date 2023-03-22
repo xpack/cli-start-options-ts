@@ -41,6 +41,36 @@ export interface NpmPackageJson {
   }
 }
 
+// ----------------------------------------------------------------------------
+
+/**
+ * @summary Get the program name.
+ *
+ * @returns A string with the name used to invoke the program.
+ *
+ * @description
+ * To differentiate between multiple invocations with different
+ * names, extract the name from the last path element; ignore
+ * extensions, if any.
+ */
+
+export function getProgramName (): string {
+  const argv1 = process.argv[1]?.trim()
+  assert(argv1 !== undefined, 'Mandatory argv[1]')
+
+  const fileName: string = path.basename(argv1)
+  let programName
+  if (fileName.indexOf('.') !== undefined) {
+    programName = fileName.split('.')[0]?.trim()
+  } else {
+    programName = fileName?.trim()
+  }
+  assert(programName !== undefined && programName.length > 0,
+    'Mandatory program name')
+
+  return programName
+}
+
 /**
  * @summary Read package JSON file.
  *

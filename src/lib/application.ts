@@ -57,7 +57,7 @@ import { Options } from './options.js'
 import { Help, MultiPass } from './help.js'
 import { ExitCodes } from './error.js'
 import * as cli from './error.js'
-import { readPackageJson } from './utils.js'
+import { getProgramName, readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
 // Logger configuration
@@ -106,11 +106,13 @@ type nodeReplCallback = (
  */
 export class Application {
   // --------------------------------------------------------------------------
+  // For convenience, use a static method to create the instance and
+  // bootstrap everything.
 
   /**
    * @summary Application start().
    *
-   * @returns The process exit code.
+   * @returns A number with the process exit code.
    *
    * @description
    * Convenience code to create an application instance.
@@ -139,7 +141,7 @@ export class Application {
     let exitCode = ExitCodes.SUCCESS
     let application
     try {
-      const programName = Application.getProgramName()
+      const programName = getProgramName()
 
       // Create the application context.
       const context = new Context({
@@ -184,27 +186,6 @@ export class Application {
     }
     // Pass through. Do not call exit(), to allow callbacks (or REPL) to run.
     return exitCode
-  }
-
-  static getProgramName (): string {
-    // To differentiate between multiple invocations with different
-    // names, extract the name from the last path element; ignore
-    // extensions, if any.
-
-    const argv1 = process.argv[1]?.trim()
-    assert(argv1 !== undefined, 'Mandatory argv[1]')
-
-    const fileName: string = path.basename(argv1)
-    let programName
-    if (fileName.indexOf('.') !== undefined) {
-      programName = fileName.split('.')[0]?.trim()
-    } else {
-      programName = fileName?.trim()
-    }
-    assert(programName !== undefined && programName.length > 0,
-      'Mandatory program name')
-
-    return programName
   }
 
   // --------------------------------------------------------------------------
