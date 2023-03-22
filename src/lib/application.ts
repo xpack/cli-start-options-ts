@@ -146,8 +146,7 @@ export class Application {
       // Create the application context.
       const context = new Context({
         programName,
-        log,
-        console: log.console
+        log
       })
 
       // Instantiate the derived class.
@@ -636,8 +635,7 @@ export class Application {
         // Create the application context.
         const socketContext = new Context({
           programName: context.programName,
-          log: socketLog,
-          console: socketLog.console
+          log: socketLog
         })
 
         // Instantiate the derived class.

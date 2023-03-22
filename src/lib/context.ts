@@ -74,17 +74,15 @@ export class Context {
 
   constructor (params: {
     programName: string
-    console?: Console | undefined
-    log?: Logger | undefined
+    log: Logger
   }) {
     this.programName = params.programName
 
-    // REPL should always set the console to the REPL inout/output streams.
-    this.console = params.console ?? console
-    assert(this.console, 'Mandatory console')
+    assert(params.log, 'Mandatory log')
+    this.log = params.log
 
-    this.log = params.log ?? new Logger({ console: this.console })
-    assert(this.log, 'Mandatory log')
+    // REPL should always set the console to the REPL inout/output streams.
+    this.console = this.log.console
 
     const argv1 = process.argv[1]?.trim()
     assert(argv1 !== undefined, 'Mandatory argv[1]')
