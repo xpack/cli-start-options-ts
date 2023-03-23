@@ -53,7 +53,7 @@ import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 // Hack to keep the cli.Error notation consistent.
 import * as cli from './error.js'
-import { Help, MultiPass } from './help.js'
+import { Help } from './help.js'
 import { Options } from './options.js'
 import { Runnable, RunnableConstructorParams } from './runnable.js'
 import { readPackageJson } from './utils.js'
@@ -93,7 +93,7 @@ type nodeReplCallback = (
   result?: readline.CompleterResult
 ) => void
 
-// ----------------------------------------------------------------------------
+// ============================================================================
 
 export interface ApplicationConstructorParams
   extends RunnableConstructorParams {
@@ -768,20 +768,6 @@ export class Application extends Runnable {
     })
   }
 
-  /**
-   * @summary Output details about extra args.
-   *
-   * @param _multiPass Status for two pass.
-   * @returns Nothing.
-   *
-   * @description
-   * The default implementation does nothing. Override it in
-   * the application if needed.
-   */
-  outputHelpArgsDetails (_multiPass: MultiPass): void {
-    // Nothing.
-  }
-
   // --------------------------------------------------------------------------
 
   /**
@@ -920,6 +906,7 @@ export class Application extends Runnable {
           `${context.fullCommands.join(' ')}' started`)
 
         exitCode = await commandInstance.prepareAndRun(commandArgs)
+
         log.debug(`'${context.programName} ` +
           `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
       } else {
@@ -933,6 +920,7 @@ export class Application extends Runnable {
         log.debug(`'${context.programName}' started`)
 
         exitCode = await this.run(remainingArgs)
+
         log.debug(`'${context.programName}' - returned ${exitCode}`)
       }
     } catch (err) {
