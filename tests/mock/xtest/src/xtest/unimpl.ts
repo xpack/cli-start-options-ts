@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------
 
 /**
- * The `xtest long` command implementation.
+ * The `xtest unim` command implementation.
  */
 
 // ----------------------------------------------------------------------------
@@ -23,6 +23,11 @@ import * as cli from '../../../../../esm/index.js'
 
 // ============================================================================
 
+// This test checks that a command class without an implementation for
+// the abstract `run()` method fails.
+
+// To silence the compiler complaining about the missing method:
+// @ts-expect-error
 export class Unimpl extends cli.Command {
   // --------------------------------------------------------------------------
 
