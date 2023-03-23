@@ -25,12 +25,14 @@ import * as cli from '../../../../esm/index.js'
 export class Test extends cli.Application {
   // --------------------------------------------------------------------------
 
-  constructor (context: cli.Context) {
-    super(context)
+  constructor (params: cli.ApplicationConstructorParams) {
+    super(params)
+
+    const context: cli.Context = this.context
 
     // Mandatory, must be set here, not in the library, since it computes
     // the root path as relative to the path of this file..
-    this.context.rootPath =
+    context.rootPath =
       path.dirname(path.dirname(fileURLToPath(import.meta.url)))
   }
 

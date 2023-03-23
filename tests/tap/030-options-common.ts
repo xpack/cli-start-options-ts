@@ -578,7 +578,12 @@ await test('xtest unim (spawn)', async (t) => {
       'unim'
     ])
     t.equal(code, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
-    t.match(stderr, 'AssertionError', 'stdout has assertion')
+
+    // After adding the abstract Runnable, the error message changed.
+    // t.match(stderr, 'AssertionError', 'stderr has assertion')
+    t.match(stderr, 'TypeError: this.run is not a function',
+      'stderr has error')
+
     t.equal(stdout, '', 'stdout is empty')
   } catch (err: any) {
     t.fail(err.message)

@@ -55,6 +55,7 @@ import { ExitCodes } from './error.js'
 import * as cli from './error.js'
 import { Help, MultiPass } from './help.js'
 import { Options } from './options.js'
+import { Runnable, RunnableConstructorParams } from './runnable.js'
 import { readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -94,8 +95,8 @@ type nodeReplCallback = (
 
 // ----------------------------------------------------------------------------
 
-export interface ApplicationConstructorParams {
-  context: Context
+export interface ApplicationConstructorParams
+  extends RunnableConstructorParams {
 }
 
 /**
@@ -107,7 +108,7 @@ export interface ApplicationConstructorParams {
  * net clients, a good reason for not using static variables.
  *
  */
-export class Application {
+export class Application extends Runnable {
   // --------------------------------------------------------------------------
   // For convenience, use a static method to create the instance and
   // bootstrap everything.
@@ -191,8 +192,6 @@ export class Application {
 
   // --------------------------------------------------------------------------
 
-  public context: Context
-
   // MAY BE set, to enable REPL mode.
   protected enableREPL: boolean = false
 
@@ -210,10 +209,7 @@ export class Application {
    * @param context Reference to a context.
    */
   constructor (params: ApplicationConstructorParams) {
-    assert(params)
-    assert(params.context)
-
-    this.context = params.context
+    super(params)
 
     const context: Context = this.context
 
@@ -566,7 +562,7 @@ export class Application {
       // Before returning, possibly send a notification to the console.
       await updateChecker.notifyIfUpdateIsAvailable()
 
-      log.verbose(`run() returns ${exitCode}`)
+      log.verbose(`prepareAndRun() returns ${exitCode}`)
     }
 
     // ------------------------------------------------------------------------

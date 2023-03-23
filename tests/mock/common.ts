@@ -208,11 +208,10 @@ export class Common {
 
     const mockConsole = new Console(ostream, errstream)
     const mockLog = new Logger({ console: mockConsole })
-    const context =
-      await new cli.Context({
-        log: mockLog
-      })
-    const app = new Xtest(context)
+    const context = new cli.Context({
+      log: mockLog
+    })
+    const app = new Xtest({ context })
     const code = await app.run(argv)
     return { code, stdout, stderr }
   }

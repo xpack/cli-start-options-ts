@@ -19,7 +19,7 @@
 
 // ----------------------------------------------------------------------------
 
-import { strict as assert } from 'node:assert'
+// import { strict as assert } from 'node:assert'
 import * as path from 'node:path'
 import * as util from 'node:util'
 
@@ -29,6 +29,7 @@ import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 import { Help, MultiPass } from './help.js'
+import { Runnable, RunnableConstructorParams } from './runnable.js'
 import { formatDuration } from './utils.js'
 
 // ============================================================================
@@ -43,19 +44,14 @@ export interface Generator {
 
 // ----------------------------------------------------------------------------
 
-export interface CommandConstructorParams {
-  context: Context
+export interface CommandConstructorParams extends RunnableConstructorParams {
 }
 
 /**
  * @classdesc
  * Base class for a CLI application command.
  */
-export class Command {
-  // --------------------------------------------------------------------------
-
-  public context: Context
-
+export abstract class Command extends Runnable {
   // --------------------------------------------------------------------------
 
   /**
@@ -65,10 +61,12 @@ export class Command {
    */
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: CommandConstructorParams) {
-    assert(params)
-    assert(params.context)
+    super(params)
 
-    this.context = params.context
+    const context: Context = this.context
+
+    const log = context.log
+    log.trace(`${this.constructor.name}.constructor()`)
   }
 
   /**
@@ -138,19 +136,6 @@ export class Command {
     context.actualArgs = actualArgs
 
     return await this.run(actualArgs)
-  }
-
-  /**
-   * @summary Kind of abstract `run()` method.
-   *
-   * @param _argv Array of arguments.
-   * @returns Exit code.
-   */
-  async run (
-    _argv: string[] // Unused
-  ): Promise<number> {
-    assert(false,
-      'Define a run() method in the cli.Command derived class.')
   }
 
   /**
@@ -282,6 +267,13 @@ export class DerivedCommand extends Command {
     const context: Context = this.context
 
     context.title = '...'
+  }
+
+  override async run (
+    _argv: string[]
+  ): Promise<number> {
+    // ...
+    return ExitCodes.SUCCESS
   }
 }
 
