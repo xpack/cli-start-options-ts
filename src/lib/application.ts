@@ -868,9 +868,9 @@ export class Application extends Command {
 
         // Full name commands, not the actual encountered,
         // which may be shortcuts.
-        context.fullCommands = found.matchedCommands
+        context.matchedCommands = found.matchedCommands
 
-        log.debug(`Command(s): '${context.fullCommands.join(' ')}'`)
+        log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
 
         // Use the original array, since we might have `--` options,
         // and skip already processed commands.
@@ -927,7 +927,7 @@ export class Application extends Command {
     }
 
     // Prevent spilling the current command into the next, in case of REPL.
-    context.fullCommands = []
+    context.matchedCommands = []
     context.unparsedArgs = []
     context.actualArgs = []
 

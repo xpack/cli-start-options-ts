@@ -156,12 +156,12 @@ export abstract class Command {
     let exitCode: number = ExitCodes.SUCCESS
 
     log.debug(`'${context.programName} ` +
-      `${context.fullCommands.join(' ')}' started`)
+      `${context.matchedCommands.join(' ')}' started`)
 
     exitCode = await this.run(actualArgs)
 
     log.debug(`'${context.programName} ` +
-      `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
+      `${context.matchedCommands.join(' ')}' - returned ${exitCode}`)
 
     return exitCode
   }
@@ -209,8 +209,8 @@ export abstract class Command {
 
     log.info()
     const durationString = formatDuration(Date.now() - context.startTime)
-    const cmdDisplay = context.fullCommands.length > 0
-      ? context.programName + context.fullCommands.join(' ')
+    const cmdDisplay = context.matchedCommands.length > 0
+      ? context.programName + context.matchedCommands.join(' ')
       : context.programName
     log.info(`'${cmdDisplay}' completed in ${durationString}.`)
   }
@@ -261,7 +261,7 @@ export abstract class Command {
     const generator: Generator = {
       tool: context.programName,
       version: context.packageJson.version,
-      command: [context.programName, ...context.fullCommands,
+      command: [context.programName, ...context.matchedCommands,
         ...context.unparsedArgs],
       date: (new Date()).toISOString()
     }

@@ -57,7 +57,7 @@ export class Context {
 
   /** The commands used to select the current class, in full form.
    * Set by the Application. */
-  public fullCommands: string[] = []
+  public matchedCommands: string[] = []
 
   /** All args, as received from main, excluding the commands. */
   public unparsedArgs: string[] = []
@@ -119,7 +119,7 @@ export class Context {
       this.options.addGroups(params.context.options.commonGroups)
       this.rootPath = params.context.rootPath
       this.packageJson = params.context.packageJson
-      this.fullCommands = params.context.fullCommands
+      this.matchedCommands = params.context.matchedCommands
     }
   }
 }

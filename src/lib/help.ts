@@ -154,7 +154,7 @@ export class Help {
   outputCommandLine (): void {
     const programName: string = this.context.programName
 
-    const commands = this.context.fullCommands.join(' ')
+    const commands = this.context.matchedCommands.join(' ')
     const usage = `Usage: ${programName} ${commands}`
     let str: string = usage
 
