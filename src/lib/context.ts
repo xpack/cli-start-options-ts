@@ -45,7 +45,7 @@ export class Context {
 
   public startTime: number
 
-  public title: string
+  public helpTitle: string
 
   public cmdPath: string
   public processCwd: string
@@ -103,7 +103,7 @@ export class Context {
     // for Application it is not available that early, since the rootPath
     // is known only after the instance is created.
     // Thus it must be set explicitly in Command/Application.
-    this.title = ''
+    this.helpTitle = ''
 
     this.startTime = Date.now()
 

@@ -35,7 +35,7 @@ export class Copy extends cli.Command {
     super(params)
 
     // Title displayed by the help message.
-    this.context.title = 'Exercise verbosity'
+    this.context.helpTitle = 'Exercise verbosity'
   }
 
   /**
@@ -50,7 +50,7 @@ export class Copy extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    log.info(this.context.title)
+    log.info(this.context.helpTitle)
 
     log.verbose('Verbose')
 

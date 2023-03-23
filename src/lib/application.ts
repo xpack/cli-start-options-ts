@@ -445,7 +445,7 @@ export class Application extends Command {
 
     const packageJson = context.packageJson
 
-    context.title = packageJson.description ?? packageJson.name
+    context.helpTitle = packageJson.description ?? packageJson.name
 
     // ------------------------------------------------------------------------
     // Validate the engine.
@@ -895,7 +895,7 @@ export class Application extends Command {
           context: commandContext
         })
 
-        assert(commandInstance.context.title.length > 0,
+        assert(commandInstance.context.helpTitle.length > 0,
           'The derived command must define a mandatory title')
 
         if (config.isHelpRequest !== undefined && config.isHelpRequest) {

@@ -39,7 +39,7 @@ export class Long extends cli.Command {
     super(params)
 
     // Title displayed by the help message.
-    this.context.title = 'Test long options'
+    this.context.helpTitle = 'Test long options'
 
     this.context.options.addGroups([
       {
@@ -76,7 +76,7 @@ export class Long extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    log.info(this.context.title)
+    log.info(this.context.helpTitle)
     // const config = this.context.config
 
     log.info('Done.')

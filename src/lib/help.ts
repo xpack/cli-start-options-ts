@@ -117,7 +117,7 @@ export class Help {
     // Start with an empty line.
     this.output()
 
-    this.outputTitle(this.context.title)
+    this.outputTitle(this.context.helpTitle)
 
     if (params.object instanceof Application) {
       // Try to get a message from the first group.

@@ -39,7 +39,7 @@ export class Generator extends cli.Command {
     super(params)
 
     // Title displayed by the help message.
-    this.context.title = 'Test generator options'
+    this.context.helpTitle = 'Test generator options'
   }
 
   /**
@@ -54,7 +54,7 @@ export class Generator extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    log.info(this.context.title)
+    log.info(this.context.helpTitle)
     // const config = this.context.config
 
     const object = {}

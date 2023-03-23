@@ -35,7 +35,7 @@ export class Long extends cli.Command {
     super(params)
 
     // Title displayed by the help message.
-    this.context.title = 'CWD options'
+    this.context.helpTitle = 'CWD options'
   }
 
   /**
@@ -50,7 +50,7 @@ export class Long extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    log.info(this.context.title)
+    log.info(this.context.helpTitle)
     const config = this.context.config
     log.always(config.cwd)
 

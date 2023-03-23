@@ -294,7 +294,7 @@ export class DerivedCommand extends Command {
 
     const context: Context = this.context
 
-    context.title = '...'
+    context.helpTitle = '...'
   }
 
   override async run (

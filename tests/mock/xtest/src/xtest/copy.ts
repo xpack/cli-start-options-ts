@@ -50,7 +50,7 @@ export class Copy extends cli.Command {
     super(params)
 
     // Title displayed by the help message.
-    this.context.title = 'Copy a file to another file'
+    this.context.helpTitle = 'Copy a file to another file'
 
     this.context.options.addGroups([
       {
@@ -97,7 +97,7 @@ export class Copy extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.run()`)
 
-    log.info(this.context.title)
+    log.info(this.context.helpTitle)
     const config: CliConfigCopy = (this.context.config as CliConfigCopy)
 
     assert(config.inputPath)

@@ -40,7 +40,7 @@ export class Unimpl extends cli.Command {
     super(params)
 
     // Title displayed by the help message.
-    this.context.title = 'Test unimpl options'
+    this.context.helpTitle = 'Test unimpl options'
   }
 }
 
