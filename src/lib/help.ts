@@ -17,11 +17,6 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-// https://www.npmjs.com/package/@xpack/logger
-import { Logger } from '@xpack/logger'
-
-// ----------------------------------------------------------------------------
-
 import { Application } from './application.js'
 import { Command } from './command.js'
 import { Context } from './context.js'
@@ -76,13 +71,16 @@ export class Help {
   public rightLimit: number
   public commands?: string[]
   public multiPass: MultiPass
+  protected isOutputAlways: boolean
 
   constructor (params: {
     context: Context
+    isOutputAlways?: boolean
   }) {
     assert(params)
 
     this.context = params.context
+    this.isOutputAlways = params.isOutputAlways ?? false
 
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
@@ -90,16 +88,34 @@ export class Help {
     this.multiPass = new MultiPass(this.middleLimit)
   }
 
+  output (message?: String): void {
+    const log = this.context.log
+
+    if (this.isOutputAlways) {
+      log.always(message)
+    } else {
+      log.output(message)
+    }
+  }
+
+  /**
+   * @summary Output the entire help content.
+   * @param params The generic parameters object.
+   * @param params.cmds Array of commands; not present for single
+   *  commands.
+   * @param params.object The application or command object.
+   * @param params.commands The full, unaliased commands for a
+   *   multi-command application.
+   * @returns Nothing.
+   */
   outputAll (params: {
     object: Application | Command
     commands?: string[]
   }): void {
     assert(params)
 
-    const log = this.context.log
-
     // Start with an empty line.
-    log.output()
+    this.output()
 
     this.outputTitle(this.context.title)
 
@@ -130,15 +146,12 @@ export class Help {
   }
 
   outputTitle (title: string | undefined): void {
-    const log = this.context.log
-
     if (title !== undefined) {
-      log.output(`${title}`)
+      this.output(`${title}`)
     }
   }
 
   outputCommandLine (): void {
-    const log = this.context.log
     const programName: string = this.context.programName
 
     const commands = this.context.fullCommands.join(' ')
@@ -194,7 +207,7 @@ export class Help {
 
       // log.output(optStr)
       if (str.length + buffer.length + 1 > this.rightLimit) {
-        log.output(str)
+        this.output(str)
         str = ' '.repeat(usage.length)
       }
       str += ' ' + buffer
@@ -202,13 +215,13 @@ export class Help {
     if (postOptions.length > 0) {
       buffer = postOptions
       if (str.length + buffer.length + 1 > this.rightLimit) {
-        log.output(str)
+        this.output(str)
         str = ' '.repeat(usage.length)
       }
       str += ' ' + buffer
     }
     if (str.length > usage.length) {
-      log.output(str)
+      this.output(str)
     }
   }
 
@@ -217,7 +230,6 @@ export class Help {
     commands: string[] | undefined,
     message: string = '[<args>...]'
   ): void {
-    const log: Logger = this.context.log
     const programName: string = this.context.programName
 
     if (commands !== undefined) {
@@ -228,10 +240,10 @@ export class Help {
       const commandsCopy: string[] = commands.slice()
       commandsCopy.sort()
 
-      log.output(`Usage: ${programName} <command> [<subcommand>...]` +
+      this.output(`Usage: ${programName} <command> [<subcommand>...]` +
         ` [<options> ...] ${message}`)
-      log.output()
-      log.output('where <command> is one of:')
+      this.output()
+      this.output('where <command> is one of:')
       let buffer: string | null = null
       commandsCopy.forEach((cmd, i) => {
         if (buffer === null) {
@@ -242,16 +254,16 @@ export class Help {
           buffer += ', '
         }
         if (buffer.length > this.rightLimit) {
-          log.output(buffer)
+          this.output(buffer)
           buffer = null
         }
       })
       if (buffer != null) {
-        log.output(buffer)
+        this.output(buffer)
         buffer = null
       }
     } else {
-      log.output(`Usage: ${programName} ` + ` [<options> ...] ${message}`)
+      this.output(`Usage: ${programName} ` + ` [<options> ...] ${message}`)
     }
   }
 
@@ -263,7 +275,6 @@ export class Help {
   outputHelpDetails (
     multiPass = this.multiPass
   ): void {
-    const log: Logger = this.context.log
     const programName: string = this.context.programName
 
     const str1: string = `${programName} -h|--help`
@@ -274,7 +285,7 @@ export class Help {
         multiPass.updateWidth(str2.length)
       }
     } else {
-      log.output()
+      this.output()
       this.outputMaybeLongLine(str1, 'Quick help', multiPass)
       if (this.commands !== undefined) {
         this.outputMaybeLongLine(str2, 'Quick help on command', multiPass)
@@ -287,9 +298,8 @@ export class Help {
     message: string,
     multiPass = this.multiPass
   ): void {
-    const log: Logger = this.context.log
     if (out.length >= multiPass.limit) {
-      log.output(out)
+      this.output(out)
       out = ''
     }
     out += ' '.repeat(multiPass.width)
@@ -297,7 +307,7 @@ export class Help {
     if (message !== undefined) {
       desc = message + ' '
     }
-    log.output(`${Help.padRight(out, multiPass.width)} ${desc}`)
+    this.output(`${Help.padRight(out, multiPass.width)} ${desc}`)
   }
 
   outputEarlyDetails (
@@ -351,8 +361,6 @@ export class Help {
     title: string | undefined,
     multiPass = this.multiPass
   ): void {
-    const log = this.context.log
-
     let hasContent = false
     optionDefinitions.forEach((optionDefinition) => {
       if (optionDefinition.message !== undefined &&
@@ -368,8 +376,8 @@ export class Help {
     }
 
     if (!multiPass.isFirstPass && title !== undefined) {
-      log.output()
-      log.output(title + ':')
+      this.output()
+      this.output(title + ':')
     }
 
     optionDefinitions.forEach((optionDefinition) => {
@@ -400,7 +408,7 @@ export class Help {
           multiPass.updateWidth(strOpts.length)
         } else {
           if (strOpts.length >= multiPass.limit) {
-            log.output(strOpts)
+            this.output(strOpts)
             strOpts = ''
           }
           strOpts += ' '.repeat(multiPass.width)
@@ -434,38 +442,37 @@ export class Help {
             optionDefinition.isMultiple) {
             desc += '(multiple)'
           }
-          log.output(`${Help.padRight(strOpts, multiPass.width)} ${desc}`)
+          this.output(`${Help.padRight(strOpts, multiPass.width)} ${desc}`)
         }
       }
     })
   }
 
   outputFooter (): void {
-    const log: Logger = this.context.log
     const pkgJson = this.context.packageJson
 
-    log.output()
+    this.output()
     assert(this.context.rootPath)
     const pkgPath = this.context.rootPath
-    log.output(`npm ${pkgJson.name}@${pkgJson.version} '${pkgPath}'`)
+    this.output(`npm ${pkgJson.name}@${pkgJson.version} '${pkgPath}'`)
     if (pkgJson.homepage !== undefined) {
-      log.output(`Home page: <${pkgJson.homepage}>`)
+      this.output(`Home page: <${pkgJson.homepage}>`)
     }
     const bugReports = 'Bug reports:'
     if (pkgJson.bugs?.url !== undefined) {
-      log.output(`${bugReports} <${pkgJson.bugs.url}>`)
+      this.output(`${bugReports} <${pkgJson.bugs.url}>`)
     } else if (pkgJson.author !== undefined) {
       if (typeof pkgJson.author === 'object' &&
         pkgJson.author.name !== undefined &&
         pkgJson.author.email !== undefined) {
-        log.output(
+        this.output(
           `${bugReports} ${pkgJson.author.name} <${pkgJson.author.email}>`)
       } else if (typeof pkgJson.author === 'object' &&
         pkgJson.author.email !== undefined) {
-        log.output(
+        this.output(
           `${bugReports} <${pkgJson.author.email}>`)
       } else if (typeof pkgJson.author === 'string') {
-        log.output(`${bugReports} ${pkgJson.author}`)
+        this.output(`${bugReports} ${pkgJson.author}`)
       }
     }
   }
