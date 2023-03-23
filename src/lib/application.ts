@@ -47,7 +47,7 @@ import * as semver from 'semver'
 
 // ----------------------------------------------------------------------------
 
-import { Command, DerivedCommand } from './command.js'
+import { Command, CommandConstructorParams, DerivedCommand } from './command.js'
 import { CommandsTree, FoundCommandModule } from './commands-tree.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
@@ -55,7 +55,6 @@ import { ExitCodes } from './error.js'
 import * as cli from './error.js'
 import { Help } from './help.js'
 import { Options } from './options.js'
-import { Runnable, RunnableConstructorParams } from './runnable.js'
 import { readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -96,7 +95,7 @@ type nodeReplCallback = (
 // ============================================================================
 
 export interface ApplicationConstructorParams
-  extends RunnableConstructorParams {
+  extends CommandConstructorParams {
 }
 
 /**
@@ -108,7 +107,7 @@ export interface ApplicationConstructorParams
  * net clients, a good reason for not using static variables.
  *
  */
-export class Application extends Runnable {
+export class Application extends Command {
   // --------------------------------------------------------------------------
   // For convenience, use a static method to create the instance and
   // bootstrap everything.
@@ -158,7 +157,7 @@ export class Application extends Runnable {
         'The derived Application must define the rootPath')
 
       // Redirect to the instance runner. It might start a REPL.
-      exitCode = await application.prepareAndRun()
+      exitCode = await application.start()
       // Pass through. Do not exit, to allow REPL to run.
     } catch (err: any) {
       // If the initialisation was completed, the log level must have been
@@ -427,7 +426,7 @@ export class Application extends Runnable {
    * the context object, which includes a logger, a configuration
    * object and a few more properties.
    */
-  async prepareAndRun (): Promise<number> {
+  async start (): Promise<number> {
     const context: Context = this.context
 
     const log = context.log
@@ -562,7 +561,7 @@ export class Application extends Runnable {
       // Before returning, possibly send a notification to the console.
       await updateChecker.notifyIfUpdateIsAvailable()
 
-      log.verbose(`prepareAndRun() returns ${exitCode}`)
+      log.verbose(`start() returns ${exitCode}`)
     }
 
     // ------------------------------------------------------------------------
@@ -750,7 +749,7 @@ export class Application extends Runnable {
    * @description
    * Override it in the application if custom content is desired.
    */
-  outputHelp (): void {
+  override outputHelp (): void {
     const context: Context = this.context
 
     const log = context.log
@@ -843,8 +842,12 @@ export class Application extends Runnable {
 
     let exitCode: number = ExitCodes.SUCCESS
     try {
-      // The complex application, with multiple commands.
-      if (this.commandsTree.hasCommands()) {
+      if (!this.commandsTree.hasCommands()) {
+        // There are no sub-commands, there should be only one
+        // way of running this application.
+        exitCode = await this.prepareAndRun(remainingArgs)
+      } else {
+        // The complex application, with multiple commands.
         if (commands.length === 0) {
           log.error('Missing mandatory command.')
           this.outputHelp()
@@ -902,26 +905,7 @@ export class Application extends Runnable {
           return ExitCodes.SUCCESS // Help explicitly called.
         }
 
-        log.debug(`'${context.programName} ` +
-          `${context.fullCommands.join(' ')}' started`)
-
         exitCode = await commandInstance.prepareAndRun(commandArgs)
-
-        log.debug(`'${context.programName} ` +
-          `${context.fullCommands.join(' ')}' - returned ${exitCode}`)
-      } else {
-        // There are no sub-commands, there should be only one main().
-        if (config.isHelpRequest !== undefined && config.isHelpRequest) {
-          // Show the top (application) help.
-          this.outputHelp()
-          return ExitCodes.SUCCESS // Help explicitly called.
-        }
-
-        log.debug(`'${context.programName}' started`)
-
-        exitCode = await this.run(remainingArgs)
-
-        log.debug(`'${context.programName}' - returned ${exitCode}`)
       }
     } catch (err) {
       exitCode = ExitCodes.ERROR.APPLICATION
