@@ -27,10 +27,6 @@ import * as path from 'node:path'
 
 import * as cli from '../../../../../esm/index.js'
 
-// ----------------------------------------------------------------------------
-
-const fsPromises = fs.promises
-
 // ============================================================================
 
 interface CliConfigCopy extends cli.Configuration {
@@ -105,7 +101,7 @@ export class Copy extends cli.Command {
     log.info(`Reading '${inputAbsolutePath}'...`)
     let inputData
     try {
-      inputData = await fsPromises.readFile(inputAbsolutePath, 'utf8')
+      inputData = await fs.promises.readFile(inputAbsolutePath, 'utf8')
     } catch (err: any) {
       throw new cli.Error(err.message, cli.ExitCodes.ERROR.INPUT)
     }
@@ -117,13 +113,13 @@ export class Copy extends cli.Command {
     log.info(`Writing '${outputAbsolutePath}'...`)
 
     try {
-      await fsPromises.stat(folderPath)
+      await fs.promises.stat(folderPath)
     } catch (err: any) {
-      await fsPromises.mkdir(folderPath)
+      await fs.promises.mkdir(folderPath)
     }
 
     try {
-      await fsPromises.writeFile(outputAbsolutePath, inputData, 'utf8')
+      await fs.promises.writeFile(outputAbsolutePath, inputData, 'utf8')
     } catch (err: any) {
       throw new cli.Error(err.message, cli.ExitCodes.ERROR.OUTPUT)
     }

@@ -19,10 +19,6 @@ import * as path from 'node:path'
 
 // ----------------------------------------------------------------------------
 
-const fsPromises = fs.promises
-
-// ----------------------------------------------------------------------------
-
 export interface NpmPackageJson {
   name: string
   version: string
@@ -88,7 +84,7 @@ Promise<NpmPackageJson> {
   assert(folderAbsolutePath)
 
   const filePath = path.join(folderAbsolutePath, 'package.json')
-  const fileContent = await fsPromises.readFile(filePath)
+  const fileContent = await fs.promises.readFile(filePath)
   assert(fileContent !== null)
   return JSON.parse(fileContent.toString())
 }

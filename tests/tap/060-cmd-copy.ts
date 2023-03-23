@@ -53,8 +53,6 @@ const fixtures = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)), '../fixtures')
 const workFolder = path.resolve(os.tmpdir(), 'xtest-copy')
 
-const fsPromises = fs.promises
-
 const skipSomeTests = true
 
 // ----------------------------------------------------------------------------
@@ -179,11 +177,11 @@ if (!skipSomeTests) {
       try {
         await Common.extractTgz(tgzPath, workFolder)
         t.pass('cmd-code.tgz unpacked into ' + workFolder)
-        await fsPromises.chmod(filePath, 0o444)
+        await fs.promises.chmod(filePath, 0o444)
         t.pass('chmod ro file')
         await makeDir(readOnlyFolder)
         t.pass('mkdir folder')
-        await fsPromises.chmod(readOnlyFolder, 0o444)
+        await fs.promises.chmod(readOnlyFolder, 0o444)
         t.pass('chmod ro folder')
       } catch (err: any) {
         console.log(err)
@@ -213,7 +211,7 @@ if (!skipSomeTests) {
         t.equal(stderr, '', 'stderr is empty')
         // console.log(stderr)
 
-        const fileContent = await fsPromises.readFile(outPath)
+        const fileContent = await fs.promises.readFile(outPath)
         t.ok(fileContent, 'content is read in')
         const json = JSON.parse(fileContent.toString())
         t.ok(json, 'json was parsed')
@@ -281,9 +279,9 @@ if (!skipSomeTests) {
   }
 
   await test('cleanup', async (t) => {
-    await fsPromises.chmod(filePath, 0o666)
+    await fs.promises.chmod(filePath, 0o666)
     t.pass('chmod rw file')
-    await fsPromises.chmod(readOnlyFolder, 0o666)
+    await fs.promises.chmod(readOnlyFolder, 0o666)
     t.pass('chmod rw folder')
     await deleteAsync(workFolder)
     t.pass('remove tmpdir')
