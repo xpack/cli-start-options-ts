@@ -122,10 +122,6 @@ export class Context {
       this.fullCommands = params.context.fullCommands
     }
   }
-
-  public get context (): Context {
-    return this
-  }
 }
 
 // ----------------------------------------------------------------------------

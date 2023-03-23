@@ -25,11 +25,6 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
-// https://www.npmjs.com/package/@xpack/logger
-import { Logger } from '@xpack/logger'
-
-// ----------------------------------------------------------------------------
-
 import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
@@ -49,7 +44,6 @@ export interface Generator {
 // ----------------------------------------------------------------------------
 
 export interface CommandConstructorParams {
-  log: Logger
   context: Context
 }
 
@@ -57,7 +51,11 @@ export interface CommandConstructorParams {
  * @classdesc
  * Base class for a CLI application command.
  */
-export class Command extends Context {
+export class Command {
+  // --------------------------------------------------------------------------
+
+  public context: Context
+
   // --------------------------------------------------------------------------
 
   /**
@@ -67,7 +65,10 @@ export class Command extends Context {
    */
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: CommandConstructorParams) {
-    super(params)
+    assert(params)
+    assert(params.context)
+
+    this.context = params.context
   }
 
   /**

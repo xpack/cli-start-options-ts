@@ -95,7 +95,7 @@ type nodeReplCallback = (
 // ----------------------------------------------------------------------------
 
 export interface ApplicationConstructorParams {
-  log: Logger
+  context: Context
 }
 
 /**
@@ -107,7 +107,7 @@ export interface ApplicationConstructorParams {
  * net clients, a good reason for not using static variables.
  *
  */
-export class Application extends Context {
+export class Application {
   // --------------------------------------------------------------------------
   // For convenience, use a static method to create the instance and
   // bootstrap everything.
@@ -144,9 +144,11 @@ export class Application extends Context {
 
     let exitCode = ExitCodes.SUCCESS
     try {
+      const context = new Context({ log })
+
       // Instantiate the derived class.
       const application = new DerivedApplicationClass({
-        log
+        context
       })
 
       // The rootPath (required to read the package.json) is known
@@ -189,14 +191,18 @@ export class Application extends Context {
 
   // --------------------------------------------------------------------------
 
+  public context: Context
+
   // MAY BE set, to enable REPL mode.
-  public enableREPL: boolean = false
+  protected enableREPL: boolean = false
 
   // MAY BE set, to enable the update checker.
-  public checkUpdatesIntervalSeconds: number = 24 * 60 * 60
+  protected checkUpdatesIntervalSeconds: number = 24 * 60 * 60
 
   protected latestVersionPromise: Promise<string> | undefined = undefined
   protected commandsTree: CommandsTree = new CommandsTree()
+
+  // --------------------------------------------------------------------------
 
   /**
    * @summary Constructor, to remember the context.
@@ -204,7 +210,10 @@ export class Application extends Context {
    * @param context Reference to a context.
    */
   constructor (params: ApplicationConstructorParams) {
-    super(params)
+    assert(params)
+    assert(params.context)
+
+    this.context = params.context
 
     const context: Context = this.context
 
@@ -634,12 +643,16 @@ export class Application extends Context {
         // Propagate the log level from the terminal to the socket.
         socketLog.level = log.level
 
+        const socketContext = new Context({
+          log: socketLog
+        })
+
         const DerivedApplicationClass =
           this.constructor as typeof DerivedApplication
 
         // Instantiate the derived class.
         const application = new DerivedApplicationClass({
-          log: socketLog
+          context: socketContext
         })
 
         assert(application.context.rootPath)
@@ -886,9 +899,15 @@ export class Application extends Context {
         const commandLog = new Logger({ console: log.console })
         commandLog.level = log.level
 
-        const commandInstance: DerivedCommand = new DerivedCommandClass({
+        // The command context inherits most of the application context
+        // properties.
+        const commandContext = new Context({
           log: commandLog,
           context
+        })
+
+        const commandInstance: DerivedCommand = new DerivedCommandClass({
+          context: commandContext
         })
 
         assert(commandInstance.context.title.length > 0,
