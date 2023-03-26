@@ -487,7 +487,7 @@ export class Application extends Command {
     // ------------------------------------------------------------------------
 
     // Skip the first two arguments (the node path and the application path).
-    const argv = process.argv.slice(2)
+    const argv = context.processArgv.slice(2)
 
     // Parse the common options, for example the log level, and update
     // the configuration, to know the log level, or if version/help.
@@ -603,7 +603,7 @@ export class Application extends Command {
 
     log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
 
-    process.argv.forEach((arg, index) => {
+    context.processArgv.forEach((arg, index) => {
       log.debug(`start arg${index}: '${arg}'`)
     })
   }
