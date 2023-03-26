@@ -203,10 +203,12 @@ export async function libRun (
   const mockConsole = new Console(ostream, errstream)
   const mockLog = new Logger({ console: mockConsole })
 
+  // process.argv[0] - the node full path
+  // process.argv[1] - the full path of the invoking script
   const context = new cli.Context({
     log: mockLog,
     programName,
-    processArgv: argv
+    processArgv: ['node', programName, ...argv]
   })
 
   const exitCode = await ClassObject.start({ context })

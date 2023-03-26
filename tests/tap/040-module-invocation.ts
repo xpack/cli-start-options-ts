@@ -28,12 +28,7 @@ import { test } from 'tap'
 
 // ----------------------------------------------------------------------------
 
-// The Mocha-like DSL http://www.node-tap.org/mochalike/
-// require('tap').mochaGlobals()
-// const should = require('should') // eslint-disable-line no-unused-vars
-// /* global describe, context, it */
-
-import { mockPath } from '../mock/common.js'
+import { mockPath, runLibXtest } from '../mock/common.js'
 
 import * as cli from '../../esm/index.js'
 
@@ -58,52 +53,40 @@ await test('setup', async (t) => {
   t.end()
 })
 
-// await test('xtest --version (module call)', async (t) => {
-//   try {
-//     const { code, stdout, stderr } = await Common.xtestLib([
-//       '--version'
-//     ])
-//     // Check exit code.
-//     t.equal(code, CliExitCodes.SUCCESS, 'exit code is success')
-//     // Check if version matches the package.
-//     // Beware, the stdout string has a new line terminator.
-//     t.equal(stdout, pack.version + '\n', 'version value')
-//     // There should be no error messages.
-//     t.equal(stderr, '', 'stderr is empty')
-//   } catch (err: any) {
-//     console.log(err.stack)
-//     t.fail(err.message)
-//   }
-//   t.end()
-// })
-
-// await test('xtest xyz (module call)', async (t) => {
-//   try {
-//     const { code, stdout, stderr } = await Common.xtestLib([
-//       'xyz'
-//     ])
-//     // Check exit code.
-//     t.equal(code, CliExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-//     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
-//     // There should be one error message.
-//     t.match(stderr, 'Command \'xyz\' not supported.', 'error')
-//   } catch (err: any) {
-//     console.log(err.stack)
-//     t.fail(err.message)
-//   }
-//   t.end()
-// })
-
-/*
-describe('setup', () => {
-  context('when reading package.json', async function () {
-    // Read in the package.json, to later compare version.
-    pack = await cli.readPackageJson()
-    it('json object exists', () => { pack.should.not.equal(null) })
-    it('version string is not empty', () => {
-      pack.version.should.be.type('string').and.not.be.empty() })
-  })
+await test('xtest --version (module call)', async (t) => {
+  try {
+    const { exitCode, stdout, stderr } = await runLibXtest([
+      '--version'
+    ])
+    // Check exit code.
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    // Check if version matches the package.
+    // Beware, the stdout string has a new line terminator.
+    t.equal(stdout, pack.version + '\n', 'version value')
+    // There should be no error messages.
+    t.equal(stderr, '', 'stderr is empty')
+  } catch (err: any) {
+    console.log(err.stack)
+    t.fail(err.message)
+  }
+  t.end()
 })
-*/
+
+await test('xtest xyz (module call)', async (t) => {
+  try {
+    const { exitCode, stdout, stderr } = await runLibXtest([
+      'xyz'
+    ])
+    // Check exit code.
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.match(stdout, 'Usage: xtest <command>', 'has Usage')
+    // There should be one error message.
+    t.match(stderr, 'Command \'xyz\' not supported.', 'error')
+  } catch (err: any) {
+    console.log(err.stack)
+    t.fail(err.message)
+  }
+  t.end()
+})
 
 // ----------------------------------------------------------------------------
