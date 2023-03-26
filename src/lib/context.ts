@@ -77,9 +77,21 @@ export class Context {
 
   // --------------------------------------------------------------------------
 
+  /**
+   * @summary Create a Context instance.
+   * @param params
+   *
+   * For direct invocations, provide a way to define the environment.
+   * Also useful in tests.
+   */
   constructor (params: {
     log: Logger
     context?: Context
+    programName?: string
+    argv1?: string
+    processCwd?: string
+    processEnv?: NodeJS.ProcessEnv
+    processArgv?: string[]
   }) {
     assert(params)
 
@@ -89,15 +101,16 @@ export class Context {
     // REPL should always set the console to the REPL inout/output streams.
     this.console = this.log.console
 
-    this.programName = getProgramName()
+    this.programName = params.programName ?? getProgramName()
 
-    const argv1 = process.argv[1]?.trim()
+    const argv1: string | undefined = params.argv1 ?? process.argv[1]
     assert(argv1 !== undefined, 'Mandatory argv[1]')
 
-    this.cmdPath = argv1
-    this.processCwd = process.cwd()
-    this.processEnv = process.env
-    this.processArgv = process.argv
+    this.cmdPath = argv1.trim()
+
+    this.processCwd = params.processCwd ?? process.cwd()
+    this.processEnv = params.processEnv ?? process.env
+    this.processArgv = params.processArgv ?? process.argv
 
     // Normally this should have been passed in the constructor, but
     // for Application it is not available that early, since the rootPath
