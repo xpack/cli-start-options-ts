@@ -38,13 +38,12 @@ import { test } from 'tap'
 
 // ----------------------------------------------------------------------------
 
-import { Common } from '../mock/common.js'
+import { runCliXtest, extractTgz } from '../mock/common.js'
 
 import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
-assert(Common)
 assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
@@ -63,7 +62,7 @@ const skipSomeTests = true
 await test('xtest copy',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { exitCode: code, stdout, stderr } = await runCliXtest([
         'copy'
       ])
       // Check exit code.
@@ -90,7 +89,7 @@ await test('xtest copy',
 await test('xtest copy -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { exitCode: code, stdout, stderr } = await runCliXtest([
         'copy',
         '-h'
       ])
@@ -122,7 +121,7 @@ await test('xtest copy -h',
 await test('xtest cop -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { exitCode: code, stdout, stderr } = await runCliXtest([
         'cop',
         '-h'
       ])
@@ -151,7 +150,7 @@ await test('xtest cop -h',
 await test('xtest cop --file xxx --output yyy -q',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.xtestCli([
+      const { exitCode: code, stdout, stderr } = await runCliXtest([
         'cop',
         '--file',
         'xxx',
@@ -175,7 +174,7 @@ if (!skipSomeTests) {
     async (t) => {
       const tgzPath = path.resolve(fixtures, 'cmd-code.tgz')
       try {
-        await Common.extractTgz(tgzPath, workFolder)
+        await extractTgz(tgzPath, workFolder)
         t.pass('cmd-code.tgz unpacked into ' + workFolder)
         await fs.promises.chmod(filePath, 0o444)
         t.pass('chmod ro file')
@@ -197,7 +196,7 @@ if (!skipSomeTests) {
     async (t) => {
       try {
         const outPath = path.resolve(workFolder, 'output.json')
-        const { code, stdout, stderr } = await Common.xtestCli([
+        const { exitCode: code, stdout, stderr } = await runCliXtest([
           'cop',
           '--file',
           filePath,
@@ -225,7 +224,7 @@ if (!skipSomeTests) {
   await test('xtest cop --file input --output output -v',
     async (t) => {
       try {
-        const { code, stdout, stderr } = await Common.xtestCli([
+        const { exitCode: code, stdout, stderr } = await runCliXtest([
           'cop',
           '-C',
           workFolder,
@@ -256,7 +255,7 @@ if (!skipSomeTests) {
       async (t) => {
         try {
           const outPath = path.resolve(workFolder, 'ro', 'output.json')
-          const { code, stdout, stderr } = await Common.xtestCli([
+          const { exitCode: code, stdout, stderr } = await runCliXtest([
             'cop',
             '--file',
             filePath,

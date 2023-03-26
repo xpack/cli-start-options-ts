@@ -8,7 +8,6 @@ Reporting (`--report`):
 - spec
 - tap
 
-
 ## [API](http://www.node-tap.org/api/)
 
 - tap = require(‘tap’)

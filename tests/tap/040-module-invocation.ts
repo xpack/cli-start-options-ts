@@ -33,13 +33,12 @@ import { test } from 'tap'
 // const should = require('should') // eslint-disable-line no-unused-vars
 // /* global describe, context, it */
 
-import { Common, mockPath } from '../mock/common.js'
+import { mockPath } from '../mock/common.js'
 
 import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
-assert(Common)
 assert(cli.Application)
 assert(cli.ExitCodes)
 

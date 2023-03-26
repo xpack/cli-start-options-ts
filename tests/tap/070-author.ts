@@ -28,12 +28,15 @@ import { test } from 'tap'
 
 // ----------------------------------------------------------------------------
 
-import { Common } from '../mock/common.js'
+import {
+  runCliA1test,
+  runCliA2test,
+  runCliA3test
+} from '../mock/common.js'
 import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
-assert(Common)
 assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
@@ -44,7 +47,7 @@ assert(cli.ExitCodes)
 await test('a1test -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.a1testCli([
+      const { exitCode: code, stdout, stderr } = await runCliA1test([
         '-h'
       ])
       // Check exit code.
@@ -67,7 +70,7 @@ await test('a1test -h',
 await test('a2test -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.a2testCli([
+      const { exitCode: code, stdout, stderr } = await runCliA2test([
         '-h'
       ])
       // Check exit code.
@@ -90,7 +93,7 @@ await test('a2test -h',
 await test('a3test -h',
   async (t) => {
     try {
-      const { code, stdout, stderr } = await Common.a3testCli([
+      const { exitCode: code, stdout, stderr } = await runCliA3test([
         '-h'
       ])
       // Check exit code.

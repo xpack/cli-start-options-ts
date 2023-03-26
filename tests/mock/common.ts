@@ -37,7 +37,7 @@ import * as cli from '../../esm/index.js'
 // ----------------------------------------------------------------------------
 
 /**
- * Test common options, like --version, --help, etc.
+ * Support code for tests.
  */
 
 // ----------------------------------------------------------------------------
@@ -67,170 +67,155 @@ interface cliResult {
 }
 
 /**
- * @class Main
+ * @summary Run program in a separate process.
+ *
+ * @async
+ * @param appAbsolutePath Program name.
+ * @param argv Command line arguments.
+ * @param spawnOpts Optional spawn options.
+ * @returns Exit
+ *  code and captured output/error streams.
+ *
+ * @description
+ * Spawn a separate process to run node with the given arguments and
+ * return the exit code and the stdio streams captured in strings.
  */
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class Common {
-  /**
-   * @summary Run program in a separate process.
-   *
-   * @async
-   * @param appAbsolutePath Program name.
-   * @param argv Command line arguments.
-   * @param spawnOpts Optional spawn options.
-   * @returns Exit
-   *  code and captured output/error streams.
-   *
-   * @description
-   * Spawn a separate process to run node with the given arguments and
-   * return the exit code and the stdio streams captured in strings.
-   */
-  static async cli (
-    appAbsolutePath: string,
-    argv: string[],
-    spawnOpts: SpawnOptionsWithoutStdio = {}
-  ): Promise<cliResult> {
-    return await new Promise((resolve, reject) => {
-      spawnOpts.env = spawnOpts?.env ?? process.env
-      spawnOpts.cwd = spawnOpts.cwd ??
-        path.dirname(path.dirname(appAbsolutePath))
+export async function runCli (
+  appAbsolutePath: string,
+  argv: string[],
+  spawnOpts: SpawnOptionsWithoutStdio = {}
+): Promise<cliResult> {
+  return await new Promise((resolve, reject) => {
+    spawnOpts.env = spawnOpts?.env ?? process.env
+    spawnOpts.cwd = spawnOpts.cwd ??
+      path.dirname(path.dirname(appAbsolutePath))
 
-      // console.log(spawnOpts.cwd)
+    // console.log(spawnOpts.cwd)
 
-      // Runs in project root.
-      // console.log(`Current directory: ${process.cwd()}`)
-      let stdout: string = ''
-      let stderr: string = ''
+    // Runs in project root.
+    // console.log(`Current directory: ${process.cwd()}`)
+    let stdout: string = ''
+    let stderr: string = ''
 
-      const cmd = [appAbsolutePath, ...argv]
+    const cmd = [appAbsolutePath, ...argv]
 
-      // console.log(`${nodeBin} ${cmd.join(' ')}`)
-      const child = spawn(nodeBin, cmd, spawnOpts)
+    // console.log(`${nodeBin} ${cmd.join(' ')}`)
+    const child = spawn(nodeBin, cmd, spawnOpts)
 
-      assert(child.stderr)
-      child.stderr.on('data', (chunk) => {
-        // console.log(chunk.toString())
-        stderr += (chunk.toString() as string)
-      })
-
-      assert(child.stdout)
-      child.stdout.on('data', (chunk) => {
-        // console.log(chunk.toString())
-        stdout += (chunk.toString() as string)
-      })
-
-      child.on('error', (err) => {
-        reject(err)
-      })
-
-      child.on('close', (code: number) => {
-        resolve({ code, stdout, stderr })
-      })
-    })
-  }
-
-  static async xtestCli (
-    argv: string[],
-    spawnOpts: SpawnOptionsWithoutStdio = {}
-  ): Promise<cliResult> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    return await staticThis.cli(appAbsolutePath('xtest'), argv, spawnOpts)
-  }
-
-  static async a1testCli (
-    argv: string[],
-    spawnOpts: SpawnOptionsWithoutStdio = {}
-  ): Promise<cliResult> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    return await staticThis.cli(appAbsolutePath('a1test'), argv, spawnOpts)
-  }
-
-  static async a2testCli (
-    argv: string[],
-    spawnOpts: SpawnOptionsWithoutStdio = {}
-  ): Promise<cliResult> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    return await staticThis.cli(appAbsolutePath('a2test'), argv, spawnOpts)
-  }
-
-  static async a3testCli (
-    argv: string[],
-    spawnOpts: SpawnOptionsWithoutStdio = {}
-  ): Promise<cliResult> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    return await staticThis.cli(appAbsolutePath('a3test'), argv, spawnOpts)
-  }
-
-  static async wtestCli (
-    argv: string[],
-    spawnOpts: SpawnOptionsWithoutStdio = {}
-  ): Promise<cliResult> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const staticThis = this
-    return await staticThis.cli(
-      appAbsolutePath('wtest-long-name', 'wtest'), argv, spawnOpts)
-  }
-
-  /**
-   * @summary Run xtest as a library call.
-   *
-   * @param argv Command line arguments
-   * @returns Exit code and captured output/error streams.
-   *
-   * @description
-   * Call the application directly, as a regular module, and return
-   * the exit code and the stdio streams captured in strings.
-   */
-  static async xtestLib (
-    argv: string[]
-  ): Promise<cliResult> {
-    assert(Xtest !== null, 'No application class')
-    // Create two streams to local strings.
-    let stdout = ''
-    const ostream = new Writable({
-      write (chunk, _encoding, callback) {
-        stdout += (chunk.toString() as string)
-        callback()
-      }
+    assert(child.stderr)
+    child.stderr.on('data', (chunk) => {
+      // console.log(chunk.toString())
+      stderr += (chunk.toString() as string)
     })
 
-    let stderr = ''
-    const errstream = new Writable({
-      write (chunk, _encoding, callback) {
-        stderr += (chunk.toString() as string)
-        callback()
-      }
+    assert(child.stdout)
+    child.stdout.on('data', (chunk) => {
+      // console.log(chunk.toString())
+      stdout += (chunk.toString() as string)
     })
 
-    const mockConsole = new Console(ostream, errstream)
-    const mockLog = new Logger({ console: mockConsole })
-    const context = new cli.Context({
-      log: mockLog
+    child.on('error', (err) => {
+      reject(err)
     })
-    const app = new Xtest({ context })
-    const code = await app.run(argv)
-    return { code, stdout, stderr }
-  }
 
-  /**
-   * @summary Extract files from a .tgz archive into a folder.
-   *
-   * @async
-   * @param tgzPath Path to archive file.
-   * @param destPath Path to destination folder.
-   * @returns Nothing.
-   */
-  static async extractTgz (tgzPath: string, destPath: string): Promise<void> {
-    await makeDir(destPath)
-    return await tar.extract({
-      file: tgzPath,
-      cwd: destPath
+    child.on('close', (code: number) => {
+      resolve({ code, stdout, stderr })
     })
-  }
+  })
+}
+
+export async function runCliXtest (
+  argv: string[],
+  spawnOpts: SpawnOptionsWithoutStdio = {}
+): Promise<cliResult> {
+  return await runCli(appAbsolutePath('xtest'), argv, spawnOpts)
+}
+
+export async function runCliA1test (
+  argv: string[],
+  spawnOpts: SpawnOptionsWithoutStdio = {}
+): Promise<cliResult> {
+  return await runCli(appAbsolutePath('a1test'), argv, spawnOpts)
+}
+
+export async function runCliA2test (
+  argv: string[],
+  spawnOpts: SpawnOptionsWithoutStdio = {}
+): Promise<cliResult> {
+  return await runCli(appAbsolutePath('a2test'), argv, spawnOpts)
+}
+
+export async function runCliA3test (
+  argv: string[],
+  spawnOpts: SpawnOptionsWithoutStdio = {}
+): Promise<cliResult> {
+  return await runCli(appAbsolutePath('a3test'), argv, spawnOpts)
+}
+
+export async function runCliWtest (
+  argv: string[],
+  spawnOpts: SpawnOptionsWithoutStdio = {}
+): Promise<cliResult> {
+  return await runCli(
+    appAbsolutePath('wtest-long-name', 'wtest'), argv, spawnOpts)
+}
+
+/**
+ * @summary Run xtest as a library call.
+ *
+ * @param argv Command line arguments
+ * @returns Exit code and captured output/error streams.
+ *
+ * @description
+ * Call the application directly, as a regular module, and return
+ * the exit code and the stdio streams captured in strings.
+ */
+export async function runLibXtest (
+  argv: string[]
+): Promise<cliResult> {
+  assert(Xtest !== null, 'No application class')
+  // Create two streams to local strings.
+  let stdout = ''
+  const ostream = new Writable({
+    write (chunk, _encoding, callback) {
+      stdout += (chunk.toString() as string)
+      callback()
+    }
+  })
+
+  let stderr = ''
+  const errstream = new Writable({
+    write (chunk, _encoding, callback) {
+      stderr += (chunk.toString() as string)
+      callback()
+    }
+  })
+
+  const mockConsole = new Console(ostream, errstream)
+  const mockLog = new Logger({ console: mockConsole })
+  const context = new cli.Context({
+    log: mockLog
+  })
+  const app = new Xtest({ context })
+  const code = await app.run(argv)
+  return { code, stdout, stderr }
+}
+
+/**
+ * @summary Extract files from a .tgz archive into a folder.
+ *
+ * @async
+ * @param tgzPath Path to archive file.
+ * @param destPath Path to destination folder.
+ * @returns Nothing.
+ */
+export async function extractTgz (tgzPath: string, destPath: string):
+Promise<void> {
+  await makeDir(destPath)
+  return await tar.extract({
+    file: tgzPath,
+    cwd: destPath
+  })
 }
 
 // ----------------------------------------------------------------------------
