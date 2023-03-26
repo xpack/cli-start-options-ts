@@ -56,7 +56,7 @@ import { ExitCodes } from './error.js'
 import * as cli from './error.js'
 import { Help } from './help.js'
 import { Options } from './options.js'
-import { readPackageJson } from './utils.js'
+import { NpmPackageJson, readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
 // Logger configuration
@@ -161,34 +161,39 @@ export class Application extends Command {
 
       // Redirect to the instance runner. It might start a REPL.
       exitCode = await application.start()
-      // Pass through. Do not exit, to allow REPL to run.
     } catch (err: any) {
-      // If the initialisation was completed, the log level must have been
-      // set, but for early quits the level might still be undefined.
-      if (!log.hasLevel) {
-        log.level = defaultLogLevel
-        // This is the moment when buffered logs are written out.
-      }
-      // This should catch possible errors during inits, otherwise
-      // in run() there is another catch.
-      exitCode = ExitCodes.ERROR.APPLICATION
-      if (err instanceof cli.Error) {
-        // CLI triggered error. Treat it gently.
-        log.error(err.message)
-        exitCode = err.exitCode
-      } else if (err.constructor === Error ||
-        err.constructor === SyntaxError ||
-        err.constructor === TypeError) {
-        // Other error. Treat it gently too.
-        console.error(err.message)
-      } else /* istanbul ignore next */ {
-        // System error, probably due to a bug (AssertionError).
-        // Show the full stack trace.
-        console.error(err.stack)
-      }
-      log.verbose(`exitCode = ${exitCode}`)
+      exitCode = this.processStartError(err, log)
     }
     // Pass through. Do not call exit(), to allow callbacks (or REPL) to run.
+    return exitCode
+  }
+
+  static processStartError (err: any, log: Logger): number {
+    let exitCode = ExitCodes.ERROR.APPLICATION
+
+    // If the initialisation was completed, the log level must have been
+    // set, but for early quits the level might still be undefined.
+    if (!log.hasLevel) {
+      log.level = defaultLogLevel
+      // This is the moment when buffered logs are written out.
+    }
+
+    if (err instanceof cli.Error) {
+      // CLI triggered error. Treat it gently.
+      log.error(err.message)
+      exitCode = err.exitCode
+    } else if (err.constructor === Error ||
+      err.constructor === SyntaxError ||
+      err.constructor === TypeError) {
+      // Other error. Treat it gently too.
+      console.error(err.message)
+    } else /* istanbul ignore next */ {
+      // System error, probably due to a bug (AssertionError).
+      // Show the full stack trace.
+      console.error(err.stack)
+    }
+    log.verbose(`exitCode = ${exitCode}`)
+
     return exitCode
   }
 
@@ -450,14 +455,12 @@ export class Application extends Command {
 
     context.helpTitle = packageJson.description ?? packageJson.name
 
+    let exitCode = ExitCodes.SUCCESS
+
     // ------------------------------------------------------------------------
     // Validate the engine.
 
-    const nodeVersion = process.version // v14.21.2
-    const engines: string = packageJson.engines?.node ??
-      ' >=16.0.0'
-    if (!semver.satisfies(nodeVersion, engines)) {
-      console.error(`Please use a newer node (at least ${engines}).\n`)
+    if (!this.validateEngine(packageJson)) {
       return ExitCodes.ERROR.PREREQUISITES
     }
 
@@ -468,16 +471,11 @@ export class Application extends Command {
     if (packageJson?.description !== undefined) {
       log.verbose(`${packageJson.description}`)
     }
-    log.debug(`${packageJson.name}@${packageJson.version}`)
-    log.debug(`os arch=${os.arch()}, platform=${os.platform()},` +
-      ` release=${os.release()}`)
-    log.debug(`node ${process.version}`)
 
-    log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
+    // Log os, node and arguments.
+    this.logInitialDebug(packageJson)
 
-    process.argv.forEach((arg, index) => {
-      log.debug(`start arg${index}: '${arg}'`)
-    })
+    // ------------------------------------------------------------------------
 
     this.initializeReplOptions()
 
@@ -485,6 +483,8 @@ export class Application extends Command {
 
     // Call the init() function of all defined options.
     options.initializeConfiguration()
+
+    // ------------------------------------------------------------------------
 
     // Skip the first two arguments (the node path and the application path).
     const argv = process.argv.slice(2)
@@ -515,18 +515,7 @@ export class Application extends Command {
     const mainArgs = options.filterOwnArguments(argv)
 
     // Isolate commands as words with letters and inner dashes.
-    // First non word (probably option) ends the list.
-    const commands: string[] = []
-    if (this.commandsTree.hasCommands()) {
-      for (const arg of mainArgs) {
-        const lowerCaseArg = arg.toLowerCase()
-        if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
-          commands.push(lowerCaseArg)
-        } else {
-          break
-        }
-      }
-    }
+    const commands: string[] = this.identifyCommands(mainArgs)
 
     // ------------------------------------------------------------------------
 
@@ -538,8 +527,6 @@ export class Application extends Command {
     }
 
     // ------------------------------------------------------------------------
-
-    let exitCode = ExitCodes.SUCCESS
 
     if ((commands.length === 0) && this.enableREPL) {
       // If there are no commands on the command line and REPL is enabled,
@@ -564,7 +551,7 @@ export class Application extends Command {
       await updateChecker.initiateVersionRetrieval()
 
       // Pass the original process arguments (without node & program path).
-      exitCode = await this.dispatchCommands(argv)
+      exitCode = await this.dispatchCommand(argv)
 
       // Before returning, possibly send a notification to the console.
       await updateChecker.notifyIfUpdateIsAvailable()
@@ -575,6 +562,75 @@ export class Application extends Command {
     // ------------------------------------------------------------------------
 
     return exitCode
+  }
+
+  /**
+   * @summary Validate node engine.
+   *
+   * @param packageJson
+   * @returns True if the version of node is acceptable.
+   *
+   * @description
+   * Check the `engines` property in `package.json` and compare it
+   * with the value reported by node itself.
+   *
+   * Use `semver` official syntax.
+   */
+  validateEngine (packageJson: NpmPackageJson): boolean {
+    const nodeVersion = process.version // v14.21.2
+    const engines: string = packageJson.engines?.node ??
+      ' >=16.0.0'
+    if (!semver.satisfies(nodeVersion, engines)) {
+      console.error(`Please use a newer node (at least ${engines}).\n`)
+      return false
+    }
+    return true
+  }
+
+  /**
+   * @summary Log several initial debug messages.
+   * @param packageJson The content of the project package.json.
+   */
+  logInitialDebug (packageJson: NpmPackageJson): void {
+    const context: Context = this.context
+
+    const log = context.log
+
+    log.debug(`${packageJson.name}@${packageJson.version}`)
+    log.debug(`os arch=${os.arch()}, platform=${os.platform()},` +
+      ` release=${os.release()}`)
+    log.debug(`node ${process.version}`)
+
+    log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
+
+    process.argv.forEach((arg, index) => {
+      log.debug(`start arg${index}: '${arg}'`)
+    })
+  }
+
+  /**
+   *
+   * @param mainArgs
+   * @returns Array of string with the commands
+   *
+   * @description
+   * Isolate commands as words with letters and inner dashes.
+   *
+   * The first non word (probably option) ends the list.
+   */
+  identifyCommands (mainArgs: string[]): string[] {
+    const commands: string[] = []
+    if (this.commandsTree.hasCommands()) {
+      for (const arg of mainArgs) {
+        const lowerCaseArg = arg.toLowerCase()
+        if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
+          commands.push(lowerCaseArg)
+        } else {
+          break
+        }
+      }
+    }
+    return commands
   }
 
   // https://nodejs.org/docs/latest-v14.x/api/repl.html
@@ -732,7 +788,7 @@ export class Application extends Command {
       // Split command line and remove any number of spaces.
       const argv = evalCmd.trim().split(/\s+/)
 
-      const exitCode = await this.dispatchCommands(argv)
+      const exitCode = await this.dispatchCommand(argv)
       log.verbose(`exit(${exitCode})`)
 
       // The last executed command exit code is passed as process exit code.
@@ -778,7 +834,7 @@ export class Application extends Command {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Dispatch commands to their implementations.
+   * @summary Dispatch the command to its implementations.
    *
    * @param argv Arguments array.
    * @returns The exit code.
@@ -788,7 +844,7 @@ export class Application extends Command {
    *
    * Called both from the top runner, or from REPL.
    */
-  async dispatchCommands (argv: string[]): Promise<number> {
+  async dispatchCommand (argv: string[]): Promise<number> {
     const context: Context = this.context
 
     const log = context.log
@@ -823,17 +879,7 @@ export class Application extends Command {
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
-    const commands: string[] = []
-    if (this.commandsTree.hasCommands()) {
-      for (const arg of mainArgs) {
-        const lowerCaseArg = arg.toLowerCase()
-        if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
-          commands.push(lowerCaseArg)
-        } else {
-          break
-        }
-      }
-    }
+    const commands: string[] = this.identifyCommands(mainArgs)
 
     // If --help and no command, output the application help message.
     if ((commands.length === 0) &&
@@ -853,91 +899,116 @@ export class Application extends Command {
       if (!this.commandsTree.hasCommands()) {
         // There are no sub-commands, there should be only one
         // way of running this application.
-        exitCode = await this.prepareAndRun(remainingArgs)
+        exitCode = await this.prepareAndRun({ argv: remainingArgs })
       } else {
         // The complex application, with multiple commands.
-        if (commands.length === 0) {
-          log.error('Missing mandatory command.')
-          this.outputHelp()
-          return ExitCodes.ERROR.SYNTAX // No commands.
-        }
-
-        // May throw 'not supported' or 'not unique'.
-        const found: FoundCommandModule = this.commandsTree.findCommandModule(
-          commands)
-
-        assert(context.rootPath)
-        // Throws an assert if there is no command class.
-        const DerivedCommandClass: typeof DerivedCommand =
-          await this.findCommandClass(
-            context.rootPath,
-            found.moduleRelativePath
-          )
-
-        // Full name commands, not the actual encountered,
-        // which may be shortcuts.
-        context.matchedCommands = found.matchedCommands
-
-        log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
-
-        // Use the original array, since we might have `--` options,
-        // and skip already processed commands.
-        const commandArgs = remainingArgs.slice(commands.length -
-          found.unusedCommands.length)
-        commandArgs.forEach((arg, index) => {
-          log.trace(`cmd arg${index}: '${arg}'`)
+        exitCode = await this.instantiateAndRunCommand({
+          commands,
+          argv: remainingArgs
         })
-
-        // Create a new logger and copy the level from the application logger.
-        const commandLog = new Logger({ console: log.console })
-        commandLog.level = log.level
-
-        // The command context inherits most of the application context
-        // properties.
-        const commandContext = new Context({
-          log: commandLog,
-          context
-        })
-
-        const commandInstance: DerivedCommand = new DerivedCommandClass({
-          context: commandContext
-        })
-
-        assert(commandInstance.context.helpTitle.length > 0,
-          'The derived command must define a mandatory title')
-
-        if (config.isHelpRequest !== undefined && config.isHelpRequest) {
-          assert(commandInstance)
-          // Show the command specific help.
-          commandInstance.outputHelp()
-          return ExitCodes.SUCCESS // Help explicitly called.
-        }
-
-        exitCode = await commandInstance.prepareAndRun(commandArgs)
       }
     } catch (err) {
-      exitCode = ExitCodes.ERROR.APPLICATION
-      if (err instanceof cli.SyntaxError) {
-        // CLI triggered error. Treat it gently and try to be helpful.
-        log.error(err.message)
-        this.outputHelp()
-        exitCode = err.exitCode
-      } else if (err instanceof cli.Error) {
-        // Other CLI triggered error. Treat it gently.
-        log.error(err.message)
-        exitCode = err.exitCode
-      } else {
-        // System error, probably due to a bug (AssertionError).
-        // Show the full stack trace.
-        log.error((err as Error).stack)
-      }
-      log.verbose(`exit(${exitCode})`)
+      exitCode = this.processCommandError(err, log)
     }
 
     // Prevent spilling the current command into the next, in case of REPL.
     context.matchedCommands = []
     context.unparsedArgs = []
     context.actualArgs = []
+
+    return exitCode
+  }
+
+  async instantiateAndRunCommand (params: {
+    commands: string[]
+    argv: string[]
+  }): Promise<number> {
+    const context: Context = this.context
+
+    const log = context.log
+    const config = context.config
+
+    if (params.commands.length === 0) {
+      log.error('Missing mandatory command.')
+      this.outputHelp()
+      return ExitCodes.ERROR.SYNTAX // No commands.
+    }
+    // May throw 'not supported' or 'not unique'.
+    const found: FoundCommandModule = this.commandsTree.findCommandModule(
+      params.commands)
+
+    assert(context.rootPath)
+    // Throws an assert if there is no command class.
+    const DerivedCommandClass: typeof DerivedCommand =
+          await this.findCommandClass(
+            context.rootPath,
+            found.moduleRelativePath
+          )
+
+    // Full name commands, not the actual encountered,
+    // which may be shortcuts.
+    context.matchedCommands = found.matchedCommands
+
+    log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
+
+    // Use the original array, since we might have `--` options,
+    // and skip already processed commands.
+    const commandArgs = params.argv.slice(params.commands.length -
+          found.unusedCommands.length)
+    commandArgs.forEach((arg, index) => {
+      log.trace(`cmd arg${index}: '${arg}'`)
+    })
+
+    // Create a new logger and copy the level from the application logger.
+    const commandLog = new Logger({
+      console: log.console
+    })
+    commandLog.level = log.level
+
+    // The command context inherits most of the application context
+    // properties.
+    const commandContext = new Context({
+      log: commandLog,
+      context
+    })
+
+    const commandInstance: DerivedCommand = new DerivedCommandClass({
+      context: commandContext
+    })
+
+    assert(commandInstance.context.helpTitle.length > 0,
+      'The derived command must define a mandatory title')
+
+    if (config.isHelpRequest !== undefined && config.isHelpRequest) {
+      assert(commandInstance)
+      // Show the command specific help.
+      commandInstance.outputHelp()
+      return ExitCodes.SUCCESS // Help explicitly called.
+    }
+
+    return await commandInstance.prepareAndRun({
+      argv: commandArgs
+    })
+  }
+
+  processCommandError (err: any, log: Logger): number {
+    let exitCode = ExitCodes.ERROR.APPLICATION
+
+    if (err instanceof cli.SyntaxError) {
+      // CLI triggered error. Treat it gently and try to be helpful.
+      log.error(err.message)
+      this.outputHelp()
+      exitCode = err.exitCode
+    } else if (err instanceof cli.Error) {
+      // Other CLI triggered error. Treat it gently.
+      log.error(err.message)
+      exitCode = err.exitCode
+    } else {
+      // System error, probably due to a bug (AssertionError).
+      // Show the full stack trace.
+      log.error((err as Error).stack)
+    }
+    log.verbose(`exit(${exitCode})`)
 
     return exitCode
   }
