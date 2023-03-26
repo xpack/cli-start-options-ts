@@ -23,6 +23,7 @@
 import { strict as assert } from 'node:assert'
 import { Console } from 'node:console'
 import * as net from 'node:net'
+import * as os from 'node:os'
 import * as path from 'node:path'
 // import * as process from 'node:process'
 import * as readline from 'node:readline'
@@ -465,6 +466,11 @@ export class Application extends Command {
     if (packageJson?.description !== undefined) {
       log.verbose(`${packageJson.description}`)
     }
+    log.debug(`${packageJson.name}@${packageJson.version}`)
+    log.debug(`os arch=${os.arch()}, platform=${os.platform()},` +
+      ` release=${os.release()}`)
+    log.debug(`node ${process.version}`)
+
     log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
 
     process.argv.forEach((arg, index) => {
