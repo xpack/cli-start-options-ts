@@ -24,7 +24,7 @@ import { Logger } from '@xpack/logger'
 
 import { Configuration } from './configuration.js'
 import { Options } from './options.js'
-import { getProgramName, NpmPackageJson } from './utils.js'
+import { getProcessProgramName, NpmPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ export class Context {
     // REPL should always set the console to the REPL inout/output streams.
     this.console = this.log.console
 
-    this.programName = params.programName ?? getProgramName()
+    this.programName = params.programName ?? getProcessProgramName()
 
     const argv1: string | undefined = params.argv1 ?? process.argv[1]
     assert(argv1 !== undefined, 'Mandatory argv[1]')
