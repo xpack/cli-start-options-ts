@@ -136,16 +136,18 @@ export class Application extends Command {
    * Xpm.start().then((code) => { process.exitCode = code })
    * ```
    */
-  static async start (): Promise<number> {
+  static async start (params?: {
+    context?: Context
+  }): Promise<number> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const DerivedApplicationClass = this // Simply to make it look like a class.
 
     // Create the log early, to have it in the exception handlers.
-    const log = new Logger({ console })
+    const log = params?.context?.log ?? new Logger({ console })
 
     let exitCode = ExitCodes.SUCCESS
     try {
-      const context = new Context({ log })
+      const context = params?.context ?? new Context({ log })
 
       // Instantiate the derived class.
       const application = new DerivedApplicationClass({

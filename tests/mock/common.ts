@@ -61,7 +61,7 @@ export const mockPath = (name: string): string => {
 // ============================================================================
 
 interface cliResult {
-  code: number
+  exitCode: number
   stdout: string
   stderr: string
 }
@@ -119,7 +119,7 @@ export async function runCli (
     })
 
     child.on('close', (code: number) => {
-      resolve({ code, stdout, stderr })
+      resolve({ exitCode: code, stdout, stderr })
     })
   })
 }
@@ -160,6 +160,59 @@ export async function runCliWtest (
     appAbsolutePath('wtest-long-name', 'wtest'), argv, spawnOpts)
 }
 
+// ----------------------------------------------------------------------------
+
+/**
+ * @summary Run xtest as a library call.
+ *
+ * @async
+ * @param {string} programName Program name.
+ * @param {string} ClassObject Class object.
+ * @param {string[]} argv Command line arguments
+ * @returns {{code: number, stdout: string, stderr: string}} Exit
+ *  code and captured output/error streams.
+ *
+ * @description
+ * Call the application directly, as a regular module, and return
+ * the exit code and the stdio streams captured in strings.
+ */
+export async function libRun (
+  programName: string,
+  ClassObject: typeof cli.Application,
+  argv: string[]
+): Promise<cliResult> {
+  assert(ClassObject, 'No application class')
+
+  // Create two streams to local strings.
+  let stdout: string = ''
+  const ostream = new Writable({
+    write (chunk, _encoding, callback) {
+      stdout += (chunk.toString() as string)
+      callback()
+    }
+  })
+
+  let stderr: string = ''
+  const errstream = new Writable({
+    write (chunk, _encoding, callback) {
+      stderr += (chunk.toString() as string)
+      callback()
+    }
+  })
+
+  const mockConsole = new Console(ostream, errstream)
+  const mockLog = new Logger({ console: mockConsole })
+
+  const context = new cli.Context({
+    log: mockLog,
+    programName,
+    processArgv: argv
+  })
+
+  const exitCode = await ClassObject.start({ context })
+  return { exitCode, stdout, stderr }
+}
+
 /**
  * @summary Run xtest as a library call.
  *
@@ -173,33 +226,10 @@ export async function runCliWtest (
 export async function runLibXtest (
   argv: string[]
 ): Promise<cliResult> {
-  assert(Xtest !== null, 'No application class')
-  // Create two streams to local strings.
-  let stdout = ''
-  const ostream = new Writable({
-    write (chunk, _encoding, callback) {
-      stdout += (chunk.toString() as string)
-      callback()
-    }
-  })
-
-  let stderr = ''
-  const errstream = new Writable({
-    write (chunk, _encoding, callback) {
-      stderr += (chunk.toString() as string)
-      callback()
-    }
-  })
-
-  const mockConsole = new Console(ostream, errstream)
-  const mockLog = new Logger({ console: mockConsole })
-  const context = new cli.Context({
-    log: mockLog
-  })
-  const app = new Xtest({ context })
-  const code = await app.run(argv)
-  return { code, stdout, stderr }
+  return await libRun('xtest', Xtest, argv)
 }
+
+// ----------------------------------------------------------------------------
 
 /**
  * @summary Extract files from a .tgz archive into a folder.
