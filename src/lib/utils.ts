@@ -50,8 +50,9 @@ export interface NpmPackageJson {
  * extensions, if any.
  */
 
-export function getProcessProgramName (): string {
-  const argv1 = process.argv[1]?.trim()
+export function getProgramName (
+  argv1: string | undefined = process.argv[1]?.trim()
+): string {
   assert(argv1 !== undefined, 'Mandatory argv[1]')
 
   const fileName: string = path.basename(argv1)
