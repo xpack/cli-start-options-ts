@@ -38,7 +38,7 @@ import { test } from 'tap'
 
 // ----------------------------------------------------------------------------
 
-import { runCliXtest, extractTgz } from '../mock/common.js'
+import { runLibXtest, extractTgz } from '../mock/common.js'
 
 import * as cli from '../../esm/index.js'
 
@@ -62,7 +62,7 @@ const skipSomeTests = true
 await test('xtest copy',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliXtest([
+      const { exitCode: code, stdout, stderr } = await runLibXtest([
         'copy'
       ])
       // Check exit code.
@@ -89,7 +89,7 @@ await test('xtest copy',
 await test('xtest copy -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliXtest([
+      const { exitCode: code, stdout, stderr } = await runLibXtest([
         'copy',
         '-h'
       ])
@@ -121,7 +121,7 @@ await test('xtest copy -h',
 await test('xtest cop -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliXtest([
+      const { exitCode: code, stdout, stderr } = await runLibXtest([
         'cop',
         '-h'
       ])
@@ -150,7 +150,7 @@ await test('xtest cop -h',
 await test('xtest cop --file xxx --output yyy -q',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliXtest([
+      const { exitCode: code, stdout, stderr } = await runLibXtest([
         'cop',
         '--file',
         'xxx',
@@ -196,7 +196,7 @@ if (!skipSomeTests) {
     async (t) => {
       try {
         const outPath = path.resolve(workFolder, 'output.json')
-        const { exitCode: code, stdout, stderr } = await runCliXtest([
+        const { exitCode: code, stdout, stderr } = await runLibXtest([
           'cop',
           '--file',
           filePath,
@@ -224,7 +224,7 @@ if (!skipSomeTests) {
   await test('xtest cop --file input --output output -v',
     async (t) => {
       try {
-        const { exitCode: code, stdout, stderr } = await runCliXtest([
+        const { exitCode: code, stdout, stderr } = await runLibXtest([
           'cop',
           '-C',
           workFolder,
@@ -255,7 +255,7 @@ if (!skipSomeTests) {
       async (t) => {
         try {
           const outPath = path.resolve(workFolder, 'ro', 'output.json')
-          const { exitCode: code, stdout, stderr } = await runCliXtest([
+          const { exitCode: code, stdout, stderr } = await runLibXtest([
             'cop',
             '--file',
             filePath,
