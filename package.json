@@ -94,6 +94,7 @@
     "coverage": false,
     "files": [
       "tests/tap/020-*.ts",
+      "tests/tap/025-*.ts",
       "tests/tap/030-*.ts",
       "tests/tap/040-*.ts",
       "tests/tap/060-*.ts",
