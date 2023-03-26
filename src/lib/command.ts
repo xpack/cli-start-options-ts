@@ -91,20 +91,22 @@ export abstract class Command {
    * @param argv Array of arguments.
    * @returns Return code.
    */
-  async prepareAndRun (argv: string[]): Promise<number> {
+  async prepareAndRun (params: {
+    argv: string[]
+  }): Promise<number> {
     const context: Context = this.context
 
     const log = context.log
     log.trace(`${this.constructor.name}.prepareAndRun()`)
 
     // Make a copy of the original args.
-    context.unparsedArgs = [...argv]
+    context.unparsedArgs = [...params.argv]
 
     // Call the init() function of all defined options.
     context.options.initializeConfiguration()
 
     // Parse the args and return the remaining args, like package names.
-    const remainingArgs: string[] = context.options.parse(argv)
+    const remainingArgs: string[] = context.options.parse(params.argv)
 
     const config: Configuration = context.config
     log.trace(util.inspect(config))
@@ -124,30 +126,9 @@ export abstract class Command {
       return ExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
     }
 
-    const actualArgs: string[] = []
-
-    if (remainingArgs.length > 0) {
-      let i = 0
-      for (; i < remainingArgs.length; ++i) {
-        const arg = remainingArgs[i]
-        if (arg !== undefined) {
-          if (arg === '--') {
-            break
-          }
-          if (arg.startsWith('-')) {
-            log.warn(`Option '${arg}' not supported; ignored`)
-          } else {
-            actualArgs.push(arg)
-          }
-        }
-      }
-      for (; i < remainingArgs.length; ++i) {
-        const arg = remainingArgs[i]
-        if (arg !== undefined) {
-          actualArgs.push(arg)
-        }
-      }
-    }
+    const actualArgs: string[] = this.computeActualArguments({
+      argv: remainingArgs
+    })
 
     context.actualArgs = actualArgs
 
@@ -164,6 +145,40 @@ export abstract class Command {
       `${context.matchedCommands.join(' ')}' - returned ${exitCode}`)
 
     return exitCode
+  }
+
+  computeActualArguments (params: {
+    argv: string[]
+  }): string[] {
+    const context: Context = this.context
+
+    const log = context.log
+
+    const actualArgs: string[] = []
+
+    if (params.argv.length > 0) {
+      let i = 0
+      for (; i < params.argv.length; ++i) {
+        const arg = params.argv[i]
+        if (arg !== undefined) {
+          if (arg === '--') {
+            break
+          }
+          if (arg.startsWith('-')) {
+            log.warn(`Option '${arg}' not supported; ignored`)
+          } else {
+            actualArgs.push(arg)
+          }
+        }
+      }
+      for (; i < params.argv.length; ++i) {
+        const arg = params.argv[i]
+        if (arg !== undefined) {
+          actualArgs.push(arg)
+        }
+      }
+    }
+    return actualArgs
   }
 
   /**
