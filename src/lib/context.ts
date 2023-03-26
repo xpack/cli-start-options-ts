@@ -88,7 +88,6 @@ export class Context {
     log: Logger
     context?: Context
     programName?: string
-    argv1?: string
     processCwd?: string
     processEnv?: NodeJS.ProcessEnv
     processArgv?: string[]
@@ -105,7 +104,9 @@ export class Context {
       params.context?.programName ??
       getProgramName()
 
-    const argv1: string | undefined = params.argv1 ?? process.argv[1]
+    // `process.argv[1]` - the full path of the invoking script.
+    const argv = params.processArgv ?? process.argv
+    const argv1: string | undefined = argv[1]
     assert(argv1 !== undefined, 'Mandatory argv[1]')
 
     this.cmdPath = argv1.trim()
