@@ -259,6 +259,16 @@ export async function runLibXtest (
   })
 }
 
+export function splitLines (message: string): string[] {
+  const lines = message.split(/\r?\n/)
+
+  if (lines.length > 0 && lines[lines.length - 1]?.length === 0) {
+    // If the last line is empty, strip it.
+    return lines.slice(0, lines.length - 1)
+  }
+  return lines
+}
+
 // ----------------------------------------------------------------------------
 
 /**
