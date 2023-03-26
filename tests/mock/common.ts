@@ -31,7 +31,7 @@ import tar from 'tar'
 // ----------------------------------------------------------------------------
 
 import { Xtest } from './xtest/src/main.js'
-import { Logger } from '../../esm/index.js'
+import { Logger, getProgramName } from '../../esm/index.js'
 import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
@@ -80,16 +80,18 @@ interface cliResult {
  * Spawn a separate process to run node with the given arguments and
  * return the exit code and the stdio streams captured in strings.
  */
-export async function runCli (
-  appAbsolutePath: string,
-  argv: string[],
-  spawnOpts: SpawnOptionsWithoutStdio = {}
-): Promise<cliResult> {
+export async function runCli (params: {
+  appAbsolutePath: string
+  argv: string[]
+  spawnOpts?: SpawnOptionsWithoutStdio
+}): Promise<cliResult> {
   return await new Promise((resolve, reject) => {
-    spawnOpts.env = spawnOpts?.env ?? process.env
-    spawnOpts.cwd = spawnOpts.cwd ??
-      path.dirname(path.dirname(appAbsolutePath))
+    const spawnOpts = params.spawnOpts ?? {}
+    spawnOpts.env = params.spawnOpts?.env ?? process.env
+    spawnOpts.cwd = params.spawnOpts?.cwd ??
+      path.dirname(path.dirname(params.appAbsolutePath))
 
+    params.spawnOpts = spawnOpts
     // console.log(spawnOpts.cwd)
 
     // Runs in project root.
@@ -97,7 +99,7 @@ export async function runCli (
     let stdout: string = ''
     let stderr: string = ''
 
-    const cmd = [appAbsolutePath, ...argv]
+    const cmd = [params.appAbsolutePath, ...params.argv]
 
     // console.log(`${nodeBin} ${cmd.join(' ')}`)
     const child = spawn(nodeBin, cmd, spawnOpts)
@@ -128,36 +130,55 @@ export async function runCliXtest (
   argv: string[],
   spawnOpts: SpawnOptionsWithoutStdio = {}
 ): Promise<cliResult> {
-  return await runCli(appAbsolutePath('xtest'), argv, spawnOpts)
+  return await runCli({
+    appAbsolutePath: appAbsolutePath('xtest'),
+    argv,
+    spawnOpts
+  })
 }
 
 export async function runCliA1test (
   argv: string[],
   spawnOpts: SpawnOptionsWithoutStdio = {}
 ): Promise<cliResult> {
-  return await runCli(appAbsolutePath('a1test'), argv, spawnOpts)
+  return await runCli({
+    appAbsolutePath: appAbsolutePath('a1test'),
+    argv,
+    spawnOpts
+  })
 }
 
 export async function runCliA2test (
   argv: string[],
   spawnOpts: SpawnOptionsWithoutStdio = {}
 ): Promise<cliResult> {
-  return await runCli(appAbsolutePath('a2test'), argv, spawnOpts)
+  return await runCli({
+    appAbsolutePath: appAbsolutePath('a2test'),
+    argv,
+    spawnOpts
+  })
 }
 
 export async function runCliA3test (
   argv: string[],
   spawnOpts: SpawnOptionsWithoutStdio = {}
 ): Promise<cliResult> {
-  return await runCli(appAbsolutePath('a3test'), argv, spawnOpts)
+  return await runCli({
+    appAbsolutePath: appAbsolutePath('a3test'),
+    argv,
+    spawnOpts
+  })
 }
 
 export async function runCliWtest (
   argv: string[],
   spawnOpts: SpawnOptionsWithoutStdio = {}
 ): Promise<cliResult> {
-  return await runCli(
-    appAbsolutePath('wtest-long-name', 'wtest'), argv, spawnOpts)
+  return await runCli({
+    appAbsolutePath: appAbsolutePath('wtest-long-name', 'wtest'),
+    argv,
+    spawnOpts
+  })
 }
 
 // ----------------------------------------------------------------------------
@@ -176,12 +197,12 @@ export async function runCliWtest (
  * Call the application directly, as a regular module, and return
  * the exit code and the stdio streams captured in strings.
  */
-export async function libRun (
-  programName: string,
-  ClassObject: typeof cli.Application,
+export async function libRun (params: {
+  ClassObject: typeof cli.Application
+  appAbsolutePath: string
   argv: string[]
-): Promise<cliResult> {
-  assert(ClassObject, 'No application class')
+}): Promise<cliResult> {
+  assert(params.ClassObject, 'No application class')
 
   // Create two streams to local strings.
   let stdout: string = ''
@@ -203,15 +224,18 @@ export async function libRun (
   const mockConsole = new Console(ostream, errstream)
   const mockLog = new Logger({ console: mockConsole })
 
+  const programName: string = getProgramName(
+    path.basename(params.appAbsolutePath))
+
   // process.argv[0] - the node full path
   // process.argv[1] - the full path of the invoking script
   const context = new cli.Context({
     log: mockLog,
     programName,
-    processArgv: ['node', programName, ...argv]
+    processArgv: ['node', params.appAbsolutePath, ...params.argv]
   })
 
-  const exitCode = await ClassObject.start({ context })
+  const exitCode = await params.ClassObject.start({ context })
   return { exitCode, stdout, stderr }
 }
 
@@ -228,7 +252,11 @@ export async function libRun (
 export async function runLibXtest (
   argv: string[]
 ): Promise<cliResult> {
-  return await libRun('xtest', Xtest, argv)
+  return await libRun({
+    ClassObject: Xtest,
+    appAbsolutePath: appAbsolutePath('xtest'),
+    argv
+  })
 }
 
 // ----------------------------------------------------------------------------
