@@ -267,7 +267,7 @@ export class Help {
     }
   }
 
-  static padRight (str: string, count: number): string {
+  padRight (str: string, count: number): string {
     str += ' '.repeat(count)
     return str.substring(0, count)
   }
@@ -307,7 +307,7 @@ export class Help {
     if (message !== undefined) {
       desc = message + ' '
     }
-    this.output(`${Help.padRight(out, multiPass.width)} ${desc}`)
+    this.output(`${this.padRight(out, multiPass.width)} ${desc}`)
   }
 
   outputEarlyDetails (
@@ -442,7 +442,7 @@ export class Help {
             optionDefinition.isMultiple) {
             desc += '(multiple)'
           }
-          this.output(`${Help.padRight(strOpts, multiPass.width)} ${desc}`)
+          this.output(`${this.padRight(strOpts, multiPass.width)} ${desc}`)
         }
       }
     })
