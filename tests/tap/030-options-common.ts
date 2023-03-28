@@ -585,7 +585,7 @@ await test('xtest unim', async (t) => {
 
     // After adding the abstract Runnable, the error message changed.
     // t.match(stderr, 'AssertionError', 'stderr has assertion')
-    t.match(stderr, 'TypeError: this.run is not a function',
+    t.match(stderr, 'TypeError: this.main is not a function',
       'stderr has error')
 
     t.equal(stdout, '', 'stdout is empty')

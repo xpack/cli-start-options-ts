@@ -1041,9 +1041,9 @@ export class Application extends Command {
       `found in '${modulePath}'.`)
   }
 
-  async run (_args: string[]): Promise<number> {
+  async main (_args: string[]): Promise<number> {
     assert(false, 'For applications that do not have sub-commands, ' +
-      'define a run() method in the cli.Application derived class')
+      'define a main() method in the cli.Application derived class')
   }
 }
 

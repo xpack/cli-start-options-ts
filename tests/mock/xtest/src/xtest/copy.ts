@@ -89,9 +89,9 @@ export class Copy extends cli.Command {
    *
    * @override
    */
-  override async run (_args: string[]): Promise<number> {
+  override async main (_argv: string[]): Promise<number> {
     const log = this.context.log
-    log.trace(`${this.constructor.name}.run()`)
+    log.trace(`${this.constructor.name}.main()`)
 
     log.info(this.context.helpTitle)
     const config: CliConfigCopy = (this.context.config as CliConfigCopy)

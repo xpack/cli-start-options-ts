@@ -78,12 +78,12 @@ export abstract class Command {
   }
 
   /**
-   * @summary Abstract `run()` method.
+   * @summary Abstract `main()` method.
    *
    * @param argv Array of arguments.
    * @returns A promise resolving to the Exit code.
    */
-  abstract run (argv: string[]): Promise<number>
+  abstract main (argv: string[]): Promise<number>
 
   /**
    * @summary Execute the command.
@@ -139,7 +139,7 @@ export abstract class Command {
     log.debug(`'${context.programName} ` +
       `${context.matchedCommands.join(' ')}' started`)
 
-    exitCode = await this.run(actualArgs)
+    exitCode = await this.main(actualArgs)
 
     log.debug(`'${context.programName} ` +
       `${context.matchedCommands.join(' ')}' - returned ${exitCode}`)
@@ -312,7 +312,7 @@ export class DerivedCommand extends Command {
     context.helpTitle = '...'
   }
 
-  override async run (
+  override async main (
     _argv: string[]
   ): Promise<number> {
     // ...
