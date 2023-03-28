@@ -186,11 +186,15 @@ export class Application extends Command {
       err.constructor === SyntaxError ||
       err.constructor === TypeError) {
       // Other error. Treat it gently too.
-      console.error(err.message)
+      if (err.message !== undefined) {
+        console.error(err.message)
+      }
     } else /* istanbul ignore next */ {
       // System error, probably due to a bug (AssertionError).
       // Show the full stack trace.
-      console.error(err.stack)
+      if ((err as Error).stack !== undefined) {
+        console.error(err.stack)
+      }
     }
     log.verbose(`exitCode = ${exitCode}`)
 
@@ -1001,12 +1005,16 @@ export class Application extends Command {
       exitCode = err.exitCode
     } else if (err instanceof cli.Error) {
       // Other CLI triggered error. Treat it gently.
-      log.error(err.message)
+      if (err.message !== undefined) {
+        log.error(err.message)
+      }
       exitCode = err.exitCode
     } else {
       // System error, probably due to a bug (AssertionError).
       // Show the full stack trace.
-      log.error((err as Error).stack)
+      if ((err as Error).stack !== undefined) {
+        log.error((err as Error).stack)
+      }
     }
     log.verbose(`exit(${exitCode})`)
 
