@@ -102,4 +102,16 @@ export function formatDuration (millis: number): string {
   return `${(millis / 1000).toFixed(3)} sec`
 }
 
+export function formatSize (bytes: number): string {
+  if (bytes < (1024 + 512)) {
+    return `${bytes} B`
+  }
+  if (bytes < (1024 + 512) * 1024) {
+    const kbytes = Math.round((bytes + 512) / 1024)
+    return `${kbytes} kB`
+  }
+  const mbytes = Math.round((bytes + 512 * 1024) / 1024 / 1024)
+  return `${mbytes} MB`
+}
+
 // ----------------------------------------------------------------------------
