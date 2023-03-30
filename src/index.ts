@@ -45,6 +45,7 @@ export * from '@xpack/logger'
 // Re-export all local definitions.
 export * from './lib/application.js'
 export * from './lib/command.js'
+export * from './lib/commands-tree.js'
 export * from './lib/configuration.js'
 export * from './lib/context.js'
 export * from './lib/error.js'

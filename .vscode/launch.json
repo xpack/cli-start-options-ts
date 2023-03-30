@@ -62,6 +62,46 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap commands-tree.ts",
+      "program": "${workspaceRoot}/tests/tap/022-commands-tree.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm",
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap cli-invocation.ts",
+      "program": "${workspaceRoot}/tests/tap/025-cli-invocation.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm",
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "tap interactive.ts",
       "program": "${workspaceRoot}/tests/tap/050-interactive.ts",
       "stopOnEntry": true,

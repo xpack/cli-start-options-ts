@@ -63,16 +63,89 @@ export class Xtest extends cli.Application {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    this.commandsTree.addCommand(['copy', 'c'], 'src/xtest/copy.js')
-    this.commandsTree.addCommand(['notclass'], 'src/xtest/not-class.js')
-    // Non existent.
-    this.commandsTree.addCommand(['con'], 'src/xtest/con.js')
-    this.commandsTree.addCommand(['verbosity', 'c'], 'src/xtest/verbosity.js')
-    this.commandsTree.addCommand(['long'], 'src/xtest/long.js')
-    this.commandsTree.addCommand(['many'], 'src/xtest/many.js')
-    this.commandsTree.addCommand(['gen'], 'src/xtest/generator.js')
-    this.commandsTree.addCommand(['unimpl'], 'src/xtest/unimpl.js')
-    this.commandsTree.addCommand(['cwd'], 'src/xtest/cwd.js')
+    this.commandsTree.addCommands({
+      copy: {
+        aliases: ['c'],
+        modulePath: 'src/xtest/copy.js',
+        helpOptions: {
+          title: 'Copy a file to another file'
+        }
+      },
+      notclass: {
+        modulePath: 'src/xtest/not-class.js'
+      },
+      con: {
+        modulePath: 'src/xtest/con.js'
+      },
+      verbosity: {
+        aliases: ['vb'],
+        modulePath: 'src/xtest/verbosity.js',
+        helpOptions: {
+          title: 'Exercise verbosity'
+        }
+      },
+      long: {
+        modulePath: 'src/xtest/long.js',
+        helpOptions: {
+          title: 'Test long options',
+          usageMoreOptions:
+            '[<name>...] [-- <very-long-long-long-params>...]'
+        }
+      },
+      many: {
+        modulePath: 'src/xtest/many.js',
+        helpOptions: {
+          title: 'Test many options'
+        }
+      },
+      gen: {
+        modulePath: 'src/xtest/generator.js',
+        helpOptions: {
+          title: 'Test generator options'
+        }
+      },
+      unimpl: {
+        modulePath: 'src/xtest/unimpl.js',
+        helpOptions: {
+          title: 'Test unimpl options'
+        }
+      },
+      cwd: {
+        modulePath: 'src/xtest/cwd.js',
+        helpOptions: {
+          title: 'CWD options'
+        }
+      },
+      multi: {
+        modulePath: 'src/xtest/multi.js',
+        className: 'Multi',
+        helpOptions: {
+          title: 'Multiple subcommands'
+        },
+        subCommands: {
+          first: {
+            modulePath: 'src/xtest/multi.js',
+            className: 'MultiFirst',
+            helpOptions: {
+              title: 'Multiple first'
+            }
+          },
+          second: {
+            modulePath: 'src/xtest/multi.js',
+            className: 'MultiSecond',
+            helpOptions: {
+              title: 'Multiple second'
+            }
+          }
+        }
+      },
+      noopts: {
+        modulePath: 'src/xtest/noopts.js',
+        helpOptions: {
+          title: 'No options'
+        }
+      }
+    })
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.

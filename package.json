@@ -95,6 +95,7 @@
     "files": [
       "tests/tap/002-*.ts",
       "tests/tap/020-*.ts",
+      "tests/tap/022-*.ts",
       "tests/tap/025-*.ts",
       "tests/tap/030-*.ts",
       "tests/tap/040-*.ts",

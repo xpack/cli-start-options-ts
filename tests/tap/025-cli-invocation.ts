@@ -90,7 +90,7 @@ await test('xtest xyz (cli call)', async (t) => {
     const errLines = splitLines(stderr)
     // There should be one error message.
     t.equal(errLines.length, 1, 'stderr has 1 line')
-    t.match(errLines[0], 'Command \'xyz\' not supported.', 'error')
+    t.match(errLines[0], 'Command \'xyz\' is not supported.', 'error')
   } catch (err: any) {
     console.log(err.stack)
     t.fail(err.message)

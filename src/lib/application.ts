@@ -48,8 +48,15 @@ import * as semver from 'semver'
 
 // ----------------------------------------------------------------------------
 
-import { Command, CommandConstructorParams, DerivedCommand } from './command.js'
-import { CommandsTree, FoundCommandModule } from './commands-tree.js'
+import {
+  Command,
+  CommandConstructorParams,
+  DerivedCommand
+} from './command.js'
+import {
+  CommandsTree2,
+  FoundCommandModule
+} from './commands-tree.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 // Hack to keep the cli.Error notation consistent.
@@ -202,6 +209,7 @@ export class Application extends Command {
   }
 
   // --------------------------------------------------------------------------
+  // Configurable in the derived Application class.
 
   // MAY BE set, to enable REPL mode.
   protected enableREPL: boolean = false
@@ -209,8 +217,10 @@ export class Application extends Command {
   // MAY BE set, to enable the update checker.
   protected checkUpdatesIntervalSeconds: number = 24 * 60 * 60
 
+  // --------------------------------------------------------------------------
+
   protected latestVersionPromise: Promise<string> | undefined = undefined
-  protected commandsTree: CommandsTree = new CommandsTree()
+  protected commandsTree: CommandsTree2 = new CommandsTree2()
 
   // --------------------------------------------------------------------------
 
@@ -483,6 +493,11 @@ export class Application extends Command {
 
     this.initializeReplOptions()
 
+    // This has double role, to prepare the commands tree and
+    // to check if the commands are unique, otherwise this will
+    // throw an assert().
+    this.commandsTree.validateCommands()
+
     const options: Options = this.context.options
 
     // Call the init() function of all defined options.
@@ -624,7 +639,7 @@ export class Application extends Command {
    */
   identifyCommands (mainArgs: string[]): string[] {
     const commands: string[] = []
-    if (this.commandsTree.hasCommands()) {
+    if (this.commandsTree.hasChildrenCommands()) {
       for (const arg of mainArgs) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
@@ -825,7 +840,7 @@ export class Application extends Command {
 
     const help = new Help({ context })
 
-    const commands = this.commandsTree.getUnaliasedCommands()
+    const commands = this.commandsTree.getChildrenCommandNames().sort()
 
     // Show top (application) help.
 
@@ -900,7 +915,7 @@ export class Application extends Command {
 
     let exitCode: number = ExitCodes.SUCCESS
     try {
-      if (!this.commandsTree.hasCommands()) {
+      if (!this.commandsTree.hasChildrenCommands()) {
         // There are no sub-commands, there should be only one
         // way of running this application.
         exitCode = await this.prepareAndRun({ argv: remainingArgs })
@@ -944,10 +959,11 @@ export class Application extends Command {
     assert(context.rootPath)
     // Throws an assert if there is no command class.
     const DerivedCommandClass: typeof DerivedCommand =
-          await this.findCommandClass(
-            context.rootPath,
-            found.moduleRelativePath
-          )
+      await this.findCommandClass({
+        rootPath: context.rootPath,
+        moduleRelativePath: found.moduleRelativePath,
+        className: found.className
+      })
 
     // Full name commands, not the actual encountered,
     // which may be shortcuts.
@@ -958,7 +974,7 @@ export class Application extends Command {
     // Use the original array, since we might have `--` options,
     // and skip already processed commands.
     const commandArgs = params.argv.slice(params.commands.length -
-          found.unusedCommands.length)
+      found.unusedCommands.length)
     commandArgs.forEach((arg, index) => {
       log.trace(`cmd arg${index}: '${arg}'`)
     })
@@ -1022,31 +1038,53 @@ export class Application extends Command {
   }
 
   // Search for classes derived from cli.Command.
-  async findCommandClass (
-    rootPath: string,
+  async findCommandClass (params: {
+    rootPath: string
     moduleRelativePath: string
-  ): Promise<typeof DerivedCommand> {
+    className: string | undefined
+  }): Promise<typeof DerivedCommand> {
     const parentClass = Command
 
-    const modulePath = path.join(rootPath, moduleRelativePath)
+    const modulePath = path.join(params.rootPath, params.moduleRelativePath)
 
     // On Windows, absolute paths start with a drive letter, and the
     // explicit `file://` is mandatory.
     const moduleExports = await import(`file://${modulePath.toString()}`)
 
-    // Return the first exported class derived from parent
-    // class (`cli.Command`).
-    for (const property in moduleExports) {
-      const obj = moduleExports[property]
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      if (Object.prototype.isPrototypeOf.call(parentClass, obj)) {
-        return moduleExports[property]
+    if (params.className !== undefined) {
+      // Return the first exported class derived from parent
+      // class (`cli.Command`).
+      for (const property in moduleExports) {
+        const obj = moduleExports[property]
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (obj.name === params.className &&
+            Object.prototype.isPrototypeOf.call(parentClass, obj)) {
+          return moduleExports[property]
+        }
       }
+      // Module not found
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      assert(false, `A class '${params.className}' derived from ` +
+        `'${parentClass.name}' not found in '${modulePath}'.`)
+    } else {
+      // Return the first exported class derived from parent
+      // class (`cli.Command`).
+      for (const property in moduleExports) {
+        const obj = moduleExports[property]
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (Object.prototype.isPrototypeOf.call(parentClass, obj)) {
+          return moduleExports[property]
+        }
+      }
+      // Module not found
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      assert(false, `A class derived from '${parentClass.name}' not ` +
+        `found in '${modulePath}'.`)
     }
-    // Module not found
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    assert(false, `A class derived from '${parentClass.name}' not ` +
-      `found in '${modulePath}'.`)
   }
 
   async main (_args: string[]): Promise<number> {

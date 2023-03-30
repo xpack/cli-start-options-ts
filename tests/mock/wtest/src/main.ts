@@ -63,12 +63,26 @@ export class Wtest extends cli.Application {
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.
-    this.commandsTree.addCommand(['one-long-command'], '')
-    this.commandsTree.addCommand(['two-long-command'], '')
-    this.commandsTree.addCommand(['three-long-command'], '')
-    this.commandsTree.addCommand(['four-long-command'], '')
-    this.commandsTree.addCommand(['five-long-command'], '')
-    this.commandsTree.addCommand(['six-long-command'], '')
+    this.commandsTree.addCommands({
+      'one-long-command': {
+        modulePath: '.'
+      },
+      'two-long-command': {
+        modulePath: '.'
+      },
+      'three-long-command': {
+        modulePath: '.'
+      },
+      'four-long-command': {
+        modulePath: '.'
+      },
+      'five-long-command': {
+        modulePath: '.'
+      },
+      'six-long-command': {
+        modulePath: '.'
+      }
+    })
   }
 }
 

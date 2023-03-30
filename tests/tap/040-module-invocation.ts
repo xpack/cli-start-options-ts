@@ -81,7 +81,7 @@ await test('xtest xyz (module call)', async (t) => {
     t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
     // There should be one error message.
-    t.match(stderr, 'Command \'xyz\' not supported.', 'error')
+    t.match(stderr, 'Command \'xyz\' is not supported.', 'error')
   } catch (err: any) {
     console.log(err.stack)
     t.fail(err.message)
