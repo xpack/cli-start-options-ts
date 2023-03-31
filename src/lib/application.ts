@@ -54,7 +54,7 @@ import {
   DerivedCommand
 } from './command.js'
 import {
-  CommandsTree2,
+  CommandsTree,
   FoundCommandModule
 } from './commands-tree.js'
 import { Context } from './context.js'
@@ -220,7 +220,7 @@ export class Application extends Command {
   // --------------------------------------------------------------------------
 
   protected latestVersionPromise: Promise<string> | undefined = undefined
-  protected commandsTree: CommandsTree2 = new CommandsTree2()
+  protected commandsTree: CommandsTree = new CommandsTree()
 
   // --------------------------------------------------------------------------
 

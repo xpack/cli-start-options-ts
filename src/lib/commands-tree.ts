@@ -379,7 +379,7 @@ class CommandNode extends CommandBaseNode {
  * @description
  * It is mainly a generic node with small changes.
  */
-export class CommandsTree2 extends CommandNode {
+export class CommandsTree extends CommandNode {
   constructor () {
     super({
       name: '(tree)', // No spaces!

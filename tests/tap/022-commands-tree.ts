@@ -31,7 +31,7 @@ import * as cli from '../../esm/index.js'
 // ----------------------------------------------------------------------------
 
 await test('two commands', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     copy: {
       modulePath: 'copy.js',
@@ -110,7 +110,7 @@ await test('two commands', async (t) => {
 })
 
 await test('duplicate commands', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     copy: {
       modulePath: 'copy.js'
@@ -140,7 +140,7 @@ await test('duplicate commands', async (t) => {
 })
 
 await test('aliases', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     build: {
       aliases: ['b', 'bild'],
@@ -192,7 +192,7 @@ await test('aliases', async (t) => {
 })
 
 await test('mixed aliases', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     build: {
       aliases: ['c', 'cild'],
@@ -247,7 +247,7 @@ await test('mixed aliases', async (t) => {
 })
 
 await test('two commands two subcommands', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     copy: {
       modulePath: 'copy.js',
@@ -313,7 +313,7 @@ await test('two commands two subcommands', async (t) => {
 })
 
 await test('promotion', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     copy: {
       aliases: ['cpy'],
@@ -362,7 +362,7 @@ await test('promotion', async (t) => {
 })
 
 await test('subcommands without parent command class', async (t) => {
-  const commandsTree = new cli.CommandsTree2()
+  const commandsTree = new cli.CommandsTree()
   commandsTree.addCommands({
     copy: {
       subCommands: {
@@ -398,7 +398,7 @@ await test('subcommands without parent command class', async (t) => {
 
 await test('subcommands without module', async (t) => {
   try {
-    const commandsTree = new cli.CommandsTree2()
+    const commandsTree = new cli.CommandsTree()
     commandsTree.addCommands({
       copy: {
         subCommands: {
