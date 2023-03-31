@@ -332,7 +332,7 @@ class CommandBaseNode {
  * @description
  * It is a generic node with additional constructor constraints.
  */
-class CommandNode extends CommandBaseNode {
+export class CommandNode extends CommandBaseNode {
   constructor (params: CommandNodeParams) {
     super(params)
 
