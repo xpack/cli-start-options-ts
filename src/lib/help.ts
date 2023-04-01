@@ -89,7 +89,9 @@ export class Help {
   }
 
   output (message?: String): void {
-    const log = this.context.log
+    const context: Context = this.context
+
+    const log = context.log
 
     if (this.isOutputAlways) {
       log.always(message)
@@ -113,6 +115,8 @@ export class Help {
     commands?: string[]
   }): void {
     assert(params)
+
+    const context: Context = this.context
 
     // Start with an empty line.
     this.output()
@@ -230,6 +234,7 @@ export class Help {
     commands: string[] | undefined,
     message: string = '[<args>...]'
   ): void {
+    const context: Context = this.context
     const programName: string = this.context.programName
 
     if (commands !== undefined) {
@@ -276,6 +281,7 @@ export class Help {
     multiPass = this.multiPass
   ): void {
     const programName: string = this.context.programName
+    const context: Context = this.context
 
     const str1: string = `${programName} -h|--help`
     const str2: string = `${programName} <command> -h|--help`
@@ -313,6 +319,7 @@ export class Help {
   outputEarlyDetails (
     multiPass = this.multiPass
   ): void {
+    const context: Context = this.context
     const programName = this.context.programName
 
     const optionsGroups = this.context.options.commonGroups
@@ -346,6 +353,7 @@ export class Help {
   outputOptionsGroups (
     multiPass = this.multiPass
   ): void {
+    const context: Context = this.context
     const options: Options = this.context.options
     const optionsGroups =
       [...options.groups, ...options.commonGroups]
@@ -449,6 +457,7 @@ export class Help {
   }
 
   outputFooter (): void {
+    const context: Context = this.context
     const pkgJson = this.context.packageJson
 
     this.output()
