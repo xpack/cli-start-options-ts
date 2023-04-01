@@ -96,16 +96,17 @@ await test('xtest copy -h',
       // Check exit code.
       t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
       const outLines = stdout.split(/\r?\n/)
-      t.ok(outLines.length > 9, 'has enough output')
-      if (outLines.length > 9) {
+      t.ok(outLines.length > 24, 'has enough output')
+      if (outLines.length > 24) {
         // console.log(outLines)
         t.equal(outLines[1], 'Copy a file to another file',
           'has title')
         t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
           '--file <file> --output <file>', 'has Usage')
-        t.match(outLines[4], 'Copy options:', 'has copy options')
-        t.match(outLines[5], '  --file <file>  ', 'has --file')
-        t.match(outLines[6], '  --output <file>  ', 'has --output')
+        t.match(outLines[4], 'Command aliases: c', 'has aliases')
+        t.match(outLines[6], 'Copy options:', 'has copy options')
+        t.match(outLines[7], '  --file <file>  ', 'has --file')
+        t.match(outLines[8], '  --output <file>  ', 'has --output')
       }
       // There should be no error messages.
       t.equal(stderr, '', 'stderr is empty')

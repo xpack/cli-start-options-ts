@@ -141,6 +141,8 @@ export class Help {
     this.twoPassAlign(() => {
       params.object.outputHelpArgsDetails(this.multiPass)
 
+      this.outputAliases()
+
       this.outputOptionsGroups()
       this.outputHelpDetails()
       this.outputEarlyDetails()
@@ -269,6 +271,18 @@ export class Help {
       }
     } else {
       this.output(`Usage: ${programName} ` + ` [<options> ...] ${message}`)
+    }
+  }
+
+  outputAliases (): void {
+    const context: Context = this.context
+
+    if (context.commandNode !== undefined &&
+      context.commandNode.aliases.length > 0 &&
+      !this.multiPass.isFirstPass) {
+      this.output()
+      this.output('Command aliases: ' +
+          `${context.commandNode.aliases.sort().join(', ')}`)
     }
   }
 
