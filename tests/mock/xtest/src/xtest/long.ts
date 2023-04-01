@@ -38,14 +38,9 @@ export class Long extends cli.Command {
   constructor (params: cli.CommandConstructorParams) {
     super(params)
 
-    // Title displayed by the help message.
-    this.context.helpTitle = 'Test long options'
-
     this.context.options.addGroups([
       {
         title: 'Long options',
-        preOptions: '[<name>...]', // Array of test names.
-        postOptions: '[-- <very-long-long-long-args>...]',
         optionsDefinitions: [
           {
             options: ['--long', '--very-long', '--extra-very-long'],
@@ -76,7 +71,7 @@ export class Long extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.context.helpTitle)
+    log.info(this.getHelpTitle())
     // const config = this.context.config
 
     log.info('Done.')

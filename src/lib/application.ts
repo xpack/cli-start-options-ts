@@ -61,7 +61,6 @@ import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 // Hack to keep the cli.Error notation consistent.
 import * as cli from './error.js'
-import { Help } from './help.js'
 import { Options } from './options.js'
 import { NpmPackageJson, readPackageJson } from './utils.js'
 
@@ -467,9 +466,7 @@ export class Application extends Command {
 
     const packageJson = context.packageJson
 
-    context.helpTitle = packageJson.description ?? packageJson.name
-
-    let exitCode = ExitCodes.SUCCESS
+    this.commandsTree.setHelpTitle(packageJson.description ?? packageJson.name)
 
     // ------------------------------------------------------------------------
     // Validate the engine.
@@ -497,6 +494,9 @@ export class Application extends Command {
     // to check if the commands are unique, otherwise this will
     // throw an assert().
     this.commandsTree.validateCommands()
+
+    // For use in Help.
+    context.commandNode = this.commandsTree
 
     const options: Options = this.context.options
 
@@ -546,6 +546,8 @@ export class Application extends Command {
     }
 
     // ------------------------------------------------------------------------
+
+    let exitCode = ExitCodes.SUCCESS
 
     if ((commands.length === 0) && this.enableREPL) {
       // If there are no commands on the command line and REPL is enabled,
@@ -825,34 +827,6 @@ export class Application extends Command {
   // --------------------------------------------------------------------------
 
   /**
-   * @summary Display the application help page.
-   *
-   * @returns Nothing.
-   *
-   * @description
-   * Override it in the application if custom content is desired.
-   */
-  override outputHelp (): void {
-    const context: Context = this.context
-
-    const log = context.log
-    log.trace(`${this.constructor.name}.help()`)
-
-    const help = new Help({ context })
-
-    const commands = this.commandsTree.getChildrenCommandNames().sort()
-
-    // Show top (application) help.
-
-    help.outputAll({
-      object: this,
-      commands
-    })
-  }
-
-  // --------------------------------------------------------------------------
-
-  /**
    * @summary Dispatch the command to its implementations.
    *
    * @param argv Arguments array.
@@ -992,12 +966,12 @@ export class Application extends Command {
       context
     })
 
+    // Used by Help, to display aliases.
+    commandContext.commandNode = found.commandNode
+
     const commandInstance: DerivedCommand = new DerivedCommandClass({
       context: commandContext
     })
-
-    assert(commandInstance.context.helpTitle.length > 0,
-      'The derived command must define a mandatory title')
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
       assert(commandInstance)

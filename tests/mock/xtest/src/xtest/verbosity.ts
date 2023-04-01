@@ -31,11 +31,9 @@ export class Copy extends cli.Command {
    *
    * @param context Reference to a context.
    */
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: cli.CommandConstructorParams) {
     super(params)
-
-    // Title displayed by the help message.
-    this.context.helpTitle = 'Exercise verbosity'
   }
 
   /**
@@ -50,7 +48,7 @@ export class Copy extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.context.helpTitle)
+    log.info(this.getHelpTitle())
 
     log.verbose('Verbose')
 

@@ -112,28 +112,25 @@ export class Help {
    */
   outputAll (params: {
     object: Application | Command
-    commands?: string[]
   }): void {
     assert(params)
 
     const context: Context = this.context
 
+    assert(context.commandNode)
+
     // Start with an empty line.
     this.output()
 
-    this.outputTitle(this.context.helpTitle)
+    assert(context.commandNode.helpOptions)
+    this.outputTitle(context.commandNode.getHelpTitle())
 
-    if (params.object instanceof Application) {
-      // Try to get a message from the first group.
-      const options: Options = params.object.context.options
-      const optionsGroups = options.groups
-      const message = optionsGroups[0]?.title
-      this.outputCommands(params.commands, message)
+    if (context.commandNode.hasChildrenCommands()) {
+      this.outputCommands()
     } else {
       // When called from commands.
       this.outputCommandLine()
     }
-
     // The special trick here is how to align the right column.
     // For this two steps are needed, with the first to compute
     // the max width of the first column, and then to output text.
@@ -158,24 +155,20 @@ export class Help {
   }
 
   outputCommandLine (): void {
-    const programName: string = this.context.programName
+    const context: Context = this.context
 
-    const commands = this.context.matchedCommands.join(' ')
+    const programName: string = context.programName
+
+    const commands = context.matchedCommands.join(' ')
     const usage = `Usage: ${programName} ${commands}`
     let str: string = usage
 
-    let preOptions = ''
-    let postOptions = ''
-    const options: Options = this.context.options
+    const preOptions =
+      this.context.commandNode?.helpOptions?.usagePreOptions ?? ''
+    const postOptions =
+      this.context.commandNode?.helpOptions?.usagePostOptions ?? ''
+    const options: Options = context.options
     const optionsGroups = options.groups
-    for (let i = 0; i < optionsGroups.length; ++i) {
-      if (preOptions === '') {
-        preOptions = optionsGroups[i]?.preOptions ?? ''
-      }
-      if (postOptions === '') {
-        postOptions = optionsGroups[i]?.postOptions ?? ''
-      }
-    }
     const optionDefinitions: OptionDefinition[] = []
     if (preOptions.length > 0) {
       str += ' ' + preOptions
@@ -232,32 +225,32 @@ export class Help {
   }
 
   // TODO: check if message can have this default, or can be undefined.
-  outputCommands (
-    commands: string[] | undefined,
-    message: string = '[<args>...]'
-  ): void {
+  outputCommands (): void {
     const context: Context = this.context
-    const programName: string = this.context.programName
 
-    if (commands !== undefined) {
-      // Remember for further possible usage.
+    const programName: string = context.programName
+
+    assert(context.commandNode)
+    const commands: string[] =
+      context.commandNode.getChildrenCommandNames().sort()
+
+    const message = context.commandNode.helpOptions?.usagePostOptions ??
+      '[<args>...]'
+
+    if (commands.length > 0) {
       this.commands = commands
-
-      // Use slice() to do a deep copy & sort.
-      const commandsCopy: string[] = commands.slice()
-      commandsCopy.sort()
 
       this.output(`Usage: ${programName} <command> [<subcommand>...]` +
         ` [<options> ...] ${message}`)
       this.output()
       this.output('where <command> is one of:')
       let buffer: string | null = null
-      commandsCopy.forEach((cmd, i) => {
+      commands.forEach((cmd, i) => {
         if (buffer === null) {
           buffer = '  '
         }
         buffer += cmd
-        if (i !== (commandsCopy.length - 1)) {
+        if (i !== (commands.length - 1)) {
           buffer += ', '
         }
         if (buffer.length > this.rightLimit) {
@@ -294,8 +287,9 @@ export class Help {
   outputHelpDetails (
     multiPass = this.multiPass
   ): void {
-    const programName: string = this.context.programName
     const context: Context = this.context
+
+    const programName: string = context.programName
 
     const str1: string = `${programName} -h|--help`
     const str2: string = `${programName} <command> -h|--help`
@@ -334,9 +328,9 @@ export class Help {
     multiPass = this.multiPass
   ): void {
     const context: Context = this.context
-    const programName = this.context.programName
 
-    const optionsGroups = this.context.options.commonGroups
+    const programName = context.programName
+    const optionsGroups = context.options.commonGroups
 
     if (!multiPass.isFirstPass) {
       // log.output()
@@ -368,7 +362,8 @@ export class Help {
     multiPass = this.multiPass
   ): void {
     const context: Context = this.context
-    const options: Options = this.context.options
+
+    const options: Options = context.options
     const optionsGroups =
       [...options.groups, ...options.commonGroups]
 
@@ -472,11 +467,12 @@ export class Help {
 
   outputFooter (): void {
     const context: Context = this.context
-    const pkgJson = this.context.packageJson
+
+    const pkgJson = context.packageJson
 
     this.output()
-    assert(this.context.rootPath)
-    const pkgPath = this.context.rootPath
+    assert(context.rootPath)
+    const pkgPath = context.rootPath
     this.output(`npm ${pkgJson.name}@${pkgJson.version} '${pkgPath}'`)
     if (pkgJson.homepage !== undefined) {
       this.output(`Home page: <${pkgJson.homepage}>`)

@@ -88,14 +88,15 @@ export class Xtest extends cli.Application {
         modulePath: 'src/xtest/long.js',
         helpOptions: {
           title: 'Test long options',
-          usageMoreOptions:
-            '[<name>...] [-- <very-long-long-long-params>...]'
+          usagePreOptions: '[<name>...]', // Array of test names.
+          usagePostOptions: '[-- <very-long-long-long-args>...]'
         }
       },
       many: {
         modulePath: 'src/xtest/many.js',
         helpOptions: {
-          title: 'Test many options'
+          title: 'Test many options',
+          usagePreOptions: '[<name1> <name2> <name3>...]'
         }
       },
       gen: {

@@ -36,11 +36,9 @@ export class Unimpl extends cli.Command {
    *
    * @param context Reference to a context.
    */
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: cli.CommandConstructorParams) {
     super(params)
-
-    // Title displayed by the help message.
-    this.context.helpTitle = 'Test unimpl options'
   }
 }
 

@@ -97,8 +97,6 @@ export interface OptionDefinition {
 export interface OptionsGroup {
   title: string
   isCommon?: boolean
-  preOptions?: string
-  postOptions?: string
   // TODO: rename optionsDefinitions
   optionsDefinitions: OptionDefinition[]
 }

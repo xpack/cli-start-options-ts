@@ -182,6 +182,19 @@ export abstract class Command {
   }
 
   /**
+   * @summary Get the command title.
+   * @returns A string
+   *
+   * @description
+   * The title is displayed in the help output and
+   * by some commands.
+   */
+  getHelpTitle (): string {
+    assert(this.context.commandNode)
+    return this.context.commandNode?.getHelpTitle()
+  }
+
+  /**
    * @summary Output command help
    *
    * @returns Nothing.
@@ -304,12 +317,9 @@ export abstract class Command {
  * in the Application class.
  */
 export class DerivedCommand extends Command {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: CommandConstructorParams) {
     super(params)
-
-    const context: Context = this.context
-
-    context.helpTitle = '...'
   }
 
   override async main (

@@ -41,13 +41,9 @@ export class Long extends cli.Command {
   constructor (params: cli.CommandConstructorParams) {
     super(params)
 
-    // Title displayed by the help message.
-    this.context.helpTitle = 'Test many options'
-
     this.context.options.addGroups([
       {
         title: 'Many options',
-        preOptions: '[<name1> <name2> <name3>...]',
         optionsDefinitions: [
           {
             options: ['--one'],
@@ -117,7 +113,7 @@ export class Long extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.context.helpTitle)
+    log.info(this.getHelpTitle())
     // const config = this.context.config
 
     log.info('Done.')

@@ -24,8 +24,10 @@ import * as cli from './error.js'
 
 interface CommandTemplateHelpOptions {
   title: string
-  usageMoreOptions?: string
+  usagePreOptions?: string
+  usagePostOptions?: string
 }
+
 interface CommandTemplate {
   /** Optional array of command aliases. */
   aliases?: string[]
@@ -51,6 +53,7 @@ export interface FoundCommandModule {
   className?: string | undefined
   matchedCommands: string[]
   unusedCommands: string[]
+  commandNode: CommandNode
 }
 
 // ============================================================================
@@ -324,6 +327,25 @@ class CommandBaseNode {
     // The CommandTree ends the recursion.
     return [...this.parent.getUnaliasedSubCommands(), this.name]
   }
+
+  /**
+   * @summary Get the title message
+   *
+   * @returns A string
+   *
+   * @description
+   * Normally each command should define the title, but for
+   * subcommands it is also possible to define the title
+   * only in the parent command.
+   */
+  getHelpTitle (): string {
+    if (this.helpOptions?.title !== undefined) {
+      return this.helpOptions.title
+    }
+
+    assert(this.parent)
+    return this.parent.getHelpTitle()
+  }
 }
 
 /**
@@ -387,6 +409,16 @@ export class CommandsTree extends CommandNode {
     })
   }
 
+  setHelpTitle (title: string): void {
+    if (this.helpOptions === undefined) {
+      this.helpOptions = {
+        title
+      }
+    } else {
+      this.helpOptions.title = title
+    }
+  }
+
   /**
    * @summary Get the array of commands.
    * @returns An empty string array.
@@ -432,7 +464,8 @@ export class CommandsTree extends CommandNode {
       moduleRelativePath: commandNode.getModulePath(),
       className: commandNode.className,
       matchedCommands: commandNode.getUnaliasedSubCommands(),
-      unusedCommands: commands.slice(depth)
+      unusedCommands: commands.slice(depth),
+      commandNode
     }
   }
 }

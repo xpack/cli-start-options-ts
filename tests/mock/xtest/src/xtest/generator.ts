@@ -35,11 +35,9 @@ export class Generator extends cli.Command {
    *
    * @param context Reference to a context.
    */
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: cli.CommandConstructorParams) {
     super(params)
-
-    // Title displayed by the help message.
-    this.context.helpTitle = 'Test generator options'
   }
 
   /**
@@ -54,7 +52,7 @@ export class Generator extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.context.helpTitle)
+    log.info(this.getHelpTitle())
     // const config = this.context.config
 
     const object = {}

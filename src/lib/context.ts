@@ -23,6 +23,7 @@ import { Logger } from '@xpack/logger'
 // ----------------------------------------------------------------------------
 
 import { Configuration } from './configuration.js'
+import { CommandNode } from './commands-tree.js'
 import { Options } from './options.js'
 import { getProgramName, NpmPackageJson } from './utils.js'
 
@@ -45,8 +46,6 @@ export class Context {
 
   public startTime: number
 
-  public helpTitle: string
-
   public cmdPath: string
   public processCwd: string
   public processEnv: NodeJS.ProcessEnv
@@ -68,6 +67,8 @@ export class Context {
    * if a `--` is encountered, everything else is also passed.
    */
   public actualArgs: string[] = []
+
+  public commandNode: CommandNode | undefined
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.
@@ -114,12 +115,6 @@ export class Context {
     this.processCwd = params.processCwd ?? process.cwd()
     this.processEnv = params.processEnv ?? process.env
     this.processArgv = params.processArgv ?? process.argv
-
-    // Normally this should have been passed in the constructor, but
-    // for Application it is not available that early, since the rootPath
-    // is known only after the instance is created.
-    // Thus it must be set explicitly in Command/Application.
-    this.helpTitle = ''
 
     this.startTime = Date.now()
 
