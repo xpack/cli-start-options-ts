@@ -19,6 +19,7 @@ import { strict as assert } from 'node:assert'
 
 // Hack to keep the cli.SyntaxError notation consistent.
 import * as cli from './error.js'
+import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
 
@@ -63,11 +64,14 @@ const characterTerminator = '.'
 interface CommandNodeParams extends CommandTemplate {
   /** Command name. */
   name: string
+  context: Context
 }
 
 // The commands and sub-commands are organised in a tree of command nodes.
 
 class CommandBaseNode {
+  public context: Context
+
   /** The full, official name of the command. */
   public name: string
   /** Possible aliases of the command, usually shorter or even misspelled. */
@@ -106,6 +110,9 @@ class CommandBaseNode {
    */
   constructor (params: CommandNodeParams) {
     assert(params)
+
+    assert(params.context)
+    this.context = params.context
 
     assert(params.name)
     this.name = params.name.trim()
@@ -175,9 +182,12 @@ class CommandBaseNode {
   }): void {
     assert(params)
 
+    const context: Context = this.context
+
     for (const [name, value] of Object.entries(params)) {
       const commandNode: CommandNode = this.addCommandNode({
         name,
+        context,
         ...value
       })
       if (value.subCommands !== undefined) {
@@ -402,8 +412,9 @@ export class CommandNode extends CommandBaseNode {
  * It is mainly a generic node with small changes.
  */
 export class CommandsTree extends CommandNode {
-  constructor () {
+  constructor (params: { context: Context }) {
     super({
+      context: params.context,
       name: '(tree)', // No spaces!
       modulePath: '.'
     })

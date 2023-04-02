@@ -219,7 +219,7 @@ export class Application extends Command {
   // --------------------------------------------------------------------------
 
   protected latestVersionPromise: Promise<string> | undefined = undefined
-  protected commandsTree: CommandsTree = new CommandsTree()
+  protected commandsTree: CommandsTree
 
   // --------------------------------------------------------------------------
 
@@ -235,6 +235,8 @@ export class Application extends Command {
 
     const log = context.log
     log.trace(`${this.constructor.name}.constructor()`)
+
+    this.commandsTree = new CommandsTree({ context })
 
     this.initializeCommonOptions()
   }
