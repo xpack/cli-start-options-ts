@@ -394,19 +394,26 @@ export class Application extends Command {
     const context: Context = this.context
 
     if (this.enableREPL) {
-      context.options.appendToGroup('Common options',
+      context.options.appendToGroups(
         [
           {
-            options: ['--interactive-server-port'],
-            init: (context) => {
-              context.config.interactiveServerPort = undefined
-            },
-            action: (context, val) => /* istanbul ignore next */ {
-              context.config.interactiveServerPort = +val // as number
-            },
-            isOptional: true,
-            hasValue: true,
-            isRequiredEarly: true
+            title: 'Common options',
+            isCommon: true,
+            isInsertInFront: true,
+            optionsDefinitions: [
+              {
+                options: ['--interactive-server-port'],
+                init: (context) => {
+                  context.config.interactiveServerPort = undefined
+                },
+                action: (context, val) => /* istanbul ignore next */ {
+                  context.config.interactiveServerPort = +val // as number
+                },
+                isOptional: true,
+                hasValue: true,
+                isRequiredEarly: true
+              }
+            ]
           }
         ]
       )

@@ -176,17 +176,36 @@ export class Options {
    * @param optionDefinitions Array of definitions.
    * @returns Nothing.
    */
-  appendToGroup (
-    title: string,
-    optionDefinitions: OptionDefinition[]
+  appendToGroups (
+    optionsGroups: OptionsGroup[]
   ): void {
-    [...this.groups, ...this.commonGroups].forEach((optionsGroup) => {
-      assert(optionsGroup.title !== undefined)
-      assert(optionsGroup.optionsDefinitions !== undefined)
+    optionsGroups.forEach((paramOptionsGroup) => {
+      const title: string = paramOptionsGroup.title
+      const optionDefinitions: OptionDefinition[] =
+        paramOptionsGroup.optionsDefinitions
+      const isInsertInFront: boolean =
+        paramOptionsGroup.isInsertInFront ?? false
 
-      if (optionsGroup.title === title) {
-        optionsGroup.optionsDefinitions.push(...optionDefinitions)
-      }
+      const groups: OptionsGroup[] =
+        (paramOptionsGroup.isCommon ?? false)
+          ? [...this.groups, ...this.commonGroups]
+          : [...this.groups, ...this.groups]
+
+      groups.forEach((optionsGroup) => {
+        assert(optionsGroup.title !== undefined)
+        assert(optionsGroup.optionsDefinitions !== undefined)
+
+        if (optionsGroup.title === title) {
+          if (isInsertInFront) {
+            optionsGroup.optionsDefinitions = [
+              ...optionDefinitions,
+              ...optionsGroup.optionsDefinitions
+            ]
+          } else {
+            optionsGroup.optionsDefinitions.push(...optionDefinitions)
+          }
+        }
+      })
     })
   }
 
