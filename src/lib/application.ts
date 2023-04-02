@@ -949,8 +949,7 @@ export class Application extends Command {
 
     // Use the original array, since we might have `--` options,
     // and skip already processed commands.
-    const commandArgs = params.argv.slice(params.commands.length -
-      found.unusedCommands.length)
+    const commandArgs = params.argv.slice(found.commandNode.depth - 1)
     commandArgs.forEach((arg, index) => {
       log.trace(`cmd arg${index}: '${arg}'`)
     })
