@@ -52,8 +52,6 @@ interface CommandTemplate {
 export interface FoundCommandModule {
   moduleRelativePath: string
   className?: string | undefined
-  matchedCommands: string[]
-  unusedCommands: string[]
   commandNode: CommandNode
 }
 
@@ -297,25 +295,25 @@ class CommandBaseNode {
     assert(Array.isArray(commands))
     assert(commands.length > 0)
 
+    const context: Context = this.context
+
     const command: string = commands[0] as string
     const restCommands = commands.slice(1)
 
     let commandNode = this.charactersTree.findCommandNode(command)
-    if (commandNode.hasChildrenCommands()) {
-      // If the node has further sub commands, possibly recurse,
-      // else the remaining commands will be passed up to the caller.
-      if (restCommands.length !== 0) {
-        // If there are subcommands, recursively descend.
-        commandNode = commandNode.findCommandNode(restCommands)
-      }
-    } else {
-      commandNode.remainingCommands = restCommands
+
+    // Store partially found node in the context, for Help to
+    // show the command specific help.
+    context.commandNode = commandNode
+    commandNode.remainingCommands = restCommands
+
+    if (restCommands.length !== 0 && commandNode.hasChildrenCommands()) {
+      // If the node has further sub commands, recurse.
+      commandNode = commandNode.findCommandNode(restCommands)
     }
 
     /* istanbul ignore next if */
-    if (!(
-      this.children !== undefined && this.children.size > 0
-    )) {
+    if (!(this.children !== undefined && this.children.size > 0)) {
       assert(commandNode.modulePath)
     }
     return commandNode
@@ -469,13 +467,10 @@ export class CommandsTree extends CommandNode {
     assert(this.hasChildrenCommands(), 'No commands defined yet.')
 
     const commandNode = this.findCommandNode(commands)
-    const depth = commandNode.depth
 
     return {
       moduleRelativePath: commandNode.getModulePath(),
       className: commandNode.className,
-      matchedCommands: commandNode.getUnaliasedSubCommands(),
-      unusedCommands: commands.slice(depth),
       commandNode
     }
   }
