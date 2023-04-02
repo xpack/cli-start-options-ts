@@ -58,6 +58,13 @@ export const mockPath = (name: string): string => {
     path.dirname(fileURLToPath(import.meta.url)), name)
 }
 
+export const dumpLines = (lines: string[]): void => {
+  for (let i = 0; i < lines.length; ++i) {
+    const paddedIndex: string = (i.toString()).padStart(2, ' ')
+    console.log(`${paddedIndex}: '${lines[i] as string}'`)
+  }
+}
+
 // ============================================================================
 
 interface cliResult {
