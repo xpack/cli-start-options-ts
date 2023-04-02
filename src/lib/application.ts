@@ -1035,7 +1035,7 @@ export class Application extends Command {
         // eslint-disable-next-line max-len
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (obj.name === params.className &&
-            Object.prototype.isPrototypeOf.call(parentClass, obj)) {
+          Object.prototype.isPrototypeOf.call(parentClass, obj)) {
           return moduleExports[property]
         }
       }
