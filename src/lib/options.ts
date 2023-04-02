@@ -53,7 +53,7 @@ type InitOptionFunction = (context: Context) => void
 type SetOptionFunction = (context: Context, value: string) => void
 
 /**
- * @typedef {Object} OptionDef
+ * @typedef {Object} OptionDefinition
  * @property {string[]} options Array of strings matching for the option;
  *   the longest string is displayed in help().
  * @property {string} msg Message to display; only options with messages
@@ -97,6 +97,7 @@ export interface OptionDefinition {
 export interface OptionsGroup {
   title: string
   isCommon?: boolean
+  isInsertInFront?: boolean
   // TODO: rename optionsDefinitions
   optionsDefinitions: OptionDefinition[]
 }
@@ -151,9 +152,19 @@ export class Options {
   addGroups (optionsGroups: OptionsGroup[]): void {
     optionsGroups.forEach((optionsGroup) => {
       if (optionsGroup.isCommon !== undefined && optionsGroup.isCommon) {
-        this.commonGroups.push(optionsGroup)
+        if (optionsGroup.isInsertInFront !== undefined &&
+          optionsGroup.isInsertInFront) {
+          this.commonGroups = [optionsGroup, ...this.commonGroups]
+        } else {
+          this.commonGroups.push(optionsGroup)
+        }
       } else {
-        this.groups.push(optionsGroup)
+        if (optionsGroup.isInsertInFront !== undefined &&
+          optionsGroup.isInsertInFront) {
+          this.groups = [optionsGroup, ...this.groups]
+        } else {
+          this.groups.push(optionsGroup)
+        }
       }
     })
   }
