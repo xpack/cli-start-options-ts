@@ -902,7 +902,7 @@ export class Application extends Command {
           argv: remainingArgs
         })
       }
-    } catch (err) {
+    } catch (err: any) {
       exitCode = this.processCommandError(err, log)
     }
 
