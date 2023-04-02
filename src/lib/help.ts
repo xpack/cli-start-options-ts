@@ -151,6 +151,7 @@ export class Help {
   outputTitle (title: string | undefined): void {
     if (title !== undefined) {
       this.output(`${title}`)
+      this.output()
     }
   }
 

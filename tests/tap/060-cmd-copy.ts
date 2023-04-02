@@ -101,12 +101,12 @@ await test('xtest copy -h',
         // console.log(outLines)
         t.equal(outLines[1], 'Copy a file to another file',
           'has title')
-        t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
+        t.equal(outLines[3], 'Usage: xtest copy [options...] ' +
           '--file <file> --output <file>', 'has Usage')
-        t.match(outLines[4], 'Command aliases: c', 'has aliases')
-        t.match(outLines[6], 'Copy options:', 'has copy options')
-        t.match(outLines[7], '  --file <file>  ', 'has --file')
-        t.match(outLines[8], '  --output <file>  ', 'has --output')
+        t.match(outLines[5], 'Command aliases: c', 'has aliases')
+        t.match(outLines[7], 'Copy options:', 'has copy options')
+        t.match(outLines[8], '  --file <file>  ', 'has --file')
+        t.match(outLines[9], '  --output <file>  ', 'has --output')
       }
       // There should be no error messages.
       t.equal(stderr, '', 'stderr is empty')
@@ -134,7 +134,7 @@ await test('xtest cop -h',
         // console.log(outLines)
         t.equal(outLines[1], 'Copy a file to another file',
           'has title')
-        t.equal(outLines[2], 'Usage: xtest copy [options...] ' +
+        t.equal(outLines[3], 'Usage: xtest copy [options...] ' +
           '--file <file> --output <file>', 'has Usage')
       }
       // There should be no error messages.

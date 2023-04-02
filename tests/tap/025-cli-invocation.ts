@@ -85,7 +85,7 @@ await test('xtest xyz (cli call)', async (t) => {
     const outLines = splitLines(stdout)
     t.ok(outLines.length > 0, 'has stdout')
     t.match(outLines[1], 'Mock Test', 'has title')
-    t.match(outLines[2], 'Usage: xtest <command>', 'has Usage')
+    t.match(outLines[3], 'Usage: xtest <command>', 'has Usage')
 
     const errLines = splitLines(stderr)
     // There should be one error message.
@@ -109,34 +109,34 @@ await test('xtest -h (cli call)', async (t) => {
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
     const outLines = splitLines(stdout)
     // console.log(outLines)
-    t.equal(outLines.length, 27, 'stdout has 27 lines')
+    t.equal(outLines.length, 28, 'stdout has 27 lines')
     t.match(outLines[1], 'Mock Test', 'has title')
-    t.match(outLines[2],
+    t.match(outLines[3],
       'Usage: xtest <command> [<subcommand>...] [<options> ...] [<args>...]',
       'has Usage')
 
-    t.match(outLines[8], '--loglevel <level>', 'has --loglevel <level>')
-    t.match(outLines[8],
+    t.match(outLines[9], '--loglevel <level>', 'has --loglevel <level>')
+    t.match(outLines[9],
       'Set log level (silent|warn|info|verbose|debug|trace)',
       'has log levels list')
-    t.match(outLines[9], '-s|--silent', 'has -s|--silent')
-    t.match(outLines[10], '-q|--quiet', 'has -q|--quiet')
-    t.match(outLines[11], '--informative', 'has --informative')
-    t.match(outLines[12], '-v|--verbose', 'has -v|--verbose')
-    t.match(outLines[13], '-d|--debug', 'has -d|--debug')
-    t.match(outLines[14], '-dd|--trace', 'has -dd|--trace')
+    t.match(outLines[10], '-s|--silent', 'has -s|--silent')
+    t.match(outLines[11], '-q|--quiet', 'has -q|--quiet')
+    t.match(outLines[12], '--informative', 'has --informative')
+    t.match(outLines[13], '-v|--verbose', 'has -v|--verbose')
+    t.match(outLines[14], '-d|--debug', 'has -d|--debug')
+    t.match(outLines[15], '-dd|--trace', 'has -dd|--trace')
 
-    t.match(outLines[15], '--no-update-notifier', 'has --no-update-notifier')
+    t.match(outLines[16], '--no-update-notifier', 'has --no-update-notifier')
 
-    t.match(outLines[16], '-C <folder>', 'has -C <folder>')
+    t.match(outLines[17], '-C <folder>', 'has -C <folder>')
 
-    t.match(outLines[18], 'xtest -h|--help', 'has -h|--help')
-    t.match(outLines[19], 'xtest <command> -h|--help',
+    t.match(outLines[19], 'xtest -h|--help', 'has -h|--help')
+    t.match(outLines[20], 'xtest <command> -h|--help',
       'has <command> -h|--help')
-    t.match(outLines[20], 'xtest --version', 'has --version')
+    t.match(outLines[21], 'xtest --version', 'has --version')
 
-    t.match(outLines[25], 'Home page:', 'has Home page')
-    t.match(outLines[26], 'Bug reports:', 'has Bug reports:')
+    t.match(outLines[26], 'Home page:', 'has Home page')
+    t.match(outLines[27], 'Bug reports:', 'has Bug reports:')
 
     // There should be no error messages.
     t.equal(stderr, '', 'stderr is empty')
