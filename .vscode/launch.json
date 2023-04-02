@@ -141,6 +141,26 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap options-multi.ts",
+      "program": "${workspaceRoot}/tests/tap/035-options-multi.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm",
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xtest.js -i",
       "program": "${workspaceRoot}/tests/mock/xtest/bin/xtest.ts",
       "stopOnEntry": true,

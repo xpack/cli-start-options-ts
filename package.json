@@ -98,6 +98,7 @@
       "tests/tap/022-*.ts",
       "tests/tap/025-*.ts",
       "tests/tap/030-*.ts",
+      "tests/tap/035-*.ts",
       "tests/tap/040-*.ts",
       "tests/tap/060-*.ts",
       "tests/tap/070-*.ts"
