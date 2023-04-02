@@ -330,12 +330,12 @@ class CommandBaseNode {
    * For the assert not to trigger, the root node overrides this and
    * returns an empty array.
    */
-  getUnaliasedSubCommands (): string[] {
+  getUnaliasedCommandParts (): string[] {
     assert(this.parent)
 
     // Put parent in front.
     // The CommandTree ends the recursion.
-    return [...this.parent.getUnaliasedSubCommands(), this.name]
+    return [...this.parent.getUnaliasedCommandParts(), this.name]
   }
 
   /**
@@ -440,7 +440,7 @@ export class CommandsTree extends CommandNode {
    * This is also used to end the
    * back recursion for children nodes.
    */
-  override getUnaliasedSubCommands (): string[] {
+  override getUnaliasedCommandParts (): string[] {
     return []
   }
 
@@ -726,7 +726,7 @@ class CharactersTree extends CharacterNode {
       throw new cli.SyntaxError(
         `Command '${command}' not fully identified, probably misspelled.`)
     } else {
-      const commands = [...this.parentCommandNode.getUnaliasedSubCommands(),
+      const commands = [...this.parentCommandNode.getUnaliasedCommandParts(),
         command]
       const str = commands.join(' ')
       throw new cli.SyntaxError(`Command '${str}' is not supported.`)

@@ -158,10 +158,12 @@ export class Help {
   outputCommandLine (): void {
     const context: Context = this.context
 
-    const programName: string = context.programName
+    assert(context.commandNode)
+    const commandParts =
+      [context.programName, ...context.commandNode.getUnaliasedCommandParts()]
+        .join(' ')
 
-    const commands = context.matchedCommands.join(' ')
-    const usage = `Usage: ${programName} ${commands}`
+    const usage = `Usage: ${commandParts}`
     let str: string = usage
 
     const preOptions =
@@ -225,15 +227,16 @@ export class Help {
     }
   }
 
-  // TODO: check if message can have this default, or can be undefined.
   outputCommands (): void {
     const context: Context = this.context
-
-    const programName: string = context.programName
 
     assert(context.commandNode)
     const commands: string[] =
       context.commandNode.getChildrenCommandNames().sort()
+
+    const commandParts =
+      [context.programName, ...context.commandNode.getUnaliasedCommandParts()]
+        .join(' ')
 
     const message = context.commandNode.helpOptions?.usagePostOptions ??
       '[<args>...]'
@@ -241,7 +244,7 @@ export class Help {
     if (commands.length > 0) {
       this.commands = commands
 
-      this.output(`Usage: ${programName} <command> [<subcommand>...]` +
+      this.output(`Usage: ${commandParts} <command> [<subcommand>...]` +
         ` [<options> ...] ${message}`)
       this.output()
       this.output('where <command> is one of:')
@@ -264,7 +267,7 @@ export class Help {
         buffer = null
       }
     } else {
-      this.output(`Usage: ${programName} ` + ` [<options> ...] ${message}`)
+      this.output(`Usage: ${commandParts} [<options> ...] ${message}`)
     }
   }
 

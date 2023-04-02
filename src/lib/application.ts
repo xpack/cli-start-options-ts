@@ -943,7 +943,7 @@ export class Application extends Command {
 
     // Full name commands, not the actual encountered,
     // which may be shortcuts.
-    context.matchedCommands = found.matchedCommands
+    context.matchedCommands = found.commandNode.getUnaliasedCommandParts()
 
     log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
 

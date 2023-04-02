@@ -62,7 +62,7 @@ await test('two commands', async (t) => {
   t.equal(commandNode.modulePath, 'copy.js', 'copy module is copy.js')
   t.equal(commandNode.className, 'Copy', 'copy class is Copy')
 
-  arr = commandNode.getUnaliasedSubCommands()
+  arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'copy', 'first command is copy')
 
@@ -70,7 +70,7 @@ await test('two commands', async (t) => {
   t.equal(commandNode.modulePath, 'conf.js', 'conf module is conf.js')
   t.equal(commandNode.className, undefined, 'conf class is not defined')
 
-  arr = commandNode.getUnaliasedSubCommands()
+  arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'conf', 'first command is conf')
 
@@ -171,7 +171,7 @@ await test('aliases', async (t) => {
   commandNode = commandsTree.findCommandNode(['build'])
   t.equal(commandNode.modulePath, 'build.js', 'build module is build.js')
 
-  const arr = commandNode.getUnaliasedSubCommands()
+  const arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'build', 'first command is build')
 
@@ -225,7 +225,7 @@ await test('mixed aliases', async (t) => {
   commandNode = commandsTree.findCommandNode(['build'])
   t.equal(commandNode.modulePath, 'build.js', 'build module is build.js')
 
-  const arr = commandNode.getUnaliasedSubCommands()
+  const arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'build', 'first command is build')
 
@@ -290,7 +290,7 @@ await test('two commands two subcommands', async (t) => {
   commandNode = commandsTree.findCommandNode(['copy'])
   t.equal(commandNode.modulePath, 'copy.js', 'copy module is copy.js')
 
-  arr = commandNode.getUnaliasedSubCommands()
+  arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'copy', 'first command is copy')
 
@@ -298,7 +298,7 @@ await test('two commands two subcommands', async (t) => {
   t.equal(commandNode.modulePath, 'copyBin.js',
     'copy binary module is copyBin.js')
 
-  arr = commandNode.getUnaliasedSubCommands()
+  arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 2, 'unaliased array has 2 entries')
   t.equal(arr[0], 'copy', 'first command is copy')
   t.equal(arr[1], 'binary', 'second command is binary')
@@ -307,7 +307,7 @@ await test('two commands two subcommands', async (t) => {
   t.equal(commandNode.modulePath, 'copyAsc.js',
     'copy ascii module is copyAsc.js')
 
-  arr = commandNode.getUnaliasedSubCommands()
+  arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 2, 'unaliased array has 2 entries')
   t.equal(arr[0], 'copy', 'first command is copy')
   t.equal(arr[1], 'ascii', 'second command is ascii')
@@ -315,7 +315,7 @@ await test('two commands two subcommands', async (t) => {
   commandNode = commandsTree.findCommandNode(['conf'])
   t.equal(commandNode.modulePath, 'conf.js', 'conf module is conf.js')
 
-  arr = commandNode.getUnaliasedSubCommands()
+  arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'conf', 'first command is conf')
 
