@@ -19,7 +19,7 @@
 
 // ----------------------------------------------------------------------------
 
-// import { strict as assert } from 'node:assert'
+import { strict as assert } from 'node:assert'
 // import * as fs from 'node:fs'
 // import * as os from 'node:os'
 import * as path from 'node:path'
@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
 
 // https://www.npmjs.com/package/del
@@ -36,7 +36,15 @@ import { test } from 'tap'
 // https://www.npmjs.com/package/make-dir
 // import makeDir from 'make-dir'
 
+// ----------------------------------------------------------------------------
+
 import * as cli from '../../esm/index.js'
+
+// ----------------------------------------------------------------------------
+
+assert(cli.readPackageJson)
+assert(cli.formatDuration)
+assert(cli.formatSize)
 
 // ----------------------------------------------------------------------------
 

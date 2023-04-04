@@ -23,8 +23,11 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
+
+// https://www.npmjs.com/package/@xpack/mock-console
+import { dumpLines } from '@xpack/mock-console'
 
 // ----------------------------------------------------------------------------
 
@@ -41,23 +44,33 @@ assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
+// To silence ts-standard.
+dumpLines([])
+
+// ----------------------------------------------------------------------------
+
 /**
  * Test if author is properly identified.
  */
 await test('a1test -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliA1test([
+      const { exitCode: code, outLines, errLines } = await runCliA1test([
         '-h'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+
+      t.ok(outLines.length > 0, 'stdout has lines')
+      const stdout = outLines.join('\n')
       // console.log(errLines)
       t.match(stdout, 'Usage: a1test', 'has Usage')
       t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
+
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(errLines.length, 0, 'stderr is empty')
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -70,17 +83,22 @@ await test('a1test -h',
 await test('a2test -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliA2test([
+      const { exitCode: code, outLines, errLines } = await runCliA2test([
         '-h'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+
+      t.ok(outLines.length > 0, 'stdout has lines')
+      const stdout = outLines.join('\n')
       // console.log(errLines)
       t.match(stdout, 'Usage: a2test', 'has Usage')
       t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
         'has Bug reports')
+
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(errLines.length, 0, 'stderr is empty')
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -93,17 +111,22 @@ await test('a2test -h',
 await test('a3test -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runCliA3test([
+      const { exitCode: code, outLines, errLines } = await runCliA3test([
         '-h'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+
+      t.ok(outLines.length > 0, 'stdout has lines')
+      const stdout = outLines.join('\n')
       // console.log(errLines)
       t.match(stdout, 'Usage: a3test', 'has Usage')
       t.match(stdout, 'Bug reports: <ilg@livius.net>',
         'has Bug reports')
+
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(errLines.length, 0, 'stderr is empty')
     } catch (err: any) {
       t.fail(err.message)
     }

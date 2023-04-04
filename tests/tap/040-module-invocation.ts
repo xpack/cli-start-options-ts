@@ -23,8 +23,11 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
+
+// https://www.npmjs.com/package/@xpack/mock-console
+import { dumpLines } from '@xpack/mock-console'
 
 // ----------------------------------------------------------------------------
 
@@ -41,6 +44,9 @@ assert(cli.ExitCodes)
 
 let pack: cli.NpmPackageJson
 
+// To silence ts-standard.
+dumpLines([])
+
 // ----------------------------------------------------------------------------
 
 await test('setup', async (t) => {
@@ -55,16 +61,19 @@ await test('setup', async (t) => {
 
 await test('xtest --version (module call)', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
-    t.equal(stdout, pack.version + '\n', 'version value')
+    t.equal(outLines[0], pack.version, 'version value')
+
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     console.log(err.stack)
     t.fail(err.message)
@@ -74,14 +83,20 @@ await test('xtest --version (module call)', async (t) => {
 
 await test('xtest xyz (module call)', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'xyz'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+
+    t.ok(outLines.length > 0, 'stdout has lines')
+    const stdout = outLines.join('\n')
     t.match(stdout, 'Usage: xtest <command>', 'has Usage')
+
+    t.ok(errLines.length > 0, 'stderr has lines')
     // There should be one error message.
-    t.match(stderr, 'Command \'xyz\' is not supported.', 'error')
+    t.match(errLines[0], 'Command \'xyz\' is not supported.', 'error')
   } catch (err: any) {
     console.log(err.stack)
     t.fail(err.message)

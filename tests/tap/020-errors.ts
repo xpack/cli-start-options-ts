@@ -23,7 +23,7 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
 
 // ----------------------------------------------------------------------------

@@ -33,8 +33,11 @@ import { deleteAsync } from 'del'
 // https://www.npmjs.com/package/make-dir
 import makeDir from 'make-dir'
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
+
+// https://www.npmjs.com/package/@xpack/mock-console
+import { dumpLines } from '@xpack/mock-console'
 
 // ----------------------------------------------------------------------------
 
@@ -54,6 +57,9 @@ const workFolder = path.resolve(os.tmpdir(), 'xtest-copy')
 
 const skipSomeTests = true
 
+// To silence ts-standard.
+dumpLines([])
+
 // ----------------------------------------------------------------------------
 
 /**
@@ -62,21 +68,25 @@ const skipSomeTests = true
 await test('xtest copy',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runLibXtest([
+      const { exitCode: code, outLines, errLines } = await runLibXtest([
         'copy'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-      const errLines = stderr.split(/\r?\n/)
+
+      t.ok(outLines.length > 0, 'stdout has lines')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Usage: xtest copy [options...]', 'has Usage')
+
       // console.log(errLines)
-      t.equal(errLines.length, 2 + 1, 'has two errors')
-      if (errLines.length === 3) {
+      t.equal(errLines.length, 2, 'has two errors')
+      if (errLines.length === 2) {
         t.match(errLines[0], 'Mandatory \'--file\' not found',
           'has --file error')
         t.match(errLines[1], 'Mandatory \'--output\' not found',
           'has --output error')
       }
-      t.match(stdout, 'Usage: xtest copy [options...]', 'has Usage')
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -89,13 +99,14 @@ await test('xtest copy',
 await test('xtest copy -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runLibXtest([
+      const { exitCode: code, outLines, errLines } = await runLibXtest([
         'copy',
         '-h'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
-      const outLines = stdout.split(/\r?\n/)
+
       t.ok(outLines.length > 24, 'has enough output')
       if (outLines.length > 24) {
         // console.log(outLines)
@@ -108,8 +119,9 @@ await test('xtest copy -h',
         t.match(outLines[8], '  --file <file>  ', 'has --file')
         t.match(outLines[9], '  --output <file>  ', 'has --output')
       }
+
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(errLines.length, 0, 'stderr is empty')
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -122,13 +134,14 @@ await test('xtest copy -h',
 await test('xtest cop -h',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runLibXtest([
+      const { exitCode: code, outLines, errLines } = await runLibXtest([
         'cop',
         '-h'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
-      const outLines = stdout.split(/\r?\n/)
+
       t.ok(outLines.length > 9, 'has enough output')
       if (outLines.length > 9) {
         // console.log(outLines)
@@ -137,8 +150,9 @@ await test('xtest cop -h',
         t.equal(outLines[3], 'Usage: xtest copy [options...] ' +
           '--file <file> --output <file>', 'has Usage')
       }
+
       // There should be no error messages.
-      t.equal(stderr, '', 'stderr is empty')
+      t.equal(errLines.length, 0, 'stderr is empty')
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -151,7 +165,7 @@ await test('xtest cop -h',
 await test('xtest cop --file xxx --output yyy -q',
   async (t) => {
     try {
-      const { exitCode: code, stdout, stderr } = await runLibXtest([
+      const { exitCode: code, outLines, errLines } = await runLibXtest([
         'cop',
         '--file',
         'xxx',
@@ -159,10 +173,15 @@ await test('xtest cop --file xxx --output yyy -q',
         'yyy',
         '-q'
       ])
+
       // Check exit code.
       t.equal(code, cli.ExitCodes.ERROR.INPUT, 'exit code is input')
+
       // There should be no output.
-      t.equal(stdout, '', 'stdout is empty')
+      t.equal(outLines.length, 0, 'stdout is empty')
+
+      t.ok(errLines.length > 0, 'stderr has lines')
+      const stderr = errLines.join('\n')
       t.match(stderr, 'ENOENT: no such file or directory', 'strerr is ENOENT')
     } catch (err: any) {
       t.fail(err.message)
@@ -197,19 +216,24 @@ if (!skipSomeTests) {
     async (t) => {
       try {
         const outPath = path.resolve(workFolder, 'output.json')
-        const { exitCode: code, stdout, stderr } = await runLibXtest([
+        const { exitCode: code, outLines, errLines } = await runLibXtest([
           'cop',
           '--file',
           filePath,
           '--output',
           outPath
         ])
+
         // Check exit code.
         t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+
+        t.ok(outLines.length > 0, 'stdout has lines')
+        const stdout = outLines.join('\n')
         t.match(stdout, 'Done', 'stdout is done')
-        // console.log(stdout)
-        t.equal(stderr, '', 'stderr is empty')
-        // console.log(stderr)
+        // dumpLines(outLines)
+
+        t.equal(errLines.length, 0, 'stderr is empty')
+        // dumpLines(errLines)
 
         const fileContent = await fs.promises.readFile(outPath)
         t.ok(fileContent, 'content is read in')
@@ -225,7 +249,7 @@ if (!skipSomeTests) {
   await test('xtest cop --file input --output output -v',
     async (t) => {
       try {
-        const { exitCode: code, stdout, stderr } = await runLibXtest([
+        const { exitCode: code, outLines, errLines } = await runLibXtest([
           'cop',
           '-C',
           workFolder,
@@ -235,12 +259,17 @@ if (!skipSomeTests) {
           'output.json',
           '-v'
         ])
+
         // Check exit code.
         t.equal(code, cli.ExitCodes.SUCCESS, 'exit code')
+
+        t.ok(outLines.length > 0, 'stdout has lines')
+        const stdout = outLines.join('\n')
         t.match(stdout, 'Done.', 'message is Done')
-        // console.log(stdout)
-        t.equal(stderr, '', 'stderr is empty')
-      // console.log(stderr)
+        // dumpLines(outLines)
+
+        t.equal(errLines.length, 0, 'stderr is empty')
+        // dumpLines(errLines)
       } catch (err: any) {
         t.fail(err.message)
       }
@@ -256,7 +285,7 @@ if (!skipSomeTests) {
       async (t) => {
         try {
           const outPath = path.resolve(workFolder, 'ro', 'output.json')
-          const { exitCode: code, stdout, stderr } = await runLibXtest([
+          const { exitCode: code, outLines, errLines } = await runLibXtest([
             'cop',
             '--file',
             filePath,
@@ -264,12 +293,18 @@ if (!skipSomeTests) {
             outPath,
             '-v'
           ])
+
           // Check exit code.
           t.equal(code, cli.ExitCodes.ERROR.OUTPUT, 'exit code is output')
+
           // Output should go up to Writing...
-          // console.log(stdout)
+          t.ok(outLines.length > 0, 'stdout has lines')
+          const stdout = outLines.join('\n')
           t.match(stdout, 'Writing ', 'up to writing')
-          // console.log(stderr)
+
+          t.ok(errLines.length > 0, 'stderr has lines')
+          const stderr = errLines.join('\n')
+          // dumpLines(errLines)
           t.match(stderr, 'EACCES: permission denied', 'stderr is EACCES')
         } catch (err: any) {
           t.fail(err.message)

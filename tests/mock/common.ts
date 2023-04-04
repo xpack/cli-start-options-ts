@@ -15,9 +15,9 @@
 
 import { strict as assert } from 'node:assert'
 import { spawn, SpawnOptionsWithoutStdio } from 'node:child_process'
-import { Console } from 'node:console'
+// import { Console } from 'node:console'
 import path from 'node:path'
-import { Writable } from 'node:stream'
+// import { Writable } from 'node:stream'
 import { fileURLToPath } from 'node:url'
 
 // ----------------------------------------------------------------------------
@@ -27,6 +27,8 @@ import makeDir from 'make-dir'
 
 // https://www.npmjs.com/package/tar
 import tar from 'tar'
+
+import { MockConsole } from '@xpack/mock-console'
 
 // ----------------------------------------------------------------------------
 
@@ -58,19 +60,12 @@ export const mockPath = (name: string): string => {
     path.dirname(fileURLToPath(import.meta.url)), name)
 }
 
-export const dumpLines = (lines: string[]): void => {
-  for (let i = 0; i < lines.length; ++i) {
-    const paddedIndex: string = (i.toString()).padStart(2, ' ')
-    console.log(`${paddedIndex}: '${lines[i] as string}'`)
-  }
-}
-
 // ============================================================================
 
 interface cliResult {
   exitCode: number
-  stdout: string
-  stderr: string
+  outLines: string[]
+  errLines: string[]
 }
 
 /**
@@ -80,8 +75,7 @@ interface cliResult {
  * @param appAbsolutePath Program name.
  * @param argv Command line arguments.
  * @param spawnOpts Optional spawn options.
- * @returns Exit
- *  code and captured output/error streams.
+ * @returns Exit code and captured output/error streams.
  *
  * @description
  * Spawn a separate process to run node with the given arguments and
@@ -103,32 +97,59 @@ export async function runCli (params: {
 
     // Runs in project root.
     // console.log(`Current directory: ${process.cwd()}`)
-    let stdout: string = ''
-    let stderr: string = ''
+    const outLines: string[] = []
+    const errLines: string[] = []
+
+    let outBuffer = ''
+    let errBuffer = ''
 
     const cmd = [params.appAbsolutePath, ...params.argv]
 
     // console.log(`${nodeBin} ${cmd.join(' ')}`)
     const child = spawn(nodeBin, cmd, spawnOpts)
 
-    assert(child.stderr)
-    child.stderr.on('data', (chunk) => {
-      // console.log(chunk.toString())
-      stderr += (chunk.toString() as string)
-    })
-
     assert(child.stdout)
     child.stdout.on('data', (chunk) => {
       // console.log(chunk.toString())
-      stdout += (chunk.toString() as string)
+      // stdout += (chunk.toString() as string)
+      outBuffer += chunk.toString('utf-8') as string
+      while (true) {
+        const ix = outBuffer.indexOf('\n')
+        if (ix === -1) {
+          break
+        }
+        outLines.push(outBuffer.substring(0, ix))
+        outBuffer = outBuffer.substring(ix + 1)
+      }
+    })
+
+    assert(child.stderr)
+    child.stderr.on('data', (chunk) => {
+      // console.log(chunk.toString())
+      // stderr += (chunk.toString() as string)
+      errBuffer += chunk.toString('utf-8') as string
+
+      // Split lines that include the line terminator.
+      while (true) {
+        const ix = errBuffer.indexOf('\n')
+        if (ix === -1) {
+          break
+        }
+        errLines.push(errBuffer.substring(0, ix))
+        errBuffer = errBuffer.substring(ix + 1)
+      }
     })
 
     child.on('error', (err) => {
       reject(err)
     })
 
-    child.on('close', (code: number) => {
-      resolve({ exitCode: code, stdout, stderr })
+    child.on('close', (exitCode: number) => {
+      resolve({
+        exitCode,
+        outLines,
+        errLines
+      })
     })
   })
 }
@@ -211,24 +232,7 @@ export async function libRun (params: {
 }): Promise<cliResult> {
   assert(params.ClassObject, 'No application class')
 
-  // Create two streams to local strings.
-  let stdout: string = ''
-  const ostream = new Writable({
-    write (chunk, _encoding, callback) {
-      stdout += (chunk.toString() as string)
-      callback()
-    }
-  })
-
-  let stderr: string = ''
-  const errstream = new Writable({
-    write (chunk, _encoding, callback) {
-      stderr += (chunk.toString() as string)
-      callback()
-    }
-  })
-
-  const mockConsole = new Console(ostream, errstream)
+  const mockConsole = new MockConsole()
   const mockLog = new Logger({ console: mockConsole })
 
   const programName: string = getProgramName(
@@ -243,7 +247,11 @@ export async function libRun (params: {
   })
 
   const exitCode = await params.ClassObject.start({ context })
-  return { exitCode, stdout, stderr }
+  return {
+    exitCode,
+    outLines: mockConsole.outLines,
+    errLines: mockConsole.errLines
+  }
 }
 
 /**

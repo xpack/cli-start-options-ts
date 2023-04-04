@@ -25,16 +25,20 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
 
+// https://www.npmjs.com/package/@xpack/mock-console
+import { dumpLines } from '@xpack/mock-console'
+
+// ----------------------------------------------------------------------------
+
 import {
-  // dumpLines,
   mockPath,
-  runLibXtest,
-  splitLines
+  runLibXtest
   // runCliXtest
 } from '../mock/common.js'
+
 import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
@@ -45,6 +49,9 @@ assert(cli.ExitCodes)
 // ----------------------------------------------------------------------------
 
 let pack: cli.NpmPackageJson
+
+// To silence ts-standard.
+dumpLines([])
 
 // ----------------------------------------------------------------------------
 
@@ -65,13 +72,13 @@ await await test('setup', async (t) => {
 
 await test('xtest multi --help', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       '--help'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
-    const outLines = splitLines(stdout)
 
     // dumpLines(outLines)
     t.ok(outLines.length > 0, 'has stdout')
@@ -84,8 +91,8 @@ await test('xtest multi --help', async (t) => {
     t.match(outLines[6], '  first, second', 'has subcommands')
 
     // There should be no error messages.
-    // console.log(stderr)
-    t.equal(stderr.length, 0, 'stderr is empty')
+    // dumpLines(errLines)
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -94,13 +101,13 @@ await test('xtest multi --help', async (t) => {
 
 await test('xtest multi', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     // dumpLines(outLines)
     t.equal(outLines.length, 4, 'has 4 stdout')
     t.match(outLines[0], 'Multiple subcommands', 'has title')
@@ -109,7 +116,7 @@ await test('xtest multi', async (t) => {
     t.match(outLines[3], '\'xtest multi\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -118,15 +125,15 @@ await test('xtest multi', async (t) => {
 
 await test('xtest multi -m mmm', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       '-m',
       'mmm'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     // dumpLines(outLines)
     t.equal(outLines.length, 5, 'has 5 stdout')
     t.match(outLines[0], 'Multiple subcommands', 'has title')
@@ -136,7 +143,7 @@ await test('xtest multi -m mmm', async (t) => {
     t.match(outLines[4], '\'xtest multi\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -145,18 +152,18 @@ await test('xtest multi -m mmm', async (t) => {
 
 await test('xtest multi -m mmm 1 2', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       '-m',
       'mmm',
       'one',
       'two'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.equal(outLines.length, 6, 'has 6 stdout')
     t.match(outLines[0], 'Multiple subcommands', 'has title')
     t.match(outLines[1], 'multi: mmm', 'has -m')
@@ -166,7 +173,7 @@ await test('xtest multi -m mmm 1 2', async (t) => {
     t.match(outLines[5], '\'xtest multi\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -175,16 +182,16 @@ await test('xtest multi -m mmm 1 2', async (t) => {
 
 await test('xtest multi 1 2', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'one',
       'two'
     ])
+
     // Check exit code.
     // console.log(code)
     t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
 
-    const outLines = splitLines(stdout)
     // dumpLines(outLines)
     t.ok(outLines.length > 0, 'has stdout')
     t.match(outLines[1], 'Multiple subcommands', 'has title')
@@ -192,7 +199,6 @@ await test('xtest multi 1 2', async (t) => {
       'xtest multi <command> [<subcommand>...] [<options> ...] [<args>...]',
       'has Usage')
 
-    const errLines = splitLines(stderr)
     // dumpLines(errLines)
     t.equal(errLines.length, 1, 'stderr 1 line')
     t.match(errLines[0], 'error: Command \'multi one\' is not supported.',
@@ -205,15 +211,15 @@ await test('xtest multi 1 2', async (t) => {
 
 await test('xtest multi first --help', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'first',
       '--help'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     // dumpLines(outLines)
     t.ok(outLines.length > 0, 'has stdout')
     t.match(outLines[1], 'Multiple first', 'has title')
@@ -228,7 +234,7 @@ await test('xtest multi first --help', async (t) => {
     t.match(outLines[9], '  --multi|-m <name>', 'has --multi')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -237,15 +243,15 @@ await test('xtest multi first --help', async (t) => {
 
 await test('xtest multi first', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'first'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.equal(outLines.length, 4, 'has 4 stdout')
     t.match(outLines[0], 'Multiple first', 'has title')
     t.match(outLines[1], 'no args', 'has no args')
@@ -253,7 +259,7 @@ await test('xtest multi first', async (t) => {
     t.match(outLines[3], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -262,7 +268,7 @@ await test('xtest multi first', async (t) => {
 
 await test('xtest multi first -m mmm --first fff', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'first',
       '-m',
@@ -270,11 +276,11 @@ await test('xtest multi first -m mmm --first fff', async (t) => {
       '--first',
       'fff'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.equal(outLines.length, 6, 'has 6 stdout')
     t.match(outLines[0], 'Multiple first', 'has title')
     t.match(outLines[1], 'multi: mmm', 'has -m')
@@ -284,7 +290,7 @@ await test('xtest multi first -m mmm --first fff', async (t) => {
     t.match(outLines[5], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -293,7 +299,7 @@ await test('xtest multi first -m mmm --first fff', async (t) => {
 
 await test('xtest multi first -m mmm --first fff 1 2', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'first',
       '-m',
@@ -303,12 +309,12 @@ await test('xtest multi first -m mmm --first fff 1 2', async (t) => {
       'one',
       'two'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     t.equal(outLines.length, 7, 'has 7 stdout')
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.match(outLines[0], 'Multiple first', 'has title')
     t.match(outLines[1], 'multi: mmm', 'has -m')
     t.match(outLines[2], 'first: fff', 'has --first')
@@ -318,7 +324,7 @@ await test('xtest multi first -m mmm --first fff 1 2', async (t) => {
     t.match(outLines[6], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -327,17 +333,17 @@ await test('xtest multi first -m mmm --first fff 1 2', async (t) => {
 
 await test('xtest multi first 1 2', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'first',
       'one',
       'two'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.equal(outLines.length, 5, 'has 5 stdout')
     t.match(outLines[0], 'Multiple first', 'has title')
     t.match(outLines[1], 'one', 'has one')
@@ -346,7 +352,7 @@ await test('xtest multi first 1 2', async (t) => {
     t.match(outLines[4], '\'xtest multi first\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -356,15 +362,15 @@ await test('xtest multi first 1 2', async (t) => {
 // Test without isInsertInFront
 await test('xtest multi second --help', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'second',
       '--help'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     // dumpLines(outLines)
     t.ok(outLines.length > 0, 'has stdout')
     t.match(outLines[1], 'Multiple second', 'has title')
@@ -382,7 +388,7 @@ await test('xtest multi second --help', async (t) => {
     t.match(outLines[12], ' --more-common <int>', 'has --more')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -391,14 +397,14 @@ await test('xtest multi second --help', async (t) => {
 
 await test('xtest multi second', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'second'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     // dumpLines(outLines)
     t.equal(outLines.length, 4, 'has 4 stdout')
     t.match(outLines[0], 'Multiple second', 'has title')
@@ -408,7 +414,7 @@ await test('xtest multi second', async (t) => {
       '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -417,7 +423,7 @@ await test('xtest multi second', async (t) => {
 
 await test('xtest multi second -m mmm --second fff', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'second',
       '-m',
@@ -425,12 +431,12 @@ await test('xtest multi second -m mmm --second fff', async (t) => {
       '--second',
       'fff'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     t.equal(outLines.length, 6, 'has 6 stdout')
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.match(outLines[0], 'Multiple second', 'has title')
     t.match(outLines[1], 'multi: mmm', 'has -m')
     t.match(outLines[2], 'second: fff', 'has --second')
@@ -440,7 +446,7 @@ await test('xtest multi second -m mmm --second fff', async (t) => {
       '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -449,7 +455,7 @@ await test('xtest multi second -m mmm --second fff', async (t) => {
 
 await test('xtest multi second -m mmm --second fff 1 2', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'second',
       '-m',
@@ -459,12 +465,12 @@ await test('xtest multi second -m mmm --second fff 1 2', async (t) => {
       'one',
       'two'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
     t.equal(outLines.length, 7, 'has 7 stdout')
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.match(outLines[0], 'Multiple second', 'has title')
     t.match(outLines[1], 'multi: mmm', 'has -m')
     t.match(outLines[2], 'second: fff', 'has --second')
@@ -475,7 +481,7 @@ await test('xtest multi second -m mmm --second fff 1 2', async (t) => {
       '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -484,17 +490,17 @@ await test('xtest multi second -m mmm --second fff 1 2', async (t) => {
 
 await test('xtest multi second 1 2', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'multi',
       'second',
       'one',
       'two'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    const outLines = splitLines(stdout)
-    // console.log(stdout)
+    // dumpLines(outLines)
     t.equal(outLines.length, 5, 'has 5 stdout')
     t.match(outLines[0], 'Multiple second', 'has title')
     t.match(outLines[1], 'one', 'has one')
@@ -504,7 +510,7 @@ await test('xtest multi second 1 2', async (t) => {
       '\'xtest multi second\' completed in ', 'has completed')
 
     // There should be no error messages.
-    t.equal(stderr.length, 0, 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }

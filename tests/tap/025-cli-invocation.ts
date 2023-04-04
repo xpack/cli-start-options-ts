@@ -23,12 +23,15 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-// The `[node-tap](http://www.node-tap.org)` framework.
+// https://www.npmjs.com/package/tap
 import { test } from 'tap'
+
+// https://www.npmjs.com/package/@xpack/mock-console
+import { dumpLines } from '@xpack/mock-console'
 
 // ----------------------------------------------------------------------------
 
-import { mockPath, runCliXtest, splitLines } from '../mock/common.js'
+import { mockPath, runCliXtest } from '../mock/common.js'
 
 import * as cli from '../../esm/index.js'
 
@@ -40,6 +43,9 @@ assert(cli.ExitCodes)
 // ----------------------------------------------------------------------------
 
 let pack: cli.NpmPackageJson
+
+// To silence ts-standard.
+dumpLines([])
 
 // ----------------------------------------------------------------------------
 
@@ -55,19 +61,21 @@ await test('setup', async (t) => {
 
 await test('xtest --version (cli call)', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runCliXtest([
+    const { exitCode, outLines, errLines } = await runCliXtest([
       '--version'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
-    const outLines = splitLines(stdout)
+
     // console.log(outLines)
     t.equal(outLines.length, 1, 'stdout has one line')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
     t.equal(outLines[0], pack.version, 'version value')
+
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     console.log(err.stack)
     t.fail(err.message)
@@ -77,17 +85,17 @@ await test('xtest --version (cli call)', async (t) => {
 
 await test('xtest xyz (cli call)', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runCliXtest([
+    const { exitCode, outLines, errLines } = await runCliXtest([
       'xyz'
     ])
+
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    const outLines = splitLines(stdout)
+
     t.ok(outLines.length > 0, 'has stdout')
     t.match(outLines[1], 'Mock Test', 'has title')
     t.match(outLines[3], 'Usage: xtest <command>', 'has Usage')
 
-    const errLines = splitLines(stderr)
     // There should be one error message.
     t.equal(errLines.length, 1, 'stderr has 1 line')
     t.match(errLines[0], 'Command \'xyz\' is not supported.', 'error')
@@ -103,11 +111,12 @@ await test('xtest xyz (cli call)', async (t) => {
  */
 await test('xtest -h (cli call)', async (t) => {
   try {
-    const { exitCode, stdout, stderr } = await runCliXtest([
+    const { exitCode, outLines, errLines } = await runCliXtest([
       '-h'
     ])
+
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
-    const outLines = splitLines(stdout)
+
     // console.log(outLines)
     t.equal(outLines.length, 28, 'stdout has 27 lines')
     t.match(outLines[1], 'Mock Test', 'has title')
@@ -139,7 +148,7 @@ await test('xtest -h (cli call)', async (t) => {
     t.match(outLines[27], 'Bug reports:', 'has Bug reports:')
 
     // There should be no error messages.
-    t.equal(stderr, '', 'stderr is empty')
+    t.equal(errLines.length, 0, 'stderr is empty')
   } catch (err: any) {
     t.fail(err.message)
   }
