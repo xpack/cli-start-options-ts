@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test common options, like --version, --help, etc.
  */
 
@@ -55,7 +55,7 @@ dumpLines([])
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Read package.json, to later compare version.
  */
 await test('setup', async (t) => {
@@ -68,7 +68,7 @@ await test('setup', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if --version returns the package version.
  */
 await test('xtest --version', async (t) => {
@@ -93,7 +93,7 @@ await test('xtest --version', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -h shows usage. Check usage content.
  */
 await test('xtest -h', async (t) => {
@@ -128,7 +128,7 @@ await test('xtest -h', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if --help shows usage.
  */
 await test('xtest --help', async (t) => {
@@ -152,7 +152,7 @@ await test('xtest --help', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -d adds debug lines.
  */
 await test('xtest --version -d', async (t) => {
@@ -180,7 +180,7 @@ await test('xtest --version -d', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -dd adds trace lines.
  */
 await test('xtest --version -dd', async (t) => {
@@ -207,7 +207,7 @@ await test('xtest --version -dd', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -d -d adds trace lines.
  */
 await test('xtest --version -d -d', async (t) => {
@@ -235,7 +235,7 @@ await test('xtest --version -d -d', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test commands that do not have an implementation derived from CliCommand.
  */
 await test('xtest notclass', async (t) => {
@@ -259,7 +259,7 @@ await test('xtest notclass', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test commands that are not unique.
  */
 await test('xtest co', async (t) => {
@@ -284,7 +284,7 @@ await test('xtest co', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if --loglevel debug adds debug lines.
  */
 await test('xtest --version --loglevel debug', async (t) => {
@@ -312,7 +312,7 @@ await test('xtest --version --loglevel debug', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -s silences the help too.
  */
 await test('xtest xx -s', async (t) => {
@@ -336,7 +336,7 @@ await test('xtest xx -s', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -q shows warnings.
  */
 await test('xtest long --long value --xx -q', async (t) => {
@@ -364,7 +364,7 @@ await test('xtest long --long value --xx -q', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if default verbosity is none.
  */
 await test('xtest verb', async (t) => {
@@ -388,7 +388,7 @@ await test('xtest verb', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if explicit verbosity is honoured.
  */
 await test('xtest verb --informative', async (t) => {
@@ -413,7 +413,7 @@ await test('xtest verb --informative', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if explicit verbosity is honoured.
  */
 await test('xtest verb -v', async (t) => {
@@ -439,7 +439,7 @@ await test('xtest verb -v', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if explicit verbosity is honoured.
  */
 await test('xtest verb --verbose', async (t) => {
@@ -465,7 +465,7 @@ await test('xtest verb --verbose', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if not allowed value in common options.
  */
 await test('xtest --loglevel xxx', async (t) => {
@@ -489,7 +489,7 @@ await test('xtest --loglevel xxx', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if value not given.
  */
 await test('xtest --loglevel', async (t) => {
@@ -512,7 +512,7 @@ await test('xtest --loglevel', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -- is ignored.
  */
 await test('xtest --loglevel --', async (t) => {
@@ -535,7 +535,7 @@ await test('xtest --loglevel --', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -- is ignored adds trace lines.
  */
 await test('xtest --version -dd -- xx', async (t) => {
@@ -564,7 +564,7 @@ await test('xtest --version -dd -- xx', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if long post options are moved to the next line.
  */
 await test('xtest long -h', async (t) => {
@@ -590,7 +590,7 @@ await test('xtest long -h', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if long with unused.
  */
 await test('xtest long -xyz', async (t) => {
@@ -618,7 +618,7 @@ await test('xtest long -xyz', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if long early options are moved to the next line.
  */
 await test('xtest -h', async (t) => {
@@ -643,7 +643,7 @@ await test('xtest -h', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if many options are moved to the next line.
  */
 await test('xtest many -h', async (t) => {
@@ -675,7 +675,7 @@ await test('xtest many -h', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test long program name.
  */
 await test('wtest-long-name -h', async (t) => {
@@ -703,7 +703,7 @@ await test('wtest-long-name -h', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test generator.
  */
 await test('xtest gen', async (t) => {
@@ -730,7 +730,7 @@ await test('xtest gen', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test unimplemented command.
  */
 await test('xtest unim', async (t) => {
@@ -756,7 +756,7 @@ await test('xtest unim', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test no command.
  */
 // await test('xtest', async (t) => {
@@ -773,7 +773,7 @@ await test('xtest unim', async (t) => {
 //   t.end()
 // })
 
-/**
+/*
  * Test no command with app options.
  */
 // await test('xtest -- xx', async (t) => {
@@ -792,7 +792,7 @@ await test('xtest unim', async (t) => {
 //   t.end()
 // })
 
-/**
+/*
  * Test no command with app options.
  */
 await test('xtest cwd -C /tmp/xx', async (t) => {
@@ -818,7 +818,7 @@ await test('xtest cwd -C /tmp/xx', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test no command with app options.
  */
 await test('xtest cwd -C /tmp/xx -C yy', async (t) => {

@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test `xtest copy`.
  */
 
@@ -62,7 +62,7 @@ dumpLines([])
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test if with empty line fails with mandatory error and displays help.
  */
 await test('xtest copy',
@@ -93,7 +93,7 @@ await test('xtest copy',
     t.end()
   })
 
-/**
+/*
  * Test if help content includes convert options.
  */
 await test('xtest copy -h',
@@ -128,7 +128,7 @@ await test('xtest copy -h',
     t.end()
   })
 
-/**
+/*
  * Test if partial command recognised and expanded.
  */
 await test('xtest cop -h',
@@ -159,7 +159,7 @@ await test('xtest cop -h',
     t.end()
   })
 
-/**
+/*
  * Test missing input file.
  */
 await test('xtest cop --file xxx --output yyy -q',

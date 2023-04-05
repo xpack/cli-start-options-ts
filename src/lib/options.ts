@@ -37,7 +37,7 @@ import { Context } from './context.js'
 // TODO: support abbreviations, as long as unique (#27)
 // (GNU also recommends to support concatenated single letter options)
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 
 /**
  * @callback InitOptionFunction
@@ -53,47 +53,46 @@ type InitOptionFunction = (context: Context) => void
 type SetOptionFunction = (context: Context, value: string) => void
 
 /**
- * @typedef {Object} OptionDefinition
- * @property {string[]} options Array of strings matching for the option;
- *   the longest string is displayed in help().
- * @property {string} msg Message to display; only options with messages
- *   are displayed in help.
- * @property {setOption} action Mandatory function called to set an
- *   option value.
- * @property {initOption} init Mandatory function called to
- *   initialise an option.
- * @property {boolean} isHelp True if it defines the option to get help;
- *   not displayed in the common list, but as a separate line.
- * @property {boolean} doProcessEarly True if it must be processed before
- *   other options, for example interactive options.
- * @property {boolean} hasValue True if the option should be followed
- *  by a value
- * @property {string[]} values Array of allowed values.
- * @property {string} param Name used to display the value in help,
- *  like `file`, `folder`, etc.
- * @property {boolean} isOptional True if the option must be displayed
- *  surrounded by square brackets.
- * @property {boolean} isMultiple True if the option must be displayed
- *  followed by an asterisk.
+ * @summary Option Definitions
  */
-
 export interface OptionDefinition {
+  /** Array of strings matching for the option;
+   *   the longest string is displayed in help(). */
   options: string[]
+  /** Mandatory function called to initialise an option. */
   init: InitOptionFunction
+  /** Mandatory function called to set an option value. */
   action: SetOptionFunction
+
   // Optional.
+  /** Message to display; only options with messages are displayed in help. */
   message?: string
+  /** True if it defines the option to get help;
+   *   not displayed in the common list, but as a separate line. */
   isHelp?: boolean
+  /** True if it must be processed before
+   *   other options, for example interactive options. */
   isRequiredEarly?: boolean
+  /** True if the option should be followed by a value. */
   hasValue?: boolean
+  /** Array of allowed values. */
   values?: string[]
+  /** Name used to display the value in help,
+   *  like `file`, `folder`, etc. */
   param?: string
-  isOptional?: boolean // false means isMandatory
+  /** True if the option must be displayed
+   *  surrounded by square brackets. False means mandatory. */
+  isOptional?: boolean
+  /** True if the option must be displayed
+   *  followed by an asterisk. */
   isMultiple?: boolean
   msgDefault?: string
   wasProcessed?: boolean
 }
 
+/**
+ * @summary A group of options.
+ */
 export interface OptionsGroup {
   title: string
   isCommon?: boolean
@@ -105,12 +104,10 @@ export interface OptionsGroup {
 // ============================================================================
 
 /**
- * @classdesc
- * Manage CLI options and commands. Keep an array of options and a tree
- * of commands.
+ * @summary Manage CLI options.
  *
- * This class is a bit unusual, since it has no instances, it is
- * basically a namespace for some data and functions.
+ * @description
+ * Keep arrays of options.
  */
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class

@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test common options, like --version, --help, etc.
  */
 
@@ -55,7 +55,7 @@ dumpLines([])
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Read package.json, to later compare version.
  */
 await await test('setup', async (t) => {

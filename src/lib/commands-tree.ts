@@ -434,7 +434,6 @@ export class CommandNode extends CommandBaseNode {
 }
 
 /**
- * @public
  * @summary The root of the commands tree.
  *
  * @description

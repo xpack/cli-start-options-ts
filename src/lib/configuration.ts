@@ -28,7 +28,7 @@ import { LogLevel } from '@xpack/logger'
 
 const defaultLogLevel = 'info'
 
-// ----------------------------------------------------------------------------
+// ============================================================================
 
 export class Configuration {
   logLevel: LogLevel = defaultLogLevel

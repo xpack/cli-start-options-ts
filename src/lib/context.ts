@@ -27,7 +27,7 @@ import { CommandNode } from './commands-tree.js'
 import { Options } from './options.js'
 import { getProgramName, NpmPackageJson } from './utils.js'
 
-// ----------------------------------------------------------------------------
+// ============================================================================
 
 export class Context {
   // --------------------------------------------------------------------------

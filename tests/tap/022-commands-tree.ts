@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test the tree used for storing and processing commands.
  */
 

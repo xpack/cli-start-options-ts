@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test the direct invocation as a module.
  */
 
@@ -106,7 +106,7 @@ await test('xtest xyz (cli call)', async (t) => {
   t.end()
 })
 
-/**
+/*
  * Test if -h shows usage. Check usage content.
  */
 await test('xtest -h (cli call)', async (t) => {

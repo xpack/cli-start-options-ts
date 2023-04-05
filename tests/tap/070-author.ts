@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test author.
  */
 
@@ -49,7 +49,7 @@ dumpLines([])
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test if author is properly identified.
  */
 await test('a1test -h',
@@ -77,7 +77,7 @@ await test('a1test -h',
     t.end()
   })
 
-/**
+/*
  * Test if author is properly identified.
  */
 await test('a2test -h',
@@ -105,7 +105,7 @@ await test('a2test -h',
     t.end()
   })
 
-/**
+/*
  * Test if author is properly identified.
  */
 await test('a3test -h',

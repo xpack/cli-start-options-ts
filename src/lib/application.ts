@@ -106,9 +106,9 @@ export interface ApplicationConstructorParams
 }
 
 /**
- * @classdesc
- * Base class for a CLI application.
+ * @summary Base class for a CLI application.
  *
+ * @description
  * Normally there is only one instance of this class, but when a
  * socket REPL is used, multiple instances can be created for multiple
  * net clients, a good reason for not using static variables.

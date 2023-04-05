@@ -48,8 +48,7 @@ export interface CommandConstructorParams {
 }
 
 /**
- * @classdesc
- * Base class for a CLI application command.
+ * @summary Base class for a CLI application command.
  */
 export abstract class Command {
   // --------------------------------------------------------------------------

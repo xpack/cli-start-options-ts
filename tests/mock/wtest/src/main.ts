@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * The Wtest main module.
  *
  * It is re-exported publicly by `index.js`.

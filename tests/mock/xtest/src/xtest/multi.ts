@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * The `xtest multi <options> ...` command implementation.
  */
 
@@ -21,8 +21,6 @@
 
 import * as cli from '../../../../../esm/index.js'
 import { Context } from '../../../../../esm/index.js'
-
-// ----------------------------------------------------------------------------
 
 // ============================================================================
 
@@ -45,7 +43,7 @@ export class Multi extends cli.Command {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} params The generic parameters object.
+   * @param params The generic parameters object.
    */
   constructor (params: cli.CommandConstructorParams) {
     super(params)
@@ -77,8 +75,8 @@ export class Multi extends cli.Command {
   /**
    * @summary Execute the `multi` command.
    *
-   * @param {string[]} argv Command line arguments.
-   * @returns {number} Return code.
+   * @param argv Command line arguments.
+   * @returns Return code.
    *
    * @override
    */
@@ -113,7 +111,7 @@ export class MultiFirst extends Multi {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} params The generic parameters object.
+   * @param params The generic parameters object.
    */
   constructor (params: cli.CommandConstructorParams) {
     super(params)
@@ -145,8 +143,8 @@ export class MultiFirst extends Multi {
   /**
    * @summary Execute the `multi first` command.
    *
-   * @param {string[]} argv Command line arguments.
-   * @returns {number} Return code.
+   * @param argv Command line arguments.
+   * @returns Return code.
    *
    * @override
    */
@@ -183,7 +181,7 @@ export class MultiSecond extends Multi {
   /**
    * @summary Constructor, to set help definitions.
    *
-   * @param {Object} params The generic parameters object.
+   * @param params The generic parameters object.
    */
   constructor (params: cli.CommandConstructorParams) {
     super(params)
@@ -235,8 +233,8 @@ export class MultiSecond extends Multi {
   /**
    * @summary Execute the `multi second` command.
    *
-   * @param {string[]} argv Command line arguments.
-   * @returns {number} Return code.
+   * @param argv Command line arguments.
+   * @returns Return code.
    *
    * @override
    */

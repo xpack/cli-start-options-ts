@@ -38,7 +38,7 @@ import * as cli from '../../esm/index.js'
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Support code for tests.
  */
 
@@ -71,7 +71,6 @@ interface cliResult {
 /**
  * @summary Run program in a separate process.
  *
- * @async
  * @param appAbsolutePath Program name.
  * @param argv Command line arguments.
  * @param spawnOpts Optional spawn options.
@@ -214,12 +213,10 @@ export async function runCliWtest (
 /**
  * @summary Run xtest as a library call.
  *
- * @async
- * @param {string} programName Program name.
- * @param {string} ClassObject Class object.
- * @param {string[]} argv Command line arguments
- * @returns {{code: number, stdout: string, stderr: string}} Exit
- *  code and captured output/error streams.
+ * @param params.ClassObject The type of a Class object.
+ * @param params.appAbsolutePath A string with the program path.
+ * @param params.argv A string array with the command line arguments.
+ * @returns Exit code and captured output/error streams.
  *
  * @description
  * Call the application directly, as a regular module, and return
@@ -257,7 +254,7 @@ export async function libRun (params: {
 /**
  * @summary Run xtest as a library call.
  *
- * @param argv Command line arguments
+ * @param argv A string array with the command line arguments.
  * @returns Exit code and captured output/error streams.
  *
  * @description
@@ -289,7 +286,6 @@ export function splitLines (message: string): string[] {
 /**
  * @summary Extract files from a .tgz archive into a folder.
  *
- * @async
  * @param tgzPath Path to archive file.
  * @param destPath Path to destination folder.
  * @returns Nothing.

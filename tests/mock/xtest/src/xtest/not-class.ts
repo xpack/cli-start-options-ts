@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * Test if error is thrown when command is not derived from CliCommand.
  */
 

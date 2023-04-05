@@ -45,8 +45,7 @@ export const ExitCodes = {
 // confusions.
 
 /**
- * @classdesc
- * Base class for all CLI triggered errors.
+ * @summary Base class for all CLI triggered errors.
  */
 class _Error extends Error {
   // --------------------------------------------------------------------------
@@ -72,8 +71,9 @@ class _Error extends Error {
 export { _Error as Error }
 
 /**
- * @classdesc
- * CLI triggered syntax error.
+ * @summary CLI triggered syntax error.
+ *
+ * @description
  * Will try to be helpful (using help())
  */
 class _SyntaxError extends _Error {
@@ -95,8 +95,7 @@ class _SyntaxError extends _Error {
 export { _SyntaxError as SyntaxError }
 
 /**
- * @classdesc
- * CLI triggered application error.
+ * @summary CLI triggered application error.
  *
  * @deprecated
  * Use cli.Error without any error code.
@@ -120,8 +119,7 @@ class _ApplicationError extends _Error {
 export { _ApplicationError as ApplicationError }
 
 /**
- * @classdesc
- * CLI triggered type error.
+ * @summary CLI triggered type error.
  */
 class _TypeError extends _Error {
   // --------------------------------------------------------------------------
@@ -142,8 +140,7 @@ class _TypeError extends _Error {
 export { _TypeError as TypeError }
 
 /**
- * @classdesc
- * CLI triggered input error.
+ * @summary CLI triggered input error.
  */
 export class _InputError extends _Error {
   // --------------------------------------------------------------------------

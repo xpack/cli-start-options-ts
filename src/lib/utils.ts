@@ -68,6 +68,8 @@ export function getProgramName (
   return programName
 }
 
+// ----------------------------------------------------------------------------
+
 /**
  * @summary Read package JSON file.
  *
@@ -92,6 +94,7 @@ Promise<NpmPackageJson> {
 
 /**
  * @summary Convert a duration in ms to seconds if larger than 1000.
+ *
  * @param millis Duration in milliseconds.
  * @returns Value in ms or sec.
  */

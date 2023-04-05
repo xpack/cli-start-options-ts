@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------
 
-/**
+/*
  * This is the module entry point, the file that is processed when
  * `import('@xpack/cli-start-options')` is called.
  *
