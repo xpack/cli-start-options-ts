@@ -13,6 +13,25 @@
 
 // ----------------------------------------------------------------------------
 
+/*
+ * This file provides the data model for storing and processing commands.
+ *
+ * Outside this data model is seen as a tree of commands, implemented as
+ * a tree root node with children nodes for each command and further
+ * sub-nodes for sub-commands.
+ *
+ * Each command may have aliases, as long as they allow to uniquely identify
+ * the commands.
+ *
+ * When trying to match a command, partial strings are accepted, down to
+ * the limit which defines uniqueness.
+ *
+ * Internally, the command name and aliases are also stored as a tree
+ * of characters.
+ */
+
+// ----------------------------------------------------------------------------
+
 import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
@@ -67,7 +86,11 @@ interface CommandNodeParams extends CommandTemplate {
 
 // The commands and sub-commands are organised in a tree of command nodes.
 
+/**
+ * @summary Base class for command nodes.
+ */
 abstract class CommandBaseNode {
+  /** Reference to a context. */
   public context: Context
 
   /** The full, official name of the command. */
@@ -102,7 +125,7 @@ abstract class CommandBaseNode {
   public remainingCommands: string[] = []
 
   /**
-   * @summary Construct a generic command node.
+   * @summary Instantiate a generic command node.
    *
    * @param params The generic parameters object.
    */
@@ -136,12 +159,20 @@ abstract class CommandBaseNode {
     this.terminatorCharacterNodes = []
   }
 
+  /**
+   * @summary Getter to obtain the current node depth.
+   *
+   * @returns A number, 1 for root, 2 for command nodes,
+   *   3 for sub-command nodes, etc.
+   */
   get depth (): number {
     if (this.parent === undefined) {
+      // The root node has no parent and returns 1.
       return 1
     }
 
-    return 1 + this.parent.depth
+    // Recurse and return one more as the parent node.
+    return this.parent.depth + 1
   }
 
   /**
@@ -151,9 +182,10 @@ abstract class CommandBaseNode {
    * @returns The newly created command node.
    *
    * @descriptions
-   * The command fails with an assert if an attempt to add a duplicate
-   * command is identified. It does not bother to throw an exception,
-   * because this is an application design issue, not an usage issue.
+   * Implement this in the derived class, to create the actual objects.
+   *
+   * The command should fail with an assert if an attempt to add a duplicate
+   * command is identified.
    *
    * The tree automatically maintains back references to the parent.
    */
@@ -185,6 +217,14 @@ abstract class CommandBaseNode {
     }
   }
 
+  /**
+   * @summary Get the node module path.
+   *
+   * @returns A string with the relative path to the module source code.
+   *
+   * @description
+   * If the current node has no module path defined, recurse to parent.
+   */
   getModulePath (): string {
     if (this.modulePath !== undefined) {
       return this.modulePath
@@ -276,7 +316,8 @@ abstract class CommandBaseNode {
    *
    * @param commands Array of commands and subcommands.
    * @returns A command node.
-   * @throws cli.SyntaxError(), if the command does not exist or is not unique.
+   * @throws `cli.SyntaxError`, if the command does not exist or
+   *   is not unique (indirectly, from `charactersTree.findCommandNode()`).
    *
    * @description
    * Recursively descends, if the command has subcommands.
@@ -347,7 +388,7 @@ abstract class CommandBaseNode {
 }
 
 /**
- * @summary Command node.
+ * @summary Command node class.
  *
  * @description
  * It is a generic node with additional constructor constraints.
@@ -439,7 +480,7 @@ export class CommandsTree extends CommandNode {
    * @returns
    *  An object with a class that implements the given command,
    *  the full command as a string array, and the remaining args.
-   * @throws cli.SyntaxError The command was not recognised or
+   * @throws `cli.SyntaxError` The command was not recognised or
    *  is not unique, or the module does not implement CmdClass.
    *
    * @description
@@ -659,7 +700,7 @@ class CharactersTree extends CharacterNode {
    * @param command The command name, possibly aliased or shortened.
    * @returns The command node.
    *
-   * @throws cli.SyntaxError() in case of errors.
+   * @throws `cli.SyntaxError` in case of errors.
    *
    * @description
    * Search the tree of characters and return the command node
