@@ -448,17 +448,18 @@ export class Help {
             })
             desc += ') '
           }
-          const msgDefault = optionDefinition.msgDefault !== undefined
-            ? `, default ${optionDefinition.msgDefault}`
-            : ''
+          const helpDefaultMessage =
+            optionDefinition.helpDefaultMessage !== undefined
+              ? `, default ${optionDefinition.helpDefaultMessage}`
+              : ''
           if (optionDefinition.isOptional !== undefined &&
             optionDefinition.isOptional &&
             optionDefinition.isMultiple !== undefined &&
             optionDefinition.isMultiple) {
-            desc += `(optional, multiple${msgDefault})`
+            desc += `(optional, multiple${helpDefaultMessage})`
           } else if (optionDefinition.isOptional !== undefined &&
             optionDefinition.isOptional) {
-            desc += `(optional${msgDefault})`
+            desc += `(optional${helpDefaultMessage})`
           } else if (optionDefinition.isMultiple !== undefined &&
             optionDefinition.isMultiple) {
             desc += '(multiple)'

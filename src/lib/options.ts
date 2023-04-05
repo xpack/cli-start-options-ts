@@ -86,7 +86,8 @@ export interface OptionDefinition {
   /** True if the option must be displayed
    *  followed by an asterisk. */
   isMultiple?: boolean
-  msgDefault?: string
+  /** Default message */
+  helpDefaultMessage?: string
   wasProcessed?: boolean
 }
 
