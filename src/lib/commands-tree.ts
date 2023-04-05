@@ -67,7 +67,7 @@ interface CommandNodeParams extends CommandTemplate {
 
 // The commands and sub-commands are organised in a tree of command nodes.
 
-class CommandBaseNode {
+abstract class CommandBaseNode {
   public context: Context
 
   /** The full, official name of the command. */
@@ -157,17 +157,7 @@ class CommandBaseNode {
    *
    * The tree automatically maintains back references to the parent.
    */
-  addCommandNode (params: CommandNodeParams): CommandNode {
-    assert(params)
-    assert(params.name)
-    assert(!this.children.has(params.name), 'Duplicate command')
-
-    const commandNode = new CommandBaseNode(params)
-    this.children.set(params.name, commandNode)
-    commandNode.parent = this
-
-    return commandNode
-  }
+  abstract addCommandNode (params: CommandNodeParams): CommandNode
 
   /**
    * @summary Add all commands in the map as children nodes.
