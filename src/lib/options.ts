@@ -88,7 +88,6 @@ export interface OptionDefinition {
   isMultiple?: boolean
   /** Default message */
   helpDefaultMessage?: string
-  wasProcessed?: boolean
 }
 
 /**
@@ -118,6 +117,8 @@ export class Options {
   public groups: OptionsGroup[] = []
   public commonGroups: OptionsGroup[] = []
   protected context: Context
+
+  protected processedOptions = new Set<OptionDefinition>()
 
   /**
    * @constructor
@@ -214,9 +215,10 @@ export class Options {
     [...this.groups, ...this.commonGroups].forEach((optionsGroup) => {
       optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
         optionDefinition.init(this.context)
-        optionDefinition.wasProcessed = false
       })
     })
+
+    this.processedOptions.clear()
   }
 
   /**
@@ -255,9 +257,10 @@ export class Options {
     })
 
     allOptionDefinitions.forEach((optionDefinition) => {
-      optionDefinition.wasProcessed = false
       optionDefinition.init(this.context)
     })
+
+    this.processedOptions.clear()
 
     const remainingArgs: string[] = []
     let wasProcessed = false
@@ -318,8 +321,7 @@ export class Options {
     allOptionDefinitions.forEach((optionDefinition) => {
       if (!(optionDefinition.isOptional !== undefined &&
         optionDefinition.isOptional) &&
-        !(optionDefinition.wasProcessed !== undefined &&
-          optionDefinition.wasProcessed)) {
+        !this.processedOptions.has(optionDefinition)) {
         const option = optionDefinition.options.join(' ')
         errors.push(`Mandatory '${option}' not found`)
       }
@@ -380,7 +382,7 @@ export class Options {
             // If allowed, call the action to set the
             // configuration value
             optionDefinition.action(this.context, value)
-            optionDefinition.wasProcessed = true
+            this.processedOptions.add(optionDefinition)
             return 1
           }
         }
@@ -389,14 +391,14 @@ export class Options {
       } else {
         // Call the action to set the configuration value
         optionDefinition.action(this.context, value)
-        optionDefinition.wasProcessed = true
+        this.processedOptions.add(optionDefinition)
         return 1
       }
     } else {
       // No list of allowed values defined, treat it as boolean true;
       // call the action to update the configuration.
       optionDefinition.action(this.context, 'true')
-      optionDefinition.wasProcessed = true
+      this.processedOptions.add(optionDefinition)
       return 0
     }
   }
