@@ -93,6 +93,9 @@ export abstract class Command {
   async prepareAndRun (params: {
     argv: string[]
   }): Promise<number> {
+    assert(params)
+    assert(params.argv)
+
     const context: Context = this.context
 
     const log = context.log
@@ -149,6 +152,9 @@ export abstract class Command {
   computeActualArguments (params: {
     argv: string[]
   }): string[] {
+    assert(params)
+    assert(params.argv)
+
     const context: Context = this.context
 
     const log = context.log
@@ -221,7 +227,11 @@ export abstract class Command {
    * The default implementation does nothing. Override it in
    * the application if needed.
    */
-  outputHelpArgsDetails (_multiPass: MultiPass): void {
+  outputHelpArgsDetails (params: {
+    multiPass: MultiPass
+  }): void {
+    assert(params)
+
     // Nothing.
   }
 
@@ -276,7 +286,14 @@ export abstract class Command {
    * Multiple generators are possible, each call will append a new
    * element to the array.
    */
-  addGenerator (object: any): Generator {
+  addGenerator (params: {
+    object: any
+  }): Generator {
+    assert(params)
+
+    assert(params.object)
+    const object = params.object
+
     const context: Context = this.context
 
     if (object.generators === undefined) {

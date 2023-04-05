@@ -168,13 +168,23 @@ export class Application extends Command {
       // Redirect to the instance runner. It might start a REPL.
       exitCode = await application.start()
     } catch (err: any) {
-      exitCode = this.processStartError(err, log)
+      exitCode = this.processStartError({ err, log })
     }
     // Pass through. Do not call exit(), to allow callbacks (or REPL) to run.
     return exitCode
   }
 
-  static processStartError (err: any, log: Logger): number {
+  static processStartError (params: {
+    err: any
+    log: Logger
+  }): number {
+    assert(params)
+
+    assert(params.err)
+    const err = params.err
+    assert(params.log)
+    const log = params.log
+
     let exitCode = ExitCodes.ERROR.APPLICATION
 
     // If the initialisation was completed, the log level must have been
@@ -649,6 +659,8 @@ export class Application extends Command {
    * The first non word (probably option) ends the list.
    */
   identifyCommands (mainArgs: string[]): string[] {
+    assert(mainArgs)
+
     const commands: string[] = []
     if (this.commandsTree.hasChildrenCommands()) {
       for (const arg of mainArgs) {
@@ -847,6 +859,8 @@ export class Application extends Command {
    * Called both from the top runner, or from REPL.
    */
   async dispatchCommand (argv: string[]): Promise<number> {
+    assert(argv)
+
     const context: Context = this.context
 
     const log = context.log
@@ -910,7 +924,7 @@ export class Application extends Command {
         })
       }
     } catch (err: any) {
-      exitCode = this.processCommandError(err, log)
+      exitCode = this.processCommandError({ err, log })
     }
 
     // Prevent spilling the current command into the next, in case of REPL.
@@ -925,6 +939,10 @@ export class Application extends Command {
     commands: string[]
     argv: string[]
   }): Promise<number> {
+    assert(params)
+    assert(params.commands)
+    assert(params.argv)
+
     const context: Context = this.context
 
     const log = context.log
@@ -993,7 +1011,17 @@ export class Application extends Command {
     })
   }
 
-  processCommandError (err: any, log: Logger): number {
+  processCommandError (params: {
+    err: any
+    log: Logger
+  }): number {
+    assert(params)
+
+    assert(params.log)
+    const err = params.err
+    assert(params.log)
+    const log = params.log
+
     let exitCode = ExitCodes.ERROR.APPLICATION
 
     if (err instanceof cli.SyntaxError) {
@@ -1025,6 +1053,10 @@ export class Application extends Command {
     moduleRelativePath: string
     className: string | undefined
   }): Promise<typeof DerivedCommand> {
+    assert(params)
+    assert(params.rootPath)
+    assert(params.moduleRelativePath)
+
     const parentClass = Command
 
     const modulePath = path.join(params.rootPath, params.moduleRelativePath)

@@ -149,6 +149,8 @@ export class Options {
    * Preliminary solution with array instead of tree.
    */
   addGroups (optionsGroups: OptionsGroup[]): void {
+    assert(optionsGroups)
+
     optionsGroups.forEach((optionsGroup) => {
       if (optionsGroup.isCommon !== undefined && optionsGroup.isCommon) {
         if (optionsGroup.isInsertInFront !== undefined &&
@@ -178,6 +180,8 @@ export class Options {
   appendToGroups (
     optionsGroups: OptionsGroup[]
   ): void {
+    assert(optionsGroups)
+
     optionsGroups.forEach((paramOptionsGroup) => {
       const title: string = paramOptionsGroup.title
       const optionDefinitions: OptionDefinition[] =
@@ -238,6 +242,8 @@ export class Options {
   parse (
     argv: string[]
   ): string[] {
+    assert(argv)
+
     assert(this.context, 'cli.Context not initialised')
     const log = this.context.log
     log.trace(`${Function.prototype.name}()`)

@@ -264,6 +264,8 @@ abstract class CommandBaseNode {
   buildCharactersSubTree (params: {
     name: string
   }): CharacterNode {
+    assert(params)
+
     assert(this.parent)
 
     const characterTerminatorNode = this.parent.charactersTree.addCommand({

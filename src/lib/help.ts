@@ -136,7 +136,7 @@ export class Help {
     // the max width of the first column, and then to output text.
 
     this.twoPassAlign(() => {
-      params.object.outputHelpArgsDetails(this.multiPass)
+      params.object.outputHelpArgsDetails({ multiPass: this.multiPass })
 
       this.outputAliases()
 

@@ -56,7 +56,7 @@ export class Generator extends cli.Command {
     // const config = this.context.config
 
     const object = {}
-    this.addGenerator(object)
+    this.addGenerator({ object })
 
     log.output(util.inspect(object, { depth: 3 }))
 
