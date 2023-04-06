@@ -33,6 +33,7 @@
     "pretest-100": "npm run compile && npm run lint",
     "pretest-100-c8": "npm run compile && npm run lint",
     "tap": "tap --reporter=spec",
+    "tap-c8": "c8 tap --reporter=spec",
     "test-tap": "tap",
     "test-tap-coverage": "tap --coverage",
     "test-tap-coverage-c8": "c8 -- tap",
@@ -93,7 +94,7 @@
     "check-coverage": false,
     "coverage": false,
     "files": [
-      "tests/tap/002-*.ts",
+      "tests/tap/010-*.ts",
       "tests/tap/020-*.ts",
       "tests/tap/022-*.ts",
       "tests/tap/025-*.ts",
