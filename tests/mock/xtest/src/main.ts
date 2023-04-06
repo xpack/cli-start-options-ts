@@ -152,25 +152,25 @@ export class Xtest extends cli.Application {
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
     context.options.addGroups([
-        {
-          title: 'Extra options',
-          isCommon: true,
-          optionsDefinitions: [
-            {
-              options: ['--extra', '--very-extra', '--very-long-extra'],
-              message: 'Extra options',
-              action: (context) => {
-                (context.config as XtestConfig).extra = true
-              },
-              init: (context) => {
-                (context.config as XtestConfig).extra = false
-              },
-              isOptional: true,
-              isRequiredEarly: true
-            }
-          ]
-        }
-      ])
+      {
+        title: 'Extra options',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--extra', '--very-extra', '--very-long-extra'],
+            message: 'Extra options',
+            action: (context) => {
+              (context.config as XtestConfig).extra = true
+            },
+            init: (context) => {
+              (context.config as XtestConfig).extra = false
+            },
+            isOptional: true,
+            isRequiredEarly: true
+          }
+        ]
+      }
+    ])
   }
 }
 
