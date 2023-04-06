@@ -109,7 +109,10 @@ export class Long extends cli.Command {
    *
    * @override
    */
-  override async main (_argv: string[]): Promise<number> {
+  override async main (
+    _argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
     const log = this.context.log
     log.trace(`${this.constructor.name}.main()`)
 

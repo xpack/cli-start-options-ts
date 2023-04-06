@@ -314,9 +314,9 @@ export class Options {
   /**
    * @summary Check if mandatory option is missing.
    *
-   * @returns Array of errors or null if everything is ok.
+   * @returns Array of errors or empty if everything is ok.
    */
-  checkMissingMandatory (): string[] | null {
+  checkMissingMandatory (): string[] {
     const allOptionDefinitions: OptionDefinition[] = []
     this.groups.forEach((optionsGroup) => {
       assert(optionsGroup.optionsDefinitions !== undefined)
@@ -333,12 +333,8 @@ export class Options {
       }
     })
 
-    if (errors.length > 0) {
-      return errors
-    }
-
-    // Everything is fine, no errors.
-    return null
+    // Empty if no errors.
+    return errors
   }
 
   /**

@@ -59,6 +59,13 @@ interface CommandTemplate {
   className?: string
   /** Optional helper options */
   helpOptions?: CommandTemplateHelpOptions
+
+  hasForwardableArguments?: boolean
+  hasMandatoryArgs?: boolean
+  hasNoCustomOptions?: boolean
+  hasNoCustomArgs?: boolean
+
+  /** Optional definitions of sub-commands. */
   subCommands?: {
     [key: string]: CommandTemplate
   }
@@ -103,6 +110,13 @@ abstract class CommandBaseNode {
   public className?: string | undefined
   /** Optional properties used by the help subsystem. */
   public helpOptions?: CommandTemplateHelpOptions | undefined
+
+  /** Optional flag when the command has forwardable arguments. */
+  public hasForwardableArguments: boolean
+
+  public hasMandatoryArgs: boolean
+  public hasNoCustomOptions: boolean
+  public hasNoCustomArgs: boolean
 
   /** Link back to parent node, or undefined. */
   public parent?: CommandBaseNode
@@ -152,6 +166,17 @@ abstract class CommandBaseNode {
 
     // Map of options for the helper.
     this.helpOptions = params.helpOptions
+
+    this.hasForwardableArguments = params.hasForwardableArguments ?? false
+
+    this.hasMandatoryArgs = params.hasMandatoryArgs ?? false
+    this.hasNoCustomOptions = params.hasNoCustomOptions ?? false
+    this.hasNoCustomArgs = params.hasNoCustomArgs ?? false
+
+    // ?
+    if (this.hasMandatoryArgs) {
+      this.hasNoCustomArgs = false
+    }
 
     // Tree of characters. Built by buildCharactersTrees().
     this.charactersTree = new CharactersTree()

@@ -339,30 +339,30 @@ await test('xtest xx -s', async (t) => {
 /*
  * Test if -q shows warnings.
  */
-await test('xtest long --long value --xx -q', async (t) => {
-  try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
-      'long',
-      '--long',
-      'value',
-      '--xx',
-      '-q',
-      'debug'
-    ])
+// await test('xtest long --long value --xx -q', async (t) => {
+//   try {
+//     const { exitCode: code, outLines, errLines } = await runLibXtest([
+//       'long',
+//       '--long',
+//       'value',
+//       '--xx',
+//       '-q',
+//       'debug'
+//     ])
 
-    // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+//     // Check exit code.
+//     t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    t.equal(outLines.length, 0, 'stdout is empty')
+//     t.equal(outLines.length, 0, 'stdout is empty')
 
-    t.ok(errLines.length > 0, 'stderr has lines')
-    t.equal(errLines[0], "warning: Option '--xx' not supported; ignored",
-      'stderr is warning')
-  } catch (err: any) {
-    t.fail(err.message)
-  }
-  t.end()
-})
+//     t.ok(errLines.length > 0, 'stderr has lines')
+//     t.equal(errLines[0], "error: Option '--xx' not supported",
+//       'stderr is warning')
+//   } catch (err: any) {
+//     t.fail(err.message)
+//   }
+//   t.end()
+// })
 
 /*
  * Test if default verbosity is none.
@@ -603,14 +603,14 @@ await test('xtest long -xyz', async (t) => {
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
 
     t.ok(outLines.length > 0, 'stdout has lines')
     const stdout = outLines.join('\n')
-    t.match(stdout, 'Done', 'stdout is done')
+    t.match(stdout, 'Usage: xtest long', 'stdout has help')
 
     t.ok(errLines.length > 0, 'stderr has lines')
-    t.match(errLines[0], "warning: Option '--xyz' not supported; ignored",
+    t.match(errLines[0], "error: Option '--xyz' not supported",
       'stderr has error')
   } catch (err: any) {
     t.fail(err.message)

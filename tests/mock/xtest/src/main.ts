@@ -90,7 +90,8 @@ export class Xtest extends cli.Application {
           title: 'Test long options',
           usagePreOptions: '[<name>...]', // Array of test names.
           usagePostOptions: '[-- <very-long-long-long-args>...]'
-        }
+        },
+        hasNoCustomOptions: true
       },
       many: {
         modulePath: 'src/xtest/many.js',
@@ -150,8 +151,7 @@ export class Xtest extends cli.Application {
 
     // The common options were already initialised by the caller,
     // and are ok, no need to redefine them.
-    context.options.addGroups(
-      [
+    context.options.addGroups([
         {
           title: 'Extra options',
           isCommon: true,

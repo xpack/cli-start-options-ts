@@ -58,22 +58,37 @@ export class Context {
    * Set by the Application. */
   public matchedCommands: string[] = []
 
-  /** All args, as received from main, excluding the commands. */
-  public unparsedArgs: string[] = []
+  /** All argument values, as received from the caller,
+   * excluding the commands. */
+  public unparsedArgv: string[] = []
 
   /**
-   * Arguments actually passed to the command run() method.
-   * Options must have been processed by Options.parse();
-   * if a `--` is encountered, everything else is also passed.
+   * Arguments actually passed to the command `main()` method.
+   * Options must have been processed by `Options.parse()`;
+   * if a `--` is encountered, the remaining arguments
+   * are passed via `forwardableArgv`.`
    */
-  public actualArgs: string[] = []
+  public ownArgv: string[] = []
+  /**
+   * Arguments after a `--`, if any.
+   */
+  public forwardableArgv: string[] = []
 
+  /**
+   * Reference to a command node, either the root tree node, or
+   * a specific command/sub-command node.
+   */
   public commandNode: CommandNode | undefined
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.
 
-  // MUST be set to define the application root path.
+  /**
+   * The absolute path of the project root folder, where the
+   * `package.json` file is located.
+   *
+   * MUST be set by the application derived class.
+   */
   public rootPath: string | undefined = undefined
 
   // --------------------------------------------------------------------------

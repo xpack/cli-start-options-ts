@@ -864,7 +864,7 @@ export class Application extends Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace(`${this.constructor.name}.main()`)
+    log.trace(`${this.constructor.name}.dispatchCommand()`)
 
     context.startTime = Date.now()
 
@@ -872,7 +872,7 @@ export class Application extends Command {
     const packageJson = context.packageJson
 
     argv.forEach((arg, index) => {
-      log.trace(`main arg${index}: '${arg}'`)
+      log.trace(`dispatchCommand arg${index}: '${arg}'`)
     })
 
     const options: Options = this.context.options
@@ -929,8 +929,9 @@ export class Application extends Command {
 
     // Prevent spilling the current command into the next, in case of REPL.
     context.matchedCommands = []
-    context.unparsedArgs = []
-    context.actualArgs = []
+    context.unparsedArgv = []
+    context.ownArgv = []
+    context.forwardableArgv = []
 
     return exitCode
   }
@@ -1101,7 +1102,7 @@ export class Application extends Command {
     }
   }
 
-  async main (_args: string[]): Promise<number> {
+  async main (_argv: string[], _forwardableArgv?: string[]): Promise<number> {
     assert(false, 'For applications that do not have sub-commands, ' +
       'define a main() method in the cli.Application derived class')
   }

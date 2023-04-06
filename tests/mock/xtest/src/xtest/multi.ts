@@ -80,7 +80,10 @@ export class Multi extends cli.Command {
    *
    * @override
    */
-  async main (argv: string[]): Promise<number> {
+  override async main (
+    argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
     const context: Context = this.context
 
     const log = context.log
@@ -148,7 +151,10 @@ export class MultiFirst extends Multi {
    *
    * @override
    */
-  override async main (argv: string[]): Promise<number> {
+  override async main (
+    argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
     const context: Context = this.context
 
     const log = context.log
@@ -238,7 +244,10 @@ export class MultiSecond extends Multi {
    *
    * @override
    */
-  override async main (argv: string[]): Promise<number> {
+  override async main (
+    argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
     const context: Context = this.context
 
     const log = context.log

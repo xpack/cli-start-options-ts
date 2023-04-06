@@ -25,6 +25,7 @@ import * as util from 'node:util'
 
 // ----------------------------------------------------------------------------
 
+import { CommandNode } from './commands-tree.js'
 import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
@@ -82,7 +83,7 @@ export abstract class Command {
    * @param argv Array of arguments.
    * @returns A promise resolving to the Exit code.
    */
-  abstract main (argv: string[]): Promise<number>
+  abstract main (argv: string[], forwardableArgv?: string[]): Promise<number>
 
   /**
    * @summary Execute the command.
@@ -102,7 +103,7 @@ export abstract class Command {
     log.trace(`${this.constructor.name}.prepareAndRun()`)
 
     // Make a copy of the original args.
-    context.unparsedArgs = [...params.argv]
+    context.unparsedArgv = [...params.argv]
 
     // Call the init() function of all defined options.
     context.options.initializeConfiguration()
@@ -120,7 +121,7 @@ export abstract class Command {
 
     // Check if there are missing mandatory options.
     const missingErrors = context.options.checkMissingMandatory()
-    if (missingErrors != null) {
+    if (missingErrors.length > 0) {
       missingErrors.forEach((msg) => {
         log.error(msg)
       })
@@ -128,11 +129,25 @@ export abstract class Command {
       return ExitCodes.ERROR.SYNTAX // Error, missing mandatory option.
     }
 
-    const actualArgs: string[] = this.computeActualArguments({
+    const { ownArgv, forwardableArgv } = this.splitForwardableArguments({
       argv: remainingArgs
     })
 
-    context.actualArgs = actualArgs
+    const errorMessages = this.validateArgv({
+      argv: ownArgv
+    })
+
+    if (errorMessages.length > 0) {
+      errorMessages.forEach((message) => {
+        log.error(message)
+      })
+      this.outputHelp()
+      return ExitCodes.ERROR.SYNTAX
+    }
+
+    // Store them in the context, for just in case.
+    context.ownArgv = ownArgv
+    context.forwardableArgv = forwardableArgv
 
     // ------------------------------------------------------------------------
 
@@ -141,7 +156,7 @@ export abstract class Command {
     log.debug(`'${context.programName} ` +
       `${context.matchedCommands.join(' ')}' started`)
 
-    exitCode = await this.main(actualArgs)
+    exitCode = await this.main(ownArgv, forwardableArgv)
 
     log.debug(`'${context.programName} ` +
       `${context.matchedCommands.join(' ')}' - returned ${exitCode}`)
@@ -149,7 +164,62 @@ export abstract class Command {
     return exitCode
   }
 
-  computeActualArguments (params: {
+  /**
+   * @summary Split arguments into own and forwardable.
+   *
+   * @param params.argv Array of strings with argument values.
+   * @returns Two arrays of strings with own and forwardable argument values.
+   *
+   * @description
+   * If the command explicitly enables `hasForwardableArguments`,
+   * all arguments after `--` are passed as forwardable.
+   */
+  splitForwardableArguments (params: {
+    argv: string[]
+  }): {
+      ownArgv: string[]
+      forwardableArgv: string[]
+    } {
+    assert(params)
+    assert(params.argv)
+
+    const context: Context = this.context
+
+    const ownArgv: string[] = []
+    const forwardableArgv: string[] = []
+
+    if (context.commandNode?.hasForwardableArguments ?? false) {
+      let isOwn = true
+      for (const arg of params.argv) {
+        if (isOwn) {
+          if (arg === '--') {
+            // From now on, the following arguments will be stored
+            // into the `forwardableArgv` array.
+            isOwn = false
+          } else {
+            ownArgv.push(arg)
+          }
+        } else {
+          // Subsequent '--' are passed through.
+          forwardableArgv.push(arg)
+        }
+      }
+    } else {
+      // If there are no forwardable, all are stored into the `ownArgv`.
+      ownArgv.push(...params.argv)
+    }
+
+    return { ownArgv, forwardableArgv }
+  }
+
+  /**
+   * @summary Validate the argument values.
+   *
+   * @param params.argv Array of strings with argument values.
+   * @returns Two arrays of strings with the valid arguments and
+   *   possible error messages.
+   */
+  validateArgv (params: {
     argv: string[]
   }): string[] {
     assert(params)
@@ -157,33 +227,27 @@ export abstract class Command {
 
     const context: Context = this.context
 
-    const log = context.log
+    assert(context.commandNode)
+    const commandNode: CommandNode = context.commandNode
 
-    const actualArgs: string[] = []
+    const errorMessages = []
 
-    if (params.argv.length > 0) {
-      let i = 0
-      for (; i < params.argv.length; ++i) {
-        const arg = params.argv[i]
-        if (arg !== undefined) {
-          if (arg === '--') {
-            break
+    if (commandNode.hasNoCustomOptions ||
+      commandNode.hasNoCustomArgs) {
+      for (const arg of params.argv) {
+        if (arg.startsWith('-')) {
+          if (commandNode.hasNoCustomOptions) {
+            errorMessages.push(`Option '${arg}' not supported`)
           }
-          if (arg.startsWith('-')) {
-            log.warn(`Option '${arg}' not supported; ignored`)
-          } else {
-            actualArgs.push(arg)
+        } else {
+          if (commandNode.hasNoCustomArgs) {
+            errorMessages.push(`Argument '${arg}' not supported`)
           }
-        }
-      }
-      for (; i < params.argv.length; ++i) {
-        const arg = params.argv[i]
-        if (arg !== undefined) {
-          actualArgs.push(arg)
         }
       }
     }
-    return actualArgs
+
+    return errorMessages
   }
 
   /**
@@ -305,7 +369,7 @@ export abstract class Command {
       tool: context.programName,
       version: context.packageJson.version,
       command: [context.programName, ...context.matchedCommands,
-        ...context.unparsedArgs],
+        ...context.unparsedArgv],
       date: (new Date()).toISOString()
     }
 
@@ -338,7 +402,8 @@ export class DerivedCommand extends Command {
   }
 
   override async main (
-    _argv: string[]
+    _argv: string[],
+    _forwardableArgv: string[]
   ): Promise<number> {
     // ...
     return ExitCodes.SUCCESS
