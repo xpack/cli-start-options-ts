@@ -42,6 +42,26 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap utils.ts",
+      "program": "${workspaceRoot}/tests/tap/010-utils.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm",
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "tap errors.ts",
       "program": "${workspaceRoot}/tests/tap/020-errors.ts",
       "stopOnEntry": true,
