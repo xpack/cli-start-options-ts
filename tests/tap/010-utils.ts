@@ -19,7 +19,7 @@
 
 // ----------------------------------------------------------------------------
 
-import { strict as assert } from 'node:assert'
+import { AssertionError, strict as assert } from 'node:assert'
 // import * as fs from 'node:fs'
 // import * as os from 'node:os'
 import * as path from 'node:path'
@@ -29,12 +29,6 @@ import { fileURLToPath } from 'node:url'
 
 // https://www.npmjs.com/package/tap
 import { test } from 'tap'
-
-// https://www.npmjs.com/package/del
-// import { deleteAsync } from 'del'
-
-// https://www.npmjs.com/package/make-dir
-// import makeDir from 'make-dir'
 
 // ----------------------------------------------------------------------------
 
@@ -48,6 +42,28 @@ assert(cli.formatSize)
 
 // ----------------------------------------------------------------------------
 
+await test('getProgramName', async (t) => {
+  t.equal(cli.getProgramName('a/b.c'), 'b', 'dotted name')
+  t.equal(cli.getProgramName('a/b'), 'b', 'undotted name')
+  t.equal(cli.getProgramName('a/b '), 'b', 'undotted name with space')
+  const processName = path.basename(process.argv[1] as string).split('.')[0]
+  t.equal(cli.getProgramName(), processName, 'process name')
+
+  {
+    const savedArgv1: string | undefined = process.argv[1]
+    process.argv[1] = undefined as unknown as string
+    t.throws(() => {
+      cli.getProgramName()
+    }, AssertionError, 'assertion argv1')
+    process.argv[1] = savedArgv1 as string
+  }
+
+  t.throws(() => {
+    cli.getProgramName('')
+  }, AssertionError, 'assertion programName')
+  t.end()
+})
+
 await test('readPackageJson', async (t) => {
   const rootPath = path.dirname(path.dirname(path.dirname(
     fileURLToPath(import.meta.url))))
@@ -55,6 +71,13 @@ await test('readPackageJson', async (t) => {
   t.ok(json, 'has json')
   t.equal(json.name, '@xpack/cli-start-options', 'name is right')
   t.ok(json.version, 'version is present')
+
+  try {
+    await cli.readPackageJson(undefined as unknown as string)
+    t.ok(false, 'assertion folderAbsolutePath')
+  } catch (err: any) {
+    t.ok(err instanceof AssertionError, 'assertion folderAbsolutePath')
+  }
 
   t.end()
 })
@@ -80,57 +103,5 @@ await test('formatSize', (t) => {
 
   t.end()
 })
-
-// test('createFolderLink', async (t) => {
-//   const tmpFolderPath = os.tmpdir()
-//   const tmpUtilsFolderPath = path.join(tmpFolderPath, 'utils')
-//   await deleteAsync(tmpUtilsFolderPath, { force: true })
-
-//   await makeDir(tmpUtilsFolderPath)
-
-//   const linkName = 'link'
-//   const linkPath = path.join(tmpUtilsFolderPath, linkName)
-
-//   const sourcePath = path.join(tmpFolderPath, 'source')
-//   await makeDir(sourcePath)
-
-//   try {
-//     await cli.createFolderLink({ linkPath, sourcePath })
-//     t.pass('link created')
-
-//     try {
-//       const stats = await fs.promises.stat(linkPath)
-
-//       t.ok(stats.isDirectory(), 'stat is folder')
-//     } catch (err) {
-//       t.fail('stat failed ' + err.message)
-//     }
-
-//     try {
-//       const stats = await fs.promises.lstat(linkPath)
-
-//       t.ok(stats.isSymbolicLink(), 'lstat is symlink')
-//     } catch (err) {
-//       t.fail('lstat failed ' + err.message)
-//     }
-
-//     try {
-//       const dirents = await fs.promises.readdir(
-//         tmpUtilsFolderPath, { withFileTypes: true })
-//       // console.log(dirents)
-//       for (const dirent of dirents) {
-//         if (dirent.name === linkName) {
-//           t.ok(dirent.isSymbolicLink(), 'dirent is symlink')
-//         }
-//       }
-//     } catch (err) {
-//       t.fail('readdir failed ' + err.message)
-//     }
-//   } catch (err) {
-//     t.fail('link failed ' + err.message)
-//   }
-
-//   t.end()
-// })
 
 // ----------------------------------------------------------------------------

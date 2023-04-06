@@ -57,7 +57,8 @@ export function getProgramName (
 
   const fileName: string = path.basename(argv1)
   let programName
-  if (fileName.indexOf('.') !== undefined) {
+  const ix = fileName.indexOf('.')
+  if (ix >= 0) {
     programName = fileName.split('.')[0]?.trim()
   } else {
     programName = fileName?.trim()
@@ -84,7 +85,7 @@ export function getProgramName (
  */
 export async function readPackageJson (folderAbsolutePath: string):
 Promise<NpmPackageJson> {
-  assert(folderAbsolutePath)
+  assert(folderAbsolutePath) // undefined or empty throws
 
   const filePath = path.join(folderAbsolutePath, 'package.json')
   const fileContent = await fs.promises.readFile(filePath)
