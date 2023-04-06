@@ -42,7 +42,7 @@
     "test": "npm run test-tap -s",
     "test-100": "npm run test-tap-coverage-100 -s",
     "test-100-c8": "npm run test-tap-coverage-100-c8 -s",
-    "dev-cycle": "npm run fix && npm run compile && npm run test",
+    "dev-cycle": "npm run fix && npm run compile && npm run test-100-c8",
     "typedoc": "typedoc",
     "clean": "del-cli esm docs 'tests/**/esm' 'src/**/*.d.ts' 'src/**/*.d.ts.map' 'src/**/*.js' 'src/**/*.js.map' 'tests/**/*.d.ts' 'tests/**/*.d.ts.map' 'tests/**/*.js' 'tests/**/*.js.map' '**/tsconfig.tsbuildinfo' .nyc_output coverage",
     "deep-clean": "npm run clean && rm -rf node_modules package-lock.json",
@@ -96,13 +96,13 @@
     "files": [
       "tests/tap/010-*.ts",
       "tests/tap/020-*.ts",
-      "tests/tap/022-*.ts",
-      "tests/tap/025-*.ts",
-      "tests/tap/030-*.ts",
-      "tests/tap/035-*.ts",
-      "tests/tap/040-*.ts",
-      "tests/tap/060-*.ts",
-      "tests/tap/070-*.ts"
+      "tests/tap/122-*.ts",
+      "tests/tap/125-*.ts",
+      "tests/tap/130-*.ts",
+      "tests/tap/135-*.ts",
+      "tests/tap/140-*.ts",
+      "tests/tap/160-*.ts",
+      "tests/tap/170-*.ts"
     ],
     "node-arg": [
       "--loader=ts-node/esm"
