@@ -65,12 +65,13 @@ export class MultiPass {
 export class Help {
   // --------------------------------------------------------------------------
 
-  public context: Context
+  protected context: Context
 
   public middleLimit: number
   public rightLimit: number
   public commands?: string[]
   public multiPass: MultiPass
+
   protected isOutputAlways: boolean
 
   constructor (params: {
@@ -82,6 +83,8 @@ export class Help {
     this.context = params.context
     this.isOutputAlways = params.isOutputAlways ?? false
 
+    // Probably these should be automatically computed from the
+    // terminal size.
     this.middleLimit = 40
     this.rightLimit = 79 // Do not write in col 80
 
