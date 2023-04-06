@@ -33,19 +33,29 @@ import * as cli from '../../esm/index.js'
 // ----------------------------------------------------------------------------
 
 assert(cli.ExitCodes)
+
 assert(cli.Error)
-assert(cli.SyntaxError)
 assert(cli.ApplicationError)
+assert(cli.InputError)
+assert(cli.OutputError)
+assert(cli.TypeError)
+assert(cli.SyntaxError)
 
 // ----------------------------------------------------------------------------
 
 await test('types', (t) => {
   t.ok(Object.prototype.isPrototypeOf.call(Error, cli.Error),
-    'CliError is Error')
-  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.SyntaxError),
-    'CliErrorSyntax is Error')
+    'cli.Error is Error')
   t.ok(Object.prototype.isPrototypeOf.call(Error, cli.ApplicationError),
-    'CliErrorApplication is Error')
+    'cli.ApplicationError is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.OutputError),
+    'cli.OutputError is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.TypeError),
+    'cli.TypeError is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.InputError),
+    'cli.InputError is Error')
+  t.ok(Object.prototype.isPrototypeOf.call(Error, cli.SyntaxError),
+    'cli.SyntaxError is Error')
 
   t.ok(cli.ExitCodes instanceof Object, 'CliExitCodes is Object')
   t.ok(cli.ExitCodes.ERROR instanceof Object, 'CliExitCodes.ERROR is Object')
@@ -60,7 +70,7 @@ await test('types', (t) => {
 })
 
 await test('exitCodes', async (t) => {
-  await t.test('CliError', (t) => {
+  await t.test('cli.Error', (t) => {
     try {
       throw new cli.Error('one')
     } catch (err: any) {
@@ -76,23 +86,57 @@ await test('exitCodes', async (t) => {
     t.end()
   })
 
-  await t.test('CliErrorSyntax', (t) => {
-    try {
-      throw new cli.SyntaxError('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
-    }
-    t.end()
-  })
-
-  await t.test('CliErrorApplication', (t) => {
+  await t.test('cli.ApplicationError', (t) => {
     try {
       throw new cli.ApplicationError('one')
     } catch (err: any) {
       t.equal(err.message, 'one', 'message is one')
       t.equal(err.exitCode, cli.ExitCodes.ERROR.APPLICATION,
-        'exit code is app')
+        'exit code is APPLICATION')
+    }
+    t.end()
+  })
+
+  await t.test('cli.InputError', (t) => {
+    try {
+      throw new cli.InputError('one')
+    } catch (err: any) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, cli.ExitCodes.ERROR.INPUT,
+        'exit code is INPUT')
+    }
+    t.end()
+  })
+
+  await t.test('cli.OutputError', (t) => {
+    try {
+      throw new cli.OutputError('one')
+    } catch (err: any) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, cli.ExitCodes.ERROR.OUTPUT,
+        'exit code is OUTPUT')
+    }
+    t.end()
+  })
+
+  await t.test('cli.SyntaxError', (t) => {
+    try {
+      throw new cli.SyntaxError('one')
+    } catch (err: any) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, cli.ExitCodes.ERROR.SYNTAX,
+        'exit code is SYNTAX')
+    }
+    t.end()
+  })
+
+  await t.test('cli.TypeError', (t) => {
+    try {
+      throw new cli.TypeError('one')
+    } catch (err: any) {
+      t.equal(err.message, 'one', 'message is one')
+      t.equal(err.exitCode, cli.ExitCodes.ERROR.TYPE,
+        'exit code is TYPE')
     }
     t.end()
   })
