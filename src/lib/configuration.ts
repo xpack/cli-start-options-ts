@@ -30,17 +30,35 @@ const defaultLogLevel = 'info'
 
 // ============================================================================
 
+/**
+ * @summary Class to store configuration variables.
+ *
+ * @description
+ * An instance of this class is present in the `Context` object.
+ *
+ * The applications can extend this class with more variables.
+ */
 export class Configuration {
-  logLevel: LogLevel = defaultLogLevel
-  cwd: string = process.cwd()
-  isHelpRequest: boolean = false
-  isVersionRequest: boolean = false
-  noUpdateNotifier: boolean = false
+  /** Log level set via `--loglevel`. */
+  public logLevel: LogLevel = defaultLogLevel
 
-  interactiveServerPort: number | undefined = undefined
+  /** Current working folder, set via `-C`. */
+  public cwd: string = process.cwd()
 
+  /** Help requested via `--help`. */
+  public isHelpRequest: boolean = false
+
+  /** Version requested via `--version`. */
+  public isVersionRequest: boolean = false
+
+  /** Disable the notifier via `--no-update-notifier`. */
+  public noUpdateNotifier: boolean = false
+
+  /** Server port number set via `--interactive-server-port`. */
+  public interactiveServerPort: number | undefined = undefined
+
+  // No explicit constructor needed, all members are already initialised.
   // constructor (_context: cli.Context) {
-  //   // All members already initialised.
   // }
 }
 
