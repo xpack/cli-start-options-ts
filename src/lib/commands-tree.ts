@@ -343,7 +343,7 @@ abstract class CommandBaseNode {
    *
    * @param commands Array of commands and subcommands.
    * @returns A command node.
-   * @throws `cli.SyntaxError`, if the command does not exist or
+   * @throws `cli.SyntaxError()`, if the command does not exist or
    *   is not unique (indirectly, from `charactersTree.findCommandNode()`).
    *
    * @description
@@ -506,7 +506,7 @@ export class CommandsTree extends CommandNode {
    * @returns
    *  An object with a class that implements the given command,
    *  the full command as a string array, and the remaining args.
-   * @throws `cli.SyntaxError` The command was not recognised or
+   * @throws `cli.SyntaxError()` The command was not recognised or
    *  is not unique, or the module does not implement CmdClass.
    *
    * @description
@@ -726,7 +726,7 @@ class CharactersTree extends CharacterNode {
    * @param command The command name, possibly aliased or shortened.
    * @returns The command node.
    *
-   * @throws `cli.SyntaxError` in case of errors.
+   * @throws `cli.SyntaxError()` in case of errors.
    *
    * @description
    * Search the tree of characters and return the command node
