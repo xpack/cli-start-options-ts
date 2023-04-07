@@ -920,7 +920,7 @@ export class Application extends Command {
         // The complex application, with multiple commands.
         exitCode = await this.instantiateAndRunCommand({
           commands,
-          argv: remainingArgs
+          argv
         })
       }
     } catch (err: any) {
