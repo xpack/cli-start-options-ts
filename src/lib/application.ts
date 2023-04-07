@@ -57,6 +57,7 @@ import {
   CommandsTree,
   FoundCommandModule
 } from './commands-tree.js'
+import { defaultLogLevel } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 // Hack to keep the cli.Error notation consistent.
@@ -65,7 +66,7 @@ import { Options } from './options.js'
 import { NpmPackageJson, readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
-// Logger configuration
+// Logger level configuration options.
 //
 // `-s`, `--silent`: `--loglevel silent` (not even errors)
 // `-q`, `--quiet`: `--loglevel warn` (errors and warnings)
@@ -74,10 +75,9 @@ import { NpmPackageJson, readPackageJson } from './utils.js'
 // `-d`, '--debug': `--loglevel debug`
 // `-dd`, '--trace': `--loglevel trace`
 
-export const defaultLogLevel = 'info'
-
 // ----------------------------------------------------------------------------
 // Exit codes:
+//
 // - 0 = Ok
 // - 1 = Syntax error
 // - 2 = Application error
