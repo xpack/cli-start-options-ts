@@ -44,7 +44,7 @@ export class Context {
   /** The invocation name of the program. */
   public programName: string
 
-  public startTime: number
+  public startTimestampMilliseconds: number
 
   public cmdPath: string
   public processCwd: string
@@ -131,7 +131,7 @@ export class Context {
     this.processEnv = params.processEnv ?? process.env
     this.processArgv = params.processArgv ?? process.argv
 
-    this.startTime = Date.now()
+    this.startTimestampMilliseconds = Date.now()
 
     // Initialise the configuration.
     this.config = new Configuration()

@@ -866,7 +866,7 @@ export class Application extends Command {
     const log = context.log
     log.trace(`${this.constructor.name}.dispatchCommand()`)
 
-    context.startTime = Date.now()
+    context.startTimestampMilliseconds = Date.now()
 
     const config = context.config
     const packageJson = context.packageJson

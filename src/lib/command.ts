@@ -309,7 +309,8 @@ export abstract class Command {
     const log = context.log
 
     log.info()
-    const durationString = formatDuration(Date.now() - context.startTime)
+    const durationString =
+      formatDuration(Date.now() - context.startTimestampMilliseconds)
     const commandParts =
       [context.programName, ...context.matchedCommands].join(' ')
     log.info(`'${commandParts}' completed in ${durationString}.`)
