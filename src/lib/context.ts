@@ -116,20 +116,22 @@ export class Context {
     // REPL should always set the console to the REPL inout/output streams.
     this.console = this.log.console
 
-    this.programName = params.programName ??
-      params.context?.programName ??
-      getProgramName()
+    this.processCwd = params.processCwd ??
+      params.context?.processCwd ?? process.cwd()
+    this.processEnv = params.processEnv ??
+      params.context?.processEnv ?? process.env
+    this.processArgv = params.processArgv ??
+      params.context?.processArgv ?? process.argv
 
     // `process.argv[1]` - the full path of the invoking script.
-    const argv = params.processArgv ?? process.argv
-    const argv1: string | undefined = argv[1]
+    const argv1: string | undefined = this.processArgv[1]
     assert(argv1 !== undefined, 'Mandatory argv[1]')
 
     this.cmdPath = argv1.trim()
 
-    this.processCwd = params.processCwd ?? process.cwd()
-    this.processEnv = params.processEnv ?? process.env
-    this.processArgv = params.processArgv ?? process.argv
+    this.programName = params.programName ??
+    params.context?.programName ??
+    getProgramName(this.cmdPath)
 
     this.startTimestampMilliseconds = Date.now()
 
@@ -139,10 +141,11 @@ export class Context {
     this.options = new Options({ context: this })
 
     if (params.context !== undefined) {
-      // Copy the options & rootPath
-      // from the application context.
+      // Copy the options from the application context.
       this.options.addGroups(params.context.options.groups)
       this.options.addGroups(params.context.options.commonGroups)
+
+      // Copy other properties from the application context.
       this.rootPath = params.context.rootPath
       this.packageJson = params.context.packageJson
       this.matchedCommands = params.context.matchedCommands

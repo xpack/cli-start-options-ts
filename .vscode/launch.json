@@ -82,8 +82,28 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap context.ts",
+      "program": "${workspaceRoot}/tests/tap/040-context.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm",
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "tap commands-tree.ts",
-      "program": "${workspaceRoot}/tests/tap/022-commands-tree.ts",
+      "program": "${workspaceRoot}/tests/tap/122-commands-tree.ts",
       "stopOnEntry": true,
       "args": [
       ],
@@ -103,7 +123,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap cli-invocation.ts",
-      "program": "${workspaceRoot}/tests/tap/025-cli-invocation.ts",
+      "program": "${workspaceRoot}/tests/tap/125-cli-invocation.ts",
       "stopOnEntry": true,
       "args": [
       ],
@@ -123,7 +143,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap interactive.ts",
-      "program": "${workspaceRoot}/tests/tap/050-interactive.ts",
+      "program": "${workspaceRoot}/tests/tap/150-interactive.ts",
       "stopOnEntry": true,
       "args": [
       ],
@@ -142,7 +162,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap options-common.ts",
-      "program": "${workspaceRoot}/tests/tap/030-options-common.ts",
+      "program": "${workspaceRoot}/tests/tap/130-options-common.ts",
       "stopOnEntry": true,
       "args": [
       ],
@@ -162,7 +182,7 @@
       "type": "node",
       "request": "launch",
       "name": "tap options-multi.ts",
-      "program": "${workspaceRoot}/tests/tap/035-options-multi.ts",
+      "program": "${workspaceRoot}/tests/tap/135-options-multi.ts",
       "stopOnEntry": true,
       "args": [
       ],
