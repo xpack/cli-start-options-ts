@@ -683,7 +683,7 @@ export class CharacterNode {
  * Each command node has a tree of characters, with the command
  * and its aliases.
  */
-class CharactersTree extends CharacterNode {
+export class CharactersTree extends CharacterNode {
   /** Parent command node;
    * optimization, to avoid repetitive back searches. */
   public parentCommandNode: CommandNode
