@@ -55,11 +55,21 @@ interface CommandTemplate {
    * Mandatory if not defined by sub-commands */
   modulePath?: string
   /** Optional class name (default the first
-   *  class derived from cli.Command in module) */
+   *  class derived from `cli.Command` in module) */
   className?: string
   /** Optional helper options */
   helpOptions?: CommandTemplateHelpOptions
 
+  /**
+   * @summary Optional boolean flag for forwardable arguments.
+   *
+   * @description
+   * If true, the arguments defined after `--` will be forwarded separately
+   * to the command.
+   * If false, `--` has no special meaning and all arguments are passed
+   * together to the command.
+   * Default: false.
+   */
   hasForwardableArguments?: boolean
   /**
    * @summary Optional boolean flag for optional custom options.
@@ -84,10 +94,6 @@ interface CommandTemplate {
     [key: string]: CommandTemplate
   }
 }
-
-// interface CommandsDefinitionMap {
-//   [key: string]: CommandTemplate
-// }
 
 export interface FoundCommandModule {
   moduleRelativePath: string
@@ -687,6 +693,7 @@ export class CharactersTree extends CharacterNode {
   /** Parent command node;
    * optimization, to avoid repetitive back searches. */
   public parentCommandNode: CommandNode
+
   /**
    * @summary Create an instance of a tree.
    */
