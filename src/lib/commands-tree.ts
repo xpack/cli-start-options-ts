@@ -141,7 +141,7 @@ abstract class CommandBaseNode {
     new Map<string, CommandBaseNode>()
 
   /** Tree of characters with command name and aliases. */
-  public charactersTree: CharactersTree = new CharactersTree()
+  public charactersTree: CharactersTree
 
   /**
    * Array of character nodes that point back to this command.
@@ -188,7 +188,7 @@ abstract class CommandBaseNode {
     this.hasCustomArgs = params.hasCustomArgs ?? true
 
     // Tree of characters. Built by buildCharactersTrees().
-    this.charactersTree = new CharactersTree()
+    this.charactersTree = new CharactersTree(this)
     // Array of CharacterNode
     this.terminatorCharacterNodes = []
   }
@@ -558,10 +558,7 @@ class CharacterNode {
   public parent?: CharacterNode
 
   /** Payload node. */
-  public commandNode?: CommandNode
-  /** Parent command node;
-   * optimization, to avoid repetitive back searches. */
-  public parentCommandNode?: CommandNode
+  public commandNode?: CommandNode = undefined
 
   /**
    * @summary Construct a character node.
@@ -681,13 +678,18 @@ class CharacterNode {
  * and its aliases.
  */
 class CharactersTree extends CharacterNode {
+  /** Parent command node;
+   * optimization, to avoid repetitive back searches. */
+  public parentCommandNode: CommandNode
   /**
    * @summary Create an instance of a tree.
    */
-  constructor () {
+  constructor (parentCommandNode: CommandNode) {
     // No special meaning, just for debug sessions,
     // to easily identify the root node.
     super('^')
+
+    this.parentCommandNode = parentCommandNode
   }
 
   /**
@@ -711,15 +713,11 @@ class CharactersTree extends CharacterNode {
 
     assert(params.commandNode)
     assert(params.commandNode.parent)
-    // All character nodes get a link to the parent command node.
-    this.parentCommandNode = params.commandNode.parent
 
     // Start with the current node and add children one level at a time.
     let characterNode: CharacterNode = this as CharacterNode
     for (const char of lowerCaseName) {
       characterNode = characterNode.addChildNode(char)
-      // All character nodes get a link to the parent command node.
-      characterNode.parentCommandNode = params.commandNode.parent
     }
 
     // The bottom-most (terminator) node gets the command node.
@@ -748,7 +746,6 @@ class CharactersTree extends CharacterNode {
     assert(!command.includes(characterTerminator))
 
     // console.log(this.parentCmdNode.fullCommandsArray())...]
-    assert(this.parentCommandNode)
 
     const lowerCaseName = command.trim().toLowerCase() + characterTerminator
     assert(lowerCaseName.length >= 2)
