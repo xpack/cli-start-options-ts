@@ -91,7 +91,7 @@ export class Xtest extends cli.Application {
           usagePreOptions: '[<name>...]', // Array of test names.
           usagePostOptions: '[-- <very-long-long-long-args>...]'
         },
-        hasNoCustomOptions: true
+        hasCustomOptions: true
       },
       many: {
         modulePath: 'src/xtest/many.js',
