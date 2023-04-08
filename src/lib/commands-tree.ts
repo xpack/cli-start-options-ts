@@ -344,7 +344,7 @@ abstract class CommandBaseNode {
     // Once the current sub-tree (at each recursion level) is in place,
     // promote leafs to upper nodes, as long as unique.
     // This helps to match incomplete commands.
-    this.charactersTree.promote()
+    this.charactersTree.promoteChildrenWithCommandNodes()
   }
 
   /**
@@ -615,7 +615,7 @@ class CharacterNode {
   }
 
   /**
-   * @summary Promote parent nodes.
+   * @summary Promote children nodes.
    *
    * @returns Nothing.
    *
@@ -629,7 +629,7 @@ class CharacterNode {
    *
    * This is an optimisation, to easily find partial commands in the tree.
    */
-  promote (): void {
+  promoteChildrenWithCommandNodes (): void {
     if (this.hasCommandNode() || this.children.size === 0) {
       // No need to go deeper if the node already has a command node
       // or has no children.
@@ -639,10 +639,14 @@ class CharacterNode {
     // The following works even if there is a singular child.
 
     // The node has children, recursively promote all.
-    this.children.forEach((child) => { child.promote() })
+    this.children.forEach(
+      (child) => {
+        child.promoteChildrenWithCommandNodes()
+      })
+
+    let commandNode: CommandBaseNode | undefined
 
     // Check if all have the same command node.
-    let commandNode: CommandBaseNode | undefined
     for (const [, child] of this.children) {
       if (commandNode === undefined) {
         if (child.hasCommandNode()) {
