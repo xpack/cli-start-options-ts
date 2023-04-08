@@ -546,16 +546,18 @@ export class CommandsTree extends CommandNode {
 
 // Each command node keeps a tree of characters for its command and aliases.
 
-class CharacterNode {
+export class CharacterNode {
   /**
    * A single letter string, usually a lowercase. '^' for root node.
    */
-  public char: string
+  public name: string
 
+  /** A map of nodes, identified by characters. */
   public children: Map<string, CharacterNode> =
     new Map<string, CharacterNode>()
 
-  public parent?: CharacterNode
+  /** The parent node, or undefined for the root node. */
+  public parent?: CharacterNode = undefined
 
   /** Payload node. */
   public commandNode?: CommandNode = undefined
@@ -566,7 +568,7 @@ class CharacterNode {
    */
   constructor (char: string) {
     assert(char.length === 1)
-    this.char = char
+    this.name = char
   }
 
   /**
@@ -757,37 +759,36 @@ class CharactersTree extends CharacterNode {
 
     let characterNode: CharacterNode = this as CharacterNode
 
-    let char: string
-    for (char of lowerCaseName) {
-      if (characterNode.children.has(char)) {
+    let name: string = ''
+    for (name of lowerCaseName) {
+      if (characterNode.children.has(name)) {
         // Descend to the next node.
-        characterNode = characterNode.children.get(char) as CharacterNode
+        characterNode = characterNode.children.get(name) as CharacterNode
       } else {
         // Character not found, possible error.
         break
       }
     }
 
-    // If all chars were matched, the node points to the terminating char.
-    // eslint-disable-next-line max-len
-    // @ts-expect-error (Variable 'char' is used before being assigned. ts(2454))
-    if (char === characterTerminator) {
-      // If the command was uniquely identified, we're fine.
+
+    // If all chars were matched, except the terminating char.
+    if (name === characterTerminator) {
       if (characterNode.hasCommandNode()) {
+        // The command was uniquely identified, we're fine.
         return characterNode.commandNode as CommandBaseNode
       } else {
         // We reached the end of the input name before identifying the
-        // command node.
-        throw new cli.SyntaxError(`Command '${command}' is not unique.`)
+      // command node.
+      throw new cli.SyntaxError(`Command '${command}' is not unique.`)
       }
     }
 
-    // TODO: check the logic
     if (characterNode.children.has(characterTerminator)) {
       // There is not a matching character.
       throw new cli.SyntaxError(
         `Command '${command}' not fully identified, probably misspelled.`)
     } else {
+      assert(this.parentCommandNode)
       const commands = [...this.parentCommandNode.getUnaliasedCommandParts(),
         command]
       const str = commands.join(' ')
