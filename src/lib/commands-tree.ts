@@ -61,9 +61,23 @@ interface CommandTemplate {
   helpOptions?: CommandTemplateHelpOptions
 
   hasForwardableArguments?: boolean
-  hasMandatoryArgs?: boolean
-  hasNoCustomOptions?: boolean
-  hasNoCustomArgs?: boolean
+  /**
+   * @summary Optional boolean flag for optional custom options.
+   *
+   * @description
+   * If true, custom options (like -x --xxx) are passed to the command.
+   * If false, custom options are flagged as errors.
+   * Default: false. */
+  hasCustomOptions?: boolean
+  /**
+   * @summary Optional boolean flag for optional custom arguments.
+   *
+   * @description
+   * If true, custom arguments (like filenames, etc) are passed to the command.
+   * If false, custom arguments are flagged as errors.
+   *
+   * Default: false. */
+  hasCustomArgs?: boolean
 
   /** Optional definitions of sub-commands. */
   subCommands?: {
@@ -114,9 +128,10 @@ abstract class CommandBaseNode {
   /** Optional flag when the command has forwardable arguments. */
   public hasForwardableArguments: boolean
 
-  public hasMandatoryArgs: boolean
-  public hasNoCustomOptions: boolean
-  public hasNoCustomArgs: boolean
+  /** Optional flag when the command has custom options. */
+  public hasCustomOptions: boolean
+  /** Optional flag when the command has custom arguments. */
+  public hasCustomArgs: boolean
 
   /** Link back to parent node, or undefined. */
   public parent?: CommandBaseNode
@@ -169,14 +184,8 @@ abstract class CommandBaseNode {
 
     this.hasForwardableArguments = params.hasForwardableArguments ?? false
 
-    this.hasMandatoryArgs = params.hasMandatoryArgs ?? false
-    this.hasNoCustomOptions = params.hasNoCustomOptions ?? false
-    this.hasNoCustomArgs = params.hasNoCustomArgs ?? false
-
-    // ?
-    if (this.hasMandatoryArgs) {
-      this.hasNoCustomArgs = false
-    }
+    this.hasCustomOptions = params.hasCustomOptions ?? true
+    this.hasCustomArgs = params.hasCustomArgs ?? true
 
     // Tree of characters. Built by buildCharactersTrees().
     this.charactersTree = new CharactersTree()

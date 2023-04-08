@@ -232,15 +232,15 @@ export abstract class Command {
 
     const errorMessages = []
 
-    if (commandNode.hasNoCustomOptions ||
-      commandNode.hasNoCustomArgs) {
+    if (commandNode.hasCustomOptions ||
+      commandNode.hasCustomArgs) {
       for (const arg of params.argv) {
         if (arg.startsWith('-')) {
-          if (commandNode.hasNoCustomOptions) {
+          if (commandNode.hasCustomOptions) {
             errorMessages.push(`Option '${arg}' not supported`)
           }
         } else {
-          if (commandNode.hasNoCustomArgs) {
+          if (commandNode.hasCustomArgs) {
             errorMessages.push(`Argument '${arg}' not supported`)
           }
         }
