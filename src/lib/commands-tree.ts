@@ -265,16 +265,16 @@ abstract class CommandBaseNode {
    * @description
    * If the current node has no module path defined, recurse to parent.
    */
-  getModulePath (): string {
+  getModulePath (): string | undefined {
     if (this.modulePath !== undefined) {
       return this.modulePath
     }
 
-    if (this.parent !== undefined) {
-      return this.parent.getModulePath()
+    if (this.parent === undefined) {
+      return undefined
     }
 
-    assert(false, `'${this.name}' must have modulePath`)
+    return this.parent.getModulePath()
   }
 
   /**
@@ -378,6 +378,7 @@ abstract class CommandBaseNode {
     // Store partially found node in the context, for Help to
     // show the command specific help.
     context.commandNode = commandNode
+
     commandNode.remainingCommands = restCommands
 
     if (restCommands.length !== 0 && commandNode.hasChildrenCommands()) {
@@ -385,10 +386,6 @@ abstract class CommandBaseNode {
       commandNode = commandNode.findCommandNode(restCommands)
     }
 
-    /* istanbul ignore next if */
-    if (!(this.children !== undefined && this.children.size > 0)) {
-      assert(commandNode.modulePath)
-    }
     return commandNode
   }
 
@@ -486,8 +483,7 @@ export class CommandsTree extends CommandNode {
   constructor (params: { context: Context }) {
     super({
       context: params.context,
-      name: '(tree)', // No spaces!
-      modulePath: '.'
+      name: '(tree)' // No spaces!
     })
   }
 
@@ -541,8 +537,11 @@ export class CommandsTree extends CommandNode {
 
     const commandNode = this.findCommandNode(commands)
 
+    const modulePath = commandNode.getModulePath()
+    assert(modulePath)
+
     return {
-      moduleRelativePath: commandNode.getModulePath(),
+      moduleRelativePath: modulePath,
       className: commandNode.className,
       commandNode
     }
@@ -778,7 +777,6 @@ export class CharactersTree extends CharacterNode {
       }
     }
 
-
     // If all chars were matched, except the terminating char.
     if (name === characterTerminator) {
       if (characterNode.hasCommandNode()) {
@@ -787,7 +785,7 @@ export class CharactersTree extends CharacterNode {
       } else {
         // We reached the end of the input name before identifying the
       // command node.
-      throw new cli.SyntaxError(`Command '${command}' is not unique.`)
+        throw new cli.SyntaxError(`Command '${command}' is not unique.`)
       }
     }
 
