@@ -156,6 +156,13 @@ export abstract class Command {
     log.debug(`'${context.programName} ` +
       `${context.matchedCommands.join(' ')}' started`)
 
+    ownArgv.forEach((arg, index) => {
+      log.trace(`own arg${index}: '${arg}'`)
+    })
+    forwardableArgv.forEach((arg, index) => {
+      log.trace(`forwardable arg${index}: '${arg}'`)
+    })
+
     exitCode = await this.main(ownArgv, forwardableArgv)
 
     log.debug(`'${context.programName} ` +
