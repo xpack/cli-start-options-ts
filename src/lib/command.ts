@@ -74,7 +74,7 @@ export abstract class Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace(`${this.constructor.name}.constructor()`)
+    log.trace('Command.constructor()')
   }
 
   /**
@@ -100,7 +100,7 @@ export abstract class Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace(`${this.constructor.name}.prepareAndRun()`)
+    log.trace('Command.prepareAndRun()')
 
     // Make a copy of the original args.
     context.unparsedArgv = [...params.argv]
@@ -272,7 +272,7 @@ export abstract class Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace(`${this.constructor.name}.help()`)
+    log.trace('Command.help()')
 
     const help: Help = new Help({ context })
 
