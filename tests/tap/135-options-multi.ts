@@ -58,7 +58,7 @@ dumpLines([])
 /*
  * Read package.json, to later compare version.
  */
-await await test('setup', async (t) => {
+await test('setup', async (t) => {
   // Read in the package.json, to later compare version.
   const rootPath = mockPath('xtest')
   pack = await cli.readPackageJson(rootPath)
@@ -79,20 +79,25 @@ await test('xtest multi --help', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.ok(outLines.length > 0, 'has stdout')
 
-    // dumpLines(outLines)
-    t.ok(outLines.length > 0, 'has stdout')
-    t.match(outLines[1], 'Multiple subcommands', 'has title')
-    t.match(outLines[3], 'Usage: xtest multi <command> ' +
-      '[<subcommand>...] [<options> ...] [<args>...]',
-    'has Usage')
+      t.match(outLines[1], 'Multiple subcommands', 'has title')
+      t.match(outLines[3], 'Usage: xtest multi <command> ' +
+        '[<subcommand>...] [<options> ...] [<args>...]',
+      'has Usage')
 
-    t.match(outLines[5], 'where <command> is one of:', 'has where')
-    t.match(outLines[6], '  first, second', 'has subcommands')
+      t.match(outLines[5], 'where <command> is one of:', 'has where')
+      t.match(outLines[6], '  first, second', 'has subcommands')
 
-    // There should be no error messages.
-    // dumpLines(errLines)
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      // dumpLines(errLines)
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -107,16 +112,20 @@ await test('xtest multi', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 4, 'has 4 stdout')
+      t.match(outLines[0], 'Multiple subcommands', 'has title')
+      t.match(outLines[1], 'no args', 'has no args')
+      t.equal(outLines[2], '', 'has empty line')
+      t.match(outLines[3], '\'xtest multi\' completed in ', 'has completed')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 4, 'has 4 stdout')
-    t.match(outLines[0], 'Multiple subcommands', 'has title')
-    t.match(outLines[1], 'no args', 'has no args')
-    t.equal(outLines[2], '', 'has empty line')
-    t.match(outLines[3], '\'xtest multi\' completed in ', 'has completed')
-
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -133,17 +142,21 @@ await test('xtest multi -m mmm', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 5, 'has 5 stdout')
+      t.match(outLines[0], 'Multiple subcommands', 'has title')
+      t.match(outLines[1], 'multi: mmm', 'has -m')
+      t.match(outLines[2], 'no args', 'has no args')
+      t.equal(outLines[3], '', 'has empty line')
+      t.match(outLines[4], '\'xtest multi\' completed in ', 'has completed')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 5, 'has 5 stdout')
-    t.match(outLines[0], 'Multiple subcommands', 'has title')
-    t.match(outLines[1], 'multi: mmm', 'has -m')
-    t.match(outLines[2], 'no args', 'has no args')
-    t.equal(outLines[3], '', 'has empty line')
-    t.match(outLines[4], '\'xtest multi\' completed in ', 'has completed')
-
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -162,18 +175,23 @@ await test('xtest multi -m mmm 1 2', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 6, 'has 6 stdout')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 6, 'has 6 stdout')
-    t.match(outLines[0], 'Multiple subcommands', 'has title')
-    t.match(outLines[1], 'multi: mmm', 'has -m')
-    t.match(outLines[2], 'one', 'has one')
-    t.match(outLines[3], 'two', 'has two')
-    t.equal(outLines[4], '', 'has empty line')
-    t.match(outLines[5], '\'xtest multi\' completed in ', 'has completed')
+      t.match(outLines[0], 'Multiple subcommands', 'has title')
+      t.match(outLines[1], 'multi: mmm', 'has -m')
+      t.match(outLines[2], 'one', 'has one')
+      t.match(outLines[3], 'two', 'has two')
+      t.equal(outLines[4], '', 'has empty line')
+      t.match(outLines[5], '\'xtest multi\' completed in ', 'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -312,19 +330,24 @@ await test('xtest multi first -m mmm --first fff 1 2', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 7, 'has 7 stdout')
 
-    t.equal(outLines.length, 7, 'has 7 stdout')
-    // dumpLines(outLines)
-    t.match(outLines[0], 'Multiple first', 'has title')
-    t.match(outLines[1], 'multi: mmm', 'has -m')
-    t.match(outLines[2], 'first: fff', 'has --first')
-    t.match(outLines[3], 'one', 'has one')
-    t.match(outLines[4], 'two', 'has two')
-    t.equal(outLines[5], '', 'has empty line')
-    t.match(outLines[6], '\'xtest multi first\' completed in ', 'has completed')
+      t.match(outLines[0], 'Multiple first', 'has title')
+      t.match(outLines[1], 'multi: mmm', 'has -m')
+      t.match(outLines[2], 'first: fff', 'has --first')
+      t.match(outLines[3], 'one', 'has one')
+      t.match(outLines[4], 'two', 'has two')
+      t.equal(outLines[5], '', 'has empty line')
+      t.match(outLines[6], '\'xtest multi first\' completed in ',
+        'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -342,17 +365,23 @@ await test('xtest multi first 1 2', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 5, 'has 5 stdout')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 5, 'has 5 stdout')
-    t.match(outLines[0], 'Multiple first', 'has title')
-    t.match(outLines[1], 'one', 'has one')
-    t.match(outLines[2], 'two', 'has two')
-    t.equal(outLines[3], '', 'has empty line')
-    t.match(outLines[4], '\'xtest multi first\' completed in ', 'has completed')
+      t.match(outLines[0], 'Multiple first', 'has title')
+      t.match(outLines[1], 'one', 'has one')
+      t.match(outLines[2], 'two', 'has two')
+      t.equal(outLines[3], '', 'has empty line')
+      t.match(outLines[4], '\'xtest multi first\' completed in ',
+        'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -370,25 +399,30 @@ await test('xtest multi second --help', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.ok(outLines.length > 0, 'has stdout')
 
-    // dumpLines(outLines)
-    t.ok(outLines.length > 0, 'has stdout')
-    t.match(outLines[1], 'Multiple second', 'has title')
-    t.match(outLines[3],
-      'Usage: xtest multi second [options...] [--multi <name>] ' +
-      '[--second <int>]',
-      'has Usage')
+      t.match(outLines[1], 'Multiple second', 'has title')
+      t.match(outLines[3],
+        'Usage: xtest multi second [options...] [--multi <name>] ' +
+        '[--second <int>]',
+        'has Usage')
 
-    t.match(outLines[5], 'Multi options:', 'has multi group')
-    t.match(outLines[6], ' --multi|-m <name>', 'has --multi')
+      t.match(outLines[5], 'Multi options:', 'has multi group')
+      t.match(outLines[6], ' --multi|-m <name>', 'has --multi')
 
-    t.match(outLines[8], 'Multi second options:', 'has second group')
-    t.match(outLines[9], ' --second <int>', 'has --second')
+      t.match(outLines[8], 'Multi second options:', 'has second group')
+      t.match(outLines[9], ' --second <int>', 'has --second')
 
-    t.match(outLines[12], ' --more-common <int>', 'has --more')
+      t.match(outLines[12], ' --more-common <int>', 'has --more')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -404,17 +438,22 @@ await test('xtest multi second', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 4, 'has 4 stdout')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 4, 'has 4 stdout')
-    t.match(outLines[0], 'Multiple second', 'has title')
-    t.match(outLines[1], 'no args', 'has no args')
-    t.equal(outLines[2], '', 'has empty line')
-    t.match(outLines[3],
-      '\'xtest multi second\' completed in ', 'has completed')
+      t.match(outLines[0], 'Multiple second', 'has title')
+      t.match(outLines[1], 'no args', 'has no args')
+      t.equal(outLines[2], '', 'has empty line')
+      t.match(outLines[3],
+        '\'xtest multi second\' completed in ', 'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -434,19 +473,24 @@ await test('xtest multi second -m mmm --second fff', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 6, 'has 6 stdout')
 
-    t.equal(outLines.length, 6, 'has 6 stdout')
-    // dumpLines(outLines)
-    t.match(outLines[0], 'Multiple second', 'has title')
-    t.match(outLines[1], 'multi: mmm', 'has -m')
-    t.match(outLines[2], 'second: fff', 'has --second')
-    t.match(outLines[3], 'no args', 'has no args')
-    t.equal(outLines[4], '', 'has empty line')
-    t.match(outLines[5],
-      '\'xtest multi second\' completed in ', 'has completed')
+      // dumpLines(outLines)
+      t.match(outLines[0], 'Multiple second', 'has title')
+      t.match(outLines[1], 'multi: mmm', 'has -m')
+      t.match(outLines[2], 'second: fff', 'has --second')
+      t.match(outLines[3], 'no args', 'has no args')
+      t.equal(outLines[4], '', 'has empty line')
+      t.match(outLines[5],
+        '\'xtest multi second\' completed in ', 'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -468,20 +512,25 @@ await test('xtest multi second -m mmm --second fff 1 2', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 7, 'has 7 stdout')
 
-    t.equal(outLines.length, 7, 'has 7 stdout')
-    // dumpLines(outLines)
-    t.match(outLines[0], 'Multiple second', 'has title')
-    t.match(outLines[1], 'multi: mmm', 'has -m')
-    t.match(outLines[2], 'second: fff', 'has --second')
-    t.match(outLines[3], 'one', 'has one')
-    t.match(outLines[4], 'two', 'has two')
-    t.equal(outLines[5], '', 'has empty line')
-    t.match(outLines[6],
-      '\'xtest multi second\' completed in ', 'has completed')
+      // dumpLines(outLines)
+      t.match(outLines[0], 'Multiple second', 'has title')
+      t.match(outLines[1], 'multi: mmm', 'has -m')
+      t.match(outLines[2], 'second: fff', 'has --second')
+      t.match(outLines[3], 'one', 'has one')
+      t.match(outLines[4], 'two', 'has two')
+      t.equal(outLines[5], '', 'has empty line')
+      t.match(outLines[6],
+        '\'xtest multi second\' completed in ', 'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -499,18 +548,23 @@ await test('xtest multi second 1 2', async (t) => {
 
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 5, 'has 5 stdout')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 5, 'has 5 stdout')
-    t.match(outLines[0], 'Multiple second', 'has title')
-    t.match(outLines[1], 'one', 'has one')
-    t.match(outLines[2], 'two', 'has two')
-    t.equal(outLines[3], '', 'has empty line')
-    t.match(outLines[4],
-      '\'xtest multi second\' completed in ', 'has completed')
+      t.match(outLines[0], 'Multiple second', 'has title')
+      t.match(outLines[1], 'one', 'has one')
+      t.match(outLines[2], 'two', 'has two')
+      t.equal(outLines[3], '', 'has empty line')
+      t.match(outLines[4],
+        '\'xtest multi second\' completed in ', 'has completed')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }

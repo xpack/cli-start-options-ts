@@ -73,20 +73,25 @@ await test('setup', async (t) => {
  */
 await test('xtest --version', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    // Check if version matches the package.
-    // Beware, the stdout string has a new line terminator.
-    t.equal(outLines[0], pack.version, 'version value')
+      // Check if version matches the package.
+      // Beware, the stdout string has a new line terminator.
+      t.equal(outLines[0], pack.version, 'version value')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -98,30 +103,35 @@ await test('xtest --version', async (t) => {
  */
 await test('xtest -h', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '-h'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    // dumpLines(outLines)
-    t.match(stdout, 'Usage: xtest <command>', 'has Usage')
+      const stdout = outLines.join('\n')
+      // dumpLines(outLines)
+      t.match(stdout, 'Usage: xtest <command>', 'has Usage')
 
-    t.match(stdout, 'Mock Test', 'has title')
-    t.match(stdout, 'xtest -h|--help', 'has -h|--help')
-    t.match(stdout, 'xtest <command> -h|--help', 'has <command> -h|--help')
-    t.match(stdout, 'xtest --version', 'has --version')
-    t.match(stdout, 'Set log level (silent|warn|info|verbose|debug|trace)',
-      'has log levels')
-    t.match(stdout, '-s|--silent', 'has -s|--silent')
-    t.match(stdout, 'Home page:', 'has Home page')
-    t.match(stdout, 'Bug reports:', 'has Bug reports:')
+      t.match(stdout, 'Mock Test', 'has title')
+      t.match(stdout, 'xtest -h|--help', 'has -h|--help')
+      t.match(stdout, 'xtest <command> -h|--help', 'has <command> -h|--help')
+      t.match(stdout, 'xtest --version', 'has --version')
+      t.match(stdout, 'Set log level (silent|warn|info|verbose|debug|trace)',
+        'has log levels')
+      t.match(stdout, '-s|--silent', 'has -s|--silent')
+      t.match(stdout, 'Home page:', 'has Home page')
+      t.match(stdout, 'Bug reports:', 'has Bug reports:')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -133,19 +143,24 @@ await test('xtest -h', async (t) => {
  */
 await test('xtest --help', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--help'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'Usage: xtest <command>', 'has Usage')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Usage: xtest <command>', 'has Usage')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -157,23 +172,28 @@ await test('xtest --help', async (t) => {
  */
 await test('xtest --version -d', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version',
       '-d'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.ok(stdout.length > 0, 'has stdout')
-    // Matching the whole string also checks that
-    // the colour changes are not used.
-    t.match(stdout, 'debug: start arg0:', 'has debug')
+      const stdout = outLines.join('\n')
+      t.ok(stdout.length > 0, 'has stdout')
+      // Matching the whole string also checks that
+      // the colour changes are not used.
+      t.match(stdout, 'debug: start arg0:', 'has debug')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -185,22 +205,29 @@ await test('xtest --version -d', async (t) => {
  */
 await test('xtest --version -dd', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version',
       '-dd'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    // Matching the whole string also checks that
-    // the colour changes are not used.
-    t.match(stdout, 'trace: Xtest.constructor()', 'has debug')
+      // dumpLines(outLines)
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      const stdout = outLines.join('\n')
+      // Matching the whole string also checks that
+      // the colour changes are not used.
+      t.match(stdout, 'trace: Xtest.constructor()', 'has debug')
+
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -212,23 +239,28 @@ await test('xtest --version -dd', async (t) => {
  */
 await test('xtest --version -d -d', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version',
       '-d',
       '-d'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    // Matching the whole string also checks that
-    // the colour changes are not used.
-    t.match(stdout, 'trace: Xtest.constructor()', 'has debug')
+      const stdout = outLines.join('\n')
+      // Matching the whole string also checks that
+      // the colour changes are not used.
+      t.match(stdout, 'trace: Xtest.constructor()', 'has debug')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -240,19 +272,23 @@ await test('xtest --version -d -d', async (t) => {
  */
 await test('xtest notclass', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'notclass'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
+    t.equal(exitCode, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
+    if (exitCode !== cli.ExitCodes.ERROR.APPLICATION) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.equal(outLines.length, 0, 'stdout is empty')
 
-    // dumpLines(outLines)
-    t.equal(outLines.length, 0, 'stdout is empty')
-
-    // dumpLines(errLines)
-    t.ok(errLines.length > 0, 'stderr has lines')
-    t.match(errLines[0], 'AssertionError', 'stderr is assertion')
+      // dumpLines(errLines)
+      t.ok(errLines.length > 0, 'stderr has lines')
+      t.match(errLines[0], 'AssertionError', 'stderr is assertion')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -264,20 +300,25 @@ await test('xtest notclass', async (t) => {
  */
 await test('xtest co', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'co'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is app')
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is app')
+    if (exitCode !== cli.ExitCodes.ERROR.SYNTAX) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    t.match(outLines[3], 'Usage: xtest <command>', 'stderr[3] is Usage')
+      t.match(outLines[3], 'Usage: xtest <command>', 'stderr[3] is Usage')
 
-    t.ok(errLines.length > 0, 'stderr has lines')
-    // dumpLines(errLines)
-    t.equal(errLines[0], "error: Command 'co' is not unique.",
-      'stderr is error')
+      t.ok(errLines.length > 0, 'stderr has lines')
+      // dumpLines(errLines)
+      t.equal(errLines[0], "error: Command 'co' is not unique.",
+        'stderr is error')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -289,23 +330,28 @@ await test('xtest co', async (t) => {
  */
 await test('xtest --version --loglevel debug', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version',
       '--loglevel',
       'debug'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    // Matching the whole string also checks that
-    // the colour changes are not used.
-    t.match(stdout, 'debug: start arg0:', 'has debug')
+      const stdout = outLines.join('\n')
+      // Matching the whole string also checks that
+      // the colour changes are not used.
+      t.match(stdout, 'debug: start arg0:', 'has debug')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -317,19 +363,23 @@ await test('xtest --version --loglevel debug', async (t) => {
  */
 await test('xtest xx -s', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'xx',
       '-s',
       'debug'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    if (exitCode !== cli.ExitCodes.ERROR.SYNTAX) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 0, 'stdout is empty')
 
-    t.equal(outLines.length, 0, 'stdout is empty')
-
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -341,7 +391,7 @@ await test('xtest xx -s', async (t) => {
  */
 // await test('xtest long --long value --xx -q', async (t) => {
 //   try {
-//     const { exitCode: code, outLines, errLines } = await runLibXtest([
+//     const { exitCode, outLines, errLines } = await runLibXtest([
 //       'long',
 //       '--long',
 //       'value',
@@ -351,7 +401,7 @@ await test('xtest xx -s', async (t) => {
 //     ])
 
 //     // Check exit code.
-//     t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+//     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
 //     t.equal(outLines.length, 0, 'stdout is empty')
 
@@ -369,19 +419,24 @@ await test('xtest xx -s', async (t) => {
  */
 await test('xtest verb', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'verb'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'Done', 'stdout is done')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Done', 'stdout is done')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -393,20 +448,25 @@ await test('xtest verb', async (t) => {
  */
 await test('xtest verb --informative', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'verb',
       '--informative'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'Exercise verbosity', 'stdout is info')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Exercise verbosity', 'stdout is info')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -418,21 +478,26 @@ await test('xtest verb --informative', async (t) => {
  */
 await test('xtest verb -v', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'verb',
       '-v'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
-    t.match(stdout, 'Verbose', 'stdout is verbose')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+      t.match(stdout, 'Verbose', 'stdout is verbose')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -444,21 +509,26 @@ await test('xtest verb -v', async (t) => {
  */
 await test('xtest verb --verbose', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'verb',
       '--verbose'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
-    t.match(stdout, 'Verbose', 'stdout is verbose')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Exercise verbosity', 'stdout is verbose')
+      t.match(stdout, 'Verbose', 'stdout is verbose')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -470,19 +540,23 @@ await test('xtest verb --verbose', async (t) => {
  */
 await test('xtest --loglevel xxx', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--loglevel',
       'xxx'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    if (exitCode !== cli.ExitCodes.ERROR.SYNTAX) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 0, 'stdout is empty')
 
-    t.equal(outLines.length, 0, 'stdout is empty')
-
-    t.ok(errLines.length > 0, 'stderr has lines')
-    t.match(errLines[0], "error: Value 'xxx' not allowed for '--loglevel'",
-      'stderr is message')
+      t.ok(errLines.length > 0, 'stderr has lines')
+      t.match(errLines[0], "error: Value 'xxx' not allowed for '--loglevel'",
+        'stderr is message')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -494,18 +568,22 @@ await test('xtest --loglevel xxx', async (t) => {
  */
 await test('xtest --loglevel', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--loglevel'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    if (exitCode !== cli.ExitCodes.ERROR.SYNTAX) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 0, 'stdout is empty')
 
-    t.equal(outLines.length, 0, 'stdout is empty')
-
-    t.ok(errLines.length > 0, 'stderr has lines')
-    t.match(errLines[0], "error: '--loglevel' expects a value",
-      'stderr is message')
+      t.ok(errLines.length > 0, 'stderr has lines')
+      t.match(errLines[0], "error: '--loglevel' expects a value",
+        'stderr is message')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -517,18 +595,22 @@ await test('xtest --loglevel', async (t) => {
  */
 await test('xtest --loglevel --', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--loglevel'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    if (exitCode !== cli.ExitCodes.ERROR.SYNTAX) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.equal(outLines.length, 0, 'stdout is empty')
 
-    t.equal(outLines.length, 0, 'stdout is empty')
-
-    t.ok(errLines.length > 0, 'stderr has lines')
-    t.match(errLines[0], "error: '--loglevel' expects a value",
-      'stderr is message')
+      t.ok(errLines.length > 0, 'stderr has lines')
+      t.match(errLines[0], "error: '--loglevel' expects a value",
+        'stderr is message')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -540,7 +622,7 @@ await test('xtest --loglevel --', async (t) => {
  */
 await test('xtest --version -dd -- xx', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '--version',
       '-dd',
       '--',
@@ -548,16 +630,21 @@ await test('xtest --version -dd -- xx', async (t) => {
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    // Matching the whole string also checks that
-    // the colour changes are not used.
-    t.match(stdout, 'trace: Xtest.constructor()', 'has debug')
+      const stdout = outLines.join('\n')
+      // Matching the whole string also checks that
+      // the colour changes are not used.
+      t.match(stdout, 'trace: Xtest.constructor()', 'has debug')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -569,21 +656,26 @@ await test('xtest --version -dd -- xx', async (t) => {
  */
 await test('xtest long -h', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'long',
       '-h'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, '                  [-- <very-long-long-long-args>...]',
-      'stdout has long post options')
+      const stdout = outLines.join('\n')
+      t.match(stdout, '                  [-- <very-long-long-long-args>...]',
+        'stdout has long post options')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -595,23 +687,29 @@ await test('xtest long -h', async (t) => {
  */
 await test('xtest long -xyz', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'long',
       '--long',
       'value',
-      '--xyz'
+      '--xyz',
+      '-dd'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit code is syntax')
+    if (exitCode !== cli.ExitCodes.ERROR.SYNTAX) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'Usage: xtest long', 'stdout has help')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'Usage: xtest long', 'stdout has help')
 
-    t.ok(errLines.length > 0, 'stderr has lines')
-    t.match(errLines[0], "error: Option '--xyz' not supported",
-      'stderr has error')
+      t.ok(errLines.length > 0, 'stderr has lines')
+      t.match(errLines[0], "error: Option '--xyz' not supported",
+        'stderr has error')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -623,20 +721,25 @@ await test('xtest long -xyz', async (t) => {
  */
 await test('xtest -h', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       '-h'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, '                                         Extra options',
-      'stdout has long early options')
+      const stdout = outLines.join('\n')
+      t.match(stdout, '                                         Extra options',
+        'stdout has long early options')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -648,27 +751,32 @@ await test('xtest -h', async (t) => {
  */
 await test('xtest many -h', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'many',
       '-h'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, '                  [--two <name>]+',
-      'stdout has many options')
-    t.match(stdout, '[--four <s>]', 'has <s>')
-    t.match(stdout, '  --four <s>  ', 'has <s>')
-    t.match(stdout, 'Option two (multiple)', 'has multiple')
-    t.match(stdout, 'Option three (optional, multiple)',
-      'has optional multiple')
-    t.match(stdout, 'Option four (optional)', 'has optional')
+      const stdout = outLines.join('\n')
+      t.match(stdout, '                  [--two <name>]+',
+        'stdout has many options')
+      t.match(stdout, '[--four <s>]', 'has <s>')
+      t.match(stdout, '  --four <s>  ', 'has <s>')
+      t.match(stdout, 'Option two (multiple)', 'has multiple')
+      t.match(stdout, 'Option three (optional, multiple)',
+        'has optional multiple')
+      t.match(stdout, 'Option four (optional)', 'has optional')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -680,23 +788,28 @@ await test('xtest many -h', async (t) => {
  */
 await test('wtest-long-name -h', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runCliWtest([
+    const { exitCode, outLines, errLines } = await runCliWtest([
       '-h'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // dumpLines(outLines)
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    // dumpLines(outLines)
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, 'wtest-long-name -h|--help            Quick help',
-      'has long name')
-    t.match(stdout, '  five-long-command,', 'has command five')
-    t.match(stdout, '  two-long-command', 'has command two')
+      const stdout = outLines.join('\n')
+      t.match(stdout, 'wtest-long-name -h|--help            Quick help',
+        'has long name')
+      t.match(stdout, '  five-long-command,', 'has command five')
+      t.match(stdout, '  two-long-command', 'has command two')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -708,22 +821,27 @@ await test('wtest-long-name -h', async (t) => {
  */
 await test('xtest gen', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'gen'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    // dumpLines(outLines)
-    t.match(stdout, 'generators:', 'stdout has generators')
-    assert(pack?.homepage)
-    t.match(stdout, `homepage: '${pack.homepage}'`)
+      const stdout = outLines.join('\n')
+      // dumpLines(outLines)
+      t.match(stdout, 'generators:', 'stdout has generators')
+      assert(pack?.homepage)
+      t.match(stdout, `homepage: '${pack.homepage}'`)
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -735,21 +853,25 @@ await test('xtest gen', async (t) => {
  */
 await test('xtest unim', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'unim'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
+    t.equal(exitCode, cli.ExitCodes.ERROR.APPLICATION, 'exit code is app')
+    if (exitCode !== cli.ExitCodes.ERROR.APPLICATION) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      // There should be no error messages.
+      t.equal(outLines.length, 0, 'stdout is empty')
 
-    // There should be no error messages.
-    t.equal(outLines.length, 0, 'stdout is empty')
-
-    t.ok(errLines.length > 0, 'stderr has lines')
-    // After adding the abstract Runnable, the error message changed.
-    // t.match(stderr, 'AssertionError', 'stderr has assertion')
-    t.match(errLines[0], 'TypeError: this.main is not a function',
-      'stderr has error')
+      t.ok(errLines.length > 0, 'stderr has lines')
+      // After adding the abstract Runnable, the error message changed.
+      // t.match(stderr, 'AssertionError', 'stderr has assertion')
+      t.match(errLines[0], 'TypeError: this.main is not a function',
+        'stderr has error')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -797,21 +919,25 @@ await test('xtest unim', async (t) => {
  */
 await test('xtest cwd -C /tmp/xx', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'cwd',
       '-C',
       '/tmp/xx'
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
+    } else {
+      t.ok(outLines.length > 0, 'stdout has lines')
+      const stdout = outLines.join('\n')
+      t.match(stdout, '/tmp/xx\n', 'stdout has path')
 
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    t.match(stdout, '/tmp/xx\n', 'stdout has path')
-
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
@@ -823,7 +949,7 @@ await test('xtest cwd -C /tmp/xx', async (t) => {
  */
 await test('xtest cwd -C /tmp/xx -C yy', async (t) => {
   try {
-    const { exitCode: code, outLines, errLines } = await runLibXtest([
+    const { exitCode, outLines, errLines } = await runLibXtest([
       'cwd',
       '-C',
       '/tmp/xx',
@@ -832,19 +958,24 @@ await test('xtest cwd -C /tmp/xx -C yy', async (t) => {
     ])
 
     // Check exit code.
-    t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
-
-    t.ok(outLines.length > 0, 'stdout has lines')
-    const stdout = outLines.join('\n')
-    const absPath = path.resolve('/tmp/xx', 'yy')
-    if (os.platform() === 'win32') {
-      t.match(stdout, absPath, 'stdout has path')
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+    if (exitCode !== cli.ExitCodes.SUCCESS) {
+      dumpLines(errLines)
+      dumpLines(outLines)
     } else {
-      t.match(stdout, absPath, 'stdout has path')
-    }
+      t.ok(outLines.length > 0, 'stdout has lines')
 
-    // There should be no error messages.
-    t.equal(errLines.length, 0, 'stderr is empty')
+      const stdout = outLines.join('\n')
+      const absPath = path.resolve('/tmp/xx', 'yy')
+      if (os.platform() === 'win32') {
+        t.match(stdout, absPath, 'stdout has path')
+      } else {
+        t.match(stdout, absPath, 'stdout has path')
+      }
+
+      // There should be no error messages.
+      t.equal(errLines.length, 0, 'stderr is empty')
+    }
   } catch (err: any) {
     t.fail(err.message)
   }
