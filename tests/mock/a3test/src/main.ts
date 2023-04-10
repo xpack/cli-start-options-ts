@@ -29,6 +29,8 @@ export class Test extends cli.Application {
     super(params)
 
     const context: cli.Context = this.context
+    const log = context.log
+    log.trace(`${this.constructor.name}.constructor()`)
 
     // Mandatory, must be set here, not in the library, since it computes
     // the root path as relative to the path of this file..

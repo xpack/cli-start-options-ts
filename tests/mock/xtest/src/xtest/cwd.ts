@@ -34,6 +34,10 @@ export class Long extends cli.Command {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: cli.CommandConstructorParams) {
     super(params)
+
+    const context: cli.Context = this.context
+    const log = context.log
+    log.trace(`${this.constructor.name}.constructor()`)
   }
 
   /**

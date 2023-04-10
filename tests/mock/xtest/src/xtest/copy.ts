@@ -45,6 +45,10 @@ export class Copy extends cli.Command {
   constructor (params: cli.CommandConstructorParams) {
     super(params)
 
+    const context: cli.Context = this.context
+    const log = context.log
+    log.trace(`${this.constructor.name}.constructor()`)
+
     this.context.options.addGroups([
       {
         title: 'Copy options',

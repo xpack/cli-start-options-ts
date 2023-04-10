@@ -38,6 +38,10 @@ export class Long extends cli.Command {
   constructor (params: cli.CommandConstructorParams) {
     super(params)
 
+    const context: cli.Context = this.context
+    const log = context.log
+    log.trace(`${this.constructor.name}.constructor()`)
+
     this.context.options.addGroups([
       {
         title: 'Long options',
@@ -71,7 +75,8 @@ export class Long extends cli.Command {
     _argv: string[],
     _forwardableArgv: string[]
   ): Promise<number> {
-    const log = this.context.log
+    const context: cli.Context = this.context
+    const log = context.log
     log.trace(`${this.constructor.name}.main()`)
 
     log.info(this.getHelpTitle())
