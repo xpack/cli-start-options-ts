@@ -436,16 +436,9 @@ abstract class CommandBaseNode {
  * It is a generic node with additional constructor constraints.
  */
 export class CommandNode extends CommandBaseNode {
-  constructor (params: CommandNodeParams) {
-    super(params)
-
-    if (!((params.subCommands != null) &&
-      Object.values(params.subCommands).length > 0)) {
-      // If there are no sub-commands, the module must be defined.
-      assert(params.modulePath,
-        `'${params.name}' must have a modulePath`)
-    }
-  }
+  // constructor (params: CommandNodeParams) {
+  //   super(params)
+  // }
 
   /**
    * @summary Add a new command node to the current node.
@@ -470,6 +463,14 @@ export class CommandNode extends CommandBaseNode {
     const commandNode = new CommandNode(params)
     this.children.set(params.name, commandNode)
     commandNode.parent = this
+
+    if (Object.values(params.subCommands ?? {}).length === 0 &&
+      this.getModulePath() === undefined) {
+      // If there are no sub-commands, and the parent has no modulePath,
+      // the modulePath must be explicitly defined.
+      assert(params.modulePath,
+        `'${params.name}' must have a modulePath`)
+    }
 
     return commandNode
   }
