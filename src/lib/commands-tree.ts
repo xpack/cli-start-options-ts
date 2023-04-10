@@ -190,8 +190,8 @@ abstract class CommandBaseNode {
 
     this.hasForwardableArguments = params.hasForwardableArguments ?? false
 
-    this.hasCustomOptions = params.hasCustomOptions ?? true
-    this.hasCustomArgs = params.hasCustomArgs ?? true
+    this.hasCustomOptions = params.hasCustomOptions ?? false
+    this.hasCustomArgs = params.hasCustomArgs ?? false
 
     // Tree of characters. Built by buildCharactersTrees().
     this.charactersTree = new CharactersTree(this)
