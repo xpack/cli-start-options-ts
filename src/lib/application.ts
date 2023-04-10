@@ -244,7 +244,7 @@ export class Application extends Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace(`${this.constructor.name}.constructor()`)
+    log.trace('Application.constructor()')
 
     this.commandsTree = new CommandsTree({ context })
 
@@ -864,7 +864,7 @@ export class Application extends Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace(`${this.constructor.name}.dispatchCommand()`)
+    log.trace('Application.dispatchCommand()')
 
     context.startTimestampMilliseconds = Date.now()
 
