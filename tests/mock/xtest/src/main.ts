@@ -68,26 +68,26 @@ export class Xtest extends cli.Application {
     this.commandsTree.addCommands({
       copy: {
         aliases: ['c'],
-        modulePath: 'src/xtest/copy.js',
+        moduleRelativePath: 'src/xtest/copy.js',
         helpOptions: {
           title: 'Copy a file to another file'
         }
       },
       notclass: {
-        modulePath: 'src/xtest/not-class.js'
+        moduleRelativePath: 'src/xtest/not-class.js'
       },
       con: {
-        modulePath: 'src/xtest/con.js'
+        moduleRelativePath: 'src/xtest/con.js'
       },
       verbosity: {
         aliases: ['vb'],
-        modulePath: 'src/xtest/verbosity.js',
+        moduleRelativePath: 'src/xtest/verbosity.js',
         helpOptions: {
           title: 'Exercise verbosity'
         }
       },
       long: {
-        modulePath: 'src/xtest/long.js',
+        moduleRelativePath: 'src/xtest/long.js',
         helpOptions: {
           title: 'Test long options',
           usagePreOptions: '[<name>...]', // Array of test names.
@@ -96,32 +96,32 @@ export class Xtest extends cli.Application {
         // hasCustomOptions: false
       },
       many: {
-        modulePath: 'src/xtest/many.js',
+        moduleRelativePath: 'src/xtest/many.js',
         helpOptions: {
           title: 'Test many options',
           usagePreOptions: '[<name1> <name2> <name3>...]'
         }
       },
       gen: {
-        modulePath: 'src/xtest/generator.js',
+        moduleRelativePath: 'src/xtest/generator.js',
         helpOptions: {
           title: 'Test generator options'
         }
       },
       unimpl: {
-        modulePath: 'src/xtest/unimpl.js',
+        moduleRelativePath: 'src/xtest/unimpl.js',
         helpOptions: {
           title: 'Test unimpl options'
         }
       },
       cwd: {
-        modulePath: 'src/xtest/cwd.js',
+        moduleRelativePath: 'src/xtest/cwd.js',
         helpOptions: {
           title: 'CWD options'
         }
       },
       multi: {
-        modulePath: 'src/xtest/multi.js',
+        moduleRelativePath: 'src/xtest/multi.js',
         className: 'Multi',
         helpOptions: {
           title: 'Multiple subcommands'
@@ -129,7 +129,7 @@ export class Xtest extends cli.Application {
         hasCustomArgs: true,
         subCommands: {
           first: {
-            modulePath: 'src/xtest/multi.js',
+            moduleRelativePath: 'src/xtest/multi.js',
             className: 'MultiFirst',
             helpOptions: {
               title: 'Multiple first'
@@ -137,7 +137,7 @@ export class Xtest extends cli.Application {
             hasCustomArgs: true
           },
           second: {
-            modulePath: 'src/xtest/multi.js',
+            moduleRelativePath: 'src/xtest/multi.js',
             className: 'MultiSecond',
             helpOptions: {
               title: 'Multiple second'
@@ -147,7 +147,7 @@ export class Xtest extends cli.Application {
         }
       },
       noopts: {
-        modulePath: 'src/xtest/noopts.js',
+        moduleRelativePath: 'src/xtest/noopts.js',
         helpOptions: {
           title: 'No options'
         }

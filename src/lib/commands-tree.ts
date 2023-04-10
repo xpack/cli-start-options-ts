@@ -53,7 +53,7 @@ interface CommandTemplate {
   aliases?: string[]
   /** Relative path to module source.
    * Mandatory if not defined by sub-commands */
-  modulePath?: string
+  moduleRelativePath?: string
   /** Optional class name (default the first
    *  class derived from `cli.Command` in module) */
   className?: string
@@ -125,7 +125,7 @@ abstract class CommandBaseNode {
   /** Possible aliases of the command, usually shorter or even misspelled. */
   public aliases: string[]
   /** Path to the module implementing the command. */
-  public modulePath?: string | undefined
+  public moduleRelativePath?: string | undefined
   /** Optional class name, if multiple classes are in the same module. */
   public className?: string | undefined
   /** Optional properties used by the help subsystem. */
@@ -182,7 +182,7 @@ abstract class CommandBaseNode {
       array[index] = str
     })
 
-    this.modulePath = params.modulePath
+    this.moduleRelativePath = params.moduleRelativePath
     this.className = params.className
 
     // Map of options for the helper.
@@ -266,8 +266,8 @@ abstract class CommandBaseNode {
    * If the current node has no module path defined, recurse to parent.
    */
   getModulePath (): string | undefined {
-    if (this.modulePath !== undefined) {
-      return this.modulePath
+    if (this.moduleRelativePath !== undefined) {
+      return this.moduleRelativePath
     }
 
     if (this.parent === undefined) {
@@ -465,8 +465,8 @@ export class CommandNode extends CommandBaseNode {
       this.getModulePath() === undefined) {
       // If there are no sub-commands, and the parent has no modulePath,
       // the modulePath must be explicitly defined.
-      assert(params.modulePath,
-        `'${params.name}' must have a modulePath`)
+      assert(params.moduleRelativePath,
+        `'${params.name}' must have a moduleRelativePath`)
     }
 
     return commandNode
@@ -537,11 +537,11 @@ export class CommandsTree extends CommandNode {
 
     const commandNode = this.findCommandNode(commands)
 
-    const modulePath = commandNode.getModulePath()
-    assert(modulePath)
+    const moduleRelativePath = commandNode.getModulePath()
+    assert(moduleRelativePath)
 
     return {
-      moduleRelativePath: modulePath,
+      moduleRelativePath,
       className: commandNode.className,
       commandNode
     }

@@ -82,12 +82,12 @@ await test('CharacterNode addCommand', async (t) => {
   const commandsTree = new cli.CommandsTree({ context })
   const copyCommandNode = commandsTree.addCommandNode({
     name: 'copy',
-    modulePath: '.',
+    moduleRelativePath: '.',
     context
   })
   const confCommandNode = commandsTree.addCommandNode({
     name: 'conf',
-    modulePath: '.',
+    moduleRelativePath: '.',
     context
   })
 
@@ -166,18 +166,18 @@ await test('CharactersTree findCommandNode', async (t) => {
   const commandsTree = new cli.CommandsTree({ context })
   const copyCommandNode = commandsTree.addCommandNode({
     name: 'copy',
-    modulePath: '.',
+    moduleRelativePath: '.',
     context
   })
   const copaCommandNode = commandsTree.addCommandNode({
     name: 'copa',
-    modulePath: '.',
+    moduleRelativePath: '.',
     context
   })
   const confCommandNode = commandsTree.addCommandNode({
     name: 'config',
     aliases: ['conf', 'cong', 'co'],
-    modulePath: '.',
+    moduleRelativePath: '.',
     context
   })
 
@@ -250,7 +250,8 @@ await test('CommandsTree', async (t) => {
   t.equal(commandsTree.context, context, 'tree context')
   t.equal(commandsTree.name, '(tree)', 'tree name')
   t.equal(commandsTree.aliases.length, 0, 'tree empty aliases')
-  t.equal(commandsTree.modulePath, undefined, 'tree no modulePath')
+  t.equal(commandsTree.moduleRelativePath, undefined,
+    'tree no moduleRelativePath')
   t.equal(commandsTree.className, undefined, 'tree className undefined')
 
   t.equal(commandsTree.helpOptions, undefined, 'tree helpOptions undefined')
@@ -304,14 +305,14 @@ await test('CommandsTree findCommandNode', async (t) => {
 
   commandsTree.addCommands({
     copy: {
-      modulePath: 'copy.js',
+      moduleRelativePath: 'copy.js',
       className: 'Copy',
       helpOptions: {
         title: 'The copy command'
       }
     },
     conf: {
-      modulePath: 'conf.js'
+      moduleRelativePath: 'conf.js'
     }
   })
 
@@ -325,7 +326,8 @@ await test('CommandsTree findCommandNode', async (t) => {
   t.equal(commands[1], 'conf', 'second is conf')
 
   const copyCommandNode = commandsTree.findCommandNode(['copy'])
-  t.equal(copyCommandNode.modulePath, 'copy.js', '"copy" modulePath is copy.js')
+  t.equal(copyCommandNode.moduleRelativePath, 'copy.js',
+    '"copy" moduleRelativePath is copy.js')
   t.equal(copyCommandNode.className, 'Copy', 'copy class is Copy')
 
   t.equal(copyCommandNode.depth, 2, 'copy depth 2')
@@ -333,7 +335,7 @@ await test('CommandsTree findCommandNode', async (t) => {
   // Test findCommandModule().
   const foundCommandModule = commandsTree.findCommandModule(['copy'])
   t.equal(foundCommandModule.moduleRelativePath, 'copy.js',
-    '"copy" modulePath is copy.js')
+    '"copy" moduleRelativePath is copy.js')
   t.equal(foundCommandModule.className, 'Copy', 'copy class is Copy')
 
   t.equal(copyCommandNode.getHelpTitle(), 'The copy command',
@@ -349,8 +351,8 @@ await test('CommandsTree findCommandNode', async (t) => {
     'tree helpOptions title set')
 
   const confCommandNode = commandsTree.findCommandNode(['conf'])
-  t.equal(confCommandNode.modulePath, 'conf.js',
-    '"conf" modulePath is conf.js')
+  t.equal(confCommandNode.moduleRelativePath, 'conf.js',
+    '"conf" moduleRelativePath is conf.js')
 
   t.equal(confCommandNode.getHelpTitle(), helpTitle,
     'conf command title')
@@ -364,16 +366,16 @@ await test('subcommands', async (t) => {
   const commandsTree = new cli.CommandsTree({ context })
   commandsTree.addCommands({
     copy: {
-      modulePath: 'copy.js',
+      moduleRelativePath: 'copy.js',
       subCommands: {
         binary: {
-          modulePath: 'copyBin.js'
+          moduleRelativePath: 'copyBin.js'
         },
         ascii: {
-          modulePath: 'copyAsc.js'
+          moduleRelativePath: 'copyAsc.js'
         },
         other: {
-          modulePath: 'copyOther.js',
+          moduleRelativePath: 'copyOther.js',
           subCommands: {
             one: {
               className: 'CopyOtherOne'
@@ -386,7 +388,7 @@ await test('subcommands', async (t) => {
       }
     },
     conf: {
-      modulePath: 'conf.js'
+      moduleRelativePath: 'conf.js'
     }
   })
 
@@ -403,15 +405,16 @@ await test('subcommands', async (t) => {
   let commandNode
   let commandParts
   commandNode = commandsTree.findCommandNode(['copy'])
-  t.equal(commandNode.modulePath, 'copy.js', '"copy" modulePath is copy.js')
+  t.equal(commandNode.moduleRelativePath, 'copy.js',
+    '"copy" moduleRelativePath is copy.js')
 
   commandParts = commandNode.getUnaliasedCommandParts()
   t.equal(commandParts.length, 1, 'unaliased array has one entry')
   t.equal(commandParts[0], 'copy', 'first command is copy')
 
   commandNode = commandsTree.findCommandNode(['copy', 'binary'])
-  t.equal(commandNode.modulePath, 'copyBin.js',
-    '"copy binary" modulePath is copyBin.js')
+  t.equal(commandNode.moduleRelativePath, 'copyBin.js',
+    '"copy binary" moduleRelativePath is copyBin.js')
 
   t.equal(commandNode.depth, 3, 'copy binary depth 3')
 
@@ -421,8 +424,8 @@ await test('subcommands', async (t) => {
   t.equal(commandParts[1], 'binary', 'second command is binary')
 
   commandNode = commandsTree.findCommandNode(['copy', 'ascii'])
-  t.equal(commandNode.modulePath, 'copyAsc.js',
-    '"copy ascii" modulePath is copyAsc.js')
+  t.equal(commandNode.moduleRelativePath, 'copyAsc.js',
+    '"copy ascii" moduleRelativePath is copyAsc.js')
 
   commandParts = commandNode.getUnaliasedCommandParts()
   t.equal(commandParts.length, 2, 'unaliased array has 2 entries')
@@ -431,11 +434,12 @@ await test('subcommands', async (t) => {
 
   commandNode = commandsTree.findCommandNode(['copy', 'other', 'one'])
   t.equal(commandNode.getModulePath(), 'copyOther.js',
-    '"copy other one" modulePath is copyOther.js')
+    '"copy other one" moduleRelativePath is copyOther.js')
   t.equal(commandNode.depth, 4, 'copy binary depth 4')
 
   commandNode = commandsTree.findCommandNode(['conf'])
-  t.equal(commandNode.modulePath, 'conf.js', '"conf" modulePath is conf.js')
+  t.equal(commandNode.moduleRelativePath, 'conf.js',
+    '"conf" moduleRelativePath is conf.js')
 
   commandParts = commandNode.getUnaliasedCommandParts()
   t.equal(commandParts.length, 1, 'unaliased array has one entry')
@@ -453,11 +457,11 @@ await test('two commands', async (t) => {
   const commandsTree = new cli.CommandsTree({ context })
   commandsTree.addCommands({
     copy: {
-      modulePath: 'copy.js',
+      moduleRelativePath: 'copy.js',
       className: 'Copy'
     },
     conf: {
-      modulePath: 'conf.js'
+      moduleRelativePath: 'conf.js'
     }
   })
 
@@ -476,7 +480,7 @@ await test('two commands', async (t) => {
   let commandNode
   let arr
   commandNode = commandsTree.findCommandNode(['copy'])
-  t.equal(commandNode.modulePath, 'copy.js', 'copy module is copy.js')
+  t.equal(commandNode.moduleRelativePath, 'copy.js', 'copy module is copy.js')
   t.equal(commandNode.className, 'Copy', 'copy class is Copy')
 
   // Test findCommandModule().
@@ -490,7 +494,7 @@ await test('two commands', async (t) => {
   t.equal(arr[0], 'copy', 'first command is copy')
 
   commandNode = commandsTree.findCommandNode(['conf'])
-  t.equal(commandNode.modulePath, 'conf.js', 'conf module is conf.js')
+  t.equal(commandNode.moduleRelativePath, 'conf.js', 'conf module is conf.js')
   t.equal(commandNode.className, undefined, 'conf class is not defined')
 
   arr = commandNode.getUnaliasedCommandParts()
@@ -498,10 +502,10 @@ await test('two commands', async (t) => {
   t.equal(arr[0], 'conf', 'first command is conf')
 
   commandNode = commandsTree.findCommandNode(['cop'])
-  t.equal(commandNode.modulePath, 'copy.js', 'cop module is copy.js')
+  t.equal(commandNode.moduleRelativePath, 'copy.js', 'cop module is copy.js')
 
   commandNode = commandsTree.findCommandNode(['con'])
-  t.equal(commandNode.modulePath, 'conf.js', 'con module is conf.js')
+  t.equal(commandNode.moduleRelativePath, 'conf.js', 'con module is conf.js')
 
   try {
     commandNode = commandsTree.findCommandNode(['copyy'])
@@ -540,10 +544,10 @@ await test('duplicate commands', async (t) => {
   const commandsTree = new cli.CommandsTree({ context })
   commandsTree.addCommands({
     copy: {
-      modulePath: 'copy.js'
+      moduleRelativePath: 'copy.js'
     },
     conf: {
-      modulePath: 'conf.js'
+      moduleRelativePath: 'conf.js'
     }
   })
 
@@ -553,7 +557,7 @@ await test('duplicate commands', async (t) => {
   try {
     commandsTree.addCommands({
       copy: {
-        modulePath: 'copy.js'
+        moduleRelativePath: 'copy.js'
       }
     })
     t.fail('duplicate copy did not throw')
@@ -573,10 +577,10 @@ await test('aliases', async (t) => {
   commandsTree.addCommands({
     build: {
       aliases: ['b', 'bild'],
-      modulePath: 'build.js'
+      moduleRelativePath: 'build.js'
     },
     conf: {
-      modulePath: 'conf.js'
+      moduleRelativePath: 'conf.js'
     }
   })
 
@@ -592,20 +596,21 @@ await test('aliases', async (t) => {
 
   let commandNode
   commandNode = commandsTree.findCommandNode(['build'])
-  t.equal(commandNode.modulePath, 'build.js', 'build module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js',
+    'build module is build.js')
 
   const arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'build', 'first command is build')
 
   commandNode = commandsTree.findCommandNode(['bild'])
-  t.equal(commandNode.modulePath, 'build.js', 'bild module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js', 'bild module is build.js')
 
   commandNode = commandsTree.findCommandNode(['b'])
-  t.equal(commandNode.modulePath, 'build.js', 'b module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js', 'b module is build.js')
 
   commandNode = commandsTree.findCommandNode(['bi'])
-  t.equal(commandNode.modulePath, 'build.js', 'bi module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js', 'bi module is build.js')
 
   try {
     commandNode = commandsTree.findCommandNode(['bildu'])
@@ -615,7 +620,7 @@ await test('aliases', async (t) => {
   }
 
   commandNode = commandsTree.findCommandNode(['conf'])
-  t.equal(commandNode.modulePath, 'conf.js', 'conf module is conf.js')
+  t.equal(commandNode.moduleRelativePath, 'conf.js', 'conf module is conf.js')
 
   t.end()
 })
@@ -627,10 +632,10 @@ await test('mixed aliases', async (t) => {
   commandsTree.addCommands({
     build: {
       aliases: ['c', 'cild'],
-      modulePath: 'build.js'
+      moduleRelativePath: 'build.js'
     },
     conf: {
-      modulePath: 'conf.js'
+      moduleRelativePath: 'conf.js'
     }
   })
 
@@ -646,20 +651,21 @@ await test('mixed aliases', async (t) => {
 
   let commandNode
   commandNode = commandsTree.findCommandNode(['build'])
-  t.equal(commandNode.modulePath, 'build.js', 'build module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js',
+    'build module is build.js')
 
   const arr = commandNode.getUnaliasedCommandParts()
   t.equal(arr.length, 1, 'unaliased array has one entry')
   t.equal(arr[0], 'build', 'first command is build')
 
   commandNode = commandsTree.findCommandNode(['cild'])
-  t.equal(commandNode.modulePath, 'build.js', 'cild module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js', 'cild module is build.js')
 
   commandNode = commandsTree.findCommandNode(['ci'])
-  t.equal(commandNode.modulePath, 'build.js', 'ci module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js', 'ci module is build.js')
 
   commandNode = commandsTree.findCommandNode(['c'])
-  t.equal(commandNode.modulePath, 'build.js', 'c module is build.js')
+  t.equal(commandNode.moduleRelativePath, 'build.js', 'c module is build.js')
 
   try {
     commandNode = commandsTree.findCommandNode(['cildu'])
@@ -669,10 +675,10 @@ await test('mixed aliases', async (t) => {
   }
 
   commandNode = commandsTree.findCommandNode(['conf'])
-  t.equal(commandNode.modulePath, 'conf.js', 'conf module is conf.js')
+  t.equal(commandNode.moduleRelativePath, 'conf.js', 'conf module is conf.js')
 
   commandNode = commandsTree.findCommandNode(['co'])
-  t.equal(commandNode.modulePath, 'conf.js', 'co module is conf.js')
+  t.equal(commandNode.moduleRelativePath, 'conf.js', 'co module is conf.js')
 
   t.end()
 })
@@ -684,19 +690,19 @@ await test('promotion', async (t) => {
   commandsTree.addCommands({
     copy: {
       aliases: ['cpy'],
-      modulePath: 'copy.js',
+      moduleRelativePath: 'copy.js',
       subCommands: {
         binary: {
           aliases: ['by'],
-          modulePath: 'copyBin.js'
+          moduleRelativePath: 'copyBin.js'
         },
         ascii: {
           aliases: ['ai'],
-          modulePath: 'copyAsc.js'
+          moduleRelativePath: 'copyAsc.js'
         },
         utf: {
           aliases: ['alt'],
-          modulePath: 'copyAlt.js'
+          moduleRelativePath: 'copyAlt.js'
         }
       }
     }
@@ -713,10 +719,11 @@ await test('promotion', async (t) => {
   let commandNode
 
   commandNode = commandsTree.findCommandNode(['c'])
-  t.equal(commandNode.modulePath, 'copy.js', 'c module is copy.js')
+  t.equal(commandNode.moduleRelativePath, 'copy.js', 'c module is copy.js')
 
   commandNode = commandsTree.findCommandNode(['c', 'b'])
-  t.equal(commandNode.modulePath, 'copyBin.js', 'c b module is copyBin.js')
+  t.equal(commandNode.moduleRelativePath, 'copyBin.js',
+    'c b module is copyBin.js')
 
   try {
     commandNode = commandsTree.findCommandNode(['c', 'a'])
@@ -736,10 +743,10 @@ await test('subcommands without parent command class', async (t) => {
     copy: {
       subCommands: {
         binary: {
-          modulePath: 'copyBin.js'
+          moduleRelativePath: 'copyBin.js'
         },
         ascii: {
-          modulePath: 'copyAsc.js'
+          moduleRelativePath: 'copyAsc.js'
         }
       }
     }
@@ -756,10 +763,10 @@ await test('subcommands without parent command class', async (t) => {
   let commandNode
 
   commandNode = commandsTree.findCommandNode(['copy'])
-  t.notOk(commandNode.modulePath, 'copy has no modulePath')
+  t.notOk(commandNode.moduleRelativePath, 'copy has no moduleRelativePath')
 
   commandNode = commandsTree.findCommandNode(['copy', 'binary'])
-  t.equal(commandNode.modulePath, 'copyBin.js',
+  t.equal(commandNode.moduleRelativePath, 'copyBin.js',
     'copy binary module is copyBin.js')
 
   t.end()
@@ -774,7 +781,7 @@ await test('subcommands without module', async (t) => {
       copy: {
         subCommands: {
           binary: {
-            modulePath: 'copyBin.js'
+            moduleRelativePath: 'copyBin.js'
           },
           ascii: {
           }
@@ -783,7 +790,8 @@ await test('subcommands without module', async (t) => {
     })
     t.fail('buildCharactersTree did not throw')
   } catch (err: any) {
-    t.match(err.message, 'must have a modulePath', 'must have modulePath')
+    t.match(err.message, 'must have a moduleRelativePath',
+      'must have moduleRelativePath')
   }
 
   t.end()

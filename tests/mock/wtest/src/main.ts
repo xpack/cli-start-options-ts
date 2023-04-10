@@ -67,22 +67,22 @@ export class Wtest extends cli.Application {
     // Paths should be relative to the package root.
     this.commandsTree.addCommands({
       'one-long-command': {
-        modulePath: '.'
+        moduleRelativePath: '.'
       },
       'two-long-command': {
-        modulePath: '.'
+        moduleRelativePath: '.'
       },
       'three-long-command': {
-        modulePath: '.'
+        moduleRelativePath: '.'
       },
       'four-long-command': {
-        modulePath: '.'
+        moduleRelativePath: '.'
       },
       'five-long-command': {
-        modulePath: '.'
+        moduleRelativePath: '.'
       },
       'six-long-command': {
-        modulePath: '.'
+        moduleRelativePath: '.'
       }
     })
   }
