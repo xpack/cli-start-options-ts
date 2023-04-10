@@ -34,6 +34,7 @@
     "pretest-100-c8": "npm run compile && npm run lint",
     "tap": "tap --reporter=spec",
     "tap-c8": "c8 tap --reporter=spec",
+    "tap-c8-xxx": "c8 tap --reporter=spec tests/tap/100-*.ts",
     "test-tap": "tap",
     "test-tap-coverage": "tap --coverage",
     "test-tap-coverage-c8": "c8 -- tap",
