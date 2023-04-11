@@ -114,16 +114,21 @@ export interface OptionsGroup {
 export class Options {
   // --------------------------------------------------------------------------
 
-  public groups: OptionsGroup[] = []
-  public commonGroups: OptionsGroup[] = []
+  /** A reference to the application context. */
   protected context: Context
+  /** An array of groups of options. */
+  public groups: OptionsGroup[] = []
+  /** An array of groups of options, common to all commands. */
+  public commonGroups: OptionsGroup[] = []
 
+  /** A set used internally while processing options. */
   protected processedOptions = new Set<OptionDefinition>()
 
   /**
-   * @constructor
+   * @summary Create an instance of the `Options` object.
    *
-   * @param context Reference to context.
+   * @param params.context Reference to context.
+   * @param params.optionsGroups Optional array of option groups.
    */
   constructor (params: {
     context: Context
@@ -228,7 +233,7 @@ export class Options {
   /**
    * @summary Parse options, common and specific to a command.
    *
-   * @param argv Array of arguments.
+   * @param argv Array of argument values.
    * @returns Array of remaining arguments.
    *
    * @description
@@ -241,7 +246,10 @@ export class Options {
    */
   parse (
     argv: string[]
-  ): string[] {
+  ): {
+      remainingArgv: string[]
+      missingMandatoryErrors: string[]
+    } {
     assert(argv)
 
     assert(this.context, 'cli.Context not initialised')
@@ -256,19 +264,20 @@ export class Options {
       assert(optionsGroup.optionsDefinitions !== undefined)
       allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
     })
-
     this.commonGroups.forEach((optionsGroup) => {
       assert(optionsGroup.optionsDefinitions !== undefined)
       allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
     })
 
+    // Initialise the configuration for all options.
     allOptionDefinitions.forEach((optionDefinition) => {
       optionDefinition.init(this.context)
     })
 
+    // Initialise the set keeping track of processed options.
     this.processedOptions.clear()
 
-    const remainingArgs: string[] = []
+    const remainingArgv: string[] = []
     let wasProcessed = false
     let i = 0
     for (; i < argv.length; ++i) {
@@ -296,7 +305,7 @@ export class Options {
         }
       }
       if (!wasProcessed && arg !== undefined) {
-        remainingArgs.push(arg)
+        remainingArgv.push(arg)
       }
     }
     // If the previous look was terminated by a `--`,
@@ -304,37 +313,22 @@ export class Options {
     for (; i < argv.length; ++i) {
       const arg = argv[i]
       if (arg !== undefined) {
-        remainingArgs.push(arg)
+        remainingArgv.push(arg)
       }
     }
 
-    return remainingArgs
-  }
-
-  /**
-   * @summary Check if mandatory option is missing.
-   *
-   * @returns Array of errors or empty if everything is ok.
-   */
-  checkMissingMandatory (): string[] {
-    const allOptionDefinitions: OptionDefinition[] = []
-    this.groups.forEach((optionsGroup) => {
-      assert(optionsGroup.optionsDefinitions !== undefined)
-      allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
-    })
-
-    const errors: string[] = []
+    // Check if any mandatory option is missing.
+    const missingMandatoryErrors: string[] = []
     allOptionDefinitions.forEach((optionDefinition) => {
-      if (!(optionDefinition.isOptional !== undefined &&
-        optionDefinition.isOptional) &&
+      // If the option is mandatory and was not processed.
+      if (!(optionDefinition.isOptional ?? false) &&
         !this.processedOptions.has(optionDefinition)) {
-        const option = optionDefinition.options.join(' ')
-        errors.push(`Mandatory '${option}' not found`)
+        const option = optionDefinition.options.join('|')
+        missingMandatoryErrors.push(`Mandatory '${option}' not found`)
       }
     })
 
-    // Empty if no errors.
-    return errors
+    return { remainingArgv, missingMandatoryErrors }
   }
 
   /**
@@ -403,43 +397,6 @@ export class Options {
       this.processedOptions.add(optionDefinition)
       return 0
     }
-  }
-
-  /**
-   * @summary Return args up to the first `--`.
-   *
-   * @param argv Array of strings.
-   * @returns Possibly a shorter array.
-   */
-  filterOwnArguments (argv: string[]): string[] {
-    const ownArgs: string[] = []
-    for (const arg of argv) {
-      if (arg === '--') {
-        break
-      }
-      ownArgs.push(arg)
-    }
-    return ownArgs
-  }
-
-  /**
-   * @summary Return args after the first `--`, if any.
-   *
-   * @param argv Array of strings.
-   * @returns A shorter array, possibly empty.
-   */
-  filterOtherArguments (argv: string[]): string[] {
-    const otherArgs: string[] = []
-    let hasOther = false
-    for (const arg of argv) {
-      if (hasOther) {
-        otherArgs.push(arg)
-      } else if (arg === '--') {
-        hasOther = true
-        continue
-      }
-    }
-    return otherArgs
   }
 }
 

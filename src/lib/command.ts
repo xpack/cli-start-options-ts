@@ -109,7 +109,8 @@ export abstract class Command {
     context.options.initializeConfiguration()
 
     // Parse the args and return the remaining args, like package names.
-    const remainingArgs: string[] = context.options.parse(params.argv)
+    const { remainingArgv, missingMandatoryErrors } =
+      context.options.parse(params.argv)
 
     const config: Configuration = context.config
     log.trace(util.inspect(config))
@@ -120,9 +121,8 @@ export abstract class Command {
     }
 
     // Check if there are missing mandatory options.
-    const missingErrors = context.options.checkMissingMandatory()
-    if (missingErrors.length > 0) {
-      missingErrors.forEach((msg) => {
+    if (missingMandatoryErrors.length > 0) {
+      missingMandatoryErrors.forEach((msg) => {
         log.error(msg)
       })
       this.outputHelp()
@@ -130,7 +130,7 @@ export abstract class Command {
     }
 
     const { ownArgv, forwardableArgv } = this.splitForwardableArguments({
-      argv: remainingArgs
+      argv: remainingArgv
     })
 
     const errorMessages = this.validateArgv({

@@ -548,12 +548,8 @@ export class Application extends Command {
 
     // ------------------------------------------------------------------------
 
-    // Copy relevant args to local array.
-    // Start with 0, possibly end with `--`.
-    const mainArgs = options.filterOwnArguments(argv)
-
     // Isolate commands as words with letters and inner dashes.
-    const commands: string[] = this.identifyCommands(mainArgs)
+    const commands: string[] = this.identifyCommands(argv)
 
     // ------------------------------------------------------------------------
 
@@ -876,7 +872,7 @@ export class Application extends Command {
     })
 
     const options: Options = this.context.options
-    const remainingArgs = options.parse(argv)
+    const { remainingArgv } = options.parse(argv)
 
     // After parsing the options, the debug level is finally known.
     log.level = config.logLevel
@@ -889,13 +885,9 @@ export class Application extends Command {
       return ExitCodes.SUCCESS
     }
 
-    // Copy relevant args to local array.
-    // Start with 0, possibly end with `--`.
-    const mainArgs = options.filterOwnArguments(argv)
-
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
-    const commands: string[] = this.identifyCommands(mainArgs)
+    const commands: string[] = this.identifyCommands(argv)
 
     // If --help and no command, output the application help message.
     if ((commands.length === 0) &&
@@ -915,7 +907,7 @@ export class Application extends Command {
       if (!this.commandsTree.hasChildrenCommands()) {
         // There are no sub-commands, there should be only one
         // way of running this application.
-        exitCode = await this.prepareAndRun({ argv: remainingArgs })
+        exitCode = await this.prepareAndRun({ argv: remainingArgv })
       } else {
         // The complex application, with multiple commands.
         exitCode = await this.instantiateAndRunCommand({
