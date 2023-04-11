@@ -254,7 +254,8 @@ await test('CommandsTree', async (t) => {
     'tree no moduleRelativePath')
   t.equal(commandsTree.className, undefined, 'tree className undefined')
 
-  t.equal(commandsTree.helpOptions, undefined, 'tree helpOptions undefined')
+  t.equal(commandsTree.helpDefinitions, undefined,
+    'tree helpDefinitions undefined')
 
   t.notOk(commandsTree.hasForwardableArguments,
     'tree hasForwardableArguments false')
@@ -281,13 +282,13 @@ await test('CommandsTree', async (t) => {
   // --------------------------------------------------------------------------
   const helpTitle = 'my title'
   commandsTree.setHelpTitle(helpTitle)
-  t.equal(commandsTree.helpOptions?.title, helpTitle,
-    'tree helpOptions title set')
+  t.equal(commandsTree.helpDefinitions?.title, helpTitle,
+    'tree helpDefinitions title set')
 
   const helpTitle2 = 'my other title'
   commandsTree.setHelpTitle(helpTitle2)
-  t.equal(commandsTree.helpOptions?.title, helpTitle2,
-    'tree helpOptions other title set')
+  t.equal(commandsTree.helpDefinitions?.title, helpTitle2,
+    'tree helpDefinitions other title set')
 
   // --------------------------------------------------------------------------
   t.equal(commandsTree.getUnaliasedCommandParts.length, 0,
@@ -307,7 +308,7 @@ await test('CommandsTree findCommandNode', async (t) => {
     copy: {
       moduleRelativePath: 'copy.js',
       className: 'Copy',
-      helpOptions: {
+      helpDefinitions: {
         title: 'The copy command'
       }
     },
@@ -347,8 +348,8 @@ await test('CommandsTree findCommandNode', async (t) => {
 
   const helpTitle = 'my title'
   commandsTree.setHelpTitle(helpTitle)
-  t.equal(commandsTree.helpOptions?.title, helpTitle,
-    'tree helpOptions title set')
+  t.equal(commandsTree.helpDefinitions?.title, helpTitle,
+    'tree helpDefinitions title set')
 
   const confCommandNode = commandsTree.findCommandNode(['conf'])
   t.equal(confCommandNode.moduleRelativePath, 'conf.js',

@@ -69,7 +69,7 @@ export class Xtest extends cli.Application {
       copy: {
         aliases: ['c'],
         moduleRelativePath: 'src/xtest/copy.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Copy a file to another file'
         }
       },
@@ -82,13 +82,13 @@ export class Xtest extends cli.Application {
       verbosity: {
         aliases: ['vb'],
         moduleRelativePath: 'src/xtest/verbosity.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Exercise verbosity'
         }
       },
       long: {
         moduleRelativePath: 'src/xtest/long.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Test long options',
           usagePreOptions: '[<name>...]', // Array of test names.
           usagePostOptions: '[-- <very-long-long-long-args>...]'
@@ -97,33 +97,33 @@ export class Xtest extends cli.Application {
       },
       many: {
         moduleRelativePath: 'src/xtest/many.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Test many options',
           usagePreOptions: '[<name1> <name2> <name3>...]'
         }
       },
       gen: {
         moduleRelativePath: 'src/xtest/generator.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Test generator options'
         }
       },
       unimpl: {
         moduleRelativePath: 'src/xtest/unimpl.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Test unimpl options'
         }
       },
       cwd: {
         moduleRelativePath: 'src/xtest/cwd.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'CWD options'
         }
       },
       multi: {
         moduleRelativePath: 'src/xtest/multi.js',
         className: 'Multi',
-        helpOptions: {
+        helpDefinitions: {
           title: 'Multiple subcommands'
         },
         hasCustomArgs: true,
@@ -131,7 +131,7 @@ export class Xtest extends cli.Application {
           first: {
             moduleRelativePath: 'src/xtest/multi.js',
             className: 'MultiFirst',
-            helpOptions: {
+            helpDefinitions: {
               title: 'Multiple first'
             },
             hasCustomArgs: true
@@ -139,7 +139,7 @@ export class Xtest extends cli.Application {
           second: {
             moduleRelativePath: 'src/xtest/multi.js',
             className: 'MultiSecond',
-            helpOptions: {
+            helpDefinitions: {
               title: 'Multiple second'
             },
             hasCustomArgs: true
@@ -148,7 +148,7 @@ export class Xtest extends cli.Application {
       },
       noopts: {
         moduleRelativePath: 'src/xtest/noopts.js',
-        helpOptions: {
+        helpDefinitions: {
           title: 'No options'
         }
       }

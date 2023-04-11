@@ -125,7 +125,7 @@ export class Help {
     // Start with an empty line.
     this.output()
 
-    assert(context.commandNode.helpOptions)
+    assert(context.commandNode.helpDefinitions)
     this.outputTitle(context.commandNode.getHelpTitle())
 
     if (context.commandNode.hasChildrenCommands()) {
@@ -170,9 +170,9 @@ export class Help {
     let str: string = usage
 
     const preOptions =
-      this.context.commandNode?.helpOptions?.usagePreOptions ?? ''
+      this.context.commandNode?.helpDefinitions?.usagePreOptions ?? ''
     const postOptions =
-      this.context.commandNode?.helpOptions?.usagePostOptions ?? ''
+      this.context.commandNode?.helpDefinitions?.usagePostOptions ?? ''
     const options: Options = context.options
     const optionsGroups = options.groups
     const optionDefinitions: OptionDefinition[] = []
@@ -238,7 +238,7 @@ export class Help {
       [context.programName, ...context.commandNode.getUnaliasedCommandParts()]
         .join(' ')
 
-    const message = context.commandNode.helpOptions?.usagePostOptions ??
+    const message = context.commandNode.helpDefinitions?.usagePostOptions ??
       '[<args>...]'
 
     if (commands.length > 0) {

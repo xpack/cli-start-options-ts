@@ -42,7 +42,7 @@ import { Context } from './context.js'
 
 // ----------------------------------------------------------------------------
 
-interface CommandTemplateHelpOptions {
+interface CommandTemplateHelpDefinitions {
   title: string
   usagePreOptions?: string
   usagePostOptions?: string
@@ -58,7 +58,7 @@ interface CommandTemplate {
    *  class derived from `cli.Command` in module) */
   className?: string
   /** Optional helper options */
-  helpOptions?: CommandTemplateHelpOptions
+  helpDefinitions?: CommandTemplateHelpDefinitions
 
   /**
    * @summary Optional boolean flag for forwardable arguments.
@@ -129,7 +129,7 @@ abstract class CommandBaseNode {
   /** Optional class name, if multiple classes are in the same module. */
   public className?: string | undefined
   /** Optional properties used by the help subsystem. */
-  public helpOptions?: CommandTemplateHelpOptions | undefined
+  public helpDefinitions?: CommandTemplateHelpDefinitions | undefined
 
   /** Optional flag when the command has forwardable arguments. */
   public hasForwardableArguments: boolean
@@ -186,7 +186,7 @@ abstract class CommandBaseNode {
     this.className = params.className
 
     // Map of options for the helper.
-    this.helpOptions = params.helpOptions
+    this.helpDefinitions = params.helpDefinitions
 
     this.hasForwardableArguments = params.hasForwardableArguments ?? false
 
@@ -417,8 +417,8 @@ abstract class CommandBaseNode {
    * only in the parent command.
    */
   getHelpTitle (): string {
-    if (this.helpOptions?.title !== undefined) {
-      return this.helpOptions.title
+    if (this.helpDefinitions?.title !== undefined) {
+      return this.helpDefinitions.title
     }
 
     assert(this.parent)
@@ -488,12 +488,12 @@ export class CommandsTree extends CommandNode {
   }
 
   setHelpTitle (title: string): void {
-    if (this.helpOptions === undefined) {
-      this.helpOptions = {
+    if (this.helpDefinitions === undefined) {
+      this.helpDefinitions = {
         title
       }
     } else {
-      this.helpOptions.title = title
+      this.helpDefinitions.title = title
     }
   }
 
