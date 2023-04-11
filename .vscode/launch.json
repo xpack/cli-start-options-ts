@@ -103,7 +103,27 @@
       "type": "node",
       "request": "launch",
       "name": "tap commands-tree.ts",
-      "program": "${workspaceRoot}/tests/tap/122-commands-tree.ts",
+      "program": "${workspaceRoot}/tests/tap/050-commands-tree.ts",
+      "stopOnEntry": true,
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--loader=ts-node/esm",
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tap options.ts",
+      "program": "${workspaceRoot}/tests/tap/060-options.ts",
       "stopOnEntry": true,
       "args": [
       ],
