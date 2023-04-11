@@ -61,9 +61,11 @@ export class Copy extends cli.Command {
             init: (context) => {
               (context.config as CliConfigCopy).inputPath = undefined
             },
-            message: 'Input file',
             param: 'file',
-            isOptional: false // Mandatory
+            isOptional: false, // Mandatory
+            helpDefinitions: {
+              message: 'Input file'
+            }
           },
           {
             options: ['--output'],
@@ -73,9 +75,11 @@ export class Copy extends cli.Command {
             init: (context) => {
               (context.config as CliConfigCopy).outputPath = undefined
             },
-            message: 'Output file',
             param: 'file',
-            isOptional: false // Mandatory
+            isOptional: false, // Mandatory!
+            helpDefinitions: {
+              message: 'Output file'
+            }
           }
         ]
       }

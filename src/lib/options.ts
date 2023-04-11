@@ -64,15 +64,6 @@ export interface OptionDefinition {
   /** Mandatory function called to set an option value. */
   action: SetOptionFunction
 
-  // Optional.
-  /** Message to display; only options with messages are displayed in help. */
-  message?: string
-  /** True if it defines the option to get help;
-   *   not displayed in the common list, but as a separate line. */
-  isHelp?: boolean
-  /** True if it must be processed before
-   *   other options, for example interactive options. */
-  isRequiredEarly?: boolean
   /** True if the option should be followed by a value. */
   hasValue?: boolean
   /** Array of allowed values. */
@@ -82,12 +73,28 @@ export interface OptionDefinition {
   param?: string
   /** True if the option must be displayed
    *  surrounded by square brackets. False means mandatory. */
+
+  /** True if the option is optional, false if it is mandatory. */
   isOptional?: boolean
-  /** True if the option must be displayed
-   *  followed by an asterisk. */
-  isMultiple?: boolean
-  /** Default message */
-  helpDefaultMessage?: string
+
+  helpDefinitions?: {
+    /** Message to display; only options with messages are displayed in help. */
+    message?: string
+    /** Default message */
+    defaultMessage?: string
+
+    /** True if it must be processed before
+     *   other options, for example interactive options. */
+    isRequiredEarly?: boolean
+
+    /** True if it defines the option to get help;
+     *   not displayed in the common list, but as a separate line. */
+    isHelp?: boolean
+
+    /** True if the option must be displayed
+     *  followed by an asterisk. */
+    isMultiple?: boolean
+  }
 }
 
 /**
@@ -358,8 +365,7 @@ export class Options {
     let value: string
     // Values can be only an array, or null.
     // An array means the option takes a value.
-    if ((optionDefinition.hasValue !== undefined &&
-      optionDefinition.hasValue) ||
+    if ((optionDefinition.hasValue ?? false) ||
       optionDefinition.param !== undefined ||
       Array.isArray(optionDefinition.values)) {
       if (index < (argv.length - 1)) {

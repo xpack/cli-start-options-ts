@@ -67,9 +67,11 @@ export class Multi extends cli.Command {
               action: (context, val) => {
                 (context.config as CliConfigMulti).multi = val
               },
-              message: 'Multi option',
               param: 'name',
-              isOptional: true
+              isOptional: true,
+              helpDefinitions: {
+                message: 'Multi option'
+              }
             }
           ]
         }
@@ -138,9 +140,11 @@ export class MultiFirst extends Multi {
               action: (context, val) => {
                 (context.config as CliConfigMultiFirst).multiFirst = val
               },
-              message: 'Multi first option',
               param: 'int',
-              isOptional: true
+              isOptional: true,
+              helpDefinitions: {
+                message: 'Multi first option'
+              }
             }
           ]
         }
@@ -211,9 +215,11 @@ export class MultiSecond extends Multi {
             action: (context, val) => {
               (context.config as CliConfigMultiSecond).multiSecond = val
             },
-            message: 'Multi second option',
             param: 'int',
-            isOptional: true
+            isOptional: true,
+            helpDefinitions: {
+              message: 'Multi second option'
+            }
           }
         ]
       }
@@ -232,9 +238,11 @@ export class MultiSecond extends Multi {
             action: (context, val) => {
               (context.config as CliConfigMultiSecond).moreCommon = val
             },
-            message: 'More common second option',
             param: 'int',
-            isOptional: true
+            isOptional: true,
+            helpDefinitions: {
+              message: 'More common second option'
+            }
           }
         ]
       }

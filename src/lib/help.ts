@@ -186,6 +186,7 @@ export class Help {
     let buffer: string
     optionDefinitions.forEach((optionDefinition) => {
       buffer = ''
+      const helpDefinitions = optionDefinition.helpDefinitions ?? {}
       optionDefinition.options.forEach((val) => {
         // Assume the longest option is the more readable.
         if (val.length > buffer.length) {
@@ -194,19 +195,15 @@ export class Help {
       })
       if (optionDefinition.param !== undefined) {
         buffer += ` <${optionDefinition.param}>`
-      } else if (optionDefinition.hasValue !== undefined &&
-        optionDefinition.hasValue) {
+      } else if (optionDefinition.hasValue ?? false) {
         buffer += ' <s>'
       }
-      if (optionDefinition.isOptional !== undefined &&
-        optionDefinition.isOptional) {
+      if (optionDefinition.isOptional ?? false) {
         buffer = `[${buffer}]`
-        if (optionDefinition.isMultiple !== undefined &&
-          optionDefinition.isMultiple) {
+        if (helpDefinitions.isMultiple ?? false) {
           buffer += '*'
         }
-      } else if (optionDefinition.isMultiple !== undefined &&
-        optionDefinition.isMultiple) {
+      } else if (helpDefinitions.isMultiple ?? false) {
         buffer = `[${buffer}]+`
       }
 
@@ -345,9 +342,9 @@ export class Help {
 
     optionsGroups.forEach((optionsGroup) => {
       optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
-        if (optionDefinition.message !== undefined &&
-          (optionDefinition.isRequiredEarly !== undefined &&
-            optionDefinition.isRequiredEarly)) {
+        const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+        if (helpDefinitions.message !== undefined &&
+          (helpDefinitions.isRequiredEarly ?? false)) {
           let out = `${programName} `
           optionDefinition.options.forEach((opt, index) => {
             out += opt
@@ -358,7 +355,7 @@ export class Help {
           if (multiPass.isFirstPass) {
             multiPass.updateWidth(out.length)
           } else {
-            this.outputMaybeLongLine(out, optionDefinition.message, multiPass)
+            this.outputMaybeLongLine(out, helpDefinitions.message, multiPass)
           }
         }
       })
@@ -387,11 +384,10 @@ export class Help {
   ): void {
     let hasContent = false
     optionDefinitions.forEach((optionDefinition) => {
-      if (optionDefinition.message !== undefined &&
-        !(optionDefinition.isRequiredEarly !== undefined &&
-          optionDefinition.isRequiredEarly) &&
-        !(optionDefinition.isHelp !== undefined &&
-          optionDefinition.isHelp)) {
+      const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+      if (helpDefinitions.message !== undefined &&
+        !(helpDefinitions.isRequiredEarly ?? false) &&
+        !(helpDefinitions.isHelp ?? false)) {
         hasContent = true
       }
     })
@@ -405,11 +401,10 @@ export class Help {
     }
 
     optionDefinitions.forEach((optionDefinition) => {
-      if (optionDefinition.message !== undefined &&
-        !(optionDefinition.isRequiredEarly !== undefined &&
-          optionDefinition.isRequiredEarly) &&
-        !(optionDefinition.isHelp !== undefined &&
-          optionDefinition.isHelp)) {
+      const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+      if (helpDefinitions.message !== undefined &&
+        !(helpDefinitions.isRequiredEarly ?? false) &&
+        !(helpDefinitions.isHelp ?? false)) {
         let strOpts = '  '
         optionDefinition.options.forEach((opt, index) => {
           strOpts += opt
@@ -417,8 +412,7 @@ export class Help {
             strOpts += '|'
           }
         })
-        if ((optionDefinition.hasValue !== undefined &&
-          optionDefinition.hasValue) ||
+        if ((optionDefinition.hasValue ?? false) ||
           optionDefinition.values !== undefined ||
           optionDefinition.param !== undefined) {
           if (optionDefinition.param !== undefined) {
@@ -437,8 +431,8 @@ export class Help {
           }
           strOpts += ' '.repeat(multiPass.width)
           let desc = ''
-          if (optionDefinition.message.length > 0) {
-            desc = optionDefinition.message + ' '
+          if (helpDefinitions.message.length > 0) {
+            desc = helpDefinitions.message + ' '
           }
           if (Array.isArray(optionDefinition.values)) {
             desc += '('
@@ -452,19 +446,15 @@ export class Help {
             desc += ') '
           }
           const helpDefaultMessage =
-            optionDefinition.helpDefaultMessage !== undefined
-              ? `, default ${optionDefinition.helpDefaultMessage}`
-              : ''
-          if (optionDefinition.isOptional !== undefined &&
-            optionDefinition.isOptional &&
-            optionDefinition.isMultiple !== undefined &&
-            optionDefinition.isMultiple) {
+          helpDefinitions.defaultMessage !== undefined
+            ? `, default ${helpDefinitions.defaultMessage}`
+            : ''
+          if ((optionDefinition.isOptional ?? false) &&
+            (helpDefinitions.isMultiple ?? false)) {
             desc += `(optional, multiple${helpDefaultMessage})`
-          } else if (optionDefinition.isOptional !== undefined &&
-            optionDefinition.isOptional) {
+          } else if (optionDefinition.isOptional ?? false) {
             desc += `(optional${helpDefaultMessage})`
-          } else if (optionDefinition.isMultiple !== undefined &&
-            optionDefinition.isMultiple) {
+          } else if (helpDefinitions.isMultiple ?? false) {
             desc += '(multiple)'
           }
           this.output(`${this.padRight(strOpts, multiPass.width)} ${desc}`)
