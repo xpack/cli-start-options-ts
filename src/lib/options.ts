@@ -275,11 +275,15 @@ export class Options {
       if (arg.startsWith('-')) {
         // If it starts with dash, it is an option.
         // Try to find it in the list of known options.
+        let opt: string = arg
+        if (arg.includes('=')) {
+          opt = arg.split('=', 1)[0] as string
+        }
         for (const optionDefinition of allOptionDefinitions) {
           const aliases = optionDefinition.options
           // Iterate all aliases.
           for (const alias of aliases) {
-            if (arg === alias) {
+            if (opt === alias) {
               i += this.processOption({
                 argv,
                 index: i,
@@ -302,10 +306,8 @@ export class Options {
     // If the previous look was terminated by a `--`,
     // copy the remaining arguments.
     for (; i < argv.length; ++i) {
-      const arg = argv[i]
-      if (arg !== undefined) {
-        remainingArgv.push(arg)
-      }
+      const arg = argv[i] ?? ''
+      remainingArgv.push(arg)
     }
 
     // Check if any mandatory option is missing.
@@ -329,7 +331,7 @@ export class Options {
    * @param params.index Index of the current arg.
    * @param params.optionDefinition Reference to the current option
    *   definition.
-   * @returns 1 if the next arg should be skipped.
+   * @returns 1 if the next arg was already consumed and should be skipped.
    *
    * @description
    * Processing the option means calling a function, that most probably
@@ -345,46 +347,51 @@ export class Options {
     index: number
     optionDefinition: OptionDefinition
   }): number {
-    const arg: string = params.argv[params.index] ?? ''
+    assert(params.argv[params.index] !== undefined)
+    const arg: string = params.argv[params.index] as string
     let value: string
 
     const optionDefinition = params.optionDefinition
-    // Values can be only an array, or null.
-    // An array means the option takes a value.
-    if ((optionDefinition.hasValue ?? false) ||
-      optionDefinition.param !== undefined ||
-      Array.isArray(optionDefinition.values)) {
-      if (params.index < (params.argv.length - 1)) {
-        // Not the last option; engulf the next arg.
-        value = params.argv[params.index + 1] ?? ''
-        // argv[index + 1].processed = true
-      } else {
+    if (!(optionDefinition.hasValue ?? false)) {
+      // If it has no value, treat it as a boolean option to be set to true;
+      // The value is just for completeness, it needs not be used.
+      optionDefinition.action(this.context, 'true')
+      return 0
+    }
+
+    // The option has a value, which can be passed either in the same string
+    // or as the next word.
+    let consumeNext = 0
+    if (arg.includes('=')) {
+      value = arg.slice(arg.indexOf('=') + 1)
+    } else {
+      if (params.index >= (params.argv.length - 1)) {
         // Error, expected option value not available.
         throw new cli.SyntaxError(`'${arg}' expects a value`)
       }
-      if (Array.isArray(optionDefinition.values)) {
-        // If a list of allowed values is present,
-        // the option value must be validated.
-        for (const allowedValue of optionDefinition.values) {
-          if (value === allowedValue) {
-            // If allowed, call the action to set the
-            // configuration value
-            optionDefinition.action(this.context, value)
-            return 1
-          }
+      // Not the last option; engulf the next arg.
+      value = params.argv[params.index + 1] ?? ''
+      consumeNext = 1
+    }
+
+    // Values can be only an array of.
+    if (Array.isArray(optionDefinition.values)) {
+      // If a list of allowed values is present,
+      // the option value must be validated.
+      for (const allowedValue of optionDefinition.values) {
+        if (value === allowedValue) {
+          // If allowed, call the action to set the
+          // configuration value
+          optionDefinition.action(this.context, value)
+          return consumeNext
         }
-        // Error, illegal option value
-        throw new cli.SyntaxError(`Value '${value}' not allowed for '${arg}'`)
-      } else {
-        // Call the action to set the configuration value
-        optionDefinition.action(this.context, value)
-        return 1
       }
+      // Error, illegal option value
+      throw new cli.SyntaxError(`Value '${value}' not allowed for '${arg}'`)
     } else {
-      // No list of allowed values defined, treat it as boolean true;
-      // call the action to update the configuration.
-      optionDefinition.action(this.context, 'true')
-      return 0
+      // Call the action to set the configuration value
+      optionDefinition.action(this.context, value)
+      return consumeNext
     }
   }
 }
