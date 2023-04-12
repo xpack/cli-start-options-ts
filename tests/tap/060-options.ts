@@ -48,7 +48,7 @@ await test('cli.Options constructor & add', async (t) => {
       context: cli.Context
       optionsGroups?: cli.OptionsGroup[]
     })
-  }, assert.AssertionError, 'assert(params)')
+  }, assert.AssertionError, 'constructor assert(params)')
 
   t.throws(() => {
     // @ts-expect-error
@@ -56,7 +56,7 @@ await test('cli.Options constructor & add', async (t) => {
     const optionsNone = new cli.Options({
       context: undefined as unknown as cli.Context
     })
-  }, assert.AssertionError, 'assert(params.context)')
+  }, assert.AssertionError, 'constructor assert(params.context)')
 
   const log = new cli.Logger()
   const context = new cli.Context({ log })
@@ -104,6 +104,12 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.commonGroups[0]?.optionsDefinitions.length, 1,
     '1 common option')
 
+  // ----- addGroups() -----
+
+  t.throws(() => {
+    options.addGroups(undefined as unknown as cli.OptionsGroup[])
+  }, assert.AssertionError, 'addGroups assert(optionsGroups)')
+
   options.addGroups([
     {
       title: 'Group Title After',
@@ -134,7 +140,6 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.commonGroups[1]?.title, 'CommonGroup Title After',
     'commonGroups title after')
 
-  // ----- addGroups() -----
   options.addGroups([
     {
       isInsertInFront: true,
@@ -169,6 +174,11 @@ await test('cli.Options constructor & add', async (t) => {
     'commonGroups title before')
 
   // ----- appendToGroups() -----
+
+  t.throws(() => {
+    options.appendToGroups(undefined as unknown as cli.OptionsGroup[])
+  }, assert.AssertionError, 'appendToGroups assert(optionsGroups)')
+
   options.appendToGroups([
     {
       title: 'Group Title',
@@ -305,7 +315,7 @@ await test('cli.Options initializeConfiguration', async (t) => {
     options.parse([])
 
   t.equal(remainingArgv.length, 0, '0 remaining')
-  t.equal(missingMandatoryErrors.length, 0, '0 errors')
+  t.equal(missingMandatoryErrors.length, 0, 'no errors')
 
   t.ok((context.config as XaConfig).mmmInit, 'mmmInit')
   t.ok((context.config as XaConfig).nnnInit, 'nnnInit')
@@ -322,11 +332,31 @@ await test('cli.Options parse', async (t) => {
     context
   })
 
-  const { remainingArgv, missingMandatoryErrors } =
-    options.parse(['abc', '--', '--ooo', 'xyz'])
+  t.throws(() => {
+    options.parse(undefined as unknown as string[])
+  }, assert.AssertionError, 'parse assert(argv)')
 
-  t.equal(remainingArgv.length, 4, '4 remaining')
-  t.equal(missingMandatoryErrors.length, 0, '0 errors')
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['abc', '--', '--ooo', 'xyz'])
+
+    t.equal(remainingArgv.length, 4, '4 remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse([
+        undefined as unknown as string,
+        '--',
+        undefined as unknown as string
+      ])
+
+    t.equal(remainingArgv.length, 3, '3 remaining')
+    t.equal(remainingArgv[0], '', 'first is empty')
+    t.equal(remainingArgv[2], '', 'third is empty')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+  }
 
   t.end()
 })
@@ -396,6 +426,171 @@ await test('cli.Options parse missing mandatory', async (t) => {
     'mandatory --mmm')
   t.equal(missingMandatoryErrors[1], 'Mandatory \'--nnn|-n\' not found',
     'mandatory --nnn')
+
+  t.end()
+})
+
+interface XbConfig extends cli.Configuration {
+  one: boolean
+  two: string | undefined
+  three: string | undefined
+}
+
+await test('cli.Options processOption', async (t) => {
+  const log = new cli.Logger()
+  const context = new cli.Context({ log })
+
+  const options = new cli.Options({
+    context
+  })
+
+  // Check missing mandatory.
+  options.addGroups([
+    {
+      title: 'Group Title',
+      optionsDefinitions: [
+        {
+          options: ['--one', '-o'],
+          init: (context) => { (context.config as XbConfig).one = false },
+          action: (context) => { (context.config as XbConfig).one = true },
+          isOptional: true
+        },
+        {
+          options: ['--two'],
+          init: (context) => {
+            (context.config as XbConfig).two = undefined
+          },
+          action: (context, value) => {
+            (context.config as XbConfig).two = value
+          },
+          hasValue: true,
+          isOptional: true
+        },
+        {
+          options: ['--three'],
+          init: (context) => {
+            (context.config as XbConfig).three = undefined
+          },
+          action: (context, value) => {
+            (context.config as XbConfig).three = value
+          },
+          hasValue: true,
+          values: ['yes', 'no'],
+          isOptional: true
+        }
+      ]
+    }
+  ])
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--one'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.ok((context.config as XbConfig).one, '--one true')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['-o'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.ok((context.config as XbConfig).one, '-o true')
+  }
+
+  // Options with values.
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two=123'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, '123', '--two=123')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two='])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, '', '--two=')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two=a=b=c'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, 'a=b=c', '--two=a=b=c')
+  }
+
+  try {
+    options.parse(['--two'])
+    t.notOk(true, 'should throw')
+  } catch (err: any) {
+    t.ok(err instanceof cli.SyntaxError, 'SyntaxError')
+    t.match(err.message, 'expects a value', 'SyntaxError expects a value')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two', '123'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, '123', '--two 123')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two', undefined as unknown as string])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, '', '--two \'\'')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two', '-o'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, '-o', '--two -o')
+    t.notOk((context.config as XbConfig).one, '--one false')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--two', '-o', '-o'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).two, '-o', '--two -o')
+    t.ok((context.config as XbConfig).one, '--one true')
+  }
+
+  {
+    const { remainingArgv, missingMandatoryErrors } =
+      options.parse(['--three=yes'])
+    t.equal(remainingArgv.length, 0, 'empty remaining')
+    t.equal(missingMandatoryErrors.length, 0, 'no errors')
+
+    t.equal((context.config as XbConfig).three, 'yes', '--three=yes')
+  }
+
+  try {
+    options.parse(['--three=niet'])
+    t.notOk(true, 'should throw')
+  } catch (err: any) {
+    t.ok(err instanceof cli.SyntaxError, 'SyntaxError')
+    t.match(err.message, 'not allowed for', 'SyntaxError not allowed for')
+  }
+
   t.end()
 })
 
