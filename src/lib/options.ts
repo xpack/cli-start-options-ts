@@ -299,7 +299,11 @@ export class Options {
           // Iterate all aliases.
           for (const alias of aliases) {
             if (arg === alias) {
-              i += this.processOption(argv, i, optionDefinition)
+              i += this.processOption({
+                argv,
+                index: i,
+                optionDefinition
+              })
               wasProcessed = true
               break
             }
@@ -354,21 +358,23 @@ export class Options {
    *
    * @todo process --opt=value syntax.
    */
-  protected processOption (
-    argv: string[],
-    index: number,
+  protected processOption (params: {
+    argv: string[]
+    index: number
     optionDefinition: OptionDefinition
-  ): number {
-    const arg: string = argv[index] ?? ''
+  }): number {
+    const arg: string = params.argv[params.index] ?? ''
     let value: string
+
+    const optionDefinition = params.optionDefinition
     // Values can be only an array, or null.
     // An array means the option takes a value.
     if ((optionDefinition.hasValue ?? false) ||
       optionDefinition.param !== undefined ||
       Array.isArray(optionDefinition.values)) {
-      if (index < (argv.length - 1)) {
+      if (params.index < (params.argv.length - 1)) {
         // Not the last option; engulf the next arg.
-        value = argv[index + 1] ?? ''
+        value = params.argv[params.index + 1] ?? ''
         // argv[index + 1].processed = true
       } else {
         // Error, expected option value not available.
