@@ -202,9 +202,7 @@ export class Options {
         paramOptionsGroup.isInsertInFront ?? false
 
       const groups: OptionsGroup[] =
-        (paramOptionsGroup.isCommon ?? false)
-          ? [...this.commonGroups]
-          : [...this.groups]
+        (paramOptionsGroup.isCommon ?? false) ? this.commonGroups : this.groups
 
       groups.forEach((optionsGroup) => {
         assert(optionsGroup.title !== undefined)
