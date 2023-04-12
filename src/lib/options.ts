@@ -260,11 +260,8 @@ export class Options {
     // all command option groups, if any.
     const allOptionDefinitions: OptionDefinition[] = []
 
-    this.groups.forEach((optionsGroup) => {
-      assert(optionsGroup.optionsDefinitions !== undefined)
-      allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
-    })
-    this.commonGroups.forEach((optionsGroup) => {
+    const allGroups = [...this.groups, ...this.commonGroups]
+    allGroups.forEach((optionsGroup) => {
       assert(optionsGroup.optionsDefinitions !== undefined)
       allOptionDefinitions.push(...optionsGroup.optionsDefinitions)
     })
