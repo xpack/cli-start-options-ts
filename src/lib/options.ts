@@ -116,8 +116,6 @@ export interface OptionsGroup {
  * @description
  * Keep arrays of options.
  */
-
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class Options {
   // --------------------------------------------------------------------------
 
@@ -234,7 +232,7 @@ export class Options {
    * @summary Parse options, common and specific to a command.
    *
    * @param argv Array of argument values.
-   * @returns Array of remaining arguments.
+   * @returns Array of remaining arguments and array of errors.
    *
    * @description
    * Iterate argv, and try to match all known options.
@@ -336,9 +334,9 @@ export class Options {
   /**
    * @summary Process an option.
    *
-   * @param argv All input arguments.
-   * @param index Index of the current arg.
-   * @param optionDefinition Reference to the current option
+   * @param params.argv All input arguments.
+   * @param params.index Index of the current arg.
+   * @param params.optionDefinition Reference to the current option
    *   definition.
    * @returns 1 if the next arg should be skipped.
    *
