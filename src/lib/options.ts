@@ -128,9 +128,6 @@ export class Options {
   /** An array of groups of options, common to all commands. */
   public commonGroups: OptionsGroup[] = []
 
-  /** A set used internally while processing options. */
-  protected processedOptions = new Set<OptionDefinition>()
-
   /**
    * @summary Create an instance of the `Options` object.
    *
@@ -231,8 +228,6 @@ export class Options {
         optionDefinition.init(this.context)
       })
     })
-
-    this.processedOptions.clear()
   }
 
   /**
@@ -279,8 +274,8 @@ export class Options {
       optionDefinition.init(this.context)
     })
 
-    // Initialise the set keeping track of processed options.
-    this.processedOptions.clear()
+    // A set keeping track of processed options.
+    const processedOptions = new Set<OptionDefinition>()
 
     const remainingArgv: string[] = []
     let wasProcessed = false
@@ -304,6 +299,7 @@ export class Options {
                 index: i,
                 optionDefinition
               })
+              processedOptions.add(optionDefinition)
               wasProcessed = true
               break
             }
@@ -331,7 +327,7 @@ export class Options {
     allOptionDefinitions.forEach((optionDefinition) => {
       // If the option is mandatory and was not processed.
       if (!(optionDefinition.isOptional ?? false) &&
-        !this.processedOptions.has(optionDefinition)) {
+        !processedOptions.has(optionDefinition)) {
         const option = optionDefinition.options.join('|')
         missingMandatoryErrors.push(`Mandatory '${option}' not found`)
       }
@@ -388,7 +384,6 @@ export class Options {
             // If allowed, call the action to set the
             // configuration value
             optionDefinition.action(this.context, value)
-            this.processedOptions.add(optionDefinition)
             return 1
           }
         }
@@ -397,14 +392,12 @@ export class Options {
       } else {
         // Call the action to set the configuration value
         optionDefinition.action(this.context, value)
-        this.processedOptions.add(optionDefinition)
         return 1
       }
     } else {
       // No list of allowed values defined, treat it as boolean true;
       // call the action to update the configuration.
       optionDefinition.action(this.context, 'true')
-      this.processedOptions.add(optionDefinition)
       return 0
     }
   }
