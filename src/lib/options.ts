@@ -252,7 +252,7 @@ export class Options {
     } {
     assert(argv)
 
-    assert(this.context, 'cli.Context not initialised')
+    assert(this.context)
     const log = this.context.log
     log.trace(`${Function.prototype.name}()`)
 
