@@ -163,11 +163,11 @@ export class Xtest extends cli.Application {
         optionsDefinitions: [
           {
             options: ['--extra', '--very-extra', '--very-long-extra'],
-            action: (context) => {
-              (context.config as XtestConfig).extra = true
-            },
             init: (context) => {
               (context.config as XtestConfig).extra = false
+            },
+            action: (context) => {
+              (context.config as XtestConfig).extra = true
             },
             isOptional: true,
             helpDefinitions: {

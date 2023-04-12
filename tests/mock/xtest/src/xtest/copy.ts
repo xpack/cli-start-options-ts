@@ -55,13 +55,13 @@ export class Copy extends cli.Command {
         optionsDefinitions: [
           {
             options: ['--file'],
-            action: (context, val) => {
-              (context.config as CliConfigCopy).inputPath = val
-            },
             init: (context) => {
               (context.config as CliConfigCopy).inputPath = undefined
             },
-            param: 'file',
+            action: (context, val) => {
+              (context.config as CliConfigCopy).inputPath = val
+            },
+            hasValue: true,
             isOptional: false, // Mandatory
             helpDefinitions: {
               message: 'Input file',
@@ -70,13 +70,13 @@ export class Copy extends cli.Command {
           },
           {
             options: ['--output'],
-            action: (context, val) => {
-              (context.config as CliConfigCopy).outputPath = val
-            },
             init: (context) => {
               (context.config as CliConfigCopy).outputPath = undefined
             },
-            param: 'file',
+            action: (context, val) => {
+              (context.config as CliConfigCopy).outputPath = val
+            },
+            hasValue: true,
             isOptional: false, // Mandatory!
             helpDefinitions: {
               message: 'Output file',

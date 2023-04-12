@@ -51,13 +51,13 @@ export class Long extends cli.Command {
         optionsDefinitions: [
           {
             options: ['--one'],
-            action: (context, val) => {
-              (context.config as CliConfigMany).one = val
-            },
             init: (context) => {
               (context.config as CliConfigMany).one = undefined
             },
-            param: 'name',
+            action: (context, val) => {
+              (context.config as CliConfigMany).one = val
+            },
+            hasValue: true,
             isOptional: false,
             helpDefinitions: {
               message: 'Option one',
@@ -66,13 +66,13 @@ export class Long extends cli.Command {
           },
           {
             options: ['--two'],
-            action: (context, val) => {
-              (context.config as CliConfigMany).two = val
-            },
             init: (context) => {
               (context.config as CliConfigMany).two = undefined
             },
-            param: 'name',
+            action: (context, val) => {
+              (context.config as CliConfigMany).two = val
+            },
+            hasValue: true,
             isOptional: false,
             helpDefinitions: {
               message: 'Option two',
@@ -82,13 +82,13 @@ export class Long extends cli.Command {
           },
           {
             options: ['--three'],
-            action: (context, val) => {
-              (context.config as CliConfigMany).three = val
-            },
             init: (context) => {
               (context.config as CliConfigMany).three = undefined
             },
-            param: 'name',
+            action: (context, val) => {
+              (context.config as CliConfigMany).three = val
+            },
+            hasValue: true,
             isOptional: true,
             helpDefinitions: {
               message: 'Option three',
@@ -98,11 +98,11 @@ export class Long extends cli.Command {
           },
           {
             options: ['--four'],
-            action: (context, val) => {
-              (context.config as CliConfigMany).four = val
-            },
             init: (context) => {
               (context.config as CliConfigMany).four = undefined
+            },
+            action: (context, val) => {
+              (context.config as CliConfigMany).four = val
             },
             // Has no param.
             hasValue: true,

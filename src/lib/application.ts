@@ -302,6 +302,7 @@ export class Application extends Command {
                 context.config.logLevel = val as LogLevel
               },
               isOptional: true,
+              hasValue: true,
               values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
               helpDefinitions: {
                 message: 'Set log level',
@@ -407,6 +408,7 @@ export class Application extends Command {
                 }
                 context.log.debug(`set cwd: '${config.cwd}'`)
               },
+              hasValue: true,
               isOptional: true,
               helpDefinitions: {
                 message: 'Set current folder',
