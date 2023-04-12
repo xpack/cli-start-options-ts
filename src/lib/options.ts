@@ -68,9 +68,7 @@ export interface OptionDefinition {
   hasValue?: boolean
   /** Array of allowed values. */
   values?: string[]
-  /** Name used to display the value in help,
-   *  like `file`, `folder`, etc. */
-  param?: string
+
   /** True if the option must be displayed
    *  surrounded by square brackets. False means mandatory. */
 
@@ -82,6 +80,10 @@ export interface OptionDefinition {
     message?: string
     /** Default message */
     defaultMessage?: string
+
+    /** Name used to display the value in help,
+     *  like `file`, `folder`, etc. */
+    parameterDescription?: string
 
     /** True if it must be processed before
      *   other options, for example interactive options. */

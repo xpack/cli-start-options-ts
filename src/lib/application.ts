@@ -303,9 +303,9 @@ export class Application extends Command {
               },
               isOptional: true,
               values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
-              param: 'level',
               helpDefinitions: {
-                message: 'Set log level'
+                message: 'Set log level',
+                parameterDescription: 'level'
               }
             },
             {
@@ -408,9 +408,9 @@ export class Application extends Command {
                 context.log.debug(`set cwd: '${config.cwd}'`)
               },
               isOptional: true,
-              param: 'folder',
               helpDefinitions: {
-                message: 'Set current folder'
+                message: 'Set current folder',
+                parameterDescription: 'folder'
               }
             }
           ]

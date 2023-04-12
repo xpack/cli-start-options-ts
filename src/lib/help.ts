@@ -193,8 +193,8 @@ export class Help {
           buffer = val
         }
       })
-      if (optionDefinition.param !== undefined) {
-        buffer += ` <${optionDefinition.param}>`
+      if (helpDefinitions.parameterDescription !== undefined) {
+        buffer += ` <${helpDefinitions.parameterDescription}>`
       } else if (optionDefinition.hasValue ?? false) {
         buffer += ' <s>'
       }
@@ -414,9 +414,9 @@ export class Help {
         })
         if ((optionDefinition.hasValue ?? false) ||
           optionDefinition.values !== undefined ||
-          optionDefinition.param !== undefined) {
-          if (optionDefinition.param !== undefined) {
-            strOpts += ` <${optionDefinition.param}>`
+          helpDefinitions.parameterDescription !== undefined) {
+          if (helpDefinitions.parameterDescription !== undefined) {
+            strOpts += ` <${helpDefinitions.parameterDescription}>`
           } else {
             strOpts += ' <s>'
           }

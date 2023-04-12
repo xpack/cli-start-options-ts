@@ -70,7 +70,8 @@ export class Multi extends cli.Command {
               param: 'name',
               isOptional: true,
               helpDefinitions: {
-                message: 'Multi option'
+                message: 'Multi option',
+                parameterDescription: 'name'
               }
             }
           ]
@@ -143,7 +144,8 @@ export class MultiFirst extends Multi {
               param: 'int',
               isOptional: true,
               helpDefinitions: {
-                message: 'Multi first option'
+                message: 'Multi first option',
+                parameterDescription: 'int'
               }
             }
           ]
@@ -218,7 +220,8 @@ export class MultiSecond extends Multi {
             param: 'int',
             isOptional: true,
             helpDefinitions: {
-              message: 'Multi second option'
+              message: 'Multi second option',
+              parameterDescription: 'int'
             }
           }
         ]
@@ -241,7 +244,8 @@ export class MultiSecond extends Multi {
             param: 'int',
             isOptional: true,
             helpDefinitions: {
-              message: 'More common second option'
+              message: 'More common second option',
+              parameterDescription: 'int'
             }
           }
         ]

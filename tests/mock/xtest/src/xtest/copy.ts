@@ -64,7 +64,8 @@ export class Copy extends cli.Command {
             param: 'file',
             isOptional: false, // Mandatory
             helpDefinitions: {
-              message: 'Input file'
+              message: 'Input file',
+              parameterDescription: 'file'
             }
           },
           {
@@ -78,7 +79,8 @@ export class Copy extends cli.Command {
             param: 'file',
             isOptional: false, // Mandatory!
             helpDefinitions: {
-              message: 'Output file'
+              message: 'Output file',
+              parameterDescription: 'file'
             }
           }
         ]
