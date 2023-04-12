@@ -218,17 +218,6 @@ export class Options {
   }
 
   /**
-   * @summary Initialise the configuration properties.
-   */
-  initializeConfiguration (): void {
-    [...this.groups, ...this.commonGroups].forEach((optionsGroup) => {
-      optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
-        optionDefinition.init(this.context)
-      })
-    })
-  }
-
-  /**
    * @summary Parse options, common and specific to a command.
    *
    * @param argv Array of argument values.

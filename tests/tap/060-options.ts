@@ -271,33 +271,41 @@ await test('cli.Options initializeConfiguration', async (t) => {
   t.equal(optionsEmpty.commonGroups.length, 0, 'empty commonGroups')
 
   const options = new cli.Options({
-    context,
-    optionsGroups: [
-      {
-        title: 'Group Title',
-        optionsDefinitions: [
-          {
-            options: ['--mmm', '-m'],
-            init: (context) => { (context.config as XaConfig).mmmInit = true },
-            action: () => { }
-          }
-        ]
-      },
-      {
-        isCommon: true,
-        title: 'CommonGroup Title',
-        optionsDefinitions: [
-          {
-            options: ['--nnn', '-n'],
-            init: (context) => { (context.config as XaConfig).nnnInit = true },
-            action: () => { }
-          }
-        ]
-      }
-    ]
+    context
   })
 
-  options.initializeConfiguration()
+  // Check missing mandatory.
+  options.addGroups([
+    {
+      title: 'Group Title',
+      optionsDefinitions: [
+        {
+          options: ['--mmm', '-m'],
+          init: (context) => { (context.config as XaConfig).mmmInit = true },
+          action: () => { },
+          isOptional: true
+        }
+      ]
+    },
+    {
+      isCommon: true,
+      title: 'CommonGroup Title',
+      optionsDefinitions: [
+        {
+          options: ['--nnn', '-n'],
+          init: (context) => { (context.config as XaConfig).nnnInit = true },
+          action: () => { },
+          isOptional: true
+        }
+      ]
+    }
+  ])
+
+  const { remainingArgv, missingMandatoryErrors } =
+    options.parse([])
+
+  t.equal(remainingArgv.length, 0, '0 remaining')
+  t.equal(missingMandatoryErrors.length, 0, '0 errors')
 
   t.ok((context.config as XaConfig).mmmInit, 'mmmInit')
   t.ok((context.config as XaConfig).nnnInit, 'nnnInit')
@@ -305,59 +313,80 @@ await test('cli.Options initializeConfiguration', async (t) => {
   t.end()
 })
 
-await test('cli.Options missing mandatory', async (t) => {
+await test('cli.Options parse', async (t) => {
   const log = new cli.Logger()
   const context = new cli.Context({ log })
 
   // Check missing mandatory.
   const options = new cli.Options({
-    context,
-    optionsGroups: [
-      {
-        title: 'Group Title',
-        optionsDefinitions: [
-          {
-            options: ['--aaa', '-a'],
-            init: () => { },
-            action: () => { },
-            isOptional: true
-          },
-          {
-            options: ['--ccc', '-c'],
-            init: () => { },
-            action: () => { }
-          },
-          {
-            options: ['--mmm', '-m'],
-            init: () => { },
-            action: () => { }
-          }
-        ]
-      },
-      {
-        isCommon: true,
-        title: 'CommonGroup Title',
-        optionsDefinitions: [
-          {
-            options: ['--bbb', '-b'],
-            init: () => { },
-            action: () => { },
-            isOptional: true
-          },
-          {
-            options: ['--ddd', '-d'],
-            init: () => { },
-            action: () => { }
-          },
-          {
-            options: ['--nnn', '-n'],
-            init: () => { },
-            action: () => { }
-          }
-        ]
-      }
-    ]
+    context
   })
+
+  const { remainingArgv, missingMandatoryErrors } =
+    options.parse(['abc', '--', '--ooo', 'xyz'])
+
+  t.equal(remainingArgv.length, 4, '4 remaining')
+  t.equal(missingMandatoryErrors.length, 0, '0 errors')
+
+  t.end()
+})
+
+await test('cli.Options parse missing mandatory', async (t) => {
+  const log = new cli.Logger()
+  const context = new cli.Context({ log })
+
+  // Check missing mandatory.
+  const options = new cli.Options({
+    context
+  })
+
+  // Check missing mandatory.
+  options.addGroups([
+    {
+      title: 'Group Title',
+      optionsDefinitions: [
+        {
+          options: ['--aaa', '-a'],
+          init: () => { },
+          action: () => { },
+          isOptional: true
+        },
+        {
+          options: ['--ccc', '-c'],
+          init: () => { },
+          action: () => { }
+        },
+        {
+          options: ['--mmm', '-m'],
+          init: () => { },
+          action: () => { }
+        }
+      ]
+    },
+    {
+      isCommon: true,
+      title: 'CommonGroup Title',
+      optionsDefinitions: [
+        {
+          options: ['--bbb', '-b'],
+          init: () => { },
+          action: () => { },
+          isOptional: true
+        },
+        {
+          options: ['--ddd', '-d'],
+          init: () => { },
+          action: () => { }
+        },
+        {
+          options: ['--nnn', '-n'],
+          init: () => { },
+          action: () => { }
+        }
+      ]
+    }
+  ])
+
   const { remainingArgv, missingMandatoryErrors } =
     options.parse(['--ccc', '--ddd'])
   t.equal(remainingArgv.length, 0, 'empty remaining')

@@ -105,9 +105,6 @@ export abstract class Command {
     // Make a copy of the original args.
     context.unparsedArgv = [...params.argv]
 
-    // Call the init() function of all defined options.
-    context.options.initializeConfiguration()
-
     // Parse the args and return the remaining args, like package names.
     const { remainingArgv, missingMandatoryErrors } =
       context.options.parse(params.argv)

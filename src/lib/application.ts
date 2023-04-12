@@ -543,9 +543,6 @@ export class Application extends Command {
 
     const options: Options = this.context.options
 
-    // Call the init() function of all defined options.
-    options.initializeConfiguration()
-
     // ------------------------------------------------------------------------
 
     // Skip the first two arguments (the node path and the application path).
