@@ -196,7 +196,7 @@ export class Options {
 
     optionsGroups.forEach((paramOptionsGroup) => {
       const title: string = paramOptionsGroup.title
-      const optionDefinitions: OptionDefinition[] =
+      const optionsDefinitions: OptionDefinition[] =
         paramOptionsGroup.optionsDefinitions
       const isInsertInFront: boolean =
         paramOptionsGroup.isInsertInFront ?? false
@@ -211,11 +211,11 @@ export class Options {
         if (optionsGroup.title === title) {
           if (isInsertInFront) {
             optionsGroup.optionsDefinitions = [
-              ...optionDefinitions,
+              ...optionsDefinitions,
               ...optionsGroup.optionsDefinitions
             ]
           } else {
-            optionsGroup.optionsDefinitions.push(...optionDefinitions)
+            optionsGroup.optionsDefinitions.push(...optionsDefinitions)
           }
         }
       })
