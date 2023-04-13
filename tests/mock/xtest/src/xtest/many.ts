@@ -60,8 +60,8 @@ export class Long extends cli.Command {
             hasValue: true,
             isMandatory: true,
             helpDefinitions: {
-              message: 'Option one',
-              parameterDescription: 'name'
+              description: 'Option one',
+              valueDescription: 'name'
             }
           },
           {
@@ -75,8 +75,8 @@ export class Long extends cli.Command {
             hasValue: true,
             isMandatory: true,
             helpDefinitions: {
-              message: 'Option two',
-              parameterDescription: 'name',
+              description: 'Option two',
+              valueDescription: 'name',
               isMultiple: true
             }
           },
@@ -90,8 +90,8 @@ export class Long extends cli.Command {
             },
             hasValue: true,
             helpDefinitions: {
-              message: 'Option three',
-              parameterDescription: 'name',
+              description: 'Option three',
+              valueDescription: 'name',
               isMultiple: true
             }
           },
@@ -105,7 +105,7 @@ export class Long extends cli.Command {
             },
             hasValue: true,
             helpDefinitions: {
-              message: 'Option four'
+              description: 'Option four'
               // Has no parameterDescription.
             }
           }

@@ -76,14 +76,17 @@ export interface OptionDefinition {
   isMandatory?: boolean
 
   helpDefinitions?: {
-    /** Message to display; only options with messages are displayed in help. */
-    message?: string
+    /** A half line text to explain what the option does;
+     * only options with descriptions are listed in help. */
+    description?: string
+
     /** Default message */
     defaultMessage?: string
 
-    /** Name used to display the value in help,
-     *  like `file`, `folder`, etc. */
-    parameterDescription?: string
+    /** Name used to display the value in help, like `file`, `folder`, etc.
+     * The default is `s`. The format is `--option=<s>`
+    */
+    valueDescription?: string
 
     /** True if it must be processed before
      *   other options, for example interactive options. */

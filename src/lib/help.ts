@@ -343,7 +343,7 @@ export class Help {
     optionsGroups.forEach((optionsGroup) => {
       optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
         const helpDefinitions = optionDefinition.helpDefinitions ?? {}
-        if (helpDefinitions.message !== undefined &&
+        if (helpDefinitions.description !== undefined &&
           (helpDefinitions.isRequiredEarly ?? false)) {
           let out = `${programName} `
           optionDefinition.options.forEach((opt, index) => {
@@ -355,7 +355,7 @@ export class Help {
           if (multiPass.isFirstPass) {
             multiPass.updateWidth(out.length)
           } else {
-            this.outputMaybeLongLine(out, helpDefinitions.message, multiPass)
+            this.outputMaybeLongLine(out, helpDefinitions.description, multiPass)
           }
         }
       })
@@ -385,7 +385,7 @@ export class Help {
     let hasContent = false
     optionDefinitions.forEach((optionDefinition) => {
       const helpDefinitions = optionDefinition.helpDefinitions ?? {}
-      if (helpDefinitions.message !== undefined &&
+      if (helpDefinitions.description !== undefined &&
         !(helpDefinitions.isRequiredEarly ?? false) &&
         !(helpDefinitions.isHelp ?? false)) {
         hasContent = true
@@ -402,7 +402,7 @@ export class Help {
 
     optionDefinitions.forEach((optionDefinition) => {
       const helpDefinitions = optionDefinition.helpDefinitions ?? {}
-      if (helpDefinitions.message !== undefined &&
+      if (helpDefinitions.description !== undefined &&
         !(helpDefinitions.isRequiredEarly ?? false) &&
         !(helpDefinitions.isHelp ?? false)) {
         let strOpts = '  '
@@ -414,9 +414,9 @@ export class Help {
         })
         if ((optionDefinition.hasValue ?? false) ||
           optionDefinition.values !== undefined ||
-          helpDefinitions.parameterDescription !== undefined) {
-          if (helpDefinitions.parameterDescription !== undefined) {
-            strOpts += ` <${helpDefinitions.parameterDescription}>`
+          helpDefinitions.valueDescription !== undefined) {
+          if (helpDefinitions.valueDescription !== undefined) {
+            strOpts += ` <${helpDefinitions.valueDescription}>`
           } else {
             strOpts += ' <s>'
           }
@@ -431,8 +431,8 @@ export class Help {
           }
           strOpts += ' '.repeat(multiPass.width)
           let desc = ''
-          if (helpDefinitions.message.length > 0) {
-            desc = helpDefinitions.message + ' '
+          if (helpDefinitions.description.length > 0) {
+            desc = helpDefinitions.description + ' '
           }
           if (Array.isArray(optionDefinition.values)) {
             desc += '('

@@ -170,7 +170,7 @@ export class Xtest extends cli.Application {
               (context.config as XtestConfig).extra = true
             },
             helpDefinitions: {
-              message: 'Extra options',
+              description: 'Extra options',
               isRequiredEarly: true
             }
           }

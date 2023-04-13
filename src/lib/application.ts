@@ -286,7 +286,7 @@ export class Application extends Command {
                 context.config.isVersionRequest = true
               },
               helpDefinitions: {
-                message: 'Show version',
+                description: 'Show version',
                 isRequiredEarly: true
               }
             },
@@ -302,8 +302,8 @@ export class Application extends Command {
               hasValue: true,
               values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
               helpDefinitions: {
-                message: 'Set log level',
-                parameterDescription: 'level'
+                description: 'Set log level',
+                valueDescription: 'level'
               }
             },
             {
@@ -313,7 +313,7 @@ export class Application extends Command {
                 context.config.logLevel = 'silent'
               },
               helpDefinitions: {
-                message: 'Disable all messages (--loglevel silent)'
+                description: 'Disable all messages (--loglevel silent)'
               }
             },
             {
@@ -323,7 +323,8 @@ export class Application extends Command {
                 context.config.logLevel = 'warn'
               },
               helpDefinitions: {
-                message: 'Mostly quiet, warnings and errors (--loglevel warn)'
+                description: 'Mostly quiet, warnings and errors' +
+                  ' (--loglevel warn)'
               }
             },
             {
@@ -333,7 +334,7 @@ export class Application extends Command {
                 context.config.logLevel = 'info'
               },
               helpDefinitions: {
-                message: 'Informative (--loglevel info)'
+                description: 'Informative (--loglevel info)'
               }
             },
             {
@@ -343,7 +344,7 @@ export class Application extends Command {
                 context.config.logLevel = 'verbose'
               },
               helpDefinitions: {
-                message: 'Verbose (--loglevel verbose)'
+                description: 'Verbose (--loglevel verbose)'
               }
             },
             {
@@ -358,7 +359,7 @@ export class Application extends Command {
                 }
               },
               helpDefinitions: {
-                message: 'Debug messages (--loglevel debug)'
+                description: 'Debug messages (--loglevel debug)'
               }
             },
             {
@@ -368,7 +369,7 @@ export class Application extends Command {
                 context.config.logLevel = 'trace'
               },
               helpDefinitions: {
-                message: 'Trace messages (--loglevel trace, -d -d)'
+                description: 'Trace messages (--loglevel trace, -d -d)'
               }
             },
             {
@@ -378,7 +379,7 @@ export class Application extends Command {
                 context.config.noUpdateNotifier = true
               },
               helpDefinitions: {
-                message: 'Skip check for a more recent version'
+                description: 'Skip check for a more recent version'
               }
             },
             {
@@ -400,8 +401,8 @@ export class Application extends Command {
               },
               hasValue: true,
               helpDefinitions: {
-                message: 'Set current folder',
-                parameterDescription: 'folder'
+                description: 'Set current folder',
+                valueDescription: 'folder'
               }
             }
           ]
