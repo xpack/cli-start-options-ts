@@ -29,7 +29,7 @@ import { CommandNode } from './commands-tree.js'
 import { Configuration } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
-import { Help, MultiPass } from './help.js'
+import { Help } from './help.js'
 import { formatDuration } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -293,7 +293,7 @@ export abstract class Command {
    * the application if needed.
    */
   outputHelpArgsDetails (params: {
-    multiPass: MultiPass
+    help: Help
   }): void {
     assert(params)
 
