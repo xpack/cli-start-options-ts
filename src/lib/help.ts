@@ -121,11 +121,11 @@ export class Help {
     const context: Context = this.context
 
     assert(context.commandNode)
+    assert(context.commandNode.helpDefinitions)
 
     // Start with an empty line.
     this.output()
 
-    assert(context.commandNode.helpDefinitions)
     this.outputTitle()
 
     if (context.commandNode.hasChildrenCommands()) {
@@ -318,7 +318,7 @@ export class Help {
       !this.multiPass.isFirstPass) {
       this.output()
       this.output('Command aliases: ' +
-          `${context.commandNode.aliases.sort().join(', ')}`)
+        `${context.commandNode.aliases.sort().join(', ')}`)
     }
   }
 
@@ -486,9 +486,9 @@ export class Help {
             desc += ') '
           }
           const helpDefaultMessage =
-          helpDefinitions.defaultMessage !== undefined
-            ? `, default ${helpDefinitions.defaultMessage}`
-            : ''
+            helpDefinitions.defaultMessage !== undefined
+              ? `, default ${helpDefinitions.defaultMessage}`
+              : ''
           if (!(optionDefinition.isMandatory ?? false) &&
             (helpDefinitions.isMultiple ?? false)) {
             desc += `(optional, multiple${helpDefaultMessage})`
