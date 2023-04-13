@@ -126,7 +126,7 @@ export class Help {
     this.output()
 
     assert(context.commandNode.helpDefinitions)
-    this.outputTitle(context.commandNode.getHelpTitle())
+    this.outputTitle()
 
     if (context.commandNode.hasChildrenCommands()) {
       this.outputCommands()
@@ -151,7 +151,12 @@ export class Help {
     this.outputFooter()
   }
 
-  outputTitle (title: string | undefined): void {
+  outputTitle (): void {
+    const context: Context = this.context
+
+    assert(context.commandNode)
+
+    const title = context.commandNode.getHelpTitle()
     if (title !== undefined) {
       this.output(`${title}`)
       this.output()
