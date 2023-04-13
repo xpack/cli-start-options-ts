@@ -198,7 +198,7 @@ export class Help {
       } else if (optionDefinition.hasValue ?? false) {
         buffer += ' <s>'
       }
-      if (optionDefinition.isOptional ?? false) {
+      if (!(optionDefinition.isMandatory ?? false)) {
         buffer = `[${buffer}]`
         if (helpDefinitions.isMultiple ?? false) {
           buffer += '*'
@@ -449,10 +449,10 @@ export class Help {
           helpDefinitions.defaultMessage !== undefined
             ? `, default ${helpDefinitions.defaultMessage}`
             : ''
-          if ((optionDefinition.isOptional ?? false) &&
+          if (!(optionDefinition.isMandatory ?? false) &&
             (helpDefinitions.isMultiple ?? false)) {
             desc += `(optional, multiple${helpDefaultMessage})`
-          } else if (optionDefinition.isOptional ?? false) {
+          } else if (!(optionDefinition.isMandatory ?? false)) {
             desc += `(optional${helpDefaultMessage})`
           } else if (helpDefinitions.isMultiple ?? false) {
             desc += '(multiple)'

@@ -273,7 +273,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.isHelpRequest = true
               },
-              isOptional: true,
               helpDefinitions: {
                 isHelp: true
               }
@@ -286,7 +285,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.isVersionRequest = true
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Show version',
                 isRequiredEarly: true
@@ -301,7 +299,6 @@ export class Application extends Command {
                 assert(val !== undefined)
                 context.config.logLevel = val as LogLevel
               },
-              isOptional: true,
               hasValue: true,
               values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
               helpDefinitions: {
@@ -315,7 +312,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.logLevel = 'silent'
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Disable all messages (--loglevel silent)'
               }
@@ -326,7 +322,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.logLevel = 'warn'
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Mostly quiet, warnings and errors (--loglevel warn)'
               }
@@ -337,7 +332,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.logLevel = 'info'
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Informative (--loglevel info)'
               }
@@ -348,7 +342,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.logLevel = 'verbose'
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Verbose (--loglevel verbose)'
               }
@@ -364,7 +357,6 @@ export class Application extends Command {
                   config.logLevel = 'debug'
                 }
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Debug messages (--loglevel debug)'
               }
@@ -375,7 +367,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.logLevel = 'trace'
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Trace messages (--loglevel trace, -d -d)'
               }
@@ -386,7 +377,6 @@ export class Application extends Command {
               action: (context) => {
                 context.config.noUpdateNotifier = true
               },
-              isOptional: true,
               helpDefinitions: {
                 message: 'Skip check for a more recent version'
               }
@@ -409,7 +399,6 @@ export class Application extends Command {
                 context.log.debug(`set cwd: '${config.cwd}'`)
               },
               hasValue: true,
-              isOptional: true,
               helpDefinitions: {
                 message: 'Set current folder',
                 parameterDescription: 'folder'
@@ -443,7 +432,6 @@ export class Application extends Command {
                 action: (context, val) => /* istanbul ignore next */ {
                   context.config.interactiveServerPort = +val // as number
                 },
-                isOptional: true,
                 hasValue: true,
                 helpDefinitions: {
                   isRequiredEarly: true

@@ -169,7 +169,6 @@ export class Xtest extends cli.Application {
             action: (context) => {
               (context.config as XtestConfig).extra = true
             },
-            isOptional: true,
             helpDefinitions: {
               message: 'Extra options',
               isRequiredEarly: true

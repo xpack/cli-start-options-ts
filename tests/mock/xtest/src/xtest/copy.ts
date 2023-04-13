@@ -62,7 +62,7 @@ export class Copy extends cli.Command {
               (context.config as CliConfigCopy).inputPath = val
             },
             hasValue: true,
-            isOptional: false, // Mandatory
+            isMandatory: true,
             helpDefinitions: {
               message: 'Input file',
               parameterDescription: 'file'
@@ -77,7 +77,7 @@ export class Copy extends cli.Command {
               (context.config as CliConfigCopy).outputPath = val
             },
             hasValue: true,
-            isOptional: false, // Mandatory!
+            isMandatory: true,
             helpDefinitions: {
               message: 'Output file',
               parameterDescription: 'file'

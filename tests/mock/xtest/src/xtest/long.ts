@@ -55,7 +55,6 @@ export class Long extends cli.Command {
               (context.config as CliConfigLong).long = val
             },
             hasValue: true,
-            isOptional: true,
             helpDefinitions: {
               message: 'Very long option',
               parameterDescription: 'name'

@@ -72,8 +72,8 @@ export interface OptionDefinition {
   /** True if the option must be displayed
    *  surrounded by square brackets. False means mandatory. */
 
-  /** True if the option is optional, false if it is mandatory. */
-  isOptional?: boolean
+  /** True if the option is mandatory, false if it is optional. */
+  isMandatory?: boolean
 
   helpDefinitions?: {
     /** Message to display; only options with messages are displayed in help. */
@@ -314,7 +314,7 @@ export class Options {
     const missingMandatoryErrors: string[] = []
     allOptionDefinitions.forEach((optionDefinition) => {
       // If the option is mandatory and was not processed.
-      if (!(optionDefinition.isOptional ?? false) &&
+      if ((optionDefinition.isMandatory ?? false) &&
         !processedOptions.has(optionDefinition)) {
         const option = optionDefinition.options.join('|')
         missingMandatoryErrors.push(`Mandatory '${option}' not found`)

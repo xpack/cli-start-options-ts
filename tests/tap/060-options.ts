@@ -292,8 +292,7 @@ await test('cli.Options initializeConfiguration', async (t) => {
         {
           options: ['--mmm', '-m'],
           init: (context) => { (context.config as XaConfig).mmmInit = true },
-          action: () => { },
-          isOptional: true
+          action: () => { }
         }
       ]
     },
@@ -304,8 +303,7 @@ await test('cli.Options initializeConfiguration', async (t) => {
         {
           options: ['--nnn', '-n'],
           init: (context) => { (context.config as XaConfig).nnnInit = true },
-          action: () => { },
-          isOptional: true
+          action: () => { }
         }
       ]
     }
@@ -378,18 +376,19 @@ await test('cli.Options parse missing mandatory', async (t) => {
         {
           options: ['--aaa', '-a'],
           init: () => { },
-          action: () => { },
-          isOptional: true
+          action: () => { }
         },
         {
           options: ['--ccc', '-c'],
           init: () => { },
-          action: () => { }
+          action: () => { },
+          isMandatory: true
         },
         {
           options: ['--mmm', '-m'],
           init: () => { },
-          action: () => { }
+          action: () => { },
+          isMandatory: true
         }
       ]
     },
@@ -400,18 +399,19 @@ await test('cli.Options parse missing mandatory', async (t) => {
         {
           options: ['--bbb', '-b'],
           init: () => { },
-          action: () => { },
-          isOptional: true
+          action: () => { }
         },
         {
           options: ['--ddd', '-d'],
           init: () => { },
-          action: () => { }
+          action: () => { },
+          isMandatory: true
         },
         {
           options: ['--nnn', '-n'],
           init: () => { },
-          action: () => { }
+          action: () => { },
+          isMandatory: true
         }
       ]
     }
@@ -452,8 +452,7 @@ await test('cli.Options processOption', async (t) => {
         {
           options: ['--one', '-o'],
           init: (context) => { (context.config as XbConfig).one = false },
-          action: (context) => { (context.config as XbConfig).one = true },
-          isOptional: true
+          action: (context) => { (context.config as XbConfig).one = true }
         },
         {
           options: ['--two'],
@@ -463,8 +462,7 @@ await test('cli.Options processOption', async (t) => {
           action: (context, value) => {
             (context.config as XbConfig).two = value
           },
-          hasValue: true,
-          isOptional: true
+          hasValue: true
         },
         {
           options: ['--three'],
@@ -475,8 +473,7 @@ await test('cli.Options processOption', async (t) => {
             (context.config as XbConfig).three = value
           },
           hasValue: true,
-          values: ['yes', 'no'],
-          isOptional: true
+          values: ['yes', 'no']
         }
       ]
     }
