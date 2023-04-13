@@ -294,10 +294,10 @@ export class Help {
   }
 
   outputHelpDetails (
-    multiPass = this.multiPass
   ): void {
     const context: Context = this.context
 
+    const multiPass = this.multiPass
     const programName: string = context.programName
 
     const str1: string = `${programName} -h|--help`
@@ -309,18 +309,19 @@ export class Help {
       }
     } else {
       this.output()
-      this.outputMaybeLongLine(str1, 'Quick help', multiPass)
+      this.outputMaybeLongLine(str1, 'Quick help')
       if (this.commands !== undefined) {
-        this.outputMaybeLongLine(str2, 'Quick help on command', multiPass)
+        this.outputMaybeLongLine(str2, 'Quick help on command')
       }
     }
   }
 
   outputMaybeLongLine (
     out: string,
-    message: string,
-    multiPass = this.multiPass
+    message: string
   ): void {
+    const multiPass = this.multiPass
+
     if (out.length >= multiPass.limit) {
       this.output(out)
       out = ''
@@ -360,7 +361,7 @@ export class Help {
           if (multiPass.isFirstPass) {
             multiPass.updateWidth(out.length)
           } else {
-            this.outputMaybeLongLine(out, helpDefinitions.description, multiPass)
+            this.outputMaybeLongLine(out, helpDefinitions.description)
           }
         }
       })
@@ -368,7 +369,6 @@ export class Help {
   }
 
   outputOptionsGroups (
-    multiPass = this.multiPass
   ): void {
     const context: Context = this.context
 
@@ -378,15 +378,16 @@ export class Help {
 
     optionsGroups.forEach((optionsGroup) => {
       this.outputOptions(
-        optionsGroup.optionsDefinitions, optionsGroup.title, multiPass)
+        optionsGroup.optionsDefinitions, optionsGroup.title)
     })
   }
 
   outputOptions (
     optionDefinitions: OptionDefinition[],
-    title: string | undefined,
-    multiPass = this.multiPass
+    title: string | undefined
   ): void {
+    const multiPass = this.multiPass
+
     let hasContent = false
     optionDefinitions.forEach((optionDefinition) => {
       const helpDefinitions = optionDefinition.helpDefinitions ?? {}
