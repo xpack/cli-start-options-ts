@@ -163,6 +163,15 @@ export class Help {
     }
   }
 
+  /**
+   * @summary: Output the command line with all visible options.
+   *
+   * @description
+   * Output the command usage, by enumerating the options, with
+   * possible values and markers for multiple apparitions.
+   *
+   * Split long lines and align subsequent lines after the command.
+   */
   outputCommandLine (): void {
     const context: Context = this.context
 
@@ -172,63 +181,88 @@ export class Help {
         .join(' ')
 
     const usage = `Usage: ${commandParts}`
-    let str: string = usage
+    let line: string = usage
 
-    const preOptions =
-      this.context.commandNode?.helpDefinitions?.usagePreOptions ?? ''
-    const postOptions =
-      this.context.commandNode?.helpDefinitions?.usagePostOptions ?? ''
     const options: Options = context.options
     const optionsGroups = options.groups
     const optionDefinitions: OptionDefinition[] = []
-    if (preOptions.length > 0) {
-      str += ' ' + preOptions
-    }
-    str += ' [options...]'
+
+    // Common groups are not shown here, only in the list below.
     optionsGroups.forEach((optionsGroup) => {
       optionDefinitions.push(...optionsGroup.optionsDefinitions)
     })
-    let buffer: string
+
+    // The preOption string allow commands to customise the command line
+    // with a something to be shown before other options.
+    const preOptions =
+      this.context.commandNode?.helpDefinitions?.usagePreOptions ?? ''
+
+    if (preOptions.length > 0) {
+      line += ' ' + preOptions
+    }
+    line += ' [options...]'
+
+    // Definitions look like:
+    // --option - option without value
+    // --option <s> - option with value
+    // [--option <s>] - non-mandatory
+    // [--option <s>]* - non mandatory, multiple
+    // [--option <s>]+ - mandatory, multiple
+
+    let definition: string
     optionDefinitions.forEach((optionDefinition) => {
-      buffer = ''
-      const helpDefinitions = optionDefinition.helpDefinitions ?? {}
-      optionDefinition.options.forEach((val) => {
-        // Assume the longest option is the more readable.
-        if (val.length > buffer.length) {
-          buffer = val
+      // Choose the longest alias, as the most readable.
+      definition = ''
+      optionDefinition.options.forEach((option) => {
+        if (option.length > definition.length) {
+          definition = option
         }
       })
-      if (helpDefinitions.parameterDescription !== undefined) {
-        buffer += ` <${helpDefinitions.parameterDescription}>`
-      } else if (optionDefinition.hasValue ?? false) {
-        buffer += ' <s>'
-      }
-      if (!(optionDefinition.isMandatory ?? false)) {
-        buffer = `[${buffer}]`
-        if (helpDefinitions.isMultiple ?? false) {
-          buffer += '*'
-        }
-      } else if (helpDefinitions.isMultiple ?? false) {
-        buffer = `[${buffer}]+`
+
+      // Add value description.
+      const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+      if (optionDefinition.hasValue ?? false) {
+        definition += ` <${helpDefinitions.valueDescription ?? 's'}>`
       }
 
-      // log.output(optStr)
-      if (str.length + buffer.length + 1 > this.rightLimit) {
-        this.output(str)
-        str = ' '.repeat(usage.length)
+      // Add braces and markers for multiple apparitions.
+      if (!(optionDefinition.isMandatory ?? false)) {
+        definition = `[${definition}]`
+        if (helpDefinitions.isMultiple ?? false) {
+          definition += '*'
+        }
+      } else if (helpDefinitions.isMultiple ?? false) {
+        definition = `[${definition}]+`
       }
-      str += ' ' + buffer
+
+      // If there is not enough space on the current line,
+      // output it and start a new line, aligned after the usage.
+      if (line.length + definition.length + 1 > this.rightLimit) {
+        this.output(line)
+        line = ' '.repeat(usage.length)
+      }
+
+      // Contribute the definition to the current line.
+      line += ' ' + definition
     })
+
+    // The postOption string allow commands to customise the command line
+    // with a something to be shown after all other options.
+    const postOptions =
+      this.context.commandNode?.helpDefinitions?.usagePostOptions ?? ''
+
     if (postOptions.length > 0) {
-      buffer = postOptions
-      if (str.length + buffer.length + 1 > this.rightLimit) {
-        this.output(str)
-        str = ' '.repeat(usage.length)
+      definition = postOptions
+      if (line.length + definition.length + 1 > this.rightLimit) {
+        this.output(line)
+        line = ' '.repeat(usage.length)
       }
-      str += ' ' + buffer
+      line += ' ' + definition
     }
-    if (str.length > usage.length) {
-      this.output(str)
+
+    // If there is a remaining partial line, output it.
+    if (line.length > usage.length) {
+      this.output(line)
     }
   }
 
