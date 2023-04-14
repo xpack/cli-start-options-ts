@@ -418,7 +418,7 @@ abstract class CommandBaseNode {
    */
   getHelpTitle (): string {
     if (this.helpDefinitions?.title !== undefined) {
-      return this.helpDefinitions.title
+      return this.helpDefinitions.title.trim()
     }
 
     assert(this.parent)
@@ -490,10 +490,10 @@ export class CommandsTree extends CommandNode {
   setHelpTitle (title: string): void {
     if (this.helpDefinitions === undefined) {
       this.helpDefinitions = {
-        title
+        title: title.trim()
       }
     } else {
-      this.helpDefinitions.title = title
+      this.helpDefinitions.title = title.trim()
     }
   }
 

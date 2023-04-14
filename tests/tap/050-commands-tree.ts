@@ -290,6 +290,11 @@ await test('CommandsTree', async (t) => {
   t.equal(commandsTree.helpDefinitions?.title, helpTitle2,
     'tree helpDefinitions other title set')
 
+  const helpTitle3 = ' my trimmed title '
+  commandsTree.setHelpTitle(helpTitle3)
+  t.equal(commandsTree.helpDefinitions?.title, helpTitle3.trim(),
+    'tree helpDefinitions trimmed title set')
+
   // --------------------------------------------------------------------------
   t.equal(commandsTree.getUnaliasedCommandParts.length, 0,
     'tree getUnaliasedCommandParts() empty')
