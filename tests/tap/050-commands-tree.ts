@@ -324,8 +324,6 @@ await test('CommandsTree findCommandNode', async (t) => {
     }
   })
 
-  commandsTree.validateCommands()
-
   const commands = commandsTree.getChildrenCommandNames()
   t.equal(commands.length, 2, 'tree has 2 commands')
 
@@ -407,7 +405,6 @@ await test('subcommands', async (t) => {
   t.equal(commands[0], 'copy', 'first is copy')
   t.equal(commands[1], 'conf', 'second is conf')
 
-  commandsTree.validateCommands()
   t.equal(commandsTree.terminatorCharacterNodes.length, 2, 'has 2 end nodes')
 
   let commandNode

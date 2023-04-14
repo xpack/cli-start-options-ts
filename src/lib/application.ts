@@ -525,11 +525,6 @@ export class Application extends Command {
 
     this.initializeReplOptions()
 
-    // This has double role, to prepare the commands tree and
-    // to check if the commands are unique, otherwise this will
-    // throw an assert().
-    this.commandsTree.validateCommands()
-
     // For use in Help.
     context.commandNode = this.commandsTree
 

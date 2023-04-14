@@ -54,7 +54,6 @@ await test('two commands', async (t) => {
   t.equal(commands[0], 'copy', 'first is copy')
   t.equal(commands[1], 'conf', 'second is conf')
 
-  commandsTree.validateCommands()
   t.equal(commandsTree.terminatorCharacterNodes.length, 2, 'has 2 end nodes')
 
   let commandNode
@@ -171,7 +170,6 @@ await test('aliases', async (t) => {
   t.equal(commands[0], 'build', 'first is build')
   t.equal(commands[1], 'conf', 'second is conf')
 
-  commandsTree.validateCommands()
   t.equal(commandsTree.terminatorCharacterNodes.length, 4, 'has 4 end nodes')
 
   let commandNode
@@ -226,7 +224,6 @@ await test('mixed aliases', async (t) => {
   t.equal(commands[0], 'build', 'first is build')
   t.equal(commands[1], 'conf', 'second is conf')
 
-  commandsTree.validateCommands()
   t.equal(commandsTree.terminatorCharacterNodes.length, 4, 'has 4 end nodes')
 
   let commandNode
@@ -293,7 +290,6 @@ await test('promotion', async (t) => {
 
   t.equal(commands[0], 'copy', 'first is copy')
 
-  commandsTree.validateCommands()
   t.equal(commandsTree.terminatorCharacterNodes.length, 2, 'has 2 end nodes')
 
   let commandNode
@@ -337,7 +333,6 @@ await test('subcommands without parent command class', async (t) => {
 
   t.equal(commands[0], 'copy', 'first is copy')
 
-  commandsTree.validateCommands()
   t.equal(commandsTree.terminatorCharacterNodes.length, 1, 'has 1 end node')
 
   let commandNode

@@ -488,6 +488,19 @@ export class CommandsTree extends CommandNode {
     })
   }
 
+  override addCommands (params: {
+    [key: string]: CommandTemplate
+  }): void {
+    assert(params)
+
+    super.addCommands(params)
+
+    // This has double role, to prepare the commands tree and
+    // to check if the commands are unique, otherwise this will
+    // throw an assert().
+    this.validateCommands()
+  }
+
   setHelpDescription (description: string): void {
     if (this.helpDefinitions === undefined) {
       this.helpDefinitions = {
