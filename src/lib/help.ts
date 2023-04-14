@@ -133,11 +133,12 @@ export class Help {
     this.outputTitle()
 
     if (context.commandNode.hasChildrenCommands()) {
-      this.outputCommands()
+      this.outputAvailableCommands()
     } else {
-      // When called from commands.
+      // No further sub-commands, leaves in the commands tree.
       this.outputCommandLine()
     }
+
     // The special trick here is how to align the right column.
     // For this two steps are needed, with the first to compute
     // the max width of the first column, and then to output text.
@@ -168,7 +169,7 @@ export class Help {
   }
 
   /**
-   * @summary: Output the command line with all visible options.
+   * @summary: Output the fully qualified command line with all visible options.
    *
    * @description
    * Output the command usage, by enumerating the options, with
@@ -270,47 +271,53 @@ export class Help {
     }
   }
 
-  outputCommands (): void {
+  /**
+   * @summary Output available commands for incomplete invocations.
+   *
+   * @description
+   * Called only if `hasChildrenCommands()`.
+   */
+  outputAvailableCommands (): void {
     const context: Context = this.context
 
     assert(context.commandNode)
+
+    // Sorted direct children commands.
     const commands: string[] =
       context.commandNode.getChildrenCommandNames().sort()
+    assert(commands.length > 0)
 
     const commandParts =
       [context.programName, ...context.commandNode.getUnaliasedCommandParts()]
         .join(' ')
 
-    const message = context.commandNode.helpDefinitions?.usagePostOptions ??
-      '[<args>...]'
+    const postOptions =
+      context.commandNode.helpDefinitions?.usagePostOptions ?? '[<args>...]'
 
-    if (commands.length > 0) {
-      this.commands = commands
+    this.commands = commands
 
-      this.output(`Usage: ${commandParts} <command> [<subcommand>...]` +
-        ` [<options> ...] ${message}`)
-      this.output()
-      this.output('where <command> is one of:')
-      let buffer: string | null = null
-      commands.forEach((cmd, i) => {
-        if (buffer === null) {
-          buffer = '  '
-        }
-        buffer += cmd
-        if (i !== (commands.length - 1)) {
-          buffer += ', '
-        }
-        if (buffer.length > this.rightLimit) {
-          this.output(buffer)
-          buffer = null
-        }
-      })
-      if (buffer != null) {
+    this.output(`Usage: ${commandParts} <command> [<subcommand>...]` +
+        ` [<options> ...] ${postOptions}`)
+    this.output()
+    this.output('where <command> is one of:')
+
+    let buffer: string | null = null
+    commands.forEach((command, index) => {
+      if (buffer === null) {
+        buffer = '  '
+      }
+      buffer += command
+      if (index !== (commands.length - 1)) {
+        buffer += ', '
+      }
+      if (buffer.length > this.rightLimit) {
         this.output(buffer)
         buffer = null
       }
-    } else {
-      this.output(`Usage: ${commandParts} [<options> ...] ${message}`)
+    })
+    if (buffer != null) {
+      this.output(buffer)
+      buffer = null
     }
   }
 
