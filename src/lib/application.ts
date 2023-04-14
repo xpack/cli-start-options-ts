@@ -500,7 +500,8 @@ export class Application extends Command {
 
     const packageJson = context.packageJson
 
-    this.commandsTree.setHelpTitle(packageJson.description ?? packageJson.name)
+    this.commandsTree.setHelpDescription(
+      packageJson.description ?? packageJson.name)
 
     // ------------------------------------------------------------------------
     // Validate the engine.

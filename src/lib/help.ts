@@ -156,9 +156,9 @@ export class Help {
 
     assert(context.commandNode)
 
-    const title = context.commandNode.getHelpTitle()
-    if (title !== undefined) {
-      this.output(`${title}`)
+    const description = context.commandNode.getHelpDescription()
+    if (description.length > 0) {
+      this.output(`${description}`)
       this.output()
     }
   }

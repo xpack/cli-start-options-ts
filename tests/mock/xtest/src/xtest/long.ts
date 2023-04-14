@@ -81,7 +81,7 @@ export class Long extends cli.Command {
     const log = context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.getHelpTitle())
+    log.info(this.getCommandDescription())
     // const config = this.context.config
 
     log.info('Done.')

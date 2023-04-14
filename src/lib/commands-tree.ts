@@ -43,7 +43,7 @@ import { Context } from './context.js'
 // ----------------------------------------------------------------------------
 
 interface CommandTemplateHelpDefinitions {
-  title: string
+  description: string
   usagePreOptions?: string
   usagePostOptions?: string
 }
@@ -128,6 +128,7 @@ abstract class CommandBaseNode {
   public moduleRelativePath?: string | undefined
   /** Optional class name, if multiple classes are in the same module. */
   public className?: string | undefined
+
   /** Optional properties used by the help subsystem. */
   public helpDefinitions?: CommandTemplateHelpDefinitions | undefined
 
@@ -416,13 +417,13 @@ abstract class CommandBaseNode {
    * subcommands it is also possible to define the title
    * only in the parent command.
    */
-  getHelpTitle (): string {
-    if (this.helpDefinitions?.title !== undefined) {
-      return this.helpDefinitions.title.trim()
+  getHelpDescription (): string {
+    if (this.helpDefinitions?.description !== undefined) {
+      return this.helpDefinitions.description.trim()
     }
 
     assert(this.parent)
-    return this.parent.getHelpTitle()
+    return this.parent.getHelpDescription()
   }
 }
 
@@ -487,13 +488,13 @@ export class CommandsTree extends CommandNode {
     })
   }
 
-  setHelpTitle (title: string): void {
+  setHelpDescription (description: string): void {
     if (this.helpDefinitions === undefined) {
       this.helpDefinitions = {
-        title: title.trim()
+        description: description.trim()
       }
     } else {
-      this.helpDefinitions.title = title.trim()
+      this.helpDefinitions.description = description.trim()
     }
   }
 

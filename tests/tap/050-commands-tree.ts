@@ -94,8 +94,10 @@ await test('CharacterNode addCommand', async (t) => {
   const charactersTree = new cli.CharactersTree(commandsTree)
 
   t.throws(() => {
-    charactersTree.addCommand(undefined as unknown as { name: string
-      commandNode: cli.CommandNode })
+    charactersTree.addCommand(undefined as unknown as {
+      name: string
+      commandNode: cli.CommandNode
+    })
   }, assert.AssertionError, 'assert(params)')
 
   t.throws(() => {
@@ -280,19 +282,19 @@ await test('CommandsTree', async (t) => {
   t.equal(commandsTree.getModulePath(), undefined, 'no getModulePath()')
 
   // --------------------------------------------------------------------------
-  const helpTitle = 'my title'
-  commandsTree.setHelpTitle(helpTitle)
-  t.equal(commandsTree.helpDefinitions?.title, helpTitle,
+  const helpDescription = 'my title'
+  commandsTree.setHelpDescription(helpDescription)
+  t.equal(commandsTree.helpDefinitions?.description, helpDescription,
     'tree helpDefinitions title set')
 
-  const helpTitle2 = 'my other title'
-  commandsTree.setHelpTitle(helpTitle2)
-  t.equal(commandsTree.helpDefinitions?.title, helpTitle2,
+  const helpDescription2 = 'my other title'
+  commandsTree.setHelpDescription(helpDescription2)
+  t.equal(commandsTree.helpDefinitions?.description, helpDescription2,
     'tree helpDefinitions other title set')
 
-  const helpTitle3 = ' my trimmed title '
-  commandsTree.setHelpTitle(helpTitle3)
-  t.equal(commandsTree.helpDefinitions?.title, helpTitle3.trim(),
+  const helpDescription3 = ' my trimmed title '
+  commandsTree.setHelpDescription(helpDescription3)
+  t.equal(commandsTree.helpDefinitions?.description, helpDescription3.trim(),
     'tree helpDefinitions trimmed title set')
 
   // --------------------------------------------------------------------------
@@ -314,7 +316,7 @@ await test('CommandsTree findCommandNode', async (t) => {
       moduleRelativePath: 'copy.js',
       className: 'Copy',
       helpDefinitions: {
-        title: 'The copy command'
+        description: 'The copy command'
       }
     },
     conf: {
@@ -344,23 +346,23 @@ await test('CommandsTree findCommandNode', async (t) => {
     '"copy" moduleRelativePath is copy.js')
   t.equal(foundCommandModule.className, 'Copy', 'copy class is Copy')
 
-  t.equal(copyCommandNode.getHelpTitle(), 'The copy command',
+  t.equal(copyCommandNode.getHelpDescription(), 'The copy command',
     'copy command title')
 
   const commandParts = copyCommandNode.getUnaliasedCommandParts()
   t.equal(commandParts.length, 1, 'unaliased array has one entry')
   t.equal(commandParts[0], 'copy', 'first command is copy')
 
-  const helpTitle = 'my title'
-  commandsTree.setHelpTitle(helpTitle)
-  t.equal(commandsTree.helpDefinitions?.title, helpTitle,
+  const helpDescription = 'my title'
+  commandsTree.setHelpDescription(helpDescription)
+  t.equal(commandsTree.helpDefinitions?.description, helpDescription,
     'tree helpDefinitions title set')
 
   const confCommandNode = commandsTree.findCommandNode(['conf'])
   t.equal(confCommandNode.moduleRelativePath, 'conf.js',
     '"conf" moduleRelativePath is conf.js')
 
-  t.equal(confCommandNode.getHelpTitle(), helpTitle,
+  t.equal(confCommandNode.getHelpDescription(), helpDescription,
     'conf command title')
 
   t.end()

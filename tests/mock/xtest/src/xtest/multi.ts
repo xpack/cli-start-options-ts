@@ -96,7 +96,7 @@ export class Multi extends cli.Command {
     const log = context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.getHelpTitle())
+    log.info(this.getCommandDescription())
 
     const config = context.config as CliConfigMulti
 
@@ -169,7 +169,7 @@ export class MultiFirst extends Multi {
     const log = context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.getHelpTitle())
+    log.info(this.getCommandDescription())
     const config = context.config as CliConfigMultiFirst
 
     if (config.multi !== undefined) {
@@ -266,7 +266,7 @@ export class MultiSecond extends Multi {
     const log = context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.getHelpTitle())
+    log.info(this.getCommandDescription())
     const config = context.config as CliConfigMultiSecond
 
     if (config.multi !== undefined) {

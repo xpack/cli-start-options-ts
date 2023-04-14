@@ -55,7 +55,7 @@ export class Copy extends cli.Command {
     const log = this.context.log
     log.trace(`${this.constructor.name}.main()`)
 
-    log.info(this.getHelpTitle())
+    log.info(this.getCommandDescription())
 
     log.verbose('Verbose')
 

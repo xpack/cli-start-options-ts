@@ -252,16 +252,16 @@ export abstract class Command {
   }
 
   /**
-   * @summary Get the command title.
+   * @summary Get the command description.
    * @returns A string
    *
    * @description
-   * The title is displayed in the help output and
+   * The description is displayed in the help output and
    * by some commands.
    */
-  getHelpTitle (): string {
+  getCommandDescription (): string {
     assert(this.context.commandNode)
-    return this.context.commandNode?.getHelpTitle()
+    return this.context.commandNode?.getHelpDescription()
   }
 
   /**
