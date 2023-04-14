@@ -108,6 +108,45 @@ export class Help {
     }
   }
 
+  outputMaybeLongLine (
+    line: string,
+    description: string
+  ): void {
+    const multiPass = this.multiPass
+
+    let str: string = line.trim()
+    if (str.length >= multiPass.limit) {
+      // If the line is longer than the limit, output it
+      // alone and move the description to the next line.
+      this.output(str)
+      str = ''
+    }
+    this.output(`${this.padRight(str, multiPass.width)} ${description}`)
+  }
+
+  /**
+   * @summary Call the function twice.
+   * @param func Function to call.
+   * @returns Nothing.
+   */
+  twoPassAlign (func: CallableNoArgs): void {
+    this.multiPass.reset()
+    func()
+    this.multiPass.secondPass()
+    func()
+  }
+
+  padRight (line: string, width: number): string {
+    let str = line.trimEnd() // Do not trim start!
+    // Add the maximum number of spaces, most of the times too many.
+    str += ' '.repeat(width)
+
+    // Cut to the desired width.
+    return str.substring(0, width)
+  }
+
+  // --------------------------------------------------------------------------
+
   /**
    * @summary Output the entire help content.
    * @param params The generic parameters object.
@@ -544,18 +583,6 @@ export class Help {
         this.output(`${bugReports} ${pkgJson.author}`)
       }
     }
-  }
-
-  /**
-   * @summary Call the function twice.
-   * @param func Function to call.
-   * @returns Nothing.
-   */
-  twoPassAlign (func: CallableNoArgs): void {
-    this.multiPass = new MultiPass(this.middleLimit)
-    func()
-    this.multiPass.secondPass()
-    func()
   }
 }
 
