@@ -106,7 +106,7 @@ export interface OptionDefinition {
  * @summary A group of options.
  */
 export interface OptionsGroup {
-  title: string
+  description: string
   isCommon?: boolean
   isInsertInFront?: boolean
   // TODO: rename optionsDefinitions
@@ -185,8 +185,7 @@ export class Options {
   /**
    * @summary Add definitions to an existing group.
    *
-   * @param title Identifier of the option groups
-   * @param optionDefinitions Array of definitions.
+   * @param optionsGroups Array of groups.
    * @returns Nothing.
    */
   appendToGroups (
@@ -195,7 +194,7 @@ export class Options {
     assert(optionsGroups)
 
     optionsGroups.forEach((paramOptionsGroup) => {
-      const title: string = paramOptionsGroup.title
+      const description: string = paramOptionsGroup.description
       const optionsDefinitions: OptionDefinition[] =
         paramOptionsGroup.optionsDefinitions
       const isInsertInFront: boolean =
@@ -205,10 +204,10 @@ export class Options {
         (paramOptionsGroup.isCommon ?? false) ? this.commonGroups : this.groups
 
       groups.forEach((optionsGroup) => {
-        assert(optionsGroup.title !== undefined)
+        assert(optionsGroup.description !== undefined)
         assert(optionsGroup.optionsDefinitions !== undefined)
 
-        if (optionsGroup.title === title) {
+        if (optionsGroup.description === description) {
           if (isInsertInFront) {
             optionsGroup.optionsDefinitions = [
               ...optionsDefinitions,

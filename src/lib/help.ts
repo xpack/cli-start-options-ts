@@ -412,13 +412,13 @@ export class Help {
 
     optionsGroups.forEach((optionsGroup) => {
       this.outputOptions(
-        optionsGroup.optionsDefinitions, optionsGroup.title)
+        optionsGroup.optionsDefinitions, optionsGroup.description)
     })
   }
 
   outputOptions (
     optionDefinitions: OptionDefinition[],
-    title: string | undefined
+    description: string | undefined
   ): void {
     const multiPass = this.multiPass
 
@@ -435,9 +435,9 @@ export class Help {
       return
     }
 
-    if (!multiPass.isFirstPass && title !== undefined) {
+    if (!multiPass.isFirstPass && description !== undefined) {
       this.output()
-      this.output(title + ':')
+      this.output(description + ':')
     }
 
     optionDefinitions.forEach((optionDefinition) => {

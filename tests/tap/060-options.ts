@@ -70,7 +70,7 @@ await test('cli.Options constructor & add', async (t) => {
     context,
     optionsGroups: [
       {
-        title: 'Group Title',
+        description: 'Group Title',
         optionsDefinitions: [
           {
             options: ['--mmm', '-m'],
@@ -81,7 +81,7 @@ await test('cli.Options constructor & add', async (t) => {
       },
       {
         isCommon: true,
-        title: 'CommonGroup Title',
+        description: 'CommonGroup Title',
         optionsDefinitions: [
           {
             options: ['--nnn', '-n'],
@@ -95,8 +95,8 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.groups.length, 1, '1 group')
   t.equal(options.commonGroups.length, 1, '1 commonGroups')
 
-  t.equal(options.groups[0]?.title, 'Group Title', 'group title')
-  t.equal(options.commonGroups[0]?.title, 'CommonGroup Title',
+  t.equal(options.groups[0]?.description, 'Group Title', 'group title')
+  t.equal(options.commonGroups[0]?.description, 'CommonGroup Title',
     'commonGroups title')
 
   t.equal(options.groups[0]?.optionsDefinitions.length, 1,
@@ -112,7 +112,7 @@ await test('cli.Options constructor & add', async (t) => {
 
   options.addGroups([
     {
-      title: 'Group Title After',
+      description: 'Group Title After',
       optionsDefinitions: [
         {
           options: ['--xxx', '-x'],
@@ -123,7 +123,7 @@ await test('cli.Options constructor & add', async (t) => {
     },
     {
       isCommon: true,
-      title: 'CommonGroup Title After',
+      description: 'CommonGroup Title After',
       optionsDefinitions: [
         {
           options: ['--yyy', '-y'],
@@ -136,14 +136,15 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.groups.length, 2, '2 groups')
   t.equal(options.commonGroups.length, 2, '2 commonGroups')
 
-  t.equal(options.groups[1]?.title, 'Group Title After', 'group title after')
-  t.equal(options.commonGroups[1]?.title, 'CommonGroup Title After',
+  t.equal(options.groups[1]?.description, 'Group Title After',
+    'group title after')
+  t.equal(options.commonGroups[1]?.description, 'CommonGroup Title After',
     'commonGroups title after')
 
   options.addGroups([
     {
       isInsertInFront: true,
-      title: 'Group Title Before',
+      description: 'Group Title Before',
       optionsDefinitions: [
         {
           options: ['--aaa', '-a'],
@@ -155,7 +156,7 @@ await test('cli.Options constructor & add', async (t) => {
     {
       isInsertInFront: true,
       isCommon: true,
-      title: 'CommonGroup Title Before',
+      description: 'CommonGroup Title Before',
       optionsDefinitions: [
         {
           options: ['--bbb', '-b'],
@@ -168,9 +169,9 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.groups.length, 3, '3 groups')
   t.equal(options.commonGroups.length, 3, '3 commonGroups')
 
-  t.equal(options.groups[0]?.title, 'Group Title Before',
+  t.equal(options.groups[0]?.description, 'Group Title Before',
     'group title before')
-  t.equal(options.commonGroups[0]?.title, 'CommonGroup Title Before',
+  t.equal(options.commonGroups[0]?.description, 'CommonGroup Title Before',
     'commonGroups title before')
 
   // ----- appendToGroups() -----
@@ -181,7 +182,7 @@ await test('cli.Options constructor & add', async (t) => {
 
   options.appendToGroups([
     {
-      title: 'Group Title',
+      description: 'Group Title',
       optionsDefinitions: [
         {
           options: ['--ppp', '-p'],
@@ -192,7 +193,7 @@ await test('cli.Options constructor & add', async (t) => {
     },
     {
       isCommon: true,
-      title: 'CommonGroup Title',
+      description: 'CommonGroup Title',
       optionsDefinitions: [
         {
           options: ['--qqq', '-q'],
@@ -206,8 +207,8 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.groups.length, 3, '3 groups')
   t.equal(options.commonGroups.length, 3, '3 commonGroups')
 
-  t.equal(options.groups[1]?.title, 'Group Title', 'group title')
-  t.equal(options.commonGroups[1]?.title, 'CommonGroup Title',
+  t.equal(options.groups[1]?.description, 'Group Title', 'group title')
+  t.equal(options.commonGroups[1]?.description, 'CommonGroup Title',
     'commonGroups title')
 
   t.equal(options.groups[1]?.optionsDefinitions.length, 2,
@@ -223,7 +224,7 @@ await test('cli.Options constructor & add', async (t) => {
   options.appendToGroups([
     {
       isInsertInFront: true,
-      title: 'Group Title',
+      description: 'Group Title',
       optionsDefinitions: [
         {
           options: ['--ccc', '-c'],
@@ -235,7 +236,7 @@ await test('cli.Options constructor & add', async (t) => {
     {
       isInsertInFront: true,
       isCommon: true,
-      title: 'CommonGroup Title',
+      description: 'CommonGroup Title',
       optionsDefinitions: [
         {
           options: ['--ddd', '-d'],
@@ -249,8 +250,8 @@ await test('cli.Options constructor & add', async (t) => {
   t.equal(options.groups.length, 3, '3 groups')
   t.equal(options.commonGroups.length, 3, '3 commonGroups')
 
-  t.equal(options.groups[1]?.title, 'Group Title', 'group title')
-  t.equal(options.commonGroups[1]?.title, 'CommonGroup Title',
+  t.equal(options.groups[1]?.description, 'Group Title', 'group title')
+  t.equal(options.commonGroups[1]?.description, 'CommonGroup Title',
     'commonGroups title')
 
   t.equal(options.groups[1]?.optionsDefinitions.length, 3,
@@ -287,7 +288,7 @@ await test('cli.Options initializeConfiguration', async (t) => {
   // Check missing mandatory.
   options.addGroups([
     {
-      title: 'Group Title',
+      description: 'Group Title',
       optionsDefinitions: [
         {
           options: ['--mmm', '-m'],
@@ -298,7 +299,7 @@ await test('cli.Options initializeConfiguration', async (t) => {
     },
     {
       isCommon: true,
-      title: 'CommonGroup Title',
+      description: 'CommonGroup Title',
       optionsDefinitions: [
         {
           options: ['--nnn', '-n'],
@@ -371,7 +372,7 @@ await test('cli.Options parse missing mandatory', async (t) => {
   // Check missing mandatory.
   options.addGroups([
     {
-      title: 'Group Title',
+      description: 'Group Title',
       optionsDefinitions: [
         {
           options: ['--aaa', '-a'],
@@ -394,7 +395,7 @@ await test('cli.Options parse missing mandatory', async (t) => {
     },
     {
       isCommon: true,
-      title: 'CommonGroup Title',
+      description: 'CommonGroup Title',
       optionsDefinitions: [
         {
           options: ['--bbb', '-b'],
@@ -447,7 +448,7 @@ await test('cli.Options processOption', async (t) => {
   // Check missing mandatory.
   options.addGroups([
     {
-      title: 'Group Title',
+      description: 'Group Title',
       optionsDefinitions: [
         {
           options: ['--one', '-o'],

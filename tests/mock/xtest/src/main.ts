@@ -158,7 +158,7 @@ export class Xtest extends cli.Application {
     // and are ok, no need to redefine them.
     context.options.addGroups([
       {
-        title: 'Extra options',
+        description: 'Extra options',
         isCommon: true,
         optionsDefinitions: [
           {

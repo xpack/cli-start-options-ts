@@ -262,7 +262,7 @@ export class Application extends Command {
     context.options.addGroups(
       [
         {
-          title: 'Common options',
+          description: 'Common options',
           isCommon: true,
           optionsDefinitions: [
             {
@@ -421,7 +421,7 @@ export class Application extends Command {
       context.options.appendToGroups(
         [
           {
-            title: 'Common options',
+            description: 'Common options',
             isCommon: true,
             isInsertInFront: true,
             optionsDefinitions: [

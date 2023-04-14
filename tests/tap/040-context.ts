@@ -151,12 +151,12 @@ await test('cli.Context constructor(context)', async (t) => {
 
   const groups: cli.OptionsGroup[] = [
     {
-      title: 'one',
+      description: 'one',
       optionsDefinitions: [],
       isCommon: true
     },
     {
-      title: 'two',
+      description: 'two',
       optionsDefinitions: []
     }
   ]
@@ -174,10 +174,11 @@ await test('cli.Context constructor(context)', async (t) => {
   t.equal(context.programName, name, `programName ${name}`)
 
   t.equal(context.options.commonGroups.length, 1, 'has commonGroups')
-  t.equal(context.options.commonGroups[0]?.title, 'one', 'commonGroup one')
+  t.equal(context.options.commonGroups[0]?.description, 'one',
+    'commonGroup one')
 
   t.equal(context.options.groups.length, 1, 'has groups')
-  t.equal(context.options.groups[0]?.title, 'two', 'group one')
+  t.equal(context.options.groups[0]?.description, 'two', 'group one')
 
   t.equal(context.rootPath, rootPath, `rootPath ${rootPath}`)
   t.equal(context.packageJson, packageJson, 'packageJson')

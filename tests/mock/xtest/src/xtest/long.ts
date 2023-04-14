@@ -44,7 +44,7 @@ export class Long extends cli.Command {
 
     this.context.options.addGroups([
       {
-        title: 'Long options',
+        description: 'Long options',
         optionsDefinitions: [
           {
             options: ['--long', '--very-long', '--extra-very-long'],

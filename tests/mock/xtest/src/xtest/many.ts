@@ -47,7 +47,7 @@ export class Long extends cli.Command {
 
     this.context.options.addGroups([
       {
-        title: 'Many options',
+        description: 'Many options',
         optionsDefinitions: [
           {
             options: ['--one'],

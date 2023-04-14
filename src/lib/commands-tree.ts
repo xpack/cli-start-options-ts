@@ -408,13 +408,13 @@ abstract class CommandBaseNode {
   }
 
   /**
-   * @summary Get the title message
+   * @summary Get the command description.
    *
    * @returns A string
    *
    * @description
-   * Normally each command should define the title, but for
-   * subcommands it is also possible to define the title
+   * Normally each command should define the description, but for
+   * subcommands it is also possible to define the description
    * only in the parent command.
    */
   getHelpDescription (): string {

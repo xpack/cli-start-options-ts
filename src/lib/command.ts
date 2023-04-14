@@ -392,7 +392,7 @@ export abstract class Command {
  *
  * @description
  * Explicit definition to show how a user Command class should look
- * like, more specifically that should it also set a mandatory title.
+ * like, more specifically that should it also set a mandatory description.
  *
  * It is also used to validate the call to instantiate the user class
  * in the Application class.

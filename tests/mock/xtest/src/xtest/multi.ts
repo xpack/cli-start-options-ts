@@ -55,7 +55,7 @@ export class Multi extends cli.Command {
     this.context.options.addGroups(
       [
         {
-          title: 'Multi options',
+          description: 'Multi options',
           isInsertInFront: true,
 
           optionsDefinitions: [
@@ -129,7 +129,7 @@ export class MultiFirst extends Multi {
     this.context.options.addGroups(
       [
         {
-          title: 'Multi first options',
+          description: 'Multi first options',
           isInsertInFront: true,
           optionsDefinitions: [
             {
@@ -203,7 +203,7 @@ export class MultiSecond extends Multi {
 
     this.context.options.addGroups([
       {
-        title: 'Multi second options',
+        description: 'Multi second options',
         // Disabled on purpose, for coverage.
         // isInsertInFront: true,
         optionsDefinitions: [
@@ -226,7 +226,7 @@ export class MultiSecond extends Multi {
     ])
     this.context.options.appendToGroups([
       {
-        title: 'Common options',
+        description: 'Common options',
         isCommon: true,
         isInsertInFront: true,
         optionsDefinitions: [

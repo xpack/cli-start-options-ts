@@ -51,7 +51,7 @@ export class Copy extends cli.Command {
 
     this.context.options.addGroups([
       {
-        title: 'Copy options',
+        description: 'Copy options',
         optionsDefinitions: [
           {
             options: ['--file'],
