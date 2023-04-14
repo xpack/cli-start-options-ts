@@ -177,6 +177,7 @@ export class Help {
     } else {
       // No further sub-commands, leaves in the commands tree.
       this.outputCommandLine()
+      this.outputCommandAliases()
     }
 
     // The special trick here is how to align the right column.
@@ -185,8 +186,6 @@ export class Help {
 
     this.twoPassAlign(() => {
       params.object.outputHelpAlignedOptions({ help: this })
-
-      this.outputAliases()
 
       this.outputOptionsGroups()
       this.outputHelpDetails()
@@ -361,12 +360,12 @@ export class Help {
     }
   }
 
-  outputAliases (): void {
+  outputCommandAliases (): void {
     const context: Context = this.context
 
-    if (context.commandNode !== undefined &&
-      context.commandNode.aliases.length > 0 &&
-      !this.multiPass.isFirstPass) {
+    assert(context.commandNode)
+
+    if (context.commandNode.aliases.length > 0) {
       this.output()
       this.output('Command aliases: ' +
         `${context.commandNode.aliases.sort().join(', ')}`)
