@@ -50,7 +50,8 @@ export class MultiPass {
     }
   }
 
-  clear (): void {
+  reset (): void {
+    this.isFirstPass = true
     this.width = 0
   }
 
