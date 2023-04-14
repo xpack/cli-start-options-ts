@@ -50,6 +50,10 @@ export class MultiPass {
     }
   }
 
+  clear (): void {
+    this.width = 0
+  }
+
   secondPass (): void {
     this.isFirstPass = false
     // One more is implicit, so a total 2 spaces between columns.
