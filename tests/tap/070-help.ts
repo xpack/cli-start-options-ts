@@ -627,4 +627,82 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
   t.end()
 })
 
+await test('cli.Help outputCommandAliases()', async (t) => {
+
+  const mockConsole = new MockConsole()
+  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+
+  t.throws(() => {
+    const context = new cli.Context({ log })
+
+    const help = new cli.Help({ context })
+    help.outputCommandAliases()
+  }, assert.AssertionError, 'assert(context.commandNode)')
+
+  mockConsole.clear()
+
+  await t.test('no aliases', async (t) => {
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    commandsTree.addCommands({
+      one: {
+        moduleRelativePath: '.',
+      },
+      two: {
+        moduleRelativePath: '.',
+      }
+    })
+    context.commandNode = commandsTree.findCommandNode(['one'])
+
+    const help = new cli.Help({ context })
+
+    help.outputCommandAliases()
+
+    // dumpLines(mockConsole.outLines)
+    // dumpLines(mockConsole.errLines)
+
+    t.equal(mockConsole.outLines.length, 0, 'no output line')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.end()
+  })
+
+  await t.test('aliases', async (t) => {
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    commandsTree.addCommands({
+      one: {
+        aliases: ['o', 'on'],
+        moduleRelativePath: '.',
+      },
+      two: {
+        moduleRelativePath: '.',
+      }
+    })
+    context.commandNode = commandsTree.findCommandNode(['one'])
+
+    const help = new cli.Help({ context })
+
+    help.outputCommandAliases()
+
+    // dumpLines(mockConsole.outLines)
+    // dumpLines(mockConsole.errLines)
+
+    t.equal(mockConsole.outLines.length, 2, 'two output lines')
+    t.equal(mockConsole.outLines[0],
+      '',
+      'first line: empty')
+    t.equal(mockConsole.outLines[1], 'Command aliases: o, on',
+      'second line: Command aliases ...')
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.end()
+  })
+
+  t.end()
+})
+
 // ----------------------------------------------------------------------------
