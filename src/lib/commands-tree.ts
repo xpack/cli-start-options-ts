@@ -48,7 +48,7 @@ interface CommandTemplateHelpDefinitions {
   usagePostOptions?: string
 }
 
-interface CommandTemplate {
+export interface CommandTemplate {
   /** Optional array of command aliases. */
   aliases?: string[]
   /** Relative path to module source.
