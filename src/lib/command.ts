@@ -285,14 +285,17 @@ export abstract class Command {
   /**
    * @summary Output details about extra args.
    *
-   * @param _multiPass Status for two pass.
+   * @param params.help Reference to the Help object.
    * @returns Nothing.
    *
    * @description
    * The default implementation does nothing. Override it in
    * the application if needed.
+   *
+   * Be sure the implemented logic does the two separate passes,
+   * first to update the width, and the second to output.
    */
-  outputHelpArgsDetails (params: {
+  outputHelpAlignedOptions (params: {
     help: Help
   }): void {
     assert(params)
