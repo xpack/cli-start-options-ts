@@ -75,31 +75,33 @@ export interface OptionDefinition {
   /** True if the option is mandatory, false if it is optional. */
   isMandatory?: boolean
 
-  helpDefinitions?: {
-    /** A half line text to explain what the option does;
-     * only options with descriptions are listed in help. */
-    description?: string
+  helpDefinitions?: OptionHelpDefinitions
+}
 
-    /** Default message */
-    defaultMessage?: string
+export interface OptionHelpDefinitions {
+  /** A half line text to explain what the option does;
+   * only options with descriptions are listed in help. */
+  description?: string
 
-    /** Name used to display the value in help, like `file`, `folder`, etc.
-     * The default is `s`. The format is `--option=<s>`
-    */
-    valueDescription?: string
+  /** Name used to display the value in help, like `file`, `folder`, etc.
+   * The default is `s`. The format is `--option=<s>`
+  */
+  valueDescription?: string
 
-    /** True if it must be processed before
-     *   other options, for example interactive options. */
-    isRequiredEarly?: boolean
+  /** A short description of the default value. */
+  defaultValueDescription?: string
 
-    /** True if it defines the option to get help;
-     *   not displayed in the common list, but as a separate line. */
-    isHelp?: boolean
+  /** True if it must be processed before
+   *   other options, for example interactive options. */
+  isRequiredEarly?: boolean
 
-    /** True if the option must be displayed
-     *  followed by an asterisk. */
-    isMultiple?: boolean
-  }
+  /** True if it defines the option to get help;
+   *   not displayed in the common list, but as a separate line. */
+  isHelp?: boolean
+
+  /** True if the option must be displayed
+   *  followed by an asterisk. */
+  isMultiple?: boolean
 }
 
 /**
