@@ -38,14 +38,62 @@ import * as cli from '../../esm/index.js'
 assert(cli.Help)
 dumpLines([])
 
+class MockCommand extends cli.Command {
+
+  main(
+    _argv: string[],
+    _forwardableArgv?: string[] | undefined
+  ): Promise<number> {
+    throw new Error('Method not implemented.')
+  }
+
+  override outputHelpAlignedOptions(params: { help: cli.Help }) {
+    const help = params.help
+    const multiPass = help.multiPass
+
+    const line = '--mock-option'
+
+    if (multiPass.isFirstPass) {
+      multiPass.updateWidth(line.length)
+    } else {
+      help.outputMaybeLongLine(line, 'Mock command option')
+    }
+  }
+}
+
 // ----------------------------------------------------------------------------
 
 await test('cli.Help constructor()', async (t) => {
   const mockConsole = new MockConsole()
   const log = new cli.Logger({ console: mockConsole, level: 'info' })
-  const context = new cli.Context({ log })
 
-  const help = new cli.Help({ context })
+  t.throws(() => {
+    const help = new cli.Help(undefined as unknown as cli.HelpConstructorParams)
+    assert(help)
+  }, assert.AssertionError, 'assert(params)')
+
+  t.throws(() => {
+    const help = new cli.Help({
+      context: undefined as unknown as cli.Context,
+      command: undefined as unknown as cli.Command
+    })
+    assert(help)
+  }, assert.AssertionError, 'assert(params.context)')
+
+  t.throws(() => {
+    const context = new cli.Context({ log })
+
+    const help = new cli.Help({
+      context,
+      command: undefined as unknown as cli.Command
+    })
+    assert(help)
+  }, assert.AssertionError, 'assert(params.command)')
+
+  const context = new cli.Context({ log })
+  const mockCommand = new MockCommand({context})
+
+  const help = new cli.Help({ context, command: mockCommand })
 
   t.ok(help.middleLimit > 0, 'middleLimit > 0')
   t.ok(help.rightLimit > 0, 'rightLimit > 0')
@@ -58,8 +106,9 @@ await test('cli.Help output()', async (t) => {
   const mockConsole = new MockConsole()
   const log = new cli.Logger({ console: mockConsole, level: 'info' })
   const context = new cli.Context({ log })
+  const mockCommand = new MockCommand({context})
 
-  const help = new cli.Help({ context })
+  const help = new cli.Help({ context, command: mockCommand })
 
   await t.test('log info', async (t) => {
 
@@ -93,7 +142,11 @@ await test('cli.Help output()', async (t) => {
 
   mockConsole.clear()
 
-  const helpAlways = new cli.Help({ context, isOutputAlways: true })
+  const helpAlways = new cli.Help({
+    context,
+    command: mockCommand,
+    isOutputAlways: true
+  })
 
   await t.test('always, log info', async (t) => {
 
@@ -136,8 +189,9 @@ await test('cli.Help outputTitle()', async (t) => {
 
   t.throws(() => {
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
     help.outputTitle()
   }, assert.AssertionError, 'outputTitle assert(context.commandNode)')
 
@@ -146,13 +200,14 @@ await test('cli.Help outputTitle()', async (t) => {
   await t.test('my title', async (t) => {
 
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.setHelpDescription('My Title')
 
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputTitle()
 
@@ -172,13 +227,14 @@ await test('cli.Help outputTitle()', async (t) => {
   await t.test('empty title', async (t) => {
 
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.setHelpDescription('')
 
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputTitle()
 
@@ -198,8 +254,9 @@ await test('cli.Help outputCommandLine()', async (t) => {
 
   t.throws(() => {
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
     help.outputCommandLine()
   }, assert.AssertionError, 'outputCommandLine assert(context.commandNode)')
 
@@ -208,11 +265,13 @@ await test('cli.Help outputCommandLine()', async (t) => {
   await t.test('empty', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     // Root tree node, practically empty.
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputCommandLine()
 
@@ -245,12 +304,14 @@ await test('cli.Help outputCommandLine()', async (t) => {
   await t.test('commands', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.addCommands(commandsTemplate)
     // commandsTree.validateCommands()
     context.commandNode = commandsTree.findCommandNode(['one', 'two'])
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputCommandLine()
 
@@ -270,6 +331,8 @@ await test('cli.Help outputCommandLine()', async (t) => {
   await t.test('pre/post options', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.helpDefinitions = {
       description: 'My Title',
@@ -278,7 +341,7 @@ await test('cli.Help outputCommandLine()', async (t) => {
     }
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputCommandLine()
 
@@ -298,6 +361,8 @@ await test('cli.Help outputCommandLine()', async (t) => {
   await t.test('options', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     context.commandNode = commandsTree
     commandsTree.helpDefinitions = {
@@ -400,7 +465,7 @@ await test('cli.Help outputCommandLine()', async (t) => {
     ])
     context.options = options
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputCommandLine()
 
@@ -437,8 +502,9 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
 
   t.throws(() => {
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
     help.outputAvailableCommands()
   }, assert.AssertionError, 'assert(context.commandNode)')
 
@@ -446,12 +512,13 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
 
   t.throws(() => {
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
     const commandsTree = new cli.CommandsTree({ context })
     // Root tree node, practically empty.
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
     help.outputAvailableCommands()
   }, assert.AssertionError, 'assert(commands.length > 0)')
 
@@ -460,6 +527,8 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
   await t.test('top commands', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.addCommands({
       one: {
@@ -504,7 +573,7 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     })
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputAvailableCommands()
 
@@ -537,6 +606,8 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
   await t.test('sub-commands', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.addCommands({
       top: {
@@ -553,7 +624,7 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     })
     context.commandNode = commandsTree.findCommandNode(['top'])
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputAvailableCommands()
 
@@ -583,6 +654,8 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
   await t.test('post options', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.addCommands({
       one: {
@@ -599,7 +672,7 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     }
     context.commandNode = commandsTree
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputAvailableCommands()
 
@@ -634,8 +707,9 @@ await test('cli.Help outputCommandAliases()', async (t) => {
 
   t.throws(() => {
     const context = new cli.Context({ log })
+    const mockCommand = new MockCommand({context})
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
     help.outputCommandAliases()
   }, assert.AssertionError, 'assert(context.commandNode)')
 
@@ -644,6 +718,8 @@ await test('cli.Help outputCommandAliases()', async (t) => {
   await t.test('no aliases', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.addCommands({
       one: {
@@ -655,7 +731,7 @@ await test('cli.Help outputCommandAliases()', async (t) => {
     })
     context.commandNode = commandsTree.findCommandNode(['one'])
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputCommandAliases()
 
@@ -671,6 +747,8 @@ await test('cli.Help outputCommandAliases()', async (t) => {
   await t.test('aliases', async (t) => {
 
     const context = new cli.Context({ log, programName: 'xyz' })
+    const mockCommand = new MockCommand({context})
+
     const commandsTree = new cli.CommandsTree({ context })
     commandsTree.addCommands({
       one: {
@@ -683,7 +761,7 @@ await test('cli.Help outputCommandAliases()', async (t) => {
     })
     context.commandNode = commandsTree.findCommandNode(['one'])
 
-    const help = new cli.Help({ context })
+    const help = new cli.Help({ context, command: mockCommand })
 
     help.outputCommandAliases()
 

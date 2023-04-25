@@ -275,11 +275,9 @@ export abstract class Command {
     const log = context.log
     log.trace('Command.help()')
 
-    const help: Help = new Help({ context })
+    const help: Help = new Help({ context, command: this })
 
-    help.outputAll({
-      object: this
-    })
+    help.outputAll()
   }
 
   /**
