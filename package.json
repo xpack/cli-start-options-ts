@@ -122,8 +122,7 @@
     "ignore": [
       "esm",
       "**/*.d.ts",
-      "**/*.js",
-      "tests/tap/070-*.ts"
+      "**/*.js"
     ]
   },
   "engines": {
