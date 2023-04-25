@@ -274,6 +274,7 @@ export class Application extends Command {
                 context.config.isHelpRequest = true
               },
               helpDefinitions: {
+                description: 'Quick help',
                 isHelp: true
               }
             },
