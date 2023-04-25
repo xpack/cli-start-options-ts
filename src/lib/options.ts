@@ -323,10 +323,15 @@ export class Options {
     const missingMandatoryErrors: string[] = []
     allOptionDefinitions.forEach((optionDefinition) => {
       // If the option is mandatory and was not processed.
-      if ((optionDefinition.isMandatory ?? false) &&
-        !processedOptions.has(optionDefinition)) {
-        const option = optionDefinition.options.join('|')
-        missingMandatoryErrors.push(`Mandatory '${option}' not found`)
+      if (optionDefinition.isMandatory ?? false) {
+        if (!processedOptions.has(optionDefinition)) {
+          const option = optionDefinition.options.join('|')
+          missingMandatoryErrors.push(`Mandatory '${option}' not found`)
+        }
+
+        // Validate, mandatory options should have no defaults.
+        const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+        assert(helpDefinitions.defaultValueDescription === undefined)
       }
     })
 
