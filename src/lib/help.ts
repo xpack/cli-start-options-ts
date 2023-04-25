@@ -146,12 +146,13 @@ export class Help {
       }
     } else {
       if (line.length >= multiPass.limit) {
-      // If the line is longer than the limit, output it
-      // alone and move the description to the next line.
+        // If the line is longer than the limit, output it
+        // alone and move the description to the next line.
         this.output(line)
         line = ''
       }
-      const description = params.description ?? ''
+      assert(params.description)
+      const description = params.description
       this.output(
         `${this.padRight(line, multiPass.width)} ${description.trim()}`)
     }
@@ -219,7 +220,7 @@ export class Help {
       (this.command).outputHelpAlignedOptions({ help: this })
 
       this.outputAlignedOptionsGroups()
-      this.outputAlignedHelpDetails()
+      this.outputAlignedAllHelpDetails()
       this.outputAlignedEarlyDetails()
     })
 
@@ -288,39 +289,47 @@ export class Help {
 
     let definition: string
     optionDefinitions.forEach((optionDefinition) => {
-      // Choose the longest alias, as the most readable.
-      definition = ''
-      optionDefinition.options.forEach((option) => {
-        if (option.length > definition.length) {
-          definition = option
-        }
-      })
-
-      // Add value description.
       const helpDefinitions = optionDefinition.helpDefinitions ?? {}
-      if (optionDefinition.hasValue ?? false) {
-        definition += ` <${helpDefinitions.valueDescription ?? 's'}>`
-      }
 
-      // Add braces and markers for multiple apparitions.
-      if (!(optionDefinition.isMandatory ?? false)) {
-        definition = `[${definition}]`
-        if (helpDefinitions.isMultiple ?? false) {
-          definition += '*'
+      // Skip help and early definitions.
+      if (!(helpDefinitions.isHelp ?? false) &&
+        !(helpDefinitions.isRequiredEarly ?? false)
+      ) {
+        // Choose the longest alias, as the most readable.
+        definition = ''
+        optionDefinition.options.forEach((option) => {
+          if (option.length > definition.length) {
+            definition = option
+          }
+        })
+
+        // Add value description.
+        if ((optionDefinition.hasValue ?? false) ||
+          (Array.isArray(optionDefinition.values) &&
+            optionDefinition.values.length > 0)) {
+          definition += ` <${helpDefinitions.valueDescription ?? 's'}>`
         }
-      } else if (helpDefinitions.isMultiple ?? false) {
-        definition = `[${definition}]+`
-      }
 
-      // If there is not enough space on the current line,
-      // output it and start a new line, aligned after the usage.
-      if (line.length + definition.length + 1 > this.rightLimit) {
-        this.output(line)
-        line = ' '.repeat(usage.length)
-      }
+        // Add braces and markers for multiple apparitions.
+        if (!(optionDefinition.isMandatory ?? false)) {
+          definition = `[${definition}]`
+          if (helpDefinitions.isMultiple ?? false) {
+            definition += '*'
+          }
+        } else if (helpDefinitions.isMultiple ?? false) {
+          definition = `[${definition}]+`
+        }
 
-      // Contribute the definition to the current line.
-      line += ' ' + definition
+        // If there is not enough space on the current line,
+        // output it and start a new line, aligned after the usage.
+        if (line.length + definition.length + 1 > this.rightLimit) {
+          this.output(line)
+          line = ' '.repeat(usage.length)
+        }
+
+        // Contribute the definition to the current line.
+        line += ' ' + definition
+      }
     })
 
     // The postOption string allow commands to customise the command line
@@ -453,14 +462,16 @@ export class Help {
     }
 
     optionDefinitions.forEach((optionDefinition) => {
-      const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+      assert(optionDefinition.helpDefinitions)
+      const helpDefinitions = optionDefinition.helpDefinitions
       if (this.isOptionDisplayable(helpDefinitions)) {
         // Join all options, in the user order.
         let option = '  ' + optionDefinition.options.join('|')
 
         // If it has values, possibly add a type, or `s` for string.
         if ((optionDefinition.hasValue ?? false) ||
-          optionDefinition.values !== undefined ||
+          (Array.isArray(optionDefinition.values) &&
+            optionDefinition.values.length > 0) ||
           helpDefinitions.valueDescription !== undefined) {
           option += ` <${helpDefinitions.valueDescription ?? 's'}>`
         }
@@ -477,14 +488,17 @@ export class Help {
             option = ''
           }
 
-          let description = helpDefinitions.description ?? ''
+          assert(helpDefinitions.description)
+          let description = helpDefinitions.description
 
-          if (Array.isArray(optionDefinition.values)) {
+          if (Array.isArray(optionDefinition.values) &&
+            optionDefinition.values.length > 0) {
             description += ` (${optionDefinition.values.join('|')})`
           }
 
           const helpDefaultDescription =
-            helpDefinitions.defaultValueDescription !== undefined
+            (!(optionDefinition.isMandatory ?? false) &&
+              helpDefinitions.defaultValueDescription !== undefined)
               ? `, default ${helpDefinitions.defaultValueDescription}`
               : ''
 
@@ -504,44 +518,60 @@ export class Help {
     })
   }
 
-  outputAlignedHelpDetails (
-  ): void {
+  outputAlignedAllHelpDetails (): void {
     const context: Context = this.context
 
     assert(context.commandNode)
     const commands: string[] =
       context.commandNode.getChildrenCommandNames()
 
-    const programName: string = context.programName
-
-    const line1: string = `${programName} -h|--help`
-    const line2: string = `${programName} <command> -h|--help`
-
     this.outputSecondPass()
 
-    this.outputMultiPassLine({
-      line: line1,
-      description: 'Quick help'
-    })
+    this.outputAlignedHelpDetails()
+
     if (commands.length > 0) {
-      this.outputMultiPassLine({
-        line: line2,
-        description: 'Quick help on command'
-      })
+      this.outputAlignedHelpDetails({ isForCommand: true })
     }
   }
 
-  outputAlignedEarlyDetails (
-    multiPass = this.multiPass
-  ): void {
+  outputAlignedHelpDetails (params: {
+    isForCommand?: boolean
+  } = {}): void {
+    const context: Context = this.context
+    const programName = context.programName
+
+    const optionsGroups =
+      [...context.options.groups, ...context.options.commonGroups]
+
+    optionsGroups.forEach((optionsGroup) => {
+      optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
+        const helpDefinitions = optionDefinition.helpDefinitions ?? {}
+        if (helpDefinitions.description !== undefined &&
+          (helpDefinitions.isHelp ?? false)) {
+          assert(optionDefinition.options.length > 0)
+          const line = `${programName} ` +
+            ((params.isForCommand ?? false) ? '<command> ' : '') +
+            `${optionDefinition.options.join('|')}`
+
+          this.outputMultiPassLine({
+            line,
+            description: (
+              helpDefinitions.description +
+              ((params.isForCommand ?? false) ? ' for command' : '')
+            ),
+            skipUpdateWidth: helpDefinitions.isExtraLarge ?? false
+          })
+        }
+      })
+    })
+  }
+
+  outputAlignedEarlyDetails (): void {
     const context: Context = this.context
 
     const programName = context.programName
-    const optionsGroups = context.options.commonGroups
-
-    if (!multiPass.isFirstPass) {
-      // log.output()
-    }
+    const optionsGroups =
+      [...context.options.groups, ...context.options.commonGroups]
 
     optionsGroups.forEach((optionsGroup) => {
       optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
