@@ -964,7 +964,27 @@ await test('cli.Help outputFooter()', async (t) => {
 
 // ----------------------------------------------------------------------------
 
-class MockApplication extends cli.Application {
+class MockApplicationRegular extends cli.Application {
+  override async main (
+    _argv: string[],
+    _forwardableArgv?: string[] | undefined
+  ): Promise<number> {
+    throw new Error('Method not implemented.')
+  }
+
+  override outputHelpAlignedOptions (params: { help: cli.Help }): void {
+    const help = params.help
+
+    if (help.multiPass.isSecondPass) {
+      help.output()
+      help.output('Top Custom Options:')
+    }
+    const line = '  --mock-option-top'
+    help.outputMultiPassLine({ line, description: 'Mock application option' })
+  }
+}
+
+class MockApplicationLong extends cli.Application {
   override async main (
     _argv: string[],
     _forwardableArgv?: string[] | undefined
@@ -1343,9 +1363,85 @@ await test('cli.Help outputAll', async (t) => {
 
   mockConsole.clear()
 
-  await t.test('top commands', async (t) => {
+  await t.test('top commands regular', async (t) => {
     const context = new cli.Context({ log, programName: 'xyz' })
-    const mockApplication = new MockApplication({ context })
+    const mockApplication = new MockApplicationRegular({ context })
+
+    context.rootPath = '/a/b/c'
+    context.packageJson.name = '@scope/abc'
+    context.packageJson.version = '1.2.3'
+
+    const commandsTree = new cli.CommandsTree({ context })
+    commandsTree.addCommands({
+      one: {
+        moduleRelativePath: '.'
+      },
+      two: {
+        moduleRelativePath: '.'
+      }
+    })
+
+    // Root tree node, practically empty.
+    context.commandNode = commandsTree
+
+    commandsTree.helpDefinitions = {
+      description: 'Mock Top Description'
+    }
+
+    const help = new cli.Help({ context, command: mockApplication })
+
+    help.outputAll()
+
+    // dumpLines(mockConsole.outLines)
+    // dumpLines(mockConsole.errLines)
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      '',
+      'Mock Top Description',
+      '',
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]',
+      '',
+      'where <command> is one of:',
+      '  one, two',
+      '',
+      'Top Custom Options:',
+      '  --mock-option-top      Mock application option',
+      '',
+      'Common options:',
+      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)',
+      '  -s|--silent            Disable all messages (--loglevel silent) (optional)',
+      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)',
+      '  --informative          Informative (--loglevel info) (optional)',
+      '  -v|--verbose           Verbose (--loglevel verbose) (optional)',
+      '  -d|--debug             Debug messages (--loglevel debug) (optional)',
+      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)',
+      '  --no-update-notifier   Skip check for a more recent version (optional)',
+      '  -C <folder>            Set current folder (optional)',
+      '',
+      'xyz -h|--help            Quick help',
+      'xyz <command> -h|--help  Quick help for command',
+      'xyz --version            Show version',
+      '',
+      'npm @scope/abc@1.2.3 \'/a/b/c\''
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.end()
+  })
+
+  mockConsole.clear()
+
+  await t.test('top commands long', async (t) => {
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const mockApplication = new MockApplicationLong({ context })
 
     context.rootPath = '/a/b/c'
     context.packageJson.name = '@scope/abc'
