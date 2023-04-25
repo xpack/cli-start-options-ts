@@ -49,15 +49,9 @@ class MockCommand extends cli.Command {
 
   override outputHelpAlignedOptions(params: { help: cli.Help }) {
     const help = params.help
-    const multiPass = help.multiPass
 
     const line = '--mock-option'
-
-    if (multiPass.isFirstPass) {
-      multiPass.updateWidth(line.length)
-    } else {
-      help.outputMaybeLongLine(line, 'Mock command option')
-    }
+    help.outputMultiPassLine({line, description: 'Mock command option'})
   }
 }
 

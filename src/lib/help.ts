@@ -122,20 +122,39 @@ export class Help {
     }
   }
 
-  outputMaybeLongLine (
-    line: string,
-    description: string
-  ): void {
+  outputSecondPass (message?: String): void {
+    const multiPass = this.multiPass
+    if (multiPass.isSecondPass) {
+      this.output(message)
+    }
+  }
+
+  outputMultiPassLine (params: {
+    line: string
+    description?: string
+    skipUpdateWidth?: boolean
+  }): void {
+    assert(params)
+    assert(params.line)
+
     const multiPass = this.multiPass
 
-    let str: string = line.trimEnd()
-    if (str.length >= multiPass.limit) {
+    let line: string = params.line.trimEnd()
+    if (multiPass.isFirstPass) {
+      if (!(params.skipUpdateWidth ?? false)) {
+        multiPass.updateWidth(line.length)
+      }
+    } else {
+      if (line.length >= multiPass.limit) {
       // If the line is longer than the limit, output it
       // alone and move the description to the next line.
-      this.output(str)
-      str = ''
+        this.output(line)
+        line = ''
+      }
+      const description = params.description ?? ''
+      this.output(
+        `${this.padRight(line, multiPass.width)} ${description.trim()}`)
     }
-    this.output(`${this.padRight(str, multiPass.width)} ${description.trim()}`)
   }
 
   /**
@@ -491,23 +510,22 @@ export class Help {
     const commands: string[] =
       context.commandNode.getChildrenCommandNames()
 
-    const multiPass = this.multiPass
     const programName: string = context.programName
 
     const line1: string = `${programName} -h|--help`
     const line2: string = `${programName} <command> -h|--help`
 
-    if (multiPass.isFirstPass) {
-      multiPass.updateWidth(line1.length)
-      if (commands.length > 0) {
-        multiPass.updateWidth(line2.length)
-      }
-    } else {
-      this.output()
-      this.outputMaybeLongLine(line1, 'Quick help')
-      if (commands.length > 0) {
-        this.outputMaybeLongLine(line2, 'Quick help on command')
-      }
+    this.outputSecondPass()
+
+    this.outputMultiPassLine({
+      line: line1,
+      description: 'Quick help'
+    })
+    if (commands.length > 0) {
+      this.outputMultiPassLine({
+        line: line2,
+        description: 'Quick help on command'
+      })
     }
   }
 
@@ -528,18 +546,14 @@ export class Help {
         const helpDefinitions = optionDefinition.helpDefinitions ?? {}
         if (helpDefinitions.description !== undefined &&
           (helpDefinitions.isRequiredEarly ?? false)) {
-          let out = `${programName} `
-          optionDefinition.options.forEach((opt, index) => {
-            out += opt
-            if (index < (optionDefinition.options.length - 1)) {
-              out += '|'
-            }
+          assert(optionDefinition.options.length > 0)
+          const line = `${programName} ${optionDefinition.options.join('|')}`
+
+          this.outputMultiPassLine({
+            line,
+            description: helpDefinitions.description,
+            skipUpdateWidth: helpDefinitions.isVeryLong ?? false
           })
-          if (multiPass.isFirstPass) {
-            multiPass.updateWidth(out.length)
-          } else {
-            this.outputMaybeLongLine(out, helpDefinitions.description)
-          }
         }
       })
     })
@@ -554,6 +568,7 @@ export class Help {
     assert(context.rootPath)
     const pkgPath = context.rootPath
     this.output(`npm ${pkgJson.name}@${pkgJson.version} '${pkgPath}'`)
+
     if (pkgJson.homepage !== undefined) {
       this.output(`Home page: <${pkgJson.homepage}>`)
     }

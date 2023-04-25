@@ -734,7 +734,7 @@ await test('xtest -h', async (t) => {
       t.ok(outLines.length > 0, 'stdout has lines')
 
       const stdout = outLines.join('\n')
-      t.match(stdout, '                                         Extra options',
+      t.match(stdout, '                           Extra options',
         'stdout has long early options')
 
       // There should be no error messages.
