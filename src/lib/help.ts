@@ -66,6 +66,10 @@ export class MultiPass {
       this.width = this.limit
     }
   }
+
+  get isSecondPass (): boolean {
+    return !this.isFirstPass
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -424,7 +428,7 @@ export class Help {
       return
     }
 
-    if (!multiPass.isFirstPass && description.length > 0) {
+    if (multiPass.isSecondPass && description.length > 0) {
       this.output()
       this.output(description + ':')
     }
