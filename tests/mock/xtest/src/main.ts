@@ -172,7 +172,7 @@ export class Xtest extends cli.Application {
             helpDefinitions: {
               description: 'Extra options',
               isRequiredEarly: true,
-              isVeryLong: true
+              isExtraLarge: true
             }
           }
         ]

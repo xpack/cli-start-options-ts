@@ -466,7 +466,7 @@ export class Help {
         }
 
         if (multiPass.isFirstPass) {
-          if (!(helpDefinitions.isVeryLong ?? false)) {
+          if (!(helpDefinitions.isExtraLarge ?? false)) {
             multiPass.updateWidth(option.length)
           }
         } else {
@@ -554,7 +554,7 @@ export class Help {
           this.outputMultiPassLine({
             line,
             description: helpDefinitions.description,
-            skipUpdateWidth: helpDefinitions.isVeryLong ?? false
+            skipUpdateWidth: helpDefinitions.isExtraLarge ?? false
           })
         }
       })

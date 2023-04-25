@@ -98,7 +98,7 @@ export interface OptionHelpDefinitions {
   /** True if the length of the line should not be considered
    * when computing the left column width.
    */
-  isVeryLong?: boolean
+  isExtraLarge?: boolean
 
   /** True if it defines the option to get help;
    *   not displayed in the common list, but as a separate line. */
