@@ -95,6 +95,11 @@ export interface OptionHelpDefinitions {
    *   other options, for example interactive options. */
   isRequiredEarly?: boolean
 
+  /** True if the length of the line should not be considered
+   * when computing the left column width.
+   */
+  isVeryLong?: boolean
+
   /** True if it defines the option to get help;
    *   not displayed in the common list, but as a separate line. */
   isHelp?: boolean

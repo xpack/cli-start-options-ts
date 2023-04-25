@@ -171,7 +171,8 @@ export class Xtest extends cli.Application {
             },
             helpDefinitions: {
               description: 'Extra options',
-              isRequiredEarly: true
+              isRequiredEarly: true,
+              isVeryLong: true
             }
           }
         ]

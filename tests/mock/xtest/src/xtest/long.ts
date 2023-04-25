@@ -57,7 +57,8 @@ export class Long extends cli.Command {
             hasValue: true,
             helpDefinitions: {
               description: 'Very long option',
-              valueDescription: 'name'
+              valueDescription: 'name',
+              isVeryLong: true
             }
           }
         ]
