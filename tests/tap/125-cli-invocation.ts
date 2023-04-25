@@ -68,7 +68,7 @@ await test('xtest --version (cli call)', async (t) => {
     // Check exit code.
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    // console.log(outLines)
+    // dumpLines(outLines)
     t.equal(outLines.length, 1, 'stdout has one line')
     // Check if version matches the package.
     // Beware, the stdout string has a new line terminator.
@@ -117,7 +117,7 @@ await test('xtest -h (cli call)', async (t) => {
 
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-    // console.log(outLines)
+    // dumpLines(outLines)
     t.equal(outLines.length, 28, 'stdout has 27 lines')
     t.match(outLines[1], 'Mock Test', 'has title')
     t.match(outLines[3],
