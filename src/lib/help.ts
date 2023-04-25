@@ -466,7 +466,9 @@ export class Help {
         }
 
         if (multiPass.isFirstPass) {
-          multiPass.updateWidth(option.length)
+          if (!(helpDefinitions.isVeryLong ?? false)) {
+            multiPass.updateWidth(option.length)
+          }
         } else {
           // If the current line is longer than the middle limit,
           // output it and output the description on the next line.
