@@ -24,6 +24,7 @@ import { Logger } from '@xpack/logger'
 
 import { Configuration } from './configuration.js'
 import { CommandNode } from './commands-tree.js'
+import { Help } from './help.js'
 import { Options } from './options.js'
 import { getProgramName, NpmPackageJson } from './utils.js'
 
@@ -79,6 +80,8 @@ export class Context {
    * a specific command/sub-command node.
    */
   public commandNode: CommandNode | undefined
+
+  public help: Help | undefined = undefined
 
   // --------------------------------------------------------------------------
   // External configuration variables, to be set in the derived constructor.
@@ -149,6 +152,8 @@ export class Context {
       this.rootPath = params.context.rootPath
       this.packageJson = params.context.packageJson
       this.matchedCommands = params.context.matchedCommands
+
+      this.help = params.context.help
     }
   }
 }
