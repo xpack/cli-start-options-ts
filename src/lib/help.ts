@@ -17,7 +17,6 @@ import { strict as assert } from 'node:assert'
 
 // ----------------------------------------------------------------------------
 
-import { Command } from './command.js'
 import { Context } from './context.js'
 import {
   Options,
@@ -77,7 +76,6 @@ export class MultiPass {
 export interface HelpConstructorParams {
   context: Context
   isOutputAlways?: boolean
-  command: Command
 }
 
 export class Help {
@@ -89,18 +87,15 @@ export class Help {
   public rightLimit: number
   public commands?: string[]
   public multiPass: MultiPass
-  public command: Command
 
   protected isOutputAlways: boolean
 
   constructor (params: HelpConstructorParams) {
     assert(params)
     assert(params.context)
-    assert(params.command)
 
     this.context = params.context
     this.isOutputAlways = params.isOutputAlways ?? false
-    this.command = params.command
 
     // Probably these should be automatically computed from the
     // terminal size.
@@ -192,8 +187,6 @@ export class Help {
    * @returns Nothing.
    */
   outputAll (): void {
-    assert(this.command)
-
     const context: Context = this.context
 
     assert(context.commandNode)
@@ -217,7 +210,7 @@ export class Help {
     // the max width of the first column, and then to output text.
 
     this.twoPassAlign(() => {
-      (this.command).outputHelpAlignedOptions({ help: this })
+      this.outputAlignedCustomOptions() // Overridden in derived class.
 
       this.outputAlignedOptionsGroups()
       this.outputAlignedAllHelpDetails()
@@ -225,6 +218,17 @@ export class Help {
     })
 
     this.outputFooter()
+  }
+
+  // --------------------------------------------------------------------------
+
+  /**
+   * @summary Output command custom options.
+   *
+   * @description
+   * Override this in a derived class to provide functionality.
+   */
+  outputAlignedCustomOptions (): void {
   }
 
   // --------------------------------------------------------------------------
