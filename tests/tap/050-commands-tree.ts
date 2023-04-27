@@ -259,14 +259,14 @@ await test('CommandsTree', async (t) => {
   t.equal(commandsTree.helpDefinitions, undefined,
     'tree helpDefinitions undefined')
 
-  t.notOk(commandsTree.hasForwardableArguments,
-    'tree hasForwardableArguments false')
-  t.notOk(commandsTree.shouldIgnoreUnknownOptions,
-    'tree shouldIgnoreUnknownOptions false')
+  t.notOk(commandsTree.shouldSplitForwardableArguments,
+    'tree shouldSplitForwardableArguments false')
+  t.notOk(commandsTree.shouldWarnOnUnknownOptions,
+    'tree shouldWarnOnUnknownOptions false')
   t.notOk(commandsTree.shouldFailOnUnknownOptions,
     'tree shouldFailOnUnknownOptions false')
-  t.notOk(commandsTree.shouldIgnoreExtraArguments,
-    'tree shouldIgnoreExtraArguments false')
+  t.notOk(commandsTree.shouldWarnOnExtraArguments,
+    'tree shouldWarnOnExtraArguments false')
   t.notOk(commandsTree.shouldFailOnExtraArguments,
     'tree shouldFailOnExtraArguments false')
 

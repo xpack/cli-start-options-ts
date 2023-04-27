@@ -70,7 +70,7 @@ export interface CommandTemplate {
    * together to the command.
    * Default: false.
    */
-  hasForwardableArguments?: boolean
+  shouldSplitForwardableArguments?: boolean
   /**
    * @summary Optional boolean flag for optional custom options.
    *
@@ -78,7 +78,7 @@ export interface CommandTemplate {
    * If true, custom options (like -x --xxx) are passed to the command.
    * If false, custom options are flagged as errors.
    * Default: false. */
-  shouldIgnoreUnknownOptions?: boolean
+  shouldWarnOnUnknownOptions?: boolean
   shouldFailOnUnknownOptions?: boolean
   /**
    * @summary Optional boolean flag for optional custom arguments.
@@ -88,7 +88,7 @@ export interface CommandTemplate {
    * If false, custom arguments are flagged as errors.
    *
    * Default: false. */
-  shouldIgnoreExtraArguments?: boolean
+  shouldWarnOnExtraArguments?: boolean
   shouldFailOnExtraArguments?: boolean
 
   /** Optional definitions of sub-commands. */
@@ -135,11 +135,11 @@ abstract class CommandBaseNode {
   public helpDefinitions?: CommandTemplateHelpDefinitions | undefined
 
   /** Optional flag when the command has forwardable arguments. */
-  public hasForwardableArguments: boolean
+  public shouldSplitForwardableArguments: boolean
 
-  public shouldIgnoreUnknownOptions: boolean
+  public shouldWarnOnUnknownOptions: boolean
   public shouldFailOnUnknownOptions: boolean
-  public shouldIgnoreExtraArguments: boolean
+  public shouldWarnOnExtraArguments: boolean
   public shouldFailOnExtraArguments: boolean
 
   /** Link back to parent node, or undefined. */
@@ -191,11 +191,12 @@ abstract class CommandBaseNode {
     // Map of options for the helper.
     this.helpDefinitions = params.helpDefinitions
 
-    this.hasForwardableArguments = params.hasForwardableArguments ?? false
+    this.shouldSplitForwardableArguments =
+      params.shouldSplitForwardableArguments ?? false
 
-    this.shouldIgnoreUnknownOptions = params.shouldIgnoreUnknownOptions ?? false
+    this.shouldWarnOnUnknownOptions = params.shouldWarnOnUnknownOptions ?? false
     this.shouldFailOnUnknownOptions = params.shouldFailOnUnknownOptions ?? false
-    this.shouldIgnoreExtraArguments = params.shouldIgnoreExtraArguments ?? false
+    this.shouldWarnOnExtraArguments = params.shouldWarnOnExtraArguments ?? false
     this.shouldFailOnExtraArguments = params.shouldFailOnExtraArguments ?? false
 
     // Tree of characters. Built by buildCharactersTrees().
