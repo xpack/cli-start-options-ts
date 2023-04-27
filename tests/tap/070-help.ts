@@ -36,7 +36,7 @@ import * as cli from '../../esm/index.js'
 // ----------------------------------------------------------------------------
 
 assert(cli.Help)
-dumpLines([])
+dumpLines()
 
 // ----------------------------------------------------------------------------
 
@@ -80,9 +80,10 @@ await test('cli.Help output()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     t.equal(mockConsole.outLines.length, 1, 'one output line')
     t.equal(mockConsole.outLines[0], 'info', 'content: info')
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
@@ -96,8 +97,9 @@ await test('cli.Help output()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 0, 'no output lines')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
 
     t.end()
   })
@@ -115,9 +117,10 @@ await test('cli.Help output()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     t.equal(mockConsole.outLines.length, 1, 'one output line')
     t.equal(mockConsole.outLines[0], 'info', 'content: info')
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
@@ -131,9 +134,10 @@ await test('cli.Help output()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     t.equal(mockConsole.outLines.length, 1, 'one output line')
     t.equal(mockConsole.outLines[0], 'silent', 'content: silent')
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
@@ -169,10 +173,16 @@ await test('cli.Help outputTitle()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 2, 'two output lines')
-    t.equal(mockConsole.outLines[0], 'My Title', 'first line: My Title')
-    t.equal(mockConsole.outLines[1], '', 'second line: empty')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'My Title', // 0
+      '' // 1
+    ]
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -191,8 +201,9 @@ await test('cli.Help outputTitle()', async (t) => {
 
     help.outputTitle()
 
-    t.equal(mockConsole.outLines.length, 0, 'no output lines')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
 
     t.end()
   })
@@ -227,10 +238,16 @@ await test('cli.Help outputCommandLine()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 1, 'one output line')
-    t.equal(mockConsole.outLines[0], 'Usage: xyz [options...]',
-      'content: Usage: xyz')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'Usage: xyz [options...]' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -265,10 +282,16 @@ await test('cli.Help outputCommandLine()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 1, 'one output line')
-    t.equal(mockConsole.outLines[0], 'Usage: xyz one two [options...]',
-      'content: Usage: xyz one two')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'Usage: xyz one two [options...]' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -293,10 +316,16 @@ await test('cli.Help outputCommandLine()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 1, 'one output line')
-    t.equal(mockConsole.outLines[0], 'Usage: xyz pre [options...] post',
-      'content: Usage: xyz pre post')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'Usage: xyz pre [options...] post' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -415,22 +444,21 @@ await test('cli.Help outputCommandLine()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 4, 'four output lines')
-    t.equal(mockConsole.outLines[0],
-      'Usage: xyz pre [options...] [--one] [--two <s>]' +
-      ' [--three <desc>] --four <s>',
-      'first line: Usage: xyz ...')
-    t.equal(mockConsole.outLines[1],
-      '           --five <desc> [--one-multi]* [--two-multi <s>]*',
-      'second line: ... --five ...')
-    t.equal(mockConsole.outLines[2],
-      '           [--three-multi <desc>]* [--four-multi <s>]+' +
-      ' [--five-multi <desc>]+',
-      'third line: ... [--three ...')
-    t.equal(mockConsole.outLines[3],
-      '           post',
-      'fourth line: ... post')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      'Usage: xyz pre [options...] [--one] [--two <s>] [--three <desc>] --four <s>', // 0
+      '           --five <desc> [--one-multi]* [--two-multi <s>]*', // 1
+      '           [--three-multi <desc>]* [--four-multi <s>]+ [--five-multi <desc>]+', // 2
+      '           post' // 3
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -518,23 +546,22 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 5, 'five output line')
-    t.equal(mockConsole.outLines[0],
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]',
-      'first line: Usage: xyz ...')
-    t.equal(mockConsole.outLines[1],
-      '',
-      'second line: empty')
-    t.equal(mockConsole.outLines[2], 'where <command> is one of:',
-      'third line: where <command> ...')
-    t.equal(mockConsole.outLines[3],
-      '  eight, eleven, five, four, nine, one, seven, six, ten, thirteen, ' +
-      'three, twelve, ',
-      'fourth line: eight, eleven...')
-    t.equal(mockConsole.outLines[4], '  two',
-      'fifth line: two')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', // 0
+      '', // 1
+      'where <command> is one of:', // 2
+      '  eight, eleven, five, four, nine, one, seven, six, ten, thirteen, three, twelve, ', // 3
+      '  two' // 4
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -567,20 +594,21 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 4, 'four output line')
-    t.equal(mockConsole.outLines[0],
-      'Usage: xyz top <command> [<subcommand>...] [<options> ...] [<args>...]',
-      'first line: Usage: xyz ...')
-    t.equal(mockConsole.outLines[1],
-      '',
-      'second line: empty')
-    t.equal(mockConsole.outLines[2], 'where <command> is one of:',
-      'third line: where <command> ...')
-    t.equal(mockConsole.outLines[3],
-      '  one, two',
-      'fourth line: one, two')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      'Usage: xyz top <command> [<subcommand>...] [<options> ...] [<args>...]', // 0
+      '', // 1
+      'where <command> is one of:', // 2
+      '  one, two' // 3
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -613,20 +641,19 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 4, 'four output line')
-    t.equal(mockConsole.outLines[0],
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] post',
-      'first line: Usage: xyz ...')
-    t.equal(mockConsole.outLines[1],
-      '',
-      'second line: empty')
-    t.equal(mockConsole.outLines[2], 'where <command> is one of:',
-      'third line: where <command> ...')
-    t.equal(mockConsole.outLines[3],
-      '  one, two',
-      'fourth line: one two')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] post', // 0
+      '', // 1
+      'where <command> is one of:', // 2
+      '  one, two' // 3
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -668,8 +695,9 @@ await test('cli.Help outputCommandAliases()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 0, 'no output line')
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.equal(mockConsole.outLines.length, 0, 'no output line')
 
     t.end()
   })
@@ -696,14 +724,17 @@ await test('cli.Help outputCommandAliases()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 2, 'two output lines')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'Command aliases: o, on',
-      'second line: Command aliases ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      'Command aliases: o, on' // 1
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -738,14 +769,17 @@ await test('cli.Help outputFooter()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 2, 'two output line')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'npm @scope/abc@1.2.3 \'/a/b/c\'',
-      'second line: npm ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      "npm @scope/abc@1.2.3 '/a/b/c'" // 1
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -767,16 +801,18 @@ await test('cli.Help outputFooter()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 3, 'three output line')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'npm @scope/abc@1.2.3 \'/a/b/c\'',
-      'second line: npm ...')
-    t.equal(mockConsole.outLines[2], 'Home page: <https://home.page.com>',
-      'third line: Home page ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      "npm @scope/abc@1.2.3 '/a/b/c'", // 1
+      'Home page: <https://home.page.com>' // 2
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -798,16 +834,18 @@ await test('cli.Help outputFooter()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 3, 'three output line')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'npm @scope/abc@1.2.3 \'/a/b/c\'',
-      'second line: npm ...')
-    t.equal(mockConsole.outLines[2], 'Bug reports: <https://bugs.page.com>',
-      'third line: Bug reports: url ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      "npm @scope/abc@1.2.3 '/a/b/c'", // 1
+      'Bug reports: <https://bugs.page.com>' // 2
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -832,17 +870,18 @@ await test('cli.Help outputFooter()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 3, 'three output line')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'npm @scope/abc@1.2.3 \'/a/b/c\'',
-      'second line: npm ...')
-    t.equal(mockConsole.outLines[2],
-      'Bug reports: First Last <first.last@gmail.com>',
-      'third line: Bug reports: name email ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      "npm @scope/abc@1.2.3 '/a/b/c'", // 1
+      'Bug reports: First Last <first.last@gmail.com>' // 2
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -866,17 +905,18 @@ await test('cli.Help outputFooter()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 3, 'three output line')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'npm @scope/abc@1.2.3 \'/a/b/c\'',
-      'second line: npm ...')
-    t.equal(mockConsole.outLines[2],
-      'Bug reports: <first.last@gmail.com>',
-      'third line: Bug reports: email ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      "npm @scope/abc@1.2.3 '/a/b/c'", // 1
+      'Bug reports: <first.last@gmail.com>' // 2
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -898,17 +938,18 @@ await test('cli.Help outputFooter()', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.equal(mockConsole.outLines.length, 3, 'three output line')
-    t.equal(mockConsole.outLines[0],
-      '',
-      'first line: empty')
-    t.equal(mockConsole.outLines[1], 'npm @scope/abc@1.2.3 \'/a/b/c\'',
-      'second line: npm ...')
-    t.equal(mockConsole.outLines[2],
-      'Bug reports: First Last <first.last@gmail.com>',
-      'third line: Bug reports: author ...')
-
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      "npm @scope/abc@1.2.3 '/a/b/c'", // 1
+      'Bug reports: First Last <first.last@gmail.com>' // 2
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
 
     t.end()
   })
@@ -1327,32 +1368,34 @@ await test('cli.Help outputAll', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     /* eslint-disable max-len */
     const expectedLines = [
-      '',
-      'Mock Top Description',
-      '',
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]',
-      '',
-      'where <command> is one of:',
-      '  one, two',
-      '',
-      'Common options:',
-      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)',
-      '  -s|--silent            Disable all messages (--loglevel silent) (optional)',
-      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)',
-      '  --informative          Informative (--loglevel info) (optional)',
-      '  -v|--verbose           Verbose (--loglevel verbose) (optional)',
-      '  -d|--debug             Debug messages (--loglevel debug) (optional)',
-      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)',
-      '  --no-update-notifier   Skip check for a more recent version (optional)',
-      '  -C <folder>            Set current folder (optional)',
-      '',
-      'xyz -h|--help            Quick help',
-      'xyz <command> -h|--help  Quick help for command',
-      'xyz --version            Show version',
-      '',
-      'npm @scope/abc@1.2.3 \'/a/b/c\''
+      '', //  0
+      'Mock Top Description', //  1
+      '', //  2
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
+      '', //  4
+      'where <command> is one of:', //  5
+      '  one, two', //  6
+      '', //  7
+      'Common options:', //  8
+      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)', //  9
+      '  -s|--silent            Disable all messages (--loglevel silent) (optional)', // 10
+      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 11
+      '  --informative          Informative (--loglevel info) (optional)', // 12
+      '  -v|--verbose           Verbose (--loglevel verbose) (optional)', // 13
+      '  -d|--debug             Debug messages (--loglevel debug) (optional)', // 14
+      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)', // 15
+      '  --no-update-notifier   Skip check for a more recent version (optional)', // 16
+      '  -C <folder>            Set current folder (optional)', // 17
+      '', // 18
+      'xyz -h|--help            Quick help', // 19
+      'xyz <command> -h|--help  Quick help for command', // 20
+      'xyz --version            Show version', // 21
+      '', // 22
+      "npm @scope/abc@1.2.3 '/a/b/c'" // 23
     ]
     /* eslint-enable max-len */
 
@@ -1360,8 +1403,6 @@ await test('cli.Help outputAll', async (t) => {
       'output lines count')
     // Compare content, not object.
     t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
@@ -1402,35 +1443,37 @@ await test('cli.Help outputAll', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     /* eslint-disable max-len */
     const expectedLines = [
-      '',
-      'Mock Top Description',
-      '',
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]',
-      '',
-      'where <command> is one of:',
-      '  one, two',
-      '',
-      'Top Custom Options:',
-      '  --mock-option-top      Mock application option',
-      '',
-      'Common options:',
-      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)',
-      '  -s|--silent            Disable all messages (--loglevel silent) (optional)',
-      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)',
-      '  --informative          Informative (--loglevel info) (optional)',
-      '  -v|--verbose           Verbose (--loglevel verbose) (optional)',
-      '  -d|--debug             Debug messages (--loglevel debug) (optional)',
-      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)',
-      '  --no-update-notifier   Skip check for a more recent version (optional)',
-      '  -C <folder>            Set current folder (optional)',
-      '',
-      'xyz -h|--help            Quick help',
-      'xyz <command> -h|--help  Quick help for command',
-      'xyz --version            Show version',
-      '',
-      'npm @scope/abc@1.2.3 \'/a/b/c\''
+      '', //  0
+      'Mock Top Description', //  1
+      '', //  2
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
+      '', //  4
+      'where <command> is one of:', //  5
+      '  one, two', //  6
+      '', //  7
+      'Top Custom Options:', //  8
+      '  --mock-option-top      Mock application option', //  9
+      '', // 10
+      'Common options:', // 11
+      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)', // 12
+      '  -s|--silent            Disable all messages (--loglevel silent) (optional)', // 13
+      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 14
+      '  --informative          Informative (--loglevel info) (optional)', // 15
+      '  -v|--verbose           Verbose (--loglevel verbose) (optional)', // 16
+      '  -d|--debug             Debug messages (--loglevel debug) (optional)', // 17
+      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)', // 18
+      '  --no-update-notifier   Skip check for a more recent version (optional)', // 19
+      '  -C <folder>            Set current folder (optional)', // 20
+      '', // 21
+      'xyz -h|--help            Quick help', // 22
+      'xyz <command> -h|--help  Quick help for command', // 23
+      'xyz --version            Show version', // 24
+      '', // 25
+      "npm @scope/abc@1.2.3 '/a/b/c'" // 26
     ]
     /* eslint-enable max-len */
 
@@ -1438,8 +1481,6 @@ await test('cli.Help outputAll', async (t) => {
       'output lines count')
     // Compare content, not object.
     t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
@@ -1480,36 +1521,38 @@ await test('cli.Help outputAll', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     /* eslint-disable max-len */
     const expectedLines = [
-      '',
-      'Mock Top Description',
-      '',
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]',
-      '',
-      'where <command> is one of:',
-      '  one, two',
-      '',
-      'Top Custom Options:',
-      '  --mock-option-top|--a-very-very-very-long-option',
-      '                                         Mock application option',
-      '',
-      'Common options:',
-      '  --loglevel <level>                     Set log level (silent|warn|info|verbose|debug|trace) (optional)',
-      '  -s|--silent                            Disable all messages (--loglevel silent) (optional)',
-      '  -q|--quiet                             Mostly quiet, warnings and errors (--loglevel warn) (optional)',
-      '  --informative                          Informative (--loglevel info) (optional)',
-      '  -v|--verbose                           Verbose (--loglevel verbose) (optional)',
-      '  -d|--debug                             Debug messages (--loglevel debug) (optional)',
-      '  -dd|--trace                            Trace messages (--loglevel trace, -d -d) (optional)',
-      '  --no-update-notifier                   Skip check for a more recent version (optional)',
-      '  -C <folder>                            Set current folder (optional)',
-      '',
-      'xyz -h|--help                            Quick help',
-      'xyz <command> -h|--help                  Quick help for command',
-      'xyz --version                            Show version',
-      '',
-      'npm @scope/abc@1.2.3 \'/a/b/c\''
+      '', //  0
+      'Mock Top Description', //  1
+      '', //  2
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
+      '', //  4
+      'where <command> is one of:', //  5
+      '  one, two', //  6
+      '', //  7
+      'Top Custom Options:', //  8
+      '  --mock-option-top|--a-very-very-very-long-option', //  9
+      '                                         Mock application option', // 10
+      '', // 11
+      'Common options:', // 12
+      '  --loglevel <level>                     Set log level (silent|warn|info|verbose|debug|trace) (optional)', // 13
+      '  -s|--silent                            Disable all messages (--loglevel silent) (optional)', // 14
+      '  -q|--quiet                             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 15
+      '  --informative                          Informative (--loglevel info) (optional)', // 16
+      '  -v|--verbose                           Verbose (--loglevel verbose) (optional)', // 17
+      '  -d|--debug                             Debug messages (--loglevel debug) (optional)', // 18
+      '  -dd|--trace                            Trace messages (--loglevel trace, -d -d) (optional)', // 19
+      '  --no-update-notifier                   Skip check for a more recent version (optional)', // 20
+      '  -C <folder>                            Set current folder (optional)', // 21
+      '', // 22
+      'xyz -h|--help                            Quick help', // 23
+      'xyz <command> -h|--help                  Quick help for command', // 24
+      'xyz --version                            Show version', // 25
+      '', // 26
+      "npm @scope/abc@1.2.3 '/a/b/c'" // 27
     ]
     /* eslint-enable max-len */
 
@@ -1517,8 +1560,6 @@ await test('cli.Help outputAll', async (t) => {
       'output lines count')
     // Compare content, not object.
     t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
@@ -1558,60 +1599,62 @@ await test('cli.Help outputAll', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
     /* eslint-disable max-len */
     const expectedLines = [
-      '',
-      'Mock One Description',
-      '',
-      'Usage: xyz one [options...] [--out <file>] [--opt] [--opt-str <s>]',
-      '               [--opt-str-multiple <s>]* [--opt-multiple]*',
-      '               [--opt-str-default <s>] [--opt-str-default-multi <s>]*',
-      '               --opt-str-mandatory <s> [--opt-str-multiple-mandatory <s>]+',
-      '               --opt-str-default-mandatory <s>',
-      '               [--opt-str-default-multi-mandatory <s>]+ [--opt-values <s>]',
-      '               [--opt-values-multi <s>]* [--opt-values-default <s>]',
-      '               [--opt-values-default-multi <s>]* --opt-values-mandatory <s>',
-      '               [--opt-values-multi-mandatory <s>]+',
-      '               --opt-values-default-mandatory <s>',
-      '               [--opt-values-default-multi-mandatory <s>]+',
-      '               [--opt-str-very-very-very-very-very-long <s>]',
-      '               [--opt-no-desc <s>] [--no-description] [--no-help]',
-      '',
-      'Command aliases: o, on',
-      '',
-      'One Custom Options:',
-      '  --mock-option                          Mock command option',
-      '',
-      'One options:',
-      '  -o|--out <file>                        Opt file (optional)',
-      '  --opt                                  Opt (optional)',
-      '  --opt-str <s>                          Opt string (optional)',
-      '  --opt-str-multiple <s>                 Opt string multiple (optional, multiple)',
-      '  --opt-multiple                         Opt string multiple (optional, multiple)',
-      '  --opt-str-default <s>                  Opt string with default (optional, default ddd)',
-      '  --opt-str-default-multi <s>            Opt string with default multi (optional, multiple, default ddd)',
-      '  --opt-str-mandatory <s>                Opt string mandatory',
-      '  --opt-str-multiple-mandatory <s>       Opt string multiple mandatory (multiple)',
-      '  --opt-str-default-mandatory <s>        Opt string with default mandatory',
-      '  --opt-str-default-multi-mandatory <s>  Opt string with default multi mandatory (multiple)',
-      '  --opt-values <s>                       Opt values (one|two) (optional)',
-      '  --opt-values-multi <s>                 Opt values multiple (one|two) (optional, multiple)',
-      '  --opt-values-default <s>               Opt values with default (one|two) (optional, default one)',
-      '  --opt-values-default-multi <s>         Opt values with default multi (one|two) (optional, multiple, default one)',
-      '  --opt-values-mandatory <s>             Opt values mandatory (one|two)',
-      '  --opt-values-multi-mandatory <s>       Opt values multiple mandatory (one|two) (multiple)',
-      '  --opt-values-default-mandatory <s>     Opt values with default mandatory (one|two)',
-      '  --opt-values-default-multi-mandatory <s>',
-      '                                         Opt values with default multi mandatory (one|two) (multiple)',
-      '  --opt-str-very-very-very-very-very-long <s>',
-      '                                         Opt string long (optional)',
-      '',
-      'xyz -H|--opt-help-cmd                    Opt help command',
-      'xyz -h|--opt-help                        Opt help',
-      'xyz -E|--opt-early-cmd                   Opt early command',
-      'xyz -e|--opt-early                       Opt early',
-      '',
-      'npm @scope/abc@1.2.3 \'/a/b/c\''
+      '', //  0
+      'Mock One Description', //  1
+      '', //  2
+      'Usage: xyz one [options...] [--out <file>] [--opt] [--opt-str <s>]', //  3
+      '               [--opt-str-multiple <s>]* [--opt-multiple]*', //  4
+      '               [--opt-str-default <s>] [--opt-str-default-multi <s>]*', //  5
+      '               --opt-str-mandatory <s> [--opt-str-multiple-mandatory <s>]+', //  6
+      '               --opt-str-default-mandatory <s>', //  7
+      '               [--opt-str-default-multi-mandatory <s>]+ [--opt-values <s>]', //  8
+      '               [--opt-values-multi <s>]* [--opt-values-default <s>]', //  9
+      '               [--opt-values-default-multi <s>]* --opt-values-mandatory <s>', // 10
+      '               [--opt-values-multi-mandatory <s>]+', // 11
+      '               --opt-values-default-mandatory <s>', // 12
+      '               [--opt-values-default-multi-mandatory <s>]+', // 13
+      '               [--opt-str-very-very-very-very-very-long <s>]', // 14
+      '               [--opt-no-desc <s>] [--no-description] [--no-help]', // 15
+      '', // 16
+      'Command aliases: o, on', // 17
+      '', // 18
+      'One Custom Options:', // 19
+      '  --mock-option                          Mock command option', // 20
+      '', // 21
+      'One options:', // 22
+      '  -o|--out <file>                        Opt file (optional)', // 23
+      '  --opt                                  Opt (optional)', // 24
+      '  --opt-str <s>                          Opt string (optional)', // 25
+      '  --opt-str-multiple <s>                 Opt string multiple (optional, multiple)', // 26
+      '  --opt-multiple                         Opt string multiple (optional, multiple)', // 27
+      '  --opt-str-default <s>                  Opt string with default (optional, default ddd)', // 28
+      '  --opt-str-default-multi <s>            Opt string with default multi (optional, multiple, default ddd)', // 29
+      '  --opt-str-mandatory <s>                Opt string mandatory', // 30
+      '  --opt-str-multiple-mandatory <s>       Opt string multiple mandatory (multiple)', // 31
+      '  --opt-str-default-mandatory <s>        Opt string with default mandatory', // 32
+      '  --opt-str-default-multi-mandatory <s>  Opt string with default multi mandatory (multiple)', // 33
+      '  --opt-values <s>                       Opt values (one|two) (optional)', // 34
+      '  --opt-values-multi <s>                 Opt values multiple (one|two) (optional, multiple)', // 35
+      '  --opt-values-default <s>               Opt values with default (one|two) (optional, default one)', // 36
+      '  --opt-values-default-multi <s>         Opt values with default multi (one|two) (optional, multiple, default one)', // 37
+      '  --opt-values-mandatory <s>             Opt values mandatory (one|two)', // 38
+      '  --opt-values-multi-mandatory <s>       Opt values multiple mandatory (one|two) (multiple)', // 39
+      '  --opt-values-default-mandatory <s>     Opt values with default mandatory (one|two)', // 40
+      '  --opt-values-default-multi-mandatory <s>', // 41
+      '                                         Opt values with default multi mandatory (one|two) (multiple)', // 42
+      '  --opt-str-very-very-very-very-very-long <s>', // 43
+      '                                         Opt string long (optional)', // 44
+      '', // 45
+      'xyz -H|--opt-help-cmd                    Opt help command', // 46
+      'xyz -h|--opt-help                        Opt help', // 47
+      'xyz -E|--opt-early-cmd                   Opt early command', // 48
+      'xyz -e|--opt-early                       Opt early', // 49
+      '', // 50
+      "npm @scope/abc@1.2.3 '/a/b/c'" // 51
     ]
     /* eslint-enable max-len */
 
@@ -1619,8 +1662,6 @@ await test('cli.Help outputAll', async (t) => {
       'output lines count')
     // Compare content, not object.
     t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
     t.end()
   })
