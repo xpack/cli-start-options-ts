@@ -529,12 +529,17 @@ export class Help {
     const commands: string[] =
       context.commandNode.getChildrenCommandNames()
 
-    this.outputSecondPass()
+    const optionsGroups =
+      [...context.options.groups, ...context.options.commonGroups]
 
-    this.outputAlignedHelpDetails()
+    if (optionsGroups.length > 0) {
+      this.outputSecondPass()
 
-    if (commands.length > 0) {
-      this.outputAlignedHelpDetails({ isForCommand: true })
+      this.outputAlignedHelpDetails()
+
+      if (commands.length > 0) {
+        this.outputAlignedHelpDetails({ isForCommand: true })
+      }
     }
   }
 
