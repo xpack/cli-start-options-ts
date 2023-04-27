@@ -261,10 +261,14 @@ await test('CommandsTree', async (t) => {
 
   t.notOk(commandsTree.hasForwardableArguments,
     'tree hasForwardableArguments false')
-  t.notOk(commandsTree.hasCustomOptions,
-    'tree hasCustomOptions false')
-  t.notOk(commandsTree.hasCustomArgs,
-    'tree hasCustomArgs false')
+  t.notOk(commandsTree.shouldIgnoreUnknownOptions,
+    'tree shouldIgnoreUnknownOptions false')
+  t.notOk(commandsTree.shouldFailOnUnknownOptions,
+    'tree shouldFailOnUnknownOptions false')
+  t.notOk(commandsTree.shouldIgnoreExtraArguments,
+    'tree shouldIgnoreExtraArguments false')
+  t.notOk(commandsTree.shouldFailOnExtraArguments,
+    'tree shouldFailOnExtraArguments false')
 
   t.equal(commandsTree.parent, undefined, 'tree parent undefined')
 

@@ -93,7 +93,7 @@ export class Xtest extends cli.Application {
           usagePreOptions: '[<name>...]', // Array of test names.
           usagePostOptions: '[-- <very-long-long-long-args>...]'
         }
-        // hasCustomOptions: false
+        // shouldWarnUnknownOptions: false
       },
       many: {
         moduleRelativePath: 'src/xtest/many.js',
@@ -126,23 +126,23 @@ export class Xtest extends cli.Application {
         helpDefinitions: {
           description: 'Multiple subcommands'
         },
-        hasCustomArgs: true,
+        // shouldWarnExtraArguments: true,
         subCommands: {
           first: {
             moduleRelativePath: 'src/xtest/multi.js',
             className: 'MultiFirst',
             helpDefinitions: {
               description: 'Multiple first'
-            },
-            hasCustomArgs: true
+            }
+            // shouldWarnExtraArguments: true
           },
           second: {
             moduleRelativePath: 'src/xtest/multi.js',
             className: 'MultiSecond',
             helpDefinitions: {
               description: 'Multiple second'
-            },
-            hasCustomArgs: true
+            }
+            // shouldWarnExtraArguments: true
           }
         }
       },

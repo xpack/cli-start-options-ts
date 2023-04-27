@@ -78,7 +78,8 @@ export interface CommandTemplate {
    * If true, custom options (like -x --xxx) are passed to the command.
    * If false, custom options are flagged as errors.
    * Default: false. */
-  hasCustomOptions?: boolean
+  shouldIgnoreUnknownOptions?: boolean
+  shouldFailOnUnknownOptions?: boolean
   /**
    * @summary Optional boolean flag for optional custom arguments.
    *
@@ -87,7 +88,8 @@ export interface CommandTemplate {
    * If false, custom arguments are flagged as errors.
    *
    * Default: false. */
-  hasCustomArgs?: boolean
+  shouldIgnoreExtraArguments?: boolean
+  shouldFailOnExtraArguments?: boolean
 
   /** Optional definitions of sub-commands. */
   subCommands?: {
@@ -135,10 +137,10 @@ abstract class CommandBaseNode {
   /** Optional flag when the command has forwardable arguments. */
   public hasForwardableArguments: boolean
 
-  /** Optional flag when the command has custom options. */
-  public hasCustomOptions: boolean
-  /** Optional flag when the command has custom arguments. */
-  public hasCustomArgs: boolean
+  public shouldIgnoreUnknownOptions: boolean
+  public shouldFailOnUnknownOptions: boolean
+  public shouldIgnoreExtraArguments: boolean
+  public shouldFailOnExtraArguments: boolean
 
   /** Link back to parent node, or undefined. */
   public parent?: CommandBaseNode
@@ -191,8 +193,10 @@ abstract class CommandBaseNode {
 
     this.hasForwardableArguments = params.hasForwardableArguments ?? false
 
-    this.hasCustomOptions = params.hasCustomOptions ?? false
-    this.hasCustomArgs = params.hasCustomArgs ?? false
+    this.shouldIgnoreUnknownOptions = params.shouldIgnoreUnknownOptions ?? false
+    this.shouldFailOnUnknownOptions = params.shouldFailOnUnknownOptions ?? false
+    this.shouldIgnoreExtraArguments = params.shouldIgnoreExtraArguments ?? false
+    this.shouldFailOnExtraArguments = params.shouldFailOnExtraArguments ?? false
 
     // Tree of characters. Built by buildCharactersTrees().
     this.charactersTree = new CharactersTree(this)
