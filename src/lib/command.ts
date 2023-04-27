@@ -34,7 +34,7 @@ import { formatDuration } from './utils.js'
 
 // ----------------------------------------------------------------------------
 
-export interface Generator {
+export interface GeneratorDescription {
   tool: string // Program name.
   version: string // Package semver.
   command: string[] // Full command.
@@ -355,7 +355,7 @@ export abstract class Command {
    */
   addGenerator (params: {
     object: any
-  }): Generator {
+  }): GeneratorDescription {
     assert(params)
 
     assert(params.object)
@@ -364,11 +364,15 @@ export abstract class Command {
     const context: Context = this.context
 
     if (object.generators === undefined) {
-      const generators: Generator[] = []
+      const generators: GeneratorDescription[] = []
       object.generators = generators
     }
 
-    const generator: Generator = {
+    assert(context.programName)
+    assert(context.matchedCommands)
+    assert(context.unparsedArgv)
+
+    const generator: GeneratorDescription = {
       tool: context.programName,
       version: context.packageJson.version,
       command: [context.programName, ...context.matchedCommands,
@@ -382,7 +386,7 @@ export abstract class Command {
 
     object.generators.push(generator)
 
-    return object
+    return generator
   }
 }
 
