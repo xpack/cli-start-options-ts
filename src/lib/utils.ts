@@ -102,8 +102,11 @@ Promise<NpmPackageJson> {
 export function formatDuration (millis: number): string {
   if (millis < 1000) {
     return `${millis} ms`
+  } else if (millis < 10000) {
+    return `${(millis / 1000).toFixed(3)} sec`
+  } else {
+    return `${(millis / 1000).toFixed(1)} sec`
   }
-  return `${(millis / 1000).toFixed(3)} sec`
 }
 
 export function formatSize (bytes: number): string {

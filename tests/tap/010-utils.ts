@@ -91,6 +91,10 @@ await test('formatDuration', (t) => {
   t.equal(cli.formatDuration(1500), '1.500 sec', '1.500 sec')
   t.equal(cli.formatDuration(1999), '1.999 sec', '1.999 sec')
 
+  t.equal(cli.formatDuration(12345), '12.3 sec', '12.3 sec')
+  t.equal(cli.formatDuration(12456), '12.5 sec', '12.5 sec')
+  t.equal(cli.formatDuration(12999), '13.0 sec', '13.0 sec')
+
   t.end()
 })
 
