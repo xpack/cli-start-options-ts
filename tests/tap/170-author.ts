@@ -44,33 +44,33 @@ assert(cli.ExitCodes)
 
 // ----------------------------------------------------------------------------
 
-// To silence ts-standard.
-dumpLines([])
-
-// ----------------------------------------------------------------------------
-
 /*
  * Test if author is properly identified.
  */
 await test('a1test -h',
   async (t) => {
     try {
-      const { exitCode: code, outLines, errLines } = await runCliA1test([
+      const { exitCode, outLines, errLines } = await runCliA1test([
         '-h'
       ])
 
       // Check exit code.
-      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+      t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
 
-      t.ok(outLines.length > 0, 'stdout has lines')
-      const stdout = outLines.join('\n')
-      // console.log(errLines)
-      t.match(stdout, 'Usage: a1test', 'has Usage')
-      t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
-        'has Bug reports')
+      if (exitCode !== cli.ExitCodes.SUCCESS) {
+        dumpLines(errLines)
+        dumpLines(outLines)
+      } else {
+        // There should be no error messages.
+        t.equal(errLines.length, 0, 'stderr is empty')
 
-      // There should be no error messages.
-      t.equal(errLines.length, 0, 'stderr is empty')
+        t.ok(outLines.length > 0, 'stdout has lines')
+        const stdout = outLines.join('\n')
+        // console.log(errLines)
+        t.match(stdout, 'Usage: a1test', 'has Usage')
+        t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+          'has Bug reports')
+      }
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -83,22 +83,26 @@ await test('a1test -h',
 await test('a2test -h',
   async (t) => {
     try {
-      const { exitCode: code, outLines, errLines } = await runCliA2test([
+      const { exitCode, outLines, errLines } = await runCliA2test([
         '-h'
       ])
 
       // Check exit code.
-      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+      t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+      if (exitCode !== cli.ExitCodes.SUCCESS) {
+        dumpLines(errLines)
+        dumpLines(outLines)
+      } else {
+        // There should be no error messages.
+        t.equal(errLines.length, 0, 'stderr is empty')
 
-      t.ok(outLines.length > 0, 'stdout has lines')
-      const stdout = outLines.join('\n')
-      // console.log(errLines)
-      t.match(stdout, 'Usage: a2test', 'has Usage')
-      t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
-        'has Bug reports')
-
-      // There should be no error messages.
-      t.equal(errLines.length, 0, 'stderr is empty')
+        t.ok(outLines.length > 0, 'stdout has lines')
+        const stdout = outLines.join('\n')
+        // console.log(errLines)
+        t.match(stdout, 'Usage: a2test', 'has Usage')
+        t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
+          'has Bug reports')
+      }
     } catch (err: any) {
       t.fail(err.message)
     }
@@ -111,22 +115,26 @@ await test('a2test -h',
 await test('a3test -h',
   async (t) => {
     try {
-      const { exitCode: code, outLines, errLines } = await runCliA3test([
+      const { exitCode, outLines, errLines } = await runCliA3test([
         '-h'
       ])
 
       // Check exit code.
-      t.equal(code, cli.ExitCodes.SUCCESS, 'exit code is success')
+      t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit code is success')
+      if (exitCode !== cli.ExitCodes.SUCCESS) {
+        dumpLines(errLines)
+        dumpLines(outLines)
+      } else {
+        // There should be no error messages.
+        t.equal(errLines.length, 0, 'stderr is empty')
 
-      t.ok(outLines.length > 0, 'stdout has lines')
-      const stdout = outLines.join('\n')
-      // console.log(errLines)
-      t.match(stdout, 'Usage: a3test', 'has Usage')
-      t.match(stdout, 'Bug reports: <ilg@livius.net>',
-        'has Bug reports')
-
-      // There should be no error messages.
-      t.equal(errLines.length, 0, 'stderr is empty')
+        t.ok(outLines.length > 0, 'stdout has lines')
+        const stdout = outLines.join('\n')
+        // console.log(errLines)
+        t.match(stdout, 'Usage: a3test', 'has Usage')
+        t.match(stdout, 'Bug reports: <ilg@livius.net>',
+          'has Bug reports')
+      }
     } catch (err: any) {
       t.fail(err.message)
     }
