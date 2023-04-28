@@ -532,18 +532,27 @@ export class Help {
     const optionsGroups =
       [...context.options.groups, ...context.options.commonGroups]
 
-    if (optionsGroups.length > 0) {
+    let hasHelpRequests = false
+    optionsGroups.forEach((optionsGroup) => {
+      optionsGroup.optionsDefinitions.forEach((optionDefinition) => {
+        if (optionDefinition.helpDefinitions?.isHelp ?? false) {
+          hasHelpRequests = true
+        }
+      })
+    })
+
+    if (hasHelpRequests) {
       this.outputSecondPass()
 
-      this.outputAlignedHelpDetails()
+      this.outputAlignedHelpOptions()
 
       if (commands.length > 0) {
-        this.outputAlignedHelpDetails({ isForCommand: true })
+        this.outputAlignedHelpOptions({ isForCommand: true })
       }
     }
   }
 
-  outputAlignedHelpDetails (params: {
+  outputAlignedHelpOptions (params: {
     isForCommand?: boolean
   } = {}): void {
     const context: Context = this.context
