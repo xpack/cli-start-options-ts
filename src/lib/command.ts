@@ -298,9 +298,15 @@ export abstract class Command {
   }
 
   /**
-   * @summary Output command help
+   * @summary Output the entire help content.
    *
    * @returns Nothing.
+   *
+   * @description
+   * Output the _standard_ help, with the command options and their
+   * descriptions.
+   *
+   * Override it to provide a different format.
    */
   outputHelp (): void {
     const context: Context = this.context
@@ -309,30 +315,52 @@ export abstract class Command {
     log.trace('Command.outputHelp()')
 
     const help: Help = context.help ?? new Help({ context })
+    context.help = help
 
-    help.outputAll()
+    assert(context.commandNode)
+    assert(context.commandNode.helpDefinitions)
+
+    // Start with an empty line.
+    help.output()
+
+    help.outputTitle()
+
+    if (context.commandNode.hasChildrenCommands()) {
+      help.outputAvailableCommands()
+    } else {
+      // No further sub-commands.
+      help.outputCommandLine()
+      help.outputCommandAliases()
+    }
+
+    // The special trick here is how to align the right column.
+    // For this two steps are needed, with the first to compute
+    // the max width of the first column, and then to output text.
+
+    help.twoPassAlign(() => {
+      this.outputAlignedCustomOptions() // Overridden in derived class.
+
+      help.outputAlignedOptionsGroups()
+      help.outputAlignedAllHelpDetails()
+      help.outputAlignedEarlyDetails()
+    })
+
+    help.outputFooter()
   }
 
-  // /**
-  //  * @summary Output details about extra args.
-  //  *
-  //  * @param params.help Reference to the Help object.
-  //  * @returns Nothing.
-  //  *
-  //  * @description
-  //  * The default implementation does nothing. Override it in
-  //  * the application if needed.
-  //  *
-  //  * Be sure the implemented logic does the two separate passes,
-  //  * first to update the width, and the second to output.
-  //  */
-  // outputHelpAlignedOptions (params: {
-  //   help: Help
-  // }): void {
-  //   assert(params)
-
-  //   // Nothing.
-  // }
+  /**
+   * @summary Output command custom options.
+   * @returns Nothing.
+   *
+   * @description
+   * The default implementation does nothing. Override it in
+   * the application if needed.
+   *
+   * Be sure the implemented logic does the two separate passes,
+   * first to update the width, and the second to output.
+   */
+  outputAlignedCustomOptions (): void {
+  }
 
   /**
    * @summary Display Done and the durations.
@@ -385,7 +413,7 @@ export abstract class Command {
    *
    * @description
    * For traceability purposes, the command line used to invoke the
-   * program is copied to the object, which will usually serialised
+   * program is copied into the object, which will usually be serialised
    * into a JSON.
    * Multiple generators are possible, each call will append a new
    * element to the array.
@@ -400,6 +428,7 @@ export abstract class Command {
 
     const context: Context = this.context
 
+    // TODO: perhaps customise the `generators` name.
     if (object.generators === undefined) {
       const generators: GeneratorDescription[] = []
       object.generators = generators

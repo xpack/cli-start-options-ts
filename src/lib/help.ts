@@ -78,6 +78,9 @@ export interface HelpConstructorParams {
   isOutputAlways?: boolean
 }
 
+/**
+ * @summary Helper class to display different sections in the help content.
+ */
 export class Help {
   // --------------------------------------------------------------------------
 
@@ -172,63 +175,6 @@ export class Help {
 
     // Cut to the desired width.
     return str.substring(0, width)
-  }
-
-  // --------------------------------------------------------------------------
-
-  /**
-   * @summary Output the entire help content.
-   * @param params The generic parameters object.
-   * @param params.cmds Array of commands; not present for single
-   *  commands.
-   * @param params.object The application or command object.
-   * @param params.commands The full, unaliased commands for a
-   *   multi-command application.
-   * @returns Nothing.
-   */
-  outputAll (): void {
-    const context: Context = this.context
-
-    assert(context.commandNode)
-    assert(context.commandNode.helpDefinitions)
-
-    // Start with an empty line.
-    this.output()
-
-    this.outputTitle()
-
-    if (context.commandNode.hasChildrenCommands()) {
-      this.outputAvailableCommands()
-    } else {
-      // No further sub-commands.
-      this.outputCommandLine()
-      this.outputCommandAliases()
-    }
-
-    // The special trick here is how to align the right column.
-    // For this two steps are needed, with the first to compute
-    // the max width of the first column, and then to output text.
-
-    this.twoPassAlign(() => {
-      this.outputAlignedCustomOptions() // Overridden in derived class.
-
-      this.outputAlignedOptionsGroups()
-      this.outputAlignedAllHelpDetails()
-      this.outputAlignedEarlyDetails()
-    })
-
-    this.outputFooter()
-  }
-
-  // --------------------------------------------------------------------------
-
-  /**
-   * @summary Output command custom options.
-   *
-   * @description
-   * Override this in a derived class to provide functionality.
-   */
-  outputAlignedCustomOptions (): void {
   }
 
   // --------------------------------------------------------------------------
@@ -460,7 +406,7 @@ export class Help {
       return
     }
 
-    if (multiPass.isSecondPass && description.length > 0) {
+    if (multiPass.isSecondPass && description?.length > 0) {
       this.output()
       this.output(description + ':')
     }
