@@ -48,6 +48,11 @@ export interface CommandConstructorParams {
   context: Context
 }
 
+export interface ValidateArgvMessages {
+  text: string
+  isError: boolean
+}
+
 /**
  * @summary Base class for a CLI application command.
  */
@@ -83,7 +88,10 @@ export abstract class Command {
    * @param argv Array of arguments.
    * @returns A promise resolving to the Exit code.
    */
-  abstract main (argv: string[], forwardableArgv?: string[]): Promise<number>
+  abstract main (
+    argv: string[],
+    forwardableArgv: string[]
+  ): Promise<number>
 
   /**
    * @summary Execute the command.
@@ -112,7 +120,7 @@ export abstract class Command {
     const config: Configuration = context.config
     log.trace(util.inspect(config))
 
-    if (config.isHelpRequest !== undefined && config.isHelpRequest) {
+    if (config.isHelpRequest) {
       this.outputHelp()
       return ExitCodes.SUCCESS // Ok, command help explicitly called.
     }
@@ -130,16 +138,24 @@ export abstract class Command {
       argv: remainingArgv
     })
 
-    const errorMessages = this.validateArgv({
+    const messages = this.validateArgv({
       argv: ownArgv
     })
 
-    if (errorMessages.length > 0) {
-      errorMessages.forEach((message) => {
-        log.error(message)
+    if (messages.length > 0) {
+      let hasErrors = false
+      messages.forEach((message) => {
+        if (message.isError) {
+          log.error(message.text)
+          hasErrors = true
+        } else {
+          log.warn(message.text)
+        }
       })
-      this.outputHelp()
-      return ExitCodes.ERROR.SYNTAX
+      if (hasErrors) {
+        this.outputHelp()
+        return ExitCodes.ERROR.SYNTAX
+      }
     }
 
     // Store them in the context, for just in case.
@@ -175,7 +191,7 @@ export abstract class Command {
    * @returns Two arrays of strings with own and forwardable argument values.
    *
    * @description
-   * If the command explicitly enables `hasForwardableArguments`,
+   * If the command explicitly enables `shouldSplitForwardableArguments`,
    * all arguments after `--` are passed as forwardable.
    */
   splitForwardableArguments (params: {
@@ -192,7 +208,8 @@ export abstract class Command {
     const ownArgv: string[] = []
     const forwardableArgv: string[] = []
 
-    if (context.commandNode?.hasForwardableArguments ?? false) {
+    assert(context.commandNode)
+    if (context.commandNode.shouldSplitForwardableArguments) {
       let isOwn = true
       for (const arg of params.argv) {
         if (isOwn) {
@@ -225,7 +242,7 @@ export abstract class Command {
    */
   validateArgv (params: {
     argv: string[]
-  }): string[] {
+  }): ValidateArgvMessages[] {
     assert(params)
     assert(params.argv)
 
@@ -234,21 +251,37 @@ export abstract class Command {
     assert(context.commandNode)
     const commandNode: CommandNode = context.commandNode
 
-    const errorMessages = []
+    const messages: ValidateArgvMessages[] = []
 
     for (const arg of params.argv) {
       if (arg.startsWith('-')) {
-        if (!commandNode.hasCustomOptions) {
-          errorMessages.push(`Option '${arg}' not supported`)
+        if (commandNode.shouldFailOnUnknownOptions) {
+          messages.push({
+            text: `Option '${arg}' not supported`,
+            isError: true
+          })
+        } else if (commandNode.shouldWarnOnUnknownOptions) {
+          messages.push({
+            text: `Option '${arg}' ignored`,
+            isError: false
+          })
         }
       } else {
-        if (!commandNode.hasCustomArgs) {
-          errorMessages.push(`Argument '${arg}' not supported`)
+        if (commandNode.shouldFailOnExtraArguments) {
+          messages.push({
+            text: `Argument '${arg}' not supported`,
+            isError: true
+          })
+        } else if (commandNode.shouldWarnOnExtraArguments) {
+          messages.push({
+            text: `Argument '${arg}' ignored`,
+            isError: false
+          })
         }
       }
     }
 
-    return errorMessages
+    return messages
   }
 
   /**
@@ -273,33 +306,33 @@ export abstract class Command {
     const context: Context = this.context
 
     const log = context.log
-    log.trace('Command.help()')
+    log.trace('Command.outputHelp()')
 
-    const help: Help = new Help({ context, command: this })
+    const help: Help = context.help ?? new Help({ context })
 
     help.outputAll()
   }
 
-  /**
-   * @summary Output details about extra args.
-   *
-   * @param params.help Reference to the Help object.
-   * @returns Nothing.
-   *
-   * @description
-   * The default implementation does nothing. Override it in
-   * the application if needed.
-   *
-   * Be sure the implemented logic does the two separate passes,
-   * first to update the width, and the second to output.
-   */
-  outputHelpAlignedOptions (params: {
-    help: Help
-  }): void {
-    assert(params)
+  // /**
+  //  * @summary Output details about extra args.
+  //  *
+  //  * @param params.help Reference to the Help object.
+  //  * @returns Nothing.
+  //  *
+  //  * @description
+  //  * The default implementation does nothing. Override it in
+  //  * the application if needed.
+  //  *
+  //  * Be sure the implemented logic does the two separate passes,
+  //  * first to update the width, and the second to output.
+  //  */
+  // outputHelpAlignedOptions (params: {
+  //   help: Help
+  // }): void {
+  //   assert(params)
 
-    // Nothing.
-  }
+  //   // Nothing.
+  // }
 
   /**
    * @summary Display Done and the durations.
@@ -310,18 +343,22 @@ export abstract class Command {
 
     const log = context.log
 
+    assert(context.startTimestampMilliseconds)
+    assert(context.programName)
+    assert(context.matchedCommands)
+
     log.info()
     const durationString =
       formatDuration(Date.now() - context.startTimestampMilliseconds)
     const commandParts =
       [context.programName, ...context.matchedCommands].join(' ')
-    log.info(`'${commandParts}' completed in ${durationString}.`)
+    log.info(`'${commandParts}' completed in ${durationString}`)
   }
 
   /**
    * @summary Make a path absolute.
    *
-   * @param inPath A file or folder path.
+   * @param inputPath A file or folder path.
    * @returns The absolute path.
    *
    * @description
@@ -330,14 +367,14 @@ export abstract class Command {
    * make the path absolute, resolve it and return.
    * To 'resolve' means to process possible `.` or `..` segments.
    */
-  makePathAbsolute (inPath: string): string {
+  makePathAbsolute (inputPath: string): string {
     const context: Context = this.context
 
-    if (path.isAbsolute(inPath)) {
-      return path.resolve(inPath)
+    if (path.isAbsolute(inputPath)) {
+      return path.resolve(inputPath)
     }
     return path.resolve(context.config.cwd ?? context.processCwd,
-      inPath)
+      inputPath)
   }
 
   /**
