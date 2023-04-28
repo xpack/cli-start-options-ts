@@ -40,9 +40,302 @@ dumpLines()
 
 // ----------------------------------------------------------------------------
 
+const mockConsole = new MockConsole()
+const log = new cli.Logger({ console: mockConsole, level: 'info' })
+
+// ----------------------------------------------------------------------------
+
+const lotsOfOptions: cli.OptionsGroup[] = [
+  {
+    description: 'Common group',
+    isCommon: true,
+    optionsDefinitions: [
+      {
+        options: ['--opt-common'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+          description: 'Opt common'
+        }
+      }
+    ]
+  },
+  {
+    description: 'Group options',
+    optionsDefinitions: [
+      {
+        options: ['-o', '--out'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Opt file',
+          valueDescription: 'file'
+        }
+      },
+      {
+        options: ['--opt'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+          description: 'Opt'
+        }
+      },
+      {
+        options: ['--opt-str'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Opt string'
+        }
+      },
+      {
+        options: ['--opt-str-multiple'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Opt string multiple',
+          isMultiple: true
+        }
+      },
+      {
+        options: ['--opt-multiple'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+          description: 'Opt string multiple',
+          isMultiple: true
+        }
+      },
+      {
+        options: ['--opt-str-default'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Opt string with default',
+          defaultValueDescription: 'ddd'
+        }
+      },
+      {
+        options: ['--opt-str-default-multi'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Opt string with default multi',
+          defaultValueDescription: 'ddd',
+          isMultiple: true
+        }
+      },
+
+      {
+        options: ['--opt-str-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt string mandatory'
+        }
+      },
+      {
+        options: ['--opt-str-multiple-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt string multiple mandatory',
+          isMultiple: true
+        }
+      },
+      {
+        options: ['--opt-str-default-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt string with default mandatory',
+          defaultValueDescription: 'ddd'
+        }
+      },
+      {
+        options: ['--opt-str-default-multi-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt string with default multi mandatory',
+          defaultValueDescription: 'ddd',
+          isMultiple: true
+        }
+      },
+
+      {
+        options: ['--opt-values'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        helpDefinitions: {
+          description: 'Opt values'
+        }
+      },
+      {
+        options: ['--opt-values-multi'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        helpDefinitions: {
+          description: 'Opt values multiple',
+          isMultiple: true
+        }
+      },
+      {
+        options: ['--opt-values-default'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        helpDefinitions: {
+          description: 'Opt values with default',
+          defaultValueDescription: 'one'
+        }
+      },
+      {
+        options: ['--opt-values-default-multi'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        helpDefinitions: {
+          description: 'Opt values with default multi',
+          defaultValueDescription: 'one',
+          isMultiple: true
+        }
+      },
+
+      {
+        options: ['--opt-values-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt values mandatory'
+        }
+      },
+      {
+        options: ['--opt-values-multi-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt values multiple mandatory',
+          isMultiple: true
+        }
+      },
+      {
+        options: ['--opt-values-default-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt values with default mandatory',
+          defaultValueDescription: 'one'
+        }
+      },
+      {
+        options: ['--opt-values-default-multi-mandatory'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        values: ['one', 'two'],
+        isMandatory: true,
+        helpDefinitions: {
+          description: 'Opt values with default multi mandatory',
+          defaultValueDescription: 'one',
+          isMultiple: true
+        }
+      },
+      {
+        options: ['--opt-str-very-very-very-very-very-long'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Opt string long'
+        }
+      },
+      {
+        options: ['-E', '--opt-early-cmd'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+          description: 'Opt early command',
+          isRequiredEarly: true
+        }
+      },
+      {
+        options: ['-x', '--opt-early-cmd-nodesc'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+          isRequiredEarly: true
+        }
+      },
+      {
+        options: ['-H', '--opt-help-cmd'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+          description: 'Opt help command',
+          isHelp: true
+        }
+      },
+
+      {
+        // Not shown.
+        options: ['--opt-no-desc'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        hasValue: true,
+        helpDefinitions: {
+        }
+      }
+    ]
+  },
+  {
+    description: 'Options without description',
+    optionsDefinitions: [
+      {
+        options: ['--no-description'],
+        init: (_context) => { },
+        action: (_context, _val) => { },
+        helpDefinitions: {
+        }
+      }
+    ]
+  },
+  {
+    description: 'Options without help',
+    optionsDefinitions: [
+      {
+        options: ['--no-help'],
+        init: (_context) => { },
+        action: (_context, _val) => { }
+      }
+    ]
+  }
+]
+
+// ----------------------------------------------------------------------------
+
 await test('cli.Help constructor()', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+  mockConsole.clear()
 
   t.throws(() => {
     const help = new cli.Help(undefined as unknown as cli.HelpConstructorParams)
@@ -68,13 +361,17 @@ await test('cli.Help constructor()', async (t) => {
 })
 
 await test('cli.Help output()', async (t) => {
+  // Local console since the logger changes the level.
   const mockConsole = new MockConsole()
   const log = new cli.Logger({ console: mockConsole, level: 'info' })
+
   const context = new cli.Context({ log })
 
   const help = new cli.Help({ context })
 
   await t.test('log info', async (t) => {
+    mockConsole.clear()
+
     help.output('info')
 
     // dumpLines(mockConsole.errLines)
@@ -88,9 +385,9 @@ await test('cli.Help output()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('log silent', async (t) => {
+    mockConsole.clear()
+
     log.level = 'silent'
     help.output('silent')
 
@@ -98,13 +395,10 @@ await test('cli.Help output()', async (t) => {
     // dumpLines(mockConsole.outLines)
 
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
-
     t.equal(mockConsole.outLines.length, 0, 'no output lines')
 
     t.end()
   })
-
-  mockConsole.clear()
 
   const helpAlways = new cli.Help({
     context,
@@ -112,6 +406,8 @@ await test('cli.Help output()', async (t) => {
   })
 
   await t.test('always, log info', async (t) => {
+    mockConsole.clear()
+
     helpAlways.output('info')
 
     // dumpLines(mockConsole.errLines)
@@ -125,9 +421,9 @@ await test('cli.Help output()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('always, log silent', async (t) => {
+    mockConsole.clear()
+
     log.level = 'silent'
     helpAlways.output('silent')
 
@@ -145,9 +441,61 @@ await test('cli.Help output()', async (t) => {
   t.end()
 })
 
+await test('cli.Help outputMultiPassLine()', async (t) => {
+  mockConsole.clear()
+
+  t.throws(() => {
+    const context = new cli.Context({ log })
+    const help = new cli.Help({ context })
+    help.outputMultiPassLine(undefined as unknown as {
+      line: string
+      description?: string
+      skipUpdateWidth?: boolean
+    })
+  }, assert.AssertionError, 'assert(params)')
+
+  t.throws(() => {
+    const context = new cli.Context({ log })
+    const help = new cli.Help({ context })
+    help.outputMultiPassLine({
+      line: undefined as unknown as string
+    })
+  }, assert.AssertionError, 'assert(params.line)')
+
+  t.throws(() => {
+    const context = new cli.Context({ log })
+    const help = new cli.Help({ context })
+    help.twoPassAlign(() => {
+      help.outputMultiPassLine({
+        line: '123'
+      })
+    })
+  }, assert.AssertionError, 'assert(params.description)')
+
+  mockConsole.clear()
+
+  const context = new cli.Context({ log })
+  const help = new cli.Help({ context })
+
+  t.equal(help.multiPass.width, 0, 'width 0')
+
+  help.twoPassAlign(() => {
+    help.outputMultiPassLine({
+      line: '123',
+      description: 'one two three'
+    })
+  })
+
+  t.equal(help.multiPass.width, 3 + 1, 'width 3+1')
+
+  dumpLines(mockConsole.errLines)
+  dumpLines(mockConsole.outLines)
+
+  t.end()
+})
+
 await test('cli.Help outputTitle()', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+  mockConsole.clear()
 
   t.throws(() => {
     const context = new cli.Context({ log })
@@ -156,9 +504,9 @@ await test('cli.Help outputTitle()', async (t) => {
     help.outputTitle()
   }, assert.AssertionError, 'outputTitle assert(context.commandNode)')
 
-  mockConsole.clear()
-
   await t.test('my title', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -187,9 +535,9 @@ await test('cli.Help outputTitle()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('empty title', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -202,7 +550,6 @@ await test('cli.Help outputTitle()', async (t) => {
     help.outputTitle()
 
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
-
     t.equal(mockConsole.outLines.length, 0, 'no output lines')
 
     t.end()
@@ -212,8 +559,7 @@ await test('cli.Help outputTitle()', async (t) => {
 })
 
 await test('cli.Help outputCommandLine()', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+  mockConsole.clear()
 
   t.throws(() => {
     const context = new cli.Context({ log })
@@ -222,9 +568,9 @@ await test('cli.Help outputCommandLine()', async (t) => {
     help.outputCommandLine()
   }, assert.AssertionError, 'outputCommandLine assert(context.commandNode)')
 
-  mockConsole.clear()
-
   await t.test('empty', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -252,8 +598,6 @@ await test('cli.Help outputCommandLine()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   const commandsTemplate: {
     [key: string]: cli.CommandTemplate
   } = {
@@ -268,6 +612,8 @@ await test('cli.Help outputCommandLine()', async (t) => {
   }
 
   await t.test('commands', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -296,9 +642,9 @@ await test('cli.Help outputCommandLine()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('pre/post options', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -330,9 +676,9 @@ await test('cli.Help outputCommandLine()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('options', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -463,12 +809,61 @@ await test('cli.Help outputCommandLine()', async (t) => {
     t.end()
   })
 
+  await t.test('lot of options', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+
+    const commandsTree = new cli.CommandsTree({ context })
+    context.commandNode = commandsTree
+    commandsTree.helpDefinitions = {
+      description: 'My Title',
+      usagePreOptions: 'pre',
+      usagePostOptions: 'post'
+    }
+    const options = new cli.Options({ context })
+    options.addGroups(lotsOfOptions)
+    context.options = options
+
+    const help = new cli.Help({ context })
+
+    help.outputCommandLine()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      'Usage: xyz pre [options...] [--out <file>] [--opt] [--opt-str <s>]', //  0
+      '           [--opt-str-multiple <s>]* [--opt-multiple]* [--opt-str-default <s>]', //  1
+      '           [--opt-str-default-multi <s>]* --opt-str-mandatory <s>', //  2
+      '           [--opt-str-multiple-mandatory <s>]+ --opt-str-default-mandatory <s>', //  3
+      '           [--opt-str-default-multi-mandatory <s>]+ [--opt-values <s>]', //  4
+      '           [--opt-values-multi <s>]* [--opt-values-default <s>]', //  5
+      '           [--opt-values-default-multi <s>]* --opt-values-mandatory <s>', //  6
+      '           [--opt-values-multi-mandatory <s>]+', //  7
+      '           --opt-values-default-mandatory <s>', //  8
+      '           [--opt-values-default-multi-mandatory <s>]+', //  9
+      '           [--opt-str-very-very-very-very-very-long <s>] [--opt-no-desc <s>]', // 10
+      '           [--no-description] [--no-help] post' // 11
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
   t.end()
 })
 
 await test('cli.Help outputAvailableCommands()', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+  mockConsole.clear()
 
   t.throws(() => {
     const context = new cli.Context({ log })
@@ -476,8 +871,6 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     const help = new cli.Help({ context })
     help.outputAvailableCommands()
   }, assert.AssertionError, 'assert(context.commandNode)')
-
-  mockConsole.clear()
 
   t.throws(() => {
     const context = new cli.Context({ log })
@@ -490,9 +883,9 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     help.outputAvailableCommands()
   }, assert.AssertionError, 'assert(commands.length > 0)')
 
-  mockConsole.clear()
-
   await t.test('top commands', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -566,9 +959,9 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('sub-commands', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -613,9 +1006,9 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('post options', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -661,9 +1054,10 @@ await test('cli.Help outputAvailableCommands()', async (t) => {
   t.end()
 })
 
+// ----------------------------------------------------------------------------
+
 await test('cli.Help outputCommandAliases()', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+  mockConsole.clear()
 
   t.throws(() => {
     const context = new cli.Context({ log })
@@ -672,9 +1066,9 @@ await test('cli.Help outputCommandAliases()', async (t) => {
     help.outputCommandAliases()
   }, assert.AssertionError, 'assert(context.commandNode)')
 
-  mockConsole.clear()
-
   await t.test('no aliases', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -703,6 +1097,8 @@ await test('cli.Help outputCommandAliases()', async (t) => {
   })
 
   await t.test('aliases', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     const commandsTree = new cli.CommandsTree({ context })
@@ -742,9 +1138,1137 @@ await test('cli.Help outputCommandAliases()', async (t) => {
   t.end()
 })
 
+// ----------------------------------------------------------------------------
+
+await test('cli.Help outputAlignedOptionsGroups()', async (t) => {
+  mockConsole.clear()
+
+  t.throws(() => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options = undefined as unknown as cli.Options
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedOptionsGroups()
+    })
+  }, assert.AssertionError, 'assert(context.options)')
+
+  await t.test('none', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedOptionsGroups()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+    t.end()
+  })
+
+  await t.test('non-relevant', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt-common-nodes'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+            }
+          },
+          {
+            options: ['--help-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help common',
+              isHelp: true
+            }
+          },
+          {
+            options: ['--early-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early common',
+              isRequiredEarly: true
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+            }
+          },
+          {
+            options: ['-h|--help'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-E', '--opt-early'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early',
+              isRequiredEarly: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedOptionsGroups()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+    t.end()
+  })
+
+  await t.test('group descriptions', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt common'
+            }
+          }
+        ]
+      },
+      {
+        description: '',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt-common-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt common'
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          }
+        ]
+      },
+      {
+        description: '',
+        optionsDefinitions: [
+          {
+            options: ['--opt-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedOptionsGroups()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      'Group:', // 1
+      '  --opt                Option (optional)', // 2
+      '  --opt-nodesc         Option (optional)', // 3
+      '', // 4
+      'Common Group:', // 5
+      '  --opt-common         Opt common (optional)', // 6
+      '  --opt-common-nodesc  Opt common (optional)' // 7
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  await t.test('formatting', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+
+    context.options.addGroups(lotsOfOptions)
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedOptionsGroups()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      '', //  0
+      'Group options:', //  1
+      '  -o|--out <file>                        Opt file (optional)', //  2
+      '  --opt                                  Opt (optional)', //  3
+      '  --opt-str <s>                          Opt string (optional)', //  4
+      '  --opt-str-multiple <s>                 Opt string multiple (optional, multiple)', //  5
+      '  --opt-multiple                         Opt string multiple (optional, multiple)', //  6
+      '  --opt-str-default <s>                  Opt string with default (optional, default ddd)', //  7
+      '  --opt-str-default-multi <s>            Opt string with default multi (optional, multiple, default ddd)', //  8
+      '  --opt-str-mandatory <s>                Opt string mandatory', //  9
+      '  --opt-str-multiple-mandatory <s>       Opt string multiple mandatory (multiple)', // 10
+      '  --opt-str-default-mandatory <s>        Opt string with default mandatory', // 11
+      '  --opt-str-default-multi-mandatory <s>  Opt string with default multi mandatory (multiple)', // 12
+      '  --opt-values <s>                       Opt values (one|two) (optional)', // 13
+      '  --opt-values-multi <s>                 Opt values multiple (one|two) (optional, multiple)', // 14
+      '  --opt-values-default <s>               Opt values with default (one|two) (optional, default one)', // 15
+      '  --opt-values-default-multi <s>         Opt values with default multi (one|two) (optional, multiple, default one)', // 16
+      '  --opt-values-mandatory <s>             Opt values mandatory (one|two)', // 17
+      '  --opt-values-multi-mandatory <s>       Opt values multiple mandatory (one|two) (multiple)', // 18
+      '  --opt-values-default-mandatory <s>     Opt values with default mandatory (one|two)', // 19
+      '  --opt-values-default-multi-mandatory <s>', // 20
+      '                                         Opt values with default multi mandatory (one|two) (multiple)', // 21
+      '  --opt-str-very-very-very-very-very-long <s>', // 22
+      '                                         Opt string long (optional)', // 23
+      '', // 24
+      'Common group:', // 25
+      '  --opt-common                           Opt common (optional)' // 26
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
+await test('cli.Help outputAlignedAllHelpDetails()', async (t) => {
+  mockConsole.clear()
+
+  t.throws(() => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: [],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt help',
+              isHelp: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedAllHelpDetails()
+    })
+  }, assert.AssertionError, 'assert(optionDefinition.options.length > 0)')
+
+  await t.test('none', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    context.commandNode = commandsTree
+
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option common'
+            }
+          },
+          {
+            options: ['--opt-common-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--opt-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedAllHelpDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+    t.end()
+  })
+
+  await t.test('regular single', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    context.commandNode = commandsTree
+
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--help-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help common',
+              isHelp: true
+            }
+          },
+          {
+            options: ['--opt-common-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['-h1|--help1'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 1',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-h2|--help2'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 2',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-x', '--opt-help-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              isHelp: true
+            }
+          },
+          {
+            options: ['--opt-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedAllHelpDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      'xyz -h1|--help1    Request help 1', // 1
+      'xyz -h2|--help2    Request help 2', // 2
+      'xyz --help-common  Request help common' // 3
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  await t.test('regular with subcommands', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    commandsTree.addCommands({
+      one: {
+        moduleRelativePath: '.'
+      },
+      two: {
+        moduleRelativePath: '.'
+      }
+    })
+
+    context.commandNode = commandsTree
+
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--help-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help common',
+              isHelp: true
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['-h1|--help1'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 1',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-h2|--help2'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 2',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-x', '--opt-help-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              isHelp: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedAllHelpDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      'xyz -h1|--help1              Request help 1', // 1
+      'xyz -h2|--help2              Request help 2', // 2
+      'xyz --help-common            Request help common', // 3
+      'xyz <command> -h1|--help1    Request help 1 for command', // 4
+      'xyz <command> -h2|--help2    Request help 2 for command', // 5
+      'xyz <command> --help-common  Request help common for command' // 6
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  await t.test('large single', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    context.commandNode = commandsTree
+
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--help-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help common',
+              isHelp: true
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['-h1|--help1'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 1',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-h2|--help2-very-very-very-very-very-very-long'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 2',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-x', '--opt-help-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              isHelp: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedAllHelpDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      'xyz -h1|--help1                          Request help 1', // 1
+      'xyz -h2|--help2-very-very-very-very-very-very-long', // 2
+      '                                         Request help 2', // 3
+      'xyz --help-common                        Request help common' // 4
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  await t.test('extra large single', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    const commandsTree = new cli.CommandsTree({ context })
+    context.commandNode = commandsTree
+
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--help-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help common',
+              isHelp: true
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['-h1|--help1'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 1',
+              isHelp: true
+            }
+          },
+          {
+            options: ['-h2|--help2-very-very-very-very-very-very-long'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Request help 2',
+              isHelp: true,
+              isExtraLarge: true
+            }
+          },
+          {
+            options: ['-x', '--opt-help-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              isHelp: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedAllHelpDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '', // 0
+      'xyz -h1|--help1    Request help 1', // 1
+      'xyz -h2|--help2-very-very-very-very-very-very-long', // 2
+      '                   Request help 2', // 3
+      'xyz --help-common  Request help common' // 4
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
+await test('cli.Help outputAlignedEarlyDetails()', async (t) => {
+  mockConsole.clear()
+
+  t.throws(() => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: [],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early',
+              isRequiredEarly: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedEarlyDetails()
+    })
+  }, assert.AssertionError, 'assert(optionDefinition.options.length > 0)')
+
+  await t.test('none', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option common'
+            }
+          },
+          {
+            options: ['--opt-common-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--opt-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedEarlyDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+    t.end()
+  })
+
+  await t.test('regular', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--early-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early common',
+              isRequiredEarly: true
+            }
+          },
+          {
+            options: ['--opt-common-no-help'],
+            init: () => { },
+            action: () => { }
+          }]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['-E', '--opt-early'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early',
+              isRequiredEarly: true
+            }
+          },
+          {
+            options: ['-x', '--opt-early-nodesc'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              isRequiredEarly: true
+            }
+          },
+          {
+            options: ['--opt-no-help'],
+            init: () => { },
+            action: () => { }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedEarlyDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'xyz -E|--opt-early  Opt early', // 0
+      'xyz --early-common  Opt early common' // 1
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  await t.test('large', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--early-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early common',
+              isRequiredEarly: true
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['-E', '--opt-early'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early',
+              isRequiredEarly: true
+            }
+          },
+          {
+            options: ['--opt-str-very-very-very-very-very-long'],
+            init: (_context) => { },
+            action: (_context, _val) => { },
+            hasValue: true,
+            helpDefinitions: {
+              description: 'Opt string long',
+              isRequiredEarly: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedEarlyDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'xyz -E|--opt-early                       Opt early', // 0
+      'xyz --opt-str-very-very-very-very-very-long', // 1
+      '                                         Opt string long', // 2
+      'xyz --early-common                       Opt early common' // 3
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  await t.test('extra large', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({ log, programName: 'xyz' })
+    context.options.addGroups([
+      {
+        description: 'Common Group',
+        isCommon: true,
+        optionsDefinitions: [
+          {
+            options: ['--opt'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Option'
+            }
+          },
+          {
+            options: ['--early-common'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early common',
+              isRequiredEarly: true
+            }
+          }
+        ]
+      },
+      {
+        description: 'Group',
+        optionsDefinitions: [
+          {
+            options: ['-E', '--opt-early'],
+            init: () => { },
+            action: () => { },
+            helpDefinitions: {
+              description: 'Opt early',
+              isRequiredEarly: true
+            }
+          },
+          {
+            options: ['--opt-str-very-very-very-very-very-long'],
+            init: (_context) => { },
+            action: (_context, _val) => { },
+            hasValue: true,
+            helpDefinitions: {
+              description: 'Opt string long',
+              isRequiredEarly: true,
+              isExtraLarge: true
+            }
+          }
+        ]
+      }
+    ])
+
+    const help = new cli.Help({ context })
+
+    help.twoPassAlign(() => {
+      help.outputAlignedEarlyDetails()
+    })
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'xyz -E|--opt-early  Opt early', // 0
+      'xyz --opt-str-very-very-very-very-very-long', // 1
+      '                    Opt string long', // 2
+      'xyz --early-common  Opt early common' // 3
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines')
+
+    t.end()
+  })
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
 await test('cli.Help outputFooter()', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
+  mockConsole.clear()
 
   t.throws(() => {
     const context = new cli.Context({ log })
@@ -753,9 +2277,9 @@ await test('cli.Help outputFooter()', async (t) => {
     help.outputFooter()
   }, assert.AssertionError, 'assert(context.rootPath)')
 
-  mockConsole.clear()
-
   await t.test('npm details', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     context.rootPath = '/a/b/c'
@@ -784,9 +2308,9 @@ await test('cli.Help outputFooter()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('home page', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     context.rootPath = '/a/b/c'
@@ -817,9 +2341,9 @@ await test('cli.Help outputFooter()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('bug url', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     context.rootPath = '/a/b/c'
@@ -850,9 +2374,9 @@ await test('cli.Help outputFooter()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('bug author name & email', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     context.rootPath = '/a/b/c'
@@ -886,9 +2410,9 @@ await test('cli.Help outputFooter()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('bug author email', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     context.rootPath = '/a/b/c'
@@ -921,9 +2445,9 @@ await test('cli.Help outputFooter()', async (t) => {
     t.end()
   })
 
-  mockConsole.clear()
-
   await t.test('bug author string', async (t) => {
+    mockConsole.clear()
+
     const context = new cli.Context({ log, programName: 'xyz' })
 
     context.rootPath = '/a/b/c'
@@ -945,718 +2469,6 @@ await test('cli.Help outputFooter()', async (t) => {
       "npm @scope/abc@1.2.3 '/a/b/c'", // 1
       'Bug reports: First Last <first.last@gmail.com>' // 2
     ]
-
-    t.equal(mockConsole.outLines.length, expectedLines.length,
-      'output lines count')
-    // Compare content, not object.
-    t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.end()
-  })
-
-  t.end()
-})
-
-// ----------------------------------------------------------------------------
-
-class MockHelpApplicationRegular extends cli.Help {
-  override outputAlignedCustomOptions (): void {
-    const multiPass = this.multiPass
-
-    if (multiPass.isSecondPass) {
-      this.output()
-      this.output('Top Custom Options:')
-    }
-    const line = '  --mock-option-top'
-    this.outputMultiPassLine({ line, description: 'Mock application option' })
-  }
-}
-
-class MockHelpApplicationLong extends cli.Help {
-  override outputAlignedCustomOptions (): void {
-    const multiPass = this.multiPass
-
-    if (multiPass.isSecondPass) {
-      this.output()
-      this.output('Top Custom Options:')
-    }
-    const line = '  --mock-option-top|--a-very-very-very-long-option'
-    this.outputMultiPassLine({ line, description: 'Mock application option' })
-  }
-}
-
-class MockHelpCommandOne extends cli.Help {
-  override outputAlignedCustomOptions (): void {
-    const multiPass = this.multiPass
-
-    if (multiPass.isSecondPass) {
-      this.output()
-      this.output('One Custom Options:')
-    }
-    const line = '  --mock-option'
-    this.outputMultiPassLine({ line, description: 'Mock command option' })
-  }
-}
-
-class MockCommandOne extends cli.Command {
-  constructor (params: cli.CommandConstructorParams) {
-    super(params)
-
-    this.context.options.addGroups([
-      {
-        description: 'One options',
-        optionsDefinitions: [
-          {
-            options: ['-o', '--out'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt file',
-              valueDescription: 'file'
-            }
-          },
-          {
-            options: ['--opt'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt'
-            }
-          },
-          {
-            options: ['--opt-str'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string'
-            }
-          },
-          {
-            options: ['--opt-str-multiple'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string multiple',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-multiple'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt string multiple',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-str-default'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string with default',
-              defaultValueDescription: 'ddd'
-            }
-          },
-          {
-            options: ['--opt-str-default-multi'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string with default multi',
-              defaultValueDescription: 'ddd',
-              isMultiple: true
-            }
-          },
-
-          {
-            options: ['--opt-str-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string mandatory'
-            }
-          },
-          {
-            options: ['--opt-str-multiple-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string multiple mandatory',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-str-default-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string with default mandatory',
-              defaultValueDescription: 'ddd'
-            }
-          },
-          {
-            options: ['--opt-str-default-multi-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string with default multi mandatory',
-              defaultValueDescription: 'ddd',
-              isMultiple: true
-            }
-          },
-
-          {
-            options: ['--opt-values'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values'
-            }
-          },
-          {
-            options: ['--opt-values-multi'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values multiple',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-values-default'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values with default',
-              defaultValueDescription: 'one'
-            }
-          },
-          {
-            options: ['--opt-values-default-multi'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values with default multi',
-              defaultValueDescription: 'one',
-              isMultiple: true
-            }
-          },
-
-          {
-            options: ['--opt-values-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values mandatory'
-            }
-          },
-          {
-            options: ['--opt-values-multi-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values multiple mandatory',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-values-default-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values with default mandatory',
-              defaultValueDescription: 'one'
-            }
-          },
-          {
-            options: ['--opt-values-default-multi-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values with default multi mandatory',
-              defaultValueDescription: 'one',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-str-very-very-very-very-very-long'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string long'
-            }
-          },
-          {
-            options: ['-E', '--opt-early-cmd'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt early command',
-              isRequiredEarly: true
-            }
-          },
-          {
-            options: ['-x', '--opt-early-cmd-nodesc'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              isRequiredEarly: true
-            }
-          },
-          {
-            options: ['-H', '--opt-help-cmd'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt help command',
-              isHelp: true
-            }
-          },
-
-          {
-            // Not shown.
-            options: ['--opt-no-desc'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-            }
-          }
-        ]
-      },
-      {
-        description: 'Common options',
-        isCommon: true,
-        optionsDefinitions: [
-          {
-            options: ['-e', '--opt-early'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt early',
-              isRequiredEarly: true
-            }
-          },
-          {
-            options: ['-h', '--opt-help'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt help',
-              isHelp: true
-            }
-          }
-        ]
-      },
-      {
-        description: 'Options without description',
-        optionsDefinitions: [
-          {
-            options: ['--no-description'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-            }
-          }
-        ]
-      },
-      {
-        description: 'Options without help',
-        optionsDefinitions: [
-          {
-            options: ['--no-help'],
-            init: (_context) => { },
-            action: (_context, _val) => { }
-          }
-        ]
-      }
-    ])
-  }
-
-  async main (
-    _argv: string[],
-    _forwardableArgv?: string[] | undefined
-  ): Promise<number> {
-    throw new Error('Method not implemented.')
-  }
-}
-
-await test('cli.Help outputAll', async (t) => {
-  const mockConsole = new MockConsole()
-  const log = new cli.Logger({ console: mockConsole, level: 'info' })
-
-  t.throws(() => {
-    const context = new cli.Context({ log })
-
-    const help = new cli.Help({ context })
-    help.outputAll()
-  }, assert.AssertionError, 'assert(context.commandNode)')
-
-  mockConsole.clear()
-
-  t.throws(() => {
-    const context = new cli.Context({ log })
-
-    const commandsTree = new cli.CommandsTree({ context })
-    // Root tree node, practically empty.
-    context.commandNode = commandsTree
-
-    const help = new cli.Help({ context })
-    help.outputAll()
-  }, assert.AssertionError, 'assert(context.commandNode.helpDefinitions)')
-
-  mockConsole.clear()
-
-  await t.test('top commands default', async (t) => {
-    const context = new cli.Context({ log, programName: 'xyz' })
-
-    context.rootPath = '/a/b/c'
-    context.packageJson.name = '@scope/abc'
-    context.packageJson.version = '1.2.3'
-
-    const commandsTree = new cli.CommandsTree({ context })
-    commandsTree.addCommands({
-      one: {
-        moduleRelativePath: '.'
-      },
-      two: {
-        moduleRelativePath: '.'
-      }
-    })
-
-    // Root tree node, practically empty.
-    context.commandNode = commandsTree
-
-    commandsTree.helpDefinitions = {
-      description: 'Mock Top Description'
-    }
-
-    const mockApplication = new cli.Application({ context })
-    assert(mockApplication)
-
-    const help = new cli.Help({ context })
-
-    help.outputAll()
-
-    // dumpLines(mockConsole.errLines)
-    // dumpLines(mockConsole.outLines)
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
-
-    /* eslint-disable max-len */
-    const expectedLines = [
-      '', //  0
-      'Mock Top Description', //  1
-      '', //  2
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
-      '', //  4
-      'where <command> is one of:', //  5
-      '  one, two', //  6
-      '', //  7
-      'Common options:', //  8
-      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)', //  9
-      '  -s|--silent            Disable all messages (--loglevel silent) (optional)', // 10
-      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 11
-      '  --informative          Informative (--loglevel info) (optional)', // 12
-      '  -v|--verbose           Verbose (--loglevel verbose) (optional)', // 13
-      '  -d|--debug             Debug messages (--loglevel debug) (optional)', // 14
-      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)', // 15
-      '  --no-update-notifier   Skip check for a more recent version (optional)', // 16
-      '  -C <folder>            Set current folder (optional)', // 17
-      '', // 18
-      'xyz -h|--help            Quick help', // 19
-      'xyz <command> -h|--help  Quick help for command', // 20
-      'xyz --version            Show version', // 21
-      '', // 22
-      "npm @scope/abc@1.2.3 '/a/b/c'" // 23
-    ]
-    /* eslint-enable max-len */
-
-    t.equal(mockConsole.outLines.length, expectedLines.length,
-      'output lines count')
-    // Compare content, not object.
-    t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.end()
-  })
-
-  mockConsole.clear()
-
-  await t.test('top commands regular', async (t) => {
-    const context = new cli.Context({ log, programName: 'xyz' })
-
-    context.rootPath = '/a/b/c'
-    context.packageJson.name = '@scope/abc'
-    context.packageJson.version = '1.2.3'
-
-    const commandsTree = new cli.CommandsTree({ context })
-    commandsTree.addCommands({
-      one: {
-        moduleRelativePath: '.'
-      },
-      two: {
-        moduleRelativePath: '.'
-      }
-    })
-
-    // Root tree node, practically empty.
-    context.commandNode = commandsTree
-
-    commandsTree.helpDefinitions = {
-      description: 'Mock Top Description'
-    }
-
-    const mockApplication = new cli.Application({ context })
-    assert(mockApplication)
-
-    const help = new MockHelpApplicationRegular({ context })
-
-    help.outputAll()
-
-    // dumpLines(mockConsole.errLines)
-    // dumpLines(mockConsole.outLines)
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
-
-    /* eslint-disable max-len */
-    const expectedLines = [
-      '', //  0
-      'Mock Top Description', //  1
-      '', //  2
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
-      '', //  4
-      'where <command> is one of:', //  5
-      '  one, two', //  6
-      '', //  7
-      'Top Custom Options:', //  8
-      '  --mock-option-top      Mock application option', //  9
-      '', // 10
-      'Common options:', // 11
-      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)', // 12
-      '  -s|--silent            Disable all messages (--loglevel silent) (optional)', // 13
-      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 14
-      '  --informative          Informative (--loglevel info) (optional)', // 15
-      '  -v|--verbose           Verbose (--loglevel verbose) (optional)', // 16
-      '  -d|--debug             Debug messages (--loglevel debug) (optional)', // 17
-      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)', // 18
-      '  --no-update-notifier   Skip check for a more recent version (optional)', // 19
-      '  -C <folder>            Set current folder (optional)', // 20
-      '', // 21
-      'xyz -h|--help            Quick help', // 22
-      'xyz <command> -h|--help  Quick help for command', // 23
-      'xyz --version            Show version', // 24
-      '', // 25
-      "npm @scope/abc@1.2.3 '/a/b/c'" // 26
-    ]
-    /* eslint-enable max-len */
-
-    t.equal(mockConsole.outLines.length, expectedLines.length,
-      'output lines count')
-    // Compare content, not object.
-    t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.end()
-  })
-
-  mockConsole.clear()
-
-  await t.test('top commands long', async (t) => {
-    const context = new cli.Context({ log, programName: 'xyz' })
-
-    context.rootPath = '/a/b/c'
-    context.packageJson.name = '@scope/abc'
-    context.packageJson.version = '1.2.3'
-
-    const commandsTree = new cli.CommandsTree({ context })
-    commandsTree.addCommands({
-      one: {
-        moduleRelativePath: '.'
-      },
-      two: {
-        moduleRelativePath: '.'
-      }
-    })
-
-    // Root tree node, practically empty.
-    context.commandNode = commandsTree
-
-    commandsTree.helpDefinitions = {
-      description: 'Mock Top Description'
-    }
-
-    const mockApplication = new cli.Application({ context })
-    assert(mockApplication)
-
-    const help = new MockHelpApplicationLong({ context })
-
-    help.outputAll()
-
-    // dumpLines(mockConsole.errLines)
-    // dumpLines(mockConsole.outLines)
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
-
-    /* eslint-disable max-len */
-    const expectedLines = [
-      '', //  0
-      'Mock Top Description', //  1
-      '', //  2
-      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
-      '', //  4
-      'where <command> is one of:', //  5
-      '  one, two', //  6
-      '', //  7
-      'Top Custom Options:', //  8
-      '  --mock-option-top|--a-very-very-very-long-option', //  9
-      '                                         Mock application option', // 10
-      '', // 11
-      'Common options:', // 12
-      '  --loglevel <level>                     Set log level (silent|warn|info|verbose|debug|trace) (optional)', // 13
-      '  -s|--silent                            Disable all messages (--loglevel silent) (optional)', // 14
-      '  -q|--quiet                             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 15
-      '  --informative                          Informative (--loglevel info) (optional)', // 16
-      '  -v|--verbose                           Verbose (--loglevel verbose) (optional)', // 17
-      '  -d|--debug                             Debug messages (--loglevel debug) (optional)', // 18
-      '  -dd|--trace                            Trace messages (--loglevel trace, -d -d) (optional)', // 19
-      '  --no-update-notifier                   Skip check for a more recent version (optional)', // 20
-      '  -C <folder>                            Set current folder (optional)', // 21
-      '', // 22
-      'xyz -h|--help                            Quick help', // 23
-      'xyz <command> -h|--help                  Quick help for command', // 24
-      'xyz --version                            Show version', // 25
-      '', // 26
-      "npm @scope/abc@1.2.3 '/a/b/c'" // 27
-    ]
-    /* eslint-enable max-len */
-
-    t.equal(mockConsole.outLines.length, expectedLines.length,
-      'output lines count')
-    // Compare content, not object.
-    t.same(mockConsole.outLines, expectedLines, 'output lines')
-
-    t.end()
-  })
-
-  mockConsole.clear()
-
-  await t.test('sub-command one', async (t) => {
-    const context = new cli.Context({ log, programName: 'xyz' })
-
-    context.rootPath = '/a/b/c'
-    context.packageJson.name = '@scope/abc'
-    context.packageJson.version = '1.2.3'
-
-    const commandsTree = new cli.CommandsTree({ context })
-    commandsTree.addCommands({
-      one: {
-        aliases: ['o', 'on'],
-        moduleRelativePath: '.',
-        helpDefinitions: {
-          description: 'Mock One Description'
-        }
-      },
-      two: {
-        moduleRelativePath: '.'
-      }
-    })
-
-    context.commandNode = commandsTree.findCommandNode(['one'])
-
-    const mockCommand = new MockCommandOne({ context })
-    assert(mockCommand)
-
-    const help = new MockHelpCommandOne({ context })
-
-    help.outputAll()
-
-    // dumpLines(mockConsole.errLines)
-    // dumpLines(mockConsole.outLines)
-
-    t.equal(mockConsole.errLines.length, 0, 'no error lines')
-
-    /* eslint-disable max-len */
-    const expectedLines = [
-      '', //  0
-      'Mock One Description', //  1
-      '', //  2
-      'Usage: xyz one [options...] [--out <file>] [--opt] [--opt-str <s>]', //  3
-      '               [--opt-str-multiple <s>]* [--opt-multiple]*', //  4
-      '               [--opt-str-default <s>] [--opt-str-default-multi <s>]*', //  5
-      '               --opt-str-mandatory <s> [--opt-str-multiple-mandatory <s>]+', //  6
-      '               --opt-str-default-mandatory <s>', //  7
-      '               [--opt-str-default-multi-mandatory <s>]+ [--opt-values <s>]', //  8
-      '               [--opt-values-multi <s>]* [--opt-values-default <s>]', //  9
-      '               [--opt-values-default-multi <s>]* --opt-values-mandatory <s>', // 10
-      '               [--opt-values-multi-mandatory <s>]+', // 11
-      '               --opt-values-default-mandatory <s>', // 12
-      '               [--opt-values-default-multi-mandatory <s>]+', // 13
-      '               [--opt-str-very-very-very-very-very-long <s>]', // 14
-      '               [--opt-no-desc <s>] [--no-description] [--no-help]', // 15
-      '', // 16
-      'Command aliases: o, on', // 17
-      '', // 18
-      'One Custom Options:', // 19
-      '  --mock-option                          Mock command option', // 20
-      '', // 21
-      'One options:', // 22
-      '  -o|--out <file>                        Opt file (optional)', // 23
-      '  --opt                                  Opt (optional)', // 24
-      '  --opt-str <s>                          Opt string (optional)', // 25
-      '  --opt-str-multiple <s>                 Opt string multiple (optional, multiple)', // 26
-      '  --opt-multiple                         Opt string multiple (optional, multiple)', // 27
-      '  --opt-str-default <s>                  Opt string with default (optional, default ddd)', // 28
-      '  --opt-str-default-multi <s>            Opt string with default multi (optional, multiple, default ddd)', // 29
-      '  --opt-str-mandatory <s>                Opt string mandatory', // 30
-      '  --opt-str-multiple-mandatory <s>       Opt string multiple mandatory (multiple)', // 31
-      '  --opt-str-default-mandatory <s>        Opt string with default mandatory', // 32
-      '  --opt-str-default-multi-mandatory <s>  Opt string with default multi mandatory (multiple)', // 33
-      '  --opt-values <s>                       Opt values (one|two) (optional)', // 34
-      '  --opt-values-multi <s>                 Opt values multiple (one|two) (optional, multiple)', // 35
-      '  --opt-values-default <s>               Opt values with default (one|two) (optional, default one)', // 36
-      '  --opt-values-default-multi <s>         Opt values with default multi (one|two) (optional, multiple, default one)', // 37
-      '  --opt-values-mandatory <s>             Opt values mandatory (one|two)', // 38
-      '  --opt-values-multi-mandatory <s>       Opt values multiple mandatory (one|two) (multiple)', // 39
-      '  --opt-values-default-mandatory <s>     Opt values with default mandatory (one|two)', // 40
-      '  --opt-values-default-multi-mandatory <s>', // 41
-      '                                         Opt values with default multi mandatory (one|two) (multiple)', // 42
-      '  --opt-str-very-very-very-very-very-long <s>', // 43
-      '                                         Opt string long (optional)', // 44
-      '', // 45
-      'xyz -H|--opt-help-cmd                    Opt help command', // 46
-      'xyz -h|--opt-help                        Opt help', // 47
-      'xyz -E|--opt-early-cmd                   Opt early command', // 48
-      'xyz -e|--opt-early                       Opt early', // 49
-      '', // 50
-      "npm @scope/abc@1.2.3 '/a/b/c'" // 51
-    ]
-    /* eslint-enable max-len */
 
     t.equal(mockConsole.outLines.length, expectedLines.length,
       'output lines count')
