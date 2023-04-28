@@ -51,7 +51,7 @@ assert(cli.ExitCodes)
 let pack: cli.NpmPackageJson
 
 // To silence ts-standard.
-dumpLines([])
+dumpLines()
 
 // ----------------------------------------------------------------------------
 

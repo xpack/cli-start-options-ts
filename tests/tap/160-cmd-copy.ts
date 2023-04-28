@@ -58,7 +58,7 @@ const workFolder = path.resolve(os.tmpdir(), 'xtest-copy')
 const skipSomeTests = true
 
 // To silence ts-standard.
-dumpLines([])
+dumpLines()
 
 // ----------------------------------------------------------------------------
 
