@@ -21,6 +21,8 @@
 // ----------------------------------------------------------------------------
 
 import { strict as assert } from 'node:assert'
+import * as nonStrictAssert from 'node:assert'
+
 import { Console } from 'node:console'
 import * as net from 'node:net'
 import * as os from 'node:os'
@@ -167,22 +169,22 @@ export class Application extends Command {
 
       // Redirect to the instance runner. It might start a REPL.
       exitCode = await application.start()
-    } catch (err: any) {
-      exitCode = this.processStartError({ err, log })
+    } catch (error: any) {
+      exitCode = this.processStartError({ error, log })
     }
     // Pass through. Do not call exit(), to allow callbacks (or REPL) to run.
     return exitCode
   }
 
   static processStartError (params: {
-    err: any
+    error: any
     log: Logger
   }): number {
-    assert(params)
+    assert(params, 'params')
+    assert(params.error, 'params.error')
+    assert(params.log, 'params.log')
 
-    assert(params.err)
-    const err = params.err
-    assert(params.log)
+    const error = params.error
     const log = params.log
 
     let exitCode = ExitCodes.ERROR.APPLICATION
@@ -194,23 +196,25 @@ export class Application extends Command {
       // This is the moment when buffered logs are written out.
     }
 
-    if (err instanceof cli.Error) {
+    // Be sure the AssertionError is the same, regardless the namespace,
+    // so that further tests do not need to check both.
+    assert(assert.AssertionError === nonStrictAssert.AssertionError,
+      'non-unique AssertionError')
+
+    if (error instanceof assert.AssertionError) {
+      // Rethrow assertion errors; they happen only during development
+      // and are checked by tests.
+      throw error
+    } else if (error instanceof cli.Error) {
       // CLI triggered error. Treat it gently.
-      log.error(err.message)
-      exitCode = err.exitCode
-    } else if (err.constructor === Error ||
-      err.constructor === SyntaxError ||
-      err.constructor === TypeError) {
-      // Other error. Treat it gently too.
-      if (err.message !== undefined) {
-        console.error(err.message)
+      if (error.message !== undefined) {
+        log.error(error.message)
       }
-    } else /* istanbul ignore next */ {
-      // System error, probably due to a bug (AssertionError).
+      exitCode = error.exitCode
+    } else {
+      // System error, probably due to a bug.
       // Show the full stack trace.
-      if ((err as Error).stack !== undefined) {
-        console.error(err.stack)
-      }
+      log.console.error(error)
     }
     log.verbose(`exitCode = ${exitCode}`)
 
@@ -495,11 +499,19 @@ export class Application extends Command {
     // ------------------------------------------------------------------------
     // Read package.json in.
 
-    assert(context.rootPath)
-    context.packageJson =
-      await readPackageJson(context.rootPath)
+    assert(context.rootPath, 'context.rootPath')
+    try {
+      context.packageJson = await readPackageJson(context.rootPath)
+    } catch (error: any) {
+      // During tests the file might not be available.
+      log.debug(error)
+    }
 
     const packageJson = context.packageJson
+
+    // The package.json file must define at least the name and the version.
+    assert(packageJson.name, 'packageJson.name')
+    assert(packageJson.version, 'packageJson.version')
 
     this.commandsTree.setHelpDescription(
       packageJson.description ?? packageJson.name)
@@ -550,7 +562,7 @@ export class Application extends Command {
 
     // Very early detection of `--version`, since it makes
     // all other irrelevant. Checked again in dispatchCommands() for REPL.
-    if (config.isVersionRequest !== undefined && config.isVersionRequest) {
+    if (config.isVersionRequest ?? false) {
       log.always(packageJson.version)
       return ExitCodes.SUCCESS
     }
@@ -564,7 +576,7 @@ export class Application extends Command {
 
     // If no commands and -h, output the application help message.
     if ((commands.length === 0) &&
-      (config.isHelpRequest !== undefined && config.isHelpRequest)) {
+      (config.isHelpRequest ?? false)) {
       this.outputHelp()
       return ExitCodes.SUCCESS // Help explicitly called.
     }
@@ -622,11 +634,16 @@ export class Application extends Command {
    * Use `semver` official syntax.
    */
   validateEngine (packageJson: NpmPackageJson): boolean {
+    const context: Context = this.context
+
+    const log = context.log
+
     const nodeVersion = process.version // v14.21.2
     const engines: string = packageJson.engines?.node ??
       ' >=16.0.0'
     if (!semver.satisfies(nodeVersion, engines)) {
-      console.error(`Please use a newer node (at least ${engines}).\n`)
+      log.console.error(
+        `Please use a newer node (at least ${engines.trim()}).\n`)
       return false
     }
     return true
@@ -655,7 +672,7 @@ export class Application extends Command {
 
   /**
    *
-   * @param mainArgs
+   * @param mainArgv
    * @returns Array of string with the commands
    *
    * @description
@@ -663,12 +680,12 @@ export class Application extends Command {
    *
    * The first non word (probably option) ends the list.
    */
-  identifyCommands (mainArgs: string[]): string[] {
-    assert(mainArgs)
+  identifyCommands (mainArgv: string[]): string[] {
+    assert(mainArgv, 'mainArgv')
 
     const commands: string[] = []
     if (this.commandsTree.hasChildrenCommands()) {
-      for (const arg of mainArgs) {
+      for (const arg of mainArgv) {
         const lowerCaseArg = arg.toLowerCase()
         if (lowerCaseArg.match(/^[a-z][a-z-]*/) != null) {
           commands.push(lowerCaseArg)
@@ -761,7 +778,7 @@ export class Application extends Command {
           context: socketContext
         })
 
-        assert(application.context.rootPath)
+        assert(application.context.rootPath, 'application.context.rootPath')
         // 'borrow' the package json from the terminal instance.
         application.context.packageJson = packageJson
 
@@ -844,9 +861,9 @@ export class Application extends Command {
       // Success, but do not return any value, since REPL thinks it
       // is a string that must be displayed.
       callback(null)
-    } catch (err: any) /* istanbul ignore next */ {
+    } catch (error: any) /* istanbul ignore next */ {
       // Failure, will display `Error: ${ex.message}`.
-      callback(err)
+      callback(error)
     }
   }
 
@@ -864,7 +881,7 @@ export class Application extends Command {
    * Called both from the top runner, or from REPL.
    */
   async dispatchCommand (argv: string[]): Promise<number> {
-    assert(argv)
+    assert(argv, 'argv')
 
     const context: Context = this.context
 
@@ -924,8 +941,8 @@ export class Application extends Command {
           argv
         })
       }
-    } catch (err: any) {
-      exitCode = this.processCommandError({ err, log })
+    } catch (error: any) {
+      exitCode = this.processCommandError({ error, log })
     }
 
     // Prevent spilling the current command into the next, in case of REPL.
@@ -941,9 +958,9 @@ export class Application extends Command {
     commands: string[]
     argv: string[]
   }): Promise<number> {
-    assert(params)
-    assert(params.commands)
-    assert(params.argv)
+    assert(params, 'params')
+    assert(params.commands, 'params.commands')
+    assert(params.argv, 'params.argv')
 
     const context: Context = this.context
 
@@ -959,7 +976,7 @@ export class Application extends Command {
     const found: FoundCommandModule = this.commandsTree.findCommandModule(
       params.commands)
 
-    assert(context.rootPath)
+    assert(context.rootPath, 'context.rootPath')
     // Throws an assert if there is no command class.
     const DerivedCommandClass: typeof DerivedCommand =
       await this.findCommandClass({
@@ -1002,7 +1019,7 @@ export class Application extends Command {
     })
 
     if (config.isHelpRequest !== undefined && config.isHelpRequest) {
-      assert(commandInstance)
+      assert(commandInstance, 'commandInstance')
       // Show the command specific help.
       commandInstance.outputHelp()
       return ExitCodes.SUCCESS // Help explicitly called.
@@ -1013,36 +1030,39 @@ export class Application extends Command {
     })
   }
 
+  // Similar to static processStartError(), but slightly different.
   processCommandError (params: {
-    err: any
+    error: any
     log: Logger
   }): number {
-    assert(params)
+    assert(params, 'params')
+    assert(params.log, 'params.log')
+    assert(params.log, 'params.log')
 
-    assert(params.log)
-    const err = params.err
-    assert(params.log)
+    const error = params.error
     const log = params.log
 
     let exitCode = ExitCodes.ERROR.APPLICATION
 
-    if (err instanceof cli.SyntaxError) {
+    if (error instanceof assert.AssertionError) {
+      // Rethrow assertion errors; they happen only during development
+      // and are checked by tests.
+      throw error
+    } else if (error instanceof cli.SyntaxError) {
       // CLI triggered error. Treat it gently and try to be helpful.
-      log.error(err.message)
+      log.error(error.message)
       this.outputHelp()
-      exitCode = err.exitCode
-    } else if (err instanceof cli.Error) {
+      exitCode = error.exitCode
+    } else if (error instanceof cli.Error) {
       // Other CLI triggered error. Treat it gently.
-      if (err.message !== undefined) {
-        log.error(err.message)
+      if (error.message !== undefined) {
+        log.error(error.message)
       }
-      exitCode = err.exitCode
+      exitCode = error.exitCode
     } else {
-      // System error, probably due to a bug (AssertionError).
+      // System error, probably due to a bug.
       // Show the full stack trace.
-      if ((err as Error).stack !== undefined) {
-        log.error((err as Error).stack)
-      }
+      log.console.error(error)
     }
     log.verbose(`exit(${exitCode})`)
 
@@ -1055,9 +1075,9 @@ export class Application extends Command {
     moduleRelativePath: string
     className: string | undefined
   }): Promise<typeof DerivedCommand> {
-    assert(params)
-    assert(params.rootPath)
-    assert(params.moduleRelativePath)
+    assert(params, 'params')
+    assert(params.rootPath, 'params.rootPath')
+    assert(params.moduleRelativePath, 'params.moduleRelativePath')
 
     const parentClass = Command
 
