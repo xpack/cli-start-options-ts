@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------
 
 /*
- * Test the context class.
+ * Test the `Context` class.
  */
 
 // ----------------------------------------------------------------------------
@@ -26,6 +26,9 @@ import { strict as assert } from 'node:assert'
 // https://www.npmjs.com/package/tap
 import { test } from 'tap'
 
+// https://www.npmjs.com/package/@xpack/mock-console
+import { MockConsole, dumpLines } from '@xpack/mock-console'
+
 // ----------------------------------------------------------------------------
 
 import * as cli from '../../esm/index.js'
@@ -33,11 +36,19 @@ import * as cli from '../../esm/index.js'
 // ----------------------------------------------------------------------------
 
 assert(cli.Context)
+dumpLines()
+
+// ----------------------------------------------------------------------------
+
+const mockConsole = new MockConsole()
+const log = new cli.Logger({ console: mockConsole, level: 'info' })
+assert(log)
 
 // ----------------------------------------------------------------------------
 
 await test('cli.Context constructor(log)', async (t) => {
-  const log = new cli.Logger()
+  mockConsole.clear()
+
   const context = new cli.Context({ log })
 
   t.equal(context.log, log, 'log')
@@ -75,7 +86,8 @@ await test('cli.Context constructor(log)', async (t) => {
 })
 
 await test('cli.Context constructor(programName)', async (t) => {
-  const log = new cli.Logger()
+  mockConsole.clear()
+
   const name = 'my-name'
   const context = new cli.Context({ log, programName: name })
 
@@ -85,7 +97,8 @@ await test('cli.Context constructor(programName)', async (t) => {
 })
 
 await test('cli.Context constructor(processCwd)', async (t) => {
-  const log = new cli.Logger()
+  mockConsole.clear()
+
   const cwd = 'my-cwd'
   const context = new cli.Context({ log, processCwd: cwd })
 
@@ -95,7 +108,8 @@ await test('cli.Context constructor(processCwd)', async (t) => {
 })
 
 await test('cli.Context constructor(processEnv)', async (t) => {
-  const log = new cli.Logger()
+  mockConsole.clear()
+
   const env: NodeJS.ProcessEnv = {
     ONE: 'one',
     TWO: 'two'
@@ -108,7 +122,8 @@ await test('cli.Context constructor(processEnv)', async (t) => {
 })
 
 await test('cli.Context constructor(processArgv)', async (t) => {
-  const log = new cli.Logger()
+  mockConsole.clear()
+
   const cmdPath = 'a/b.c'
   const argv = ['node', cmdPath]
   const context = new cli.Context({ log, processArgv: argv })
@@ -120,8 +135,23 @@ await test('cli.Context constructor(processArgv)', async (t) => {
   t.end()
 })
 
+await test('cli.Context constructor(packageJson)', async (t) => {
+  mockConsole.clear()
+
+  const packageJson: cli.NpmPackageJson = {
+    name: '@scope/name',
+    version: '1.2.3'
+  }
+  const context = new cli.Context({ log, packageJson })
+
+  t.equal(context.packageJson, packageJson, 'packageJson')
+
+  t.end()
+})
+
 await test('cli.Context constructor(context)', async (t) => {
-  const log = new cli.Logger()
+  mockConsole.clear()
+
   const name = 'my-name'
   const cwd = 'my-cwd'
   const env: NodeJS.ProcessEnv = {

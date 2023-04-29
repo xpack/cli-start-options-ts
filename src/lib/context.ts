@@ -52,8 +52,7 @@ export class Context {
   public processEnv: NodeJS.ProcessEnv
   public processArgv: string[]
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  public packageJson: NpmPackageJson = ({} as NpmPackageJson)
+  public packageJson: NpmPackageJson
 
   /** The commands used to select the current class, in full form.
    * Set by the Application. */
@@ -110,6 +109,7 @@ export class Context {
     processCwd?: string
     processEnv?: NodeJS.ProcessEnv
     processArgv?: string[]
+    packageJson?: NpmPackageJson
   }) {
     assert(params)
 
@@ -135,6 +135,9 @@ export class Context {
     this.programName = params.programName ??
     params.context?.programName ??
     getProgramName(this.cmdPath)
+
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    this.packageJson = params.packageJson ?? ({} as NpmPackageJson)
 
     this.startTimestampMilliseconds = Date.now()
 
