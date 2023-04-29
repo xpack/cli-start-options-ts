@@ -42,6 +42,7 @@
     "tap-c8-options": "c8 tap --reporter=spec tests/tap/*-options.ts",
     "tap-c8-help": "c8 tap --reporter=spec tests/tap/*-help.ts",
     "tap-c8-command": "c8 tap --reporter=spec tests/tap/*-command.ts",
+    "tap-c8-application": "c8 tap --reporter=spec tests/tap/*-application.ts",
     "test-tap": "tap",
     "test-tap-coverage": "tap --coverage",
     "test-tap-coverage-c8": "c8 -- tap",
