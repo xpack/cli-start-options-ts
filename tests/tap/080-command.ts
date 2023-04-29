@@ -32,6 +32,7 @@ import { MockConsole, dumpLines } from '@xpack/mock-console'
 // ----------------------------------------------------------------------------
 
 import * as cli from '../../esm/index.js'
+import { lotsOfOptions } from '../mock/optiongroups.js'
 
 // ----------------------------------------------------------------------------
 
@@ -996,302 +997,7 @@ class MockCommandOne extends cli.Command {
   constructor (params: cli.CommandConstructorParams) {
     super(params)
 
-    this.context.options.addGroups([
-      {
-        description: 'One options',
-        optionsDefinitions: [
-          {
-            options: ['-o', '--out'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt file',
-              valueDescription: 'file'
-            }
-          },
-          {
-            options: ['--opt'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt'
-            }
-          },
-          {
-            options: ['--opt-str'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string'
-            }
-          },
-          {
-            options: ['--opt-str-multiple'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string multiple',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-multiple'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt string multiple',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-str-default'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string with default',
-              defaultValueDescription: 'ddd'
-            }
-          },
-          {
-            options: ['--opt-str-default-multi'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string with default multi',
-              defaultValueDescription: 'ddd',
-              isMultiple: true
-            }
-          },
-
-          {
-            options: ['--opt-str-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string mandatory'
-            }
-          },
-          {
-            options: ['--opt-str-multiple-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string multiple mandatory',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-str-default-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string with default mandatory',
-              defaultValueDescription: 'ddd'
-            }
-          },
-          {
-            options: ['--opt-str-default-multi-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt string with default multi mandatory',
-              defaultValueDescription: 'ddd',
-              isMultiple: true
-            }
-          },
-
-          {
-            options: ['--opt-values'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values'
-            }
-          },
-          {
-            options: ['--opt-values-multi'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values multiple',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-values-default'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values with default',
-              defaultValueDescription: 'one'
-            }
-          },
-          {
-            options: ['--opt-values-default-multi'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            helpDefinitions: {
-              description: 'Opt values with default multi',
-              defaultValueDescription: 'one',
-              isMultiple: true
-            }
-          },
-
-          {
-            options: ['--opt-values-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values mandatory'
-            }
-          },
-          {
-            options: ['--opt-values-multi-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values multiple mandatory',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-values-default-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values with default mandatory',
-              defaultValueDescription: 'one'
-            }
-          },
-          {
-            options: ['--opt-values-default-multi-mandatory'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            values: ['one', 'two'],
-            isMandatory: true,
-            helpDefinitions: {
-              description: 'Opt values with default multi mandatory',
-              defaultValueDescription: 'one',
-              isMultiple: true
-            }
-          },
-          {
-            options: ['--opt-str-very-very-very-very-very-long'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-              description: 'Opt string long'
-            }
-          },
-          {
-            options: ['-E', '--opt-early-cmd'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt early command',
-              isRequiredEarly: true
-            }
-          },
-          {
-            options: ['-x', '--opt-early-cmd-nodesc'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              isRequiredEarly: true
-            }
-          },
-          {
-            options: ['-H', '--opt-help-cmd'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt help command',
-              isHelp: true
-            }
-          },
-
-          {
-            // Not shown.
-            options: ['--opt-no-desc'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            hasValue: true,
-            helpDefinitions: {
-            }
-          }
-        ]
-      },
-      {
-        description: 'Common options',
-        isCommon: true,
-        optionsDefinitions: [
-          {
-            options: ['-e', '--opt-early'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt early',
-              isRequiredEarly: true
-            }
-          },
-          {
-            options: ['-h', '--opt-help'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-              description: 'Opt help',
-              isHelp: true
-            }
-          }
-        ]
-      },
-      {
-        description: 'Options without description',
-        optionsDefinitions: [
-          {
-            options: ['--no-description'],
-            init: (_context) => { },
-            action: (_context, _val) => { },
-            helpDefinitions: {
-            }
-          }
-        ]
-      },
-      {
-        description: 'Options without help',
-        optionsDefinitions: [
-          {
-            options: ['--no-help'],
-            init: (_context) => { },
-            action: (_context, _val) => { }
-          }
-        ]
-      }
-    ])
+    this.context.options.addGroups(lotsOfOptions)
   }
 
   async main (
@@ -1625,7 +1331,7 @@ await test('cli.Command outputHelp', async (t) => {
       'One Custom Options:', // 19
       '  --mock-option                          Mock command option', // 20
       '', // 21
-      'One options:', // 22
+      'Group options:', // 22
       '  -o|--out <file>                        Opt file (optional)', // 23
       '  --opt                                  Opt (optional)', // 24
       '  --opt-str <s>                          Opt string (optional)', // 25
@@ -1649,12 +1355,15 @@ await test('cli.Command outputHelp', async (t) => {
       '  --opt-str-very-very-very-very-very-long <s>', // 43
       '                                         Opt string long (optional)', // 44
       '', // 45
-      'xyz -H|--opt-help-cmd                    Opt help command', // 46
-      'xyz -h|--opt-help                        Opt help', // 47
-      'xyz -E|--opt-early-cmd                   Opt early command', // 48
-      'xyz -e|--opt-early                       Opt early', // 49
-      '', // 50
-      "npm @scope/abc@1.2.3 '/a/b/c'" // 51
+      'Common group:', // 46
+      '  --opt-common                           Opt common (optional)', // 47
+      '', // 48
+      'xyz -H|--opt-help-cmd                    Opt help command', // 49
+      'xyz -h|--opt-help                        Opt help', // 50
+      'xyz -E|--opt-early-cmd                   Opt early command', // 51
+      'xyz -e|--opt-early                       Opt early', // 52
+      '', // 53
+      "npm @scope/abc@1.2.3 '/a/b/c'" // 54
     ]
     /* eslint-enable max-len */
 
