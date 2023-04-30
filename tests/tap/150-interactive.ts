@@ -140,7 +140,7 @@ await test('xtest -i (spawn)', async (t) => {
           if (count === 2) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             t.test('first prompt', (t) => {
-              t.ok(true, 'prompt ok')
+              t.pass('prompt ok')
               t.equal(stderr, '', 'stderr is empty')
               t.end()
             })

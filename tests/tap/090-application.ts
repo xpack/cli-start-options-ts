@@ -75,7 +75,7 @@ await test('cli.Application static start()', async (t) => {
 
   try {
     await cli.Application.start()
-    t.notOk(false, 'does not throw')
+    t.fail('does not throw')
   } catch (error: any) {
     // console.log(error)
     t.ok(error instanceof assert.AssertionError,
@@ -184,7 +184,7 @@ await test('cli.Application start()', async (t) => {
     const application = new MockApplication1({ context })
 
     await application.start()
-    t.notOk(false, 'assert(packageJson.name) not thrown')
+    t.fail('assert(packageJson.name) not thrown')
   } catch (error: any) {
     t.ok(error instanceof assert.AssertionError,
       'assert(packageJson.name)')
@@ -203,7 +203,7 @@ await test('cli.Application start()', async (t) => {
     const application = new MockApplication1({ context })
 
     await application.start()
-    t.notOk(false, 'assert(packageJson.version) not thrown')
+    t.fail('assert(packageJson.version) not thrown')
   } catch (error: any) {
     // console.log(error)
     t.ok(error instanceof assert.AssertionError,

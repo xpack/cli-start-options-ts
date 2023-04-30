@@ -528,7 +528,7 @@ await test('cli.Options processOption', async (t) => {
 
   try {
     options.parse(['--two'])
-    t.notOk(true, 'should throw')
+    t.fail('should throw')
   } catch (error: any) {
     t.ok(error instanceof cli.SyntaxError, 'SyntaxError')
     t.match(error.message, 'expects a value', 'SyntaxError expects a value')
@@ -583,7 +583,7 @@ await test('cli.Options processOption', async (t) => {
 
   try {
     options.parse(['--three=niet'])
-    t.notOk(true, 'should throw')
+    t.fail('should throw')
   } catch (error: any) {
     t.ok(error instanceof cli.SyntaxError, 'SyntaxError')
     t.match(error.message, 'not allowed for', 'SyntaxError not allowed for')
