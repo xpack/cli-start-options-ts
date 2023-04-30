@@ -59,7 +59,7 @@ import {
   CommandsTree,
   FoundCommandModule
 } from './commands-tree.js'
-import { defaultLogLevel } from './configuration.js'
+import { Configuration, defaultLogLevel } from './configuration.js'
 import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 // Hack to keep the cli.Error notation consistent.
@@ -151,11 +151,11 @@ export class Application extends Command {
     const DerivedApplicationClass = this // Simply to make it look like a class.
 
     // Create the log early, to have it in the exception handlers.
-    const log = params?.context?.log ?? new Logger({ console })
+    const log: Logger = params?.context?.log ?? new Logger({ console })
 
-    let exitCode = ExitCodes.SUCCESS
+    let exitCode: number = ExitCodes.SUCCESS
     try {
-      const context = params?.context ?? new Context({ log })
+      const context: Context = params?.context ?? new Context({ log })
 
       // Instantiate the derived class.
       const application = new DerivedApplicationClass({
@@ -185,9 +185,9 @@ export class Application extends Command {
     assert(params.log, 'params.log')
 
     const error = params.error
-    const log = params.log
+    const log: Logger = params.log
 
-    let exitCode = ExitCodes.ERROR.APPLICATION
+    let exitCode: number = ExitCodes.ERROR.APPLICATION
 
     // If the initialisation was completed, the log level must have been
     // set, but for early quits the level might still be undefined.
@@ -247,7 +247,7 @@ export class Application extends Command {
 
     const context: Context = this.context
 
-    const log = context.log
+    const log: Logger = context.log
     log.trace('Application.constructor()')
 
     this.commandsTree = new CommandsTree({ context })
@@ -356,7 +356,7 @@ export class Application extends Command {
               options: ['-d', '--debug'],
               init: () => { },
               action: (context) => {
-                const config = context.config
+                const config: Configuration = context.config
                 if (config.logLevel === 'debug') {
                   config.logLevel = 'trace'
                 } else {
@@ -394,7 +394,7 @@ export class Application extends Command {
               },
               action: (context, val) => {
                 assert(val !== undefined)
-                const config = context.config
+                const config: Configuration = context.config
                 if (path.isAbsolute(val)) {
                   config.cwd = val
                 } else if (config.cwd !== undefined) {
@@ -489,8 +489,8 @@ export class Application extends Command {
   async start (): Promise<number> {
     const context: Context = this.context
 
-    const log = context.log
-    const config = context.config
+    const log: Logger = context.log
+    const config: Configuration = context.config
 
     // Set the application name, to make `ps` output more readable.
     // https://nodejs.org/docs/latest-v14.x/api/process.html#process_process_title
@@ -507,7 +507,7 @@ export class Application extends Command {
       log.debug(error)
     }
 
-    const packageJson = context.packageJson
+    const packageJson: NpmPackageJson = context.packageJson
 
     // The package.json file must define at least the name and the version.
     assert(packageJson.name, 'packageJson.name')
@@ -583,7 +583,7 @@ export class Application extends Command {
 
     // ------------------------------------------------------------------------
 
-    let exitCode = ExitCodes.SUCCESS
+    let exitCode: number = ExitCodes.SUCCESS
 
     if ((commands.length === 0) && this.enableREPL) {
       // If there are no commands on the command line and REPL is enabled,
@@ -636,7 +636,7 @@ export class Application extends Command {
   validateEngine (packageJson: NpmPackageJson): boolean {
     const context: Context = this.context
 
-    const log = context.log
+    const log: Logger = context.log
 
     const nodeVersion = process.version // v14.21.2
     const engines: string = packageJson.engines?.node ??
@@ -656,7 +656,7 @@ export class Application extends Command {
   logInitialDebug (packageJson: NpmPackageJson): void {
     const context: Context = this.context
 
-    const log = context.log
+    const log: Logger = context.log
 
     log.debug(`${packageJson.name}@${packageJson.version}`)
     log.debug(`os arch=${os.arch()}, platform=${os.platform()},` +
@@ -706,12 +706,11 @@ export class Application extends Command {
   async enterRepl (): Promise<number> {
     const context: Context = this.context
 
-    const log = context.log
-    const config = context.config
-    const packageJson = context.packageJson
+    const log: Logger = context.log
+    const config: Configuration = context.config
+    const packageJson: NpmPackageJson = context.packageJson
 
     const replTitle = context.packageJson.description ?? context.programName
-    const exitCode = ExitCodes.SUCCESS
 
     const serverPort = config.interactiveServerPort
     if (serverPort === undefined) {
@@ -815,7 +814,7 @@ export class Application extends Command {
 
       // Pass through to allow REPL to run...
     }
-    return exitCode
+    return ExitCodes.SUCCESS
   }
 
   // --------------------------------------------------------------------------
@@ -845,14 +844,14 @@ export class Application extends Command {
     // `this` is bound to the application class.
     const context: Context = this.context
 
-    const log = context.log
+    const log: Logger = context.log
 
     // Catch errors, this is an old style callback.
     try {
       // Split command line and remove any number of spaces.
-      const argv = evalCmd.trim().split(/\s+/)
+      const argv: string[] = evalCmd.trim().split(/\s+/)
 
-      const exitCode = await this.dispatchCommand(argv)
+      const exitCode: number = await this.dispatchCommand(argv)
       log.verbose(`exit(${exitCode})`)
 
       // The last executed command exit code is passed as process exit code.
@@ -885,13 +884,10 @@ export class Application extends Command {
 
     const context: Context = this.context
 
-    const log = context.log
+    const log: Logger = context.log
     log.trace('Application.dispatchCommand()')
 
     context.startTimestampMilliseconds = Date.now()
-
-    const config = context.config
-    const packageJson = context.packageJson
 
     argv.forEach((arg, index) => {
       log.trace(`dispatchCommand arg${index}: '${arg}'`)
@@ -900,10 +896,14 @@ export class Application extends Command {
     const options: Options = this.context.options
     const { remainingArgv } = options.parse(argv)
 
+    const config: Configuration = context.config
+
     // After parsing the options, the debug level is finally known.
     log.level = config.logLevel
 
     log.trace(util.inspect(context.config))
+
+    const packageJson: NpmPackageJson = context.packageJson
 
     // Done again here, for REPL invocations.
     if (config.isVersionRequest !== undefined && config.isVersionRequest) {
@@ -964,8 +964,8 @@ export class Application extends Command {
 
     const context: Context = this.context
 
-    const log = context.log
-    const config = context.config
+    const log: Logger = context.log
+    const config: Configuration = context.config
 
     if (params.commands.length === 0) {
       log.error('Missing mandatory command.')
@@ -993,20 +993,20 @@ export class Application extends Command {
 
     // Use the original array, since we might have `--` options,
     // and skip already processed commands.
-    const commandArgs = params.argv.slice(found.commandNode.depth - 1)
+    const commandArgs: string[] = params.argv.slice(found.commandNode.depth - 1)
     commandArgs.forEach((arg, index) => {
       log.trace(`cmd arg${index}: '${arg}'`)
     })
 
     // Create a new logger and copy the level from the application logger.
-    const commandLog = new Logger({
+    const commandLog: Logger = new Logger({
       console: log.console
     })
     commandLog.level = log.level
 
     // The command context inherits most of the application context
     // properties.
-    const commandContext = new Context({
+    const commandContext: Context = new Context({
       log: commandLog,
       context
     })
@@ -1039,10 +1039,10 @@ export class Application extends Command {
     assert(params.log, 'params.log')
     assert(params.log, 'params.log')
 
-    const error = params.error
-    const log = params.log
+    const error: any = params.error
+    const log: Logger = params.log
 
-    let exitCode = ExitCodes.ERROR.APPLICATION
+    let exitCode: number = ExitCodes.ERROR.APPLICATION
 
     if (error instanceof assert.AssertionError) {
       // Rethrow assertion errors; they happen only during development
@@ -1081,21 +1081,22 @@ export class Application extends Command {
 
     const parentClass = Command
 
-    const modulePath = path.join(params.rootPath, params.moduleRelativePath)
+    const modulePath: string =
+      path.join(params.rootPath, params.moduleRelativePath)
 
     // On Windows, absolute paths start with a drive letter, and the
     // explicit `file://` is mandatory.
-    const moduleExports = await import(`file://${modulePath.toString()}`)
+    const moduleExports: any = await import(`file://${modulePath.toString()}`)
 
     if (params.className !== undefined) {
       // Return the first exported class derived from parent
       // class (`cli.Command`).
       for (const property in moduleExports) {
-        const obj = moduleExports[property]
+        const object: any = moduleExports[property]
         // eslint-disable-next-line max-len
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (obj.name === params.className &&
-          Object.prototype.isPrototypeOf.call(parentClass, obj)) {
+        if (object.name === params.className &&
+          Object.prototype.isPrototypeOf.call(parentClass, object)) {
           return moduleExports[property]
         }
       }
@@ -1108,10 +1109,10 @@ export class Application extends Command {
       // Return the first exported class derived from parent
       // class (`cli.Command`).
       for (const property in moduleExports) {
-        const obj = moduleExports[property]
+        const object = moduleExports[property]
         // eslint-disable-next-line max-len
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (Object.prototype.isPrototypeOf.call(parentClass, obj)) {
+        if (Object.prototype.isPrototypeOf.call(parentClass, object)) {
           return moduleExports[property]
         }
       }
@@ -1123,7 +1124,10 @@ export class Application extends Command {
     }
   }
 
-  async main (_argv: string[], _forwardableArgv?: string[]): Promise<number> {
+  async main (
+    _argv: string[],
+    _forwardableArgv?: string[]
+  ): Promise<number> {
     assert(false, 'For applications that do not have sub-commands, ' +
       'define a main() method in the cli.Application derived class')
   }
