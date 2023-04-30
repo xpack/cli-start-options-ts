@@ -73,15 +73,15 @@ await test('exitCodes', async (t) => {
   await t.test('cli.Error', (t) => {
     try {
       throw new cli.Error('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ERROR.APPLICATION, 'exit code is APPLICATION')
+    } catch (error: any) {
+      t.equal(error.message, 'one', 'message is one')
+      t.equal(error.exitCode, cli.ERROR.APPLICATION, 'exit code is APPLICATION')
     }
     try {
       throw new cli.Error('two', 7)
-    } catch (err: any) {
-      t.equal(err.message, 'two', 'message is two')
-      t.equal(err.exitCode, 7, 'exit code is 7')
+    } catch (error: any) {
+      t.equal(error.message, 'two', 'message is two')
+      t.equal(error.exitCode, 7, 'exit code is 7')
     }
     t.end()
   })
@@ -89,9 +89,9 @@ await test('exitCodes', async (t) => {
   await t.test('cli.ApplicationError', (t) => {
     try {
       throw new cli.ApplicationError('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ExitCodes.ERROR.APPLICATION,
+    } catch (error: any) {
+      t.equal(error.message, 'one', 'message is one')
+      t.equal(error.exitCode, cli.ExitCodes.ERROR.APPLICATION,
         'exit code is APPLICATION')
     }
     t.end()
@@ -100,9 +100,9 @@ await test('exitCodes', async (t) => {
   await t.test('cli.InputError', (t) => {
     try {
       throw new cli.InputError('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ExitCodes.ERROR.INPUT,
+    } catch (error: any) {
+      t.equal(error.message, 'one', 'message is one')
+      t.equal(error.exitCode, cli.ExitCodes.ERROR.INPUT,
         'exit code is INPUT')
     }
     t.end()
@@ -111,9 +111,9 @@ await test('exitCodes', async (t) => {
   await t.test('cli.OutputError', (t) => {
     try {
       throw new cli.OutputError('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ExitCodes.ERROR.OUTPUT,
+    } catch (error: any) {
+      t.equal(error.message, 'one', 'message is one')
+      t.equal(error.exitCode, cli.ExitCodes.ERROR.OUTPUT,
         'exit code is OUTPUT')
     }
     t.end()
@@ -122,9 +122,9 @@ await test('exitCodes', async (t) => {
   await t.test('cli.SyntaxError', (t) => {
     try {
       throw new cli.SyntaxError('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ExitCodes.ERROR.SYNTAX,
+    } catch (error: any) {
+      t.equal(error.message, 'one', 'message is one')
+      t.equal(error.exitCode, cli.ExitCodes.ERROR.SYNTAX,
         'exit code is SYNTAX')
     }
     t.end()
@@ -133,9 +133,9 @@ await test('exitCodes', async (t) => {
   await t.test('cli.TypeError', (t) => {
     try {
       throw new cli.TypeError('one')
-    } catch (err: any) {
-      t.equal(err.message, 'one', 'message is one')
-      t.equal(err.exitCode, cli.ExitCodes.ERROR.TYPE,
+    } catch (error: any) {
+      t.equal(error.message, 'one', 'message is one')
+      t.equal(error.exitCode, cli.ExitCodes.ERROR.TYPE,
         'exit code is TYPE')
     }
     t.end()

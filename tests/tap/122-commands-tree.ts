@@ -89,29 +89,29 @@ await test('two commands', async (t) => {
   try {
     commandNode = commandsTree.findCommandNode(['copyy'])
     t.fail('copyy did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'probably misspelled', 'copyy misspelled')
+  } catch (error: any) {
+    t.match(error.message, 'probably misspelled', 'copyy misspelled')
   }
 
   try {
     commandNode = commandsTree.findCommandNode(['conff'])
     t.fail('conff did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'probably misspelled', 'conff misspelled')
+  } catch (error: any) {
+    t.match(error.message, 'probably misspelled', 'conff misspelled')
   }
 
   try {
     commandNode = commandsTree.findCommandNode(['co'])
     t.fail('co did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'not unique', 'co throws not unique')
+  } catch (error: any) {
+    t.match(error.message, 'not unique', 'co throws not unique')
   }
 
   try {
     commandNode = commandsTree.findCommandNode(['ca'])
     t.fail('ca did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'not supported', 'ca throws not supported')
+  } catch (error: any) {
+    t.match(error.message, 'not supported', 'ca throws not supported')
   }
 
   t.end()
@@ -140,9 +140,9 @@ await test('duplicate commands', async (t) => {
       }
     })
     t.fail('duplicate copy did not throw')
-  } catch (err: any) {
-    if (err instanceof assert.AssertionError) {
-      t.match(err.message, 'Duplicate command', 'throws duplicate')
+  } catch (error: any) {
+    if (error instanceof assert.AssertionError) {
+      t.match(error.message, 'Duplicate command', 'throws duplicate')
     }
   }
 
@@ -193,8 +193,8 @@ await test('aliases', async (t) => {
   try {
     commandNode = commandsTree.findCommandNode(['bildu'])
     t.fail('bildu did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'probably misspelled', 'bildu misspelled')
+  } catch (error: any) {
+    t.match(error.message, 'probably misspelled', 'bildu misspelled')
   }
 
   commandNode = commandsTree.findCommandNode(['conf'])
@@ -247,8 +247,8 @@ await test('mixed aliases', async (t) => {
   try {
     commandNode = commandsTree.findCommandNode(['cildu'])
     t.fail('cildu did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'probably misspelled', 'bildu misspelled')
+  } catch (error: any) {
+    t.match(error.message, 'probably misspelled', 'bildu misspelled')
   }
 
   commandNode = commandsTree.findCommandNode(['conf'])
@@ -304,8 +304,8 @@ await test('promotion', async (t) => {
   try {
     commandNode = commandsTree.findCommandNode(['c', 'a'])
     t.fail('c a did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'is not unique', 'c a not unique')
+  } catch (error: any) {
+    t.match(error.message, 'is not unique', 'c a not unique')
   }
 
   t.end()
@@ -364,8 +364,8 @@ await test('subcommands without module', async (t) => {
       }
     })
     t.fail('buildCharactersTree did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'must have a moduleRelativePath',
+  } catch (error: any) {
+    t.match(error.message, 'must have a moduleRelativePath',
       'must have moduleRelativePath')
   }
 

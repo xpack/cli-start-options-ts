@@ -98,8 +98,8 @@ await test('xtest multi --help', async (t) => {
       // dumpLines(errLines)
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -126,8 +126,8 @@ await test('xtest multi', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -157,8 +157,8 @@ await test('xtest multi -m mmm', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -192,8 +192,8 @@ await test('xtest multi -m mmm 1 2', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -221,8 +221,8 @@ await test('xtest multi 1 2', async (t) => {
     t.equal(errLines.length, 1, 'stderr 1 line')
     t.match(errLines[0], 'error: Command \'multi one\' is not supported.',
       'not supported')
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -253,8 +253,8 @@ await test('xtest multi first --help', async (t) => {
 
     // There should be no error messages.
     t.equal(errLines.length, 0, 'stderr is empty')
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -278,8 +278,8 @@ await test('xtest multi first', async (t) => {
 
     // There should be no error messages.
     t.equal(errLines.length, 0, 'stderr is empty')
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -309,8 +309,8 @@ await test('xtest multi first -m mmm --first fff', async (t) => {
 
     // There should be no error messages.
     t.equal(errLines.length, 0, 'stderr is empty')
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -348,8 +348,8 @@ await test('xtest multi first -m mmm --first fff 1 2', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -382,8 +382,8 @@ await test('xtest multi first 1 2', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -423,8 +423,8 @@ await test('xtest multi second --help', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -454,8 +454,8 @@ await test('xtest multi second', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -491,8 +491,8 @@ await test('xtest multi second -m mmm --second fff', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -531,8 +531,8 @@ await test('xtest multi second -m mmm --second fff 1 2', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -565,8 +565,8 @@ await test('xtest multi second 1 2', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })

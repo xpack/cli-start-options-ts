@@ -71,11 +71,11 @@ await test('xtest -i (spawn)', async (t) => {
 
   const child: ChildProcessWithoutNullStreams = spawn(nodeBin, cmd, opts)
 
-  child.on('error', (err) => {
+  child.on('error', (error) => {
     if (debug) {
       console.log('error')
     }
-    t.fail(err.message)
+    t.fail(error.message)
     t.end()
   })
 

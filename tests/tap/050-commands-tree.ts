@@ -202,43 +202,43 @@ await test('CharactersTree findCommandNode', async (t) => {
   try {
     charactersTree.findCommandNode('c')
     t.fail('c did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'not unique', 'c throws not unique')
+  } catch (error: any) {
+    t.match(error.message, 'not unique', 'c throws not unique')
   }
 
   try {
     charactersTree.findCommandNode('cop')
     t.fail('cop did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'not unique', 'cop throws not unique')
+  } catch (error: any) {
+    t.match(error.message, 'not unique', 'cop throws not unique')
   }
 
   try {
     charactersTree.findCommandNode('copyy')
     t.fail('copyy did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'probably misspelled', 'copyy misspelled')
+  } catch (error: any) {
+    t.match(error.message, 'probably misspelled', 'copyy misspelled')
   }
 
   try {
     charactersTree.findCommandNode('conff')
     t.fail('conff did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'probably misspelled', 'conff misspelled')
+  } catch (error: any) {
+    t.match(error.message, 'probably misspelled', 'conff misspelled')
   }
 
   try {
     charactersTree.findCommandNode('ca')
     t.fail('ca did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'not supported', 'ca throws not supported')
+  } catch (error: any) {
+    t.match(error.message, 'not supported', 'ca throws not supported')
   }
 
   try {
     charactersTree.findCommandNode('copb')
     t.fail('copb did not throw')
-  } catch (err: any) {
-    t.match(err.message, 'not supported', 'copb throws not supported')
+  } catch (error: any) {
+    t.match(error.message, 'not supported', 'copb throws not supported')
   }
 
   t.end()

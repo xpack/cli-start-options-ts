@@ -92,8 +92,8 @@ await test('xtest --version', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -132,8 +132,8 @@ await test('xtest -h', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -161,8 +161,8 @@ await test('xtest --help', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -194,8 +194,8 @@ await test('xtest --version -d', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -228,8 +228,8 @@ await test('xtest --version -dd', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -261,8 +261,8 @@ await test('xtest --version -d -d', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -289,8 +289,8 @@ await test('xtest notclass', async (t) => {
       t.ok(errLines.length > 0, 'stderr has lines')
       t.match(errLines[0], 'AssertionError', 'stderr is assertion')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -319,8 +319,8 @@ await test('xtest co', async (t) => {
       t.equal(errLines[0], "error: Command 'co' is not unique.",
         'stderr is error')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -352,8 +352,8 @@ await test('xtest --version --loglevel debug', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -380,8 +380,8 @@ await test('xtest xx -s', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -408,8 +408,8 @@ await test('xtest xx -s', async (t) => {
 //     t.ok(errLines.length > 0, 'stderr has lines')
 //     t.equal(errLines[0], "error: Option '--xx' not supported",
 //       'stderr is warning')
-//   } catch (err: any) {
-//     t.fail(err.message)
+//   } catch (error: any) {
+//     t.fail(error.message)
 //   }
 //   t.end()
 // })
@@ -437,8 +437,8 @@ await test('xtest verb', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -467,8 +467,8 @@ await test('xtest verb --informative', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -498,8 +498,8 @@ await test('xtest verb -v', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -529,8 +529,8 @@ await test('xtest verb --verbose', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -557,8 +557,8 @@ await test('xtest --loglevel xxx', async (t) => {
       t.match(errLines[0], "error: Value 'xxx' not allowed for '--loglevel'",
         'stderr is message')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -584,8 +584,8 @@ await test('xtest --loglevel', async (t) => {
       t.match(errLines[0], "error: '--loglevel' expects a value",
         'stderr is message')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -611,8 +611,8 @@ await test('xtest --loglevel --', async (t) => {
       t.match(errLines[0], "error: '--loglevel' expects a value",
         'stderr is message')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -645,8 +645,8 @@ await test('xtest --version -dd -- xx', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -676,8 +676,8 @@ await test('xtest long -h', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -710,8 +710,8 @@ await test('xtest long -xyz', async (t) => {
       t.match(errLines[0], "error: Option '--xyz' not supported",
         'stderr has error')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -740,8 +740,8 @@ await test('xtest -h', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -777,8 +777,8 @@ await test('xtest many -h', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -810,8 +810,8 @@ await test('wtest-long-name -h', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -842,8 +842,8 @@ await test('xtest gen', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -872,8 +872,8 @@ await test('xtest unim', async (t) => {
       t.match(errLines[0], 'TypeError: this.main is not a function',
         'stderr has error')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -889,8 +889,8 @@ await test('xtest unim', async (t) => {
 //     t.equal(stderr, 'error: Missing mandatory command.\n',
 //       'stdout has error')
 //     t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
-//   } catch (err: any) {
-//     t.fail(err.message)
+//   } catch (error: any) {
+//     t.fail(error.message)
 //   }
 //   t.end()
 // })
@@ -908,8 +908,8 @@ await test('xtest unim', async (t) => {
 //     t.equal(stderr, 'error: Missing mandatory command.\n',
 //       'stdout has error')
 //     t.match(stdout, 'Usage: xtest <command>', 'stdout has usage')
-//   } catch (err: any) {
-//     t.fail(err.message)
+//   } catch (error: any) {
+//     t.fail(error.message)
 //   }
 //   t.end()
 // })
@@ -938,8 +938,8 @@ await test('xtest cwd -C /tmp/xx', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })
@@ -976,8 +976,8 @@ await test('xtest cwd -C /tmp/xx -C yy', async (t) => {
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
     }
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })

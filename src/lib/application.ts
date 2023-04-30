@@ -97,7 +97,7 @@ import { NpmPackageJson, readPackageJson } from './utils.js'
  * @callback nodeReplCallback
  */
 type nodeReplCallback = (
-  err?: null | Error,
+  error?: null | Error,
   result?: readline.CompleterResult
 ) => void
 
@@ -790,8 +790,8 @@ export class Application extends Command {
             unknown as repl.REPLEval
         })
 
-        socketReplServer.on('error', (err: any) => {
-          throw err
+        socketReplServer.on('error', (error: any) => {
+          throw error
         })
 
         socketReplServer.on('exit', () => {
@@ -800,8 +800,8 @@ export class Application extends Command {
         })
       })
 
-      server.on('error', (err: any) => {
-        throw err
+      server.on('error', (error: any) => {
+        throw error
       })
 
       server.on('close', () => {

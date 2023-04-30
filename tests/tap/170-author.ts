@@ -71,8 +71,8 @@ await test('a1test -h',
         t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
           'has Bug reports')
       }
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })
@@ -103,8 +103,8 @@ await test('a2test -h',
         t.match(stdout, 'Bug reports: Liviu Ionescu <ilg@livius.net>',
           'has Bug reports')
       }
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })
@@ -135,8 +135,8 @@ await test('a3test -h',
         t.match(stdout, 'Bug reports: <ilg@livius.net>',
           'has Bug reports')
       }
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })

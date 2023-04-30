@@ -75,8 +75,8 @@ await test('readPackageJson', async (t) => {
   try {
     await cli.readPackageJson(undefined as unknown as string)
     t.ok(false, 'assertion folderAbsolutePath')
-  } catch (err: any) {
-    t.ok(err instanceof AssertionError, 'assertion folderAbsolutePath')
+  } catch (error: any) {
+    t.ok(error instanceof AssertionError, 'assertion folderAbsolutePath')
   }
 
   t.end()

@@ -76,9 +76,9 @@ await test('xtest --version (cli call)', async (t) => {
 
     // There should be no error messages.
     t.equal(errLines.length, 0, 'stderr is empty')
-  } catch (err: any) {
-    console.log(err.stack)
-    t.fail(err.message)
+  } catch (error: any) {
+    console.log(error.stack)
+    t.fail(error.message)
   }
   t.end()
 })
@@ -99,9 +99,9 @@ await test('xtest xyz (cli call)', async (t) => {
     // There should be one error message.
     t.equal(errLines.length, 1, 'stderr has 1 line')
     t.match(errLines[0], 'Command \'xyz\' is not supported.', 'error')
-  } catch (err: any) {
-    console.log(err.stack)
-    t.fail(err.message)
+  } catch (error: any) {
+    console.log(error.stack)
+    t.fail(error.message)
   }
   t.end()
 })
@@ -149,8 +149,8 @@ await test('xtest -h (cli call)', async (t) => {
 
     // There should be no error messages.
     t.equal(errLines.length, 0, 'stderr is empty')
-  } catch (err: any) {
-    t.fail(err.message)
+  } catch (error: any) {
+    t.fail(error.message)
   }
   t.end()
 })

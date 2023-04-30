@@ -48,7 +48,6 @@ dumpLines()
 
 const mockConsole = new MockConsole()
 const log = new cli.Logger({ console: mockConsole, level: 'info' })
-assert(log)
 
 // ----------------------------------------------------------------------------
 
@@ -77,9 +76,9 @@ await test('cli.Application static start()', async (t) => {
   try {
     await cli.Application.start()
     t.notOk(false, 'does not throw')
-  } catch (err: any) {
-    // console.log(err)
-    t.ok(err instanceof assert.AssertionError,
+  } catch (error: any) {
+    // console.log(error)
+    t.ok(error instanceof assert.AssertionError,
       'assert(application.context.rootPath)')
   }
 

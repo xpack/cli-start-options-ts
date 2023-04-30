@@ -87,8 +87,8 @@ await test('xtest copy',
         t.match(errLines[1], 'Mandatory \'--output\' not found',
           'has --output error')
       }
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })
@@ -122,8 +122,8 @@ await test('xtest copy -h',
 
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })
@@ -153,8 +153,8 @@ await test('xtest cop -h',
 
       // There should be no error messages.
       t.equal(errLines.length, 0, 'stderr is empty')
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })
@@ -183,8 +183,8 @@ await test('xtest cop --file xxx --output yyy -q',
       t.ok(errLines.length > 0, 'stderr has lines')
       const stderr = errLines.join('\n')
       t.match(stderr, 'ENOENT: no such file or directory', 'strerr is ENOENT')
-    } catch (err: any) {
-      t.fail(err.message)
+    } catch (error: any) {
+      t.fail(error.message)
     }
     t.end()
   })
@@ -202,9 +202,9 @@ if (!skipSomeTests) {
         t.pass('mkdir folder')
         await fs.promises.chmod(readOnlyFolder, 0o444)
         t.pass('chmod ro folder')
-      } catch (err: any) {
-        console.log(err)
-        t.fail(err)
+      } catch (error: any) {
+        console.log(error)
+        t.fail(error)
       }
       t.end()
     })
@@ -240,8 +240,8 @@ if (!skipSomeTests) {
         const json = JSON.parse(fileContent.toString())
         t.ok(json, 'json was parsed')
         t.match(json.name, '@ilg/cli-start-options', 'has name')
-      } catch (err: any) {
-        t.fail(err.message)
+      } catch (error: any) {
+        t.fail(error.message)
       }
       t.end()
     })
@@ -270,8 +270,8 @@ if (!skipSomeTests) {
 
         t.equal(errLines.length, 0, 'stderr is empty')
         // dumpLines(errLines)
-      } catch (err: any) {
-        t.fail(err.message)
+      } catch (error: any) {
+        t.fail(error.message)
       }
       t.end()
     })
@@ -306,8 +306,8 @@ if (!skipSomeTests) {
           const stderr = errLines.join('\n')
           // dumpLines(errLines)
           t.match(stderr, 'EACCES: permission denied', 'stderr is EACCES')
-        } catch (err: any) {
-          t.fail(err.message)
+        } catch (error: any) {
+          t.fail(error.message)
         }
         t.end()
       })
