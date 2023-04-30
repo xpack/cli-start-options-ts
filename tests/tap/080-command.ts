@@ -913,7 +913,7 @@ await test('cli.Command addGenerator()', async (t) => {
     const generator = command.addGenerator({ object })
 
     // console.log(generator)
-    t.ok(object.generators !== undefined, 'generator exist')
+    t.not(object.generators, undefined, 'generator exist')
     if (object.generators != null) {
       t.equal(object.generators?.length, 1, 'one generator')
       t.equal(object.generators[0], generator, 'equal')
@@ -942,7 +942,7 @@ await test('cli.Command addGenerator()', async (t) => {
     const generator = command.addGenerator({ object })
 
     // console.log(generator)
-    t.ok(object.generators !== undefined, 'generator exist')
+    t.not(object.generators, undefined, 'generator exist')
     if (object.generators != null) {
       t.equal(object.generators?.length, 1, 'one generator')
       t.equal(object.generators[0], generator, 'equal')
