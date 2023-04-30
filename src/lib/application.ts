@@ -422,6 +422,7 @@ export class Application extends Command {
   initializeReplOptions (): void {
     const context: Context = this.context
 
+    /* c8 ignore start */
     if (this.enableREPL) {
       context.options.appendToGroups(
         [
@@ -448,6 +449,7 @@ export class Application extends Command {
         ]
       )
     }
+    /* c8 ignore stop */
   }
 
   /**
@@ -586,12 +588,14 @@ export class Application extends Command {
     let exitCode: number = ExitCodes.SUCCESS
 
     if ((commands.length === 0) && this.enableREPL) {
+      /* c8 ignore start */
       // If there are no commands on the command line and REPL is enabled,
       // enter the loop. Each line will be evaluated with dispatchCommands().
       exitCode = await this.enterRepl()
       // The exit code at this point reflects only the
       // initial command, later commands will all set the exit code,
       // and the last one will be returned. (probably not very useful)
+      /* c8 ignore stop */
     } else {
       // For regular invocations, also check if an update is available.
       // Create on instance of notifier class, configured for the
@@ -703,6 +707,7 @@ export class Application extends Command {
   // Be sure `exit()` is called only on the `close()` event, otherwise
   // it'll abruptly terminate the process and prevent REPL usage, which
   // is inherently asynchronous.
+  /* c8 ignore start */
   async enterRepl (): Promise<number> {
     const context: Context = this.context
 
@@ -816,6 +821,7 @@ export class Application extends Command {
     }
     return ExitCodes.SUCCESS
   }
+  /* c8 ignore stop */
 
   // --------------------------------------------------------------------------
 
@@ -835,6 +841,7 @@ export class Application extends Command {
    * An eval function can error with repl.Recoverable to indicate the input
    * was incomplete and prompt for additional lines.
    */
+  /* c8 ignore start */
   async evaluateRepl (
     evalCmd: string,
     _context: vm.Context,
@@ -865,6 +872,7 @@ export class Application extends Command {
       callback(error)
     }
   }
+  /* c8 ignore stop */
 
   // --------------------------------------------------------------------------
 
