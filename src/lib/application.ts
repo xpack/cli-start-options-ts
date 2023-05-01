@@ -1151,15 +1151,14 @@ export class Application extends Command {
       // Rethrow assertion errors; they happen only during development
       // and are checked by tests.
       throw error
-    } else if (error instanceof cli.SyntaxError) {
-      // CLI triggered error. Treat it gently and try to be helpful.
-      log.error(error.message)
-      this.outputHelp()
-      exitCode = error.exitCode
     } else if (error instanceof cli.Error) {
-      // Other CLI triggered error. Treat it gently.
+      // CLI triggered error. Treat it gently.
       if (error.message !== undefined) {
         log.error(error.message)
+      }
+      // For syntax errors display help.
+      if (error.exitCode === ExitCodes.ERROR.SYNTAX) {
+        this.outputHelp()
       }
       exitCode = error.exitCode
     } else {
