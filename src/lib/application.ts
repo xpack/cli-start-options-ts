@@ -64,7 +64,7 @@ import { Context } from './context.js'
 import { ExitCodes } from './error.js'
 // Hack to keep the cli.Error notation consistent.
 import * as cli from './error.js'
-import { Options } from './options.js'
+import { Options, OptionsGroup } from './options.js'
 import { NpmPackageJson, readPackageJson } from './utils.js'
 
 // ----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ import { NpmPackageJson, readPackageJson } from './utils.js'
 // - 6 = Prerequisites (like node version)
 // - 7 = Mismatched type, usually in configurations error
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 
 /**
  * @summary Node.js REPL callback.
@@ -100,6 +100,179 @@ type nodeReplCallback = (
   error?: null | Error,
   result?: readline.CompleterResult
 ) => void
+
+const commonOptions: OptionsGroup[] = [
+  {
+    description: 'Common options',
+    isCommon: true,
+    optionsDefinitions: [
+      {
+        options: ['-h', '--help'],
+        init: (context) => {
+          context.config.isHelpRequest = false
+        },
+        action: (context) => {
+          context.config.isHelpRequest = true
+        },
+        helpDefinitions: {
+          description: 'Quick help',
+          isHelp: true
+        }
+      },
+      {
+        options: ['--version'],
+        init: (context) => {
+          context.config.isVersionRequest = false
+        },
+        action: (context) => {
+          context.config.isVersionRequest = true
+        },
+        helpDefinitions: {
+          description: 'Show version',
+          isRequiredEarly: true
+        }
+      },
+      {
+        options: ['--loglevel'],
+        init: (context) => {
+          context.config.logLevel = defaultLogLevel
+        },
+        action: (context, val) => {
+          assert(val !== undefined)
+          context.config.logLevel = val as LogLevel
+        },
+        hasValue: true,
+        values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
+        helpDefinitions: {
+          description: 'Set log level',
+          valueDescription: 'level'
+        }
+      },
+      {
+        options: ['-s', '--silent'],
+        init: () => { },
+        action: (context) => {
+          context.config.logLevel = 'silent'
+        },
+        helpDefinitions: {
+          description: 'Disable all messages (--loglevel silent)'
+        }
+      },
+      {
+        options: ['-q', '--quiet'],
+        init: () => { },
+        action: (context) => {
+          context.config.logLevel = 'warn'
+        },
+        helpDefinitions: {
+          description: 'Mostly quiet, warnings and errors' +
+            ' (--loglevel warn)'
+        }
+      },
+      {
+        options: ['--informative'],
+        init: () => { },
+        action: (context) => {
+          context.config.logLevel = 'info'
+        },
+        helpDefinitions: {
+          description: 'Informative (--loglevel info)'
+        }
+      },
+      {
+        options: ['-v', '--verbose'],
+        init: () => { },
+        action: (context) => {
+          context.config.logLevel = 'verbose'
+        },
+        helpDefinitions: {
+          description: 'Verbose (--loglevel verbose)'
+        }
+      },
+      {
+        options: ['-d', '--debug'],
+        init: () => { },
+        action: (context) => {
+          const config: Configuration = context.config
+          if (config.logLevel === 'debug') {
+            config.logLevel = 'trace'
+          } else {
+            config.logLevel = 'debug'
+          }
+        },
+        helpDefinitions: {
+          description: 'Debug messages (--loglevel debug)'
+        }
+      },
+      {
+        options: ['-dd', '--trace'],
+        init: () => { },
+        action: (context) => {
+          context.config.logLevel = 'trace'
+        },
+        helpDefinitions: {
+          description: 'Trace messages (--loglevel trace, -d -d)'
+        }
+      },
+      {
+        options: ['--no-update-notifier'],
+        init: () => { },
+        action: (context) => {
+          context.config.noUpdateNotifier = true
+        },
+        helpDefinitions: {
+          description: 'Skip check for a more recent version'
+        }
+      },
+      {
+        options: ['-C'],
+        init: (context) => {
+          context.config.cwd = context.processCwd
+        },
+        action: (context, val) => {
+          assert(val !== undefined)
+          const config: Configuration = context.config
+          if (path.isAbsolute(val)) {
+            config.cwd = val
+          } else if (config.cwd !== undefined) {
+            config.cwd = path.resolve(config.cwd, val)
+          } else /* istanbul ignore next */ {
+            config.cwd = path.resolve(val)
+          }
+          context.log.debug(`set cwd: '${config.cwd}'`)
+        },
+        hasValue: true,
+        helpDefinitions: {
+          description: 'Set current folder',
+          valueDescription: 'folder'
+        }
+      }
+    ]
+  }
+]
+
+const commonOptionsRepl: OptionsGroup[] = [
+  {
+    description: 'Common options',
+    isCommon: true,
+    isInsertInFront: true,
+    optionsDefinitions: [
+      {
+        options: ['--interactive-server-port'],
+        init: (context) => {
+          context.config.interactiveServerPort = undefined
+        },
+        action: (context, val) => /* istanbul ignore next */ {
+          context.config.interactiveServerPort = +val // as number
+        },
+        hasValue: true,
+        helpDefinitions: {
+          isRequiredEarly: true
+        }
+      }
+    ]
+  }
+]
 
 // ============================================================================
 
@@ -263,157 +436,7 @@ export class Application extends Command {
 
     // Initialise the common options, that apply to all commands,
     // like options to set logger level, to display help, etc.
-    context.options.addGroups(
-      [
-        {
-          description: 'Common options',
-          isCommon: true,
-          optionsDefinitions: [
-            {
-              options: ['-h', '--help'],
-              init: (context) => {
-                context.config.isHelpRequest = false
-              },
-              action: (context) => {
-                context.config.isHelpRequest = true
-              },
-              helpDefinitions: {
-                description: 'Quick help',
-                isHelp: true
-              }
-            },
-            {
-              options: ['--version'],
-              init: (context) => {
-                context.config.isVersionRequest = false
-              },
-              action: (context) => {
-                context.config.isVersionRequest = true
-              },
-              helpDefinitions: {
-                description: 'Show version',
-                isRequiredEarly: true
-              }
-            },
-            {
-              options: ['--loglevel'],
-              init: (context) => {
-                context.config.logLevel = defaultLogLevel
-              },
-              action: (context, val) => {
-                assert(val !== undefined)
-                context.config.logLevel = val as LogLevel
-              },
-              hasValue: true,
-              values: ['silent', 'warn', 'info', 'verbose', 'debug', 'trace'],
-              helpDefinitions: {
-                description: 'Set log level',
-                valueDescription: 'level'
-              }
-            },
-            {
-              options: ['-s', '--silent'],
-              init: () => { },
-              action: (context) => {
-                context.config.logLevel = 'silent'
-              },
-              helpDefinitions: {
-                description: 'Disable all messages (--loglevel silent)'
-              }
-            },
-            {
-              options: ['-q', '--quiet'],
-              init: () => { },
-              action: (context) => {
-                context.config.logLevel = 'warn'
-              },
-              helpDefinitions: {
-                description: 'Mostly quiet, warnings and errors' +
-                  ' (--loglevel warn)'
-              }
-            },
-            {
-              options: ['--informative'],
-              init: () => { },
-              action: (context) => {
-                context.config.logLevel = 'info'
-              },
-              helpDefinitions: {
-                description: 'Informative (--loglevel info)'
-              }
-            },
-            {
-              options: ['-v', '--verbose'],
-              init: () => { },
-              action: (context) => {
-                context.config.logLevel = 'verbose'
-              },
-              helpDefinitions: {
-                description: 'Verbose (--loglevel verbose)'
-              }
-            },
-            {
-              options: ['-d', '--debug'],
-              init: () => { },
-              action: (context) => {
-                const config: Configuration = context.config
-                if (config.logLevel === 'debug') {
-                  config.logLevel = 'trace'
-                } else {
-                  config.logLevel = 'debug'
-                }
-              },
-              helpDefinitions: {
-                description: 'Debug messages (--loglevel debug)'
-              }
-            },
-            {
-              options: ['-dd', '--trace'],
-              init: () => { },
-              action: (context) => {
-                context.config.logLevel = 'trace'
-              },
-              helpDefinitions: {
-                description: 'Trace messages (--loglevel trace, -d -d)'
-              }
-            },
-            {
-              options: ['--no-update-notifier'],
-              init: () => { },
-              action: (context) => {
-                context.config.noUpdateNotifier = true
-              },
-              helpDefinitions: {
-                description: 'Skip check for a more recent version'
-              }
-            },
-            {
-              options: ['-C'],
-              init: (context) => {
-                context.config.cwd = context.processCwd
-              },
-              action: (context, val) => {
-                assert(val !== undefined)
-                const config: Configuration = context.config
-                if (path.isAbsolute(val)) {
-                  config.cwd = val
-                } else if (config.cwd !== undefined) {
-                  config.cwd = path.resolve(config.cwd, val)
-                } else /* istanbul ignore next */ {
-                  config.cwd = path.resolve(val)
-                }
-                context.log.debug(`set cwd: '${config.cwd}'`)
-              },
-              hasValue: true,
-              helpDefinitions: {
-                description: 'Set current folder',
-                valueDescription: 'folder'
-              }
-            }
-          ]
-        }
-      ]
-    )
+    context.options.addGroups(commonOptions)
   }
 
   /**
@@ -424,30 +447,7 @@ export class Application extends Command {
 
     /* c8 ignore start */
     if (this.enableREPL) {
-      context.options.appendToGroups(
-        [
-          {
-            description: 'Common options',
-            isCommon: true,
-            isInsertInFront: true,
-            optionsDefinitions: [
-              {
-                options: ['--interactive-server-port'],
-                init: (context) => {
-                  context.config.interactiveServerPort = undefined
-                },
-                action: (context, val) => /* istanbul ignore next */ {
-                  context.config.interactiveServerPort = +val // as number
-                },
-                hasValue: true,
-                helpDefinitions: {
-                  isRequiredEarly: true
-                }
-              }
-            ]
-          }
-        ]
-      )
+      context.options.appendToGroups(commonOptionsRepl)
     }
     /* c8 ignore stop */
   }
