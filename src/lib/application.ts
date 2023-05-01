@@ -1153,7 +1153,7 @@ export class Application extends Command {
       throw error
     } else if (error instanceof cli.Error) {
       // CLI triggered error. Treat it gently.
-      if (error.message !== undefined) {
+      if (error.message?.length > 0) {
         log.error(error.message)
       }
       // For syntax errors display help.
