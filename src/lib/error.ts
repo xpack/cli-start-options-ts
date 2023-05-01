@@ -62,7 +62,7 @@ class _Error extends Error {
    * Remember the exit code.
    */
   constructor (message: string, exitCode: number = ERROR.APPLICATION) {
-    super(message)
+    super(message.trim())
 
     this.exitCode = exitCode
   }
