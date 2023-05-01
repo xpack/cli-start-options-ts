@@ -142,7 +142,7 @@ await test('cli.Application static processStartError', async (t) => {
     // dumpLines(mockConsole.errLines)
     // dumpLines(mockConsole.outLines)
 
-    t.ok(mockConsole.errLines.length > 0, 'has error lines')
+    t.ok(mockConsole.errLines.length > 1, 'has error lines')
     // Compare content, not object.
     t.equal(mockConsole.errLines[0], 'Error: my error', 'my error')
     t.match(mockConsole.errLines[1], '    at ', 'second line is stack')
@@ -629,7 +629,7 @@ await test('cli.Application dispatchCommand()', async (t) => {
     t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
 
     // dumpLines(mockConsole.errLines)
-    dumpLines(mockConsole.outLines)
+    // dumpLines(mockConsole.outLines)
 
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
@@ -739,8 +739,11 @@ class MockApplicationErrors extends cli.Application {
       case 'SyntaxError':
         throw new cli.SyntaxError('syntax')
 
-      case 'Error':
-        throw new cli.Error('error')
+      case 'ErrorWithMessage':
+        throw new cli.Error('ErrorWithMessage', 42)
+
+      case 'ErrorEmptyMessage':
+        throw new cli.Error('')
 
       case 'System':
         throw new Error('system')
@@ -776,6 +779,104 @@ await test('cli.Application processCommandError()', async (t) => {
         'AssertionError')
       t.equal(error.message, 'assert(false)', 'assert(false)')
     }
+
+    t.end()
+  })
+
+  await t.test('cli.ErrorWithMessage', async (t) => {
+    mockConsole.clear()
+
+    const packageJson = {
+      name: '@scope/name',
+      version: '1.2.3'
+    }
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', 'ErrorWithMessage']
+    })
+
+    const application = new MockApplicationErrors({ context })
+
+    const exitCode = await application.start()
+    t.equal(exitCode, 42, 'exit 42')
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    const expectedErrorLines = [
+      'error: ErrorWithMessage' // 0
+    ]
+
+    t.equal(mockConsole.errLines.length, expectedErrorLines.length,
+      'error lines count')
+    // Compare content, not object.
+    t.same(mockConsole.errLines, expectedErrorLines, 'error lines')
+
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+    t.end()
+  })
+
+  await t.test('cli.ErrorEmptyMessage', async (t) => {
+    mockConsole.clear()
+
+    const packageJson = {
+      name: '@scope/name',
+      version: '1.2.3'
+    }
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', 'ErrorEmptyMessage']
+    })
+
+    const application = new MockApplicationErrors({ context })
+
+    const exitCode = await application.start()
+    t.equal(exitCode, cli.ExitCodes.ERROR.APPLICATION,
+      'exit ERROR.APPLICATION')
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+    t.end()
+  })
+
+  await t.test('system Error', async (t) => {
+    mockConsole.clear()
+
+    const packageJson = {
+      name: '@scope/name',
+      version: '1.2.3'
+    }
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', 'System']
+    })
+
+    const application = new MockApplicationErrors({ context })
+
+    const exitCode = await application.start()
+    t.equal(exitCode, cli.ExitCodes.ERROR.APPLICATION, 'exit ERROR.APPLICATION')
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.ok(mockConsole.errLines.length > 1, 'has error lines')
+    t.same(mockConsole.errLines[0], 'Error: system', 'Error: system')
+    t.match(mockConsole.errLines[1], '    at ', 'second line is stack')
+    t.match(mockConsole.errLines[mockConsole.errLines.length - 1], '    at ',
+      'last line is stack')
+
+    t.equal(mockConsole.outLines.length, 0, 'no output lines')
 
     t.end()
   })
