@@ -155,8 +155,6 @@ export class Context {
       this.rootPath = params.context.rootPath
       this.packageJson = params.context.packageJson
       this.matchedCommands = params.context.matchedCommands
-
-      this.help = params.context.help
     }
   }
 }
