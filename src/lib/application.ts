@@ -901,9 +901,6 @@ export class Application extends Command {
       log.trace(`dispatchCommand arg${index}: '${arg}'`)
     })
 
-    const options: Options = this.context.options
-    const { remainingArgv } = options.parse(argv)
-
     const config: Configuration = context.config
 
     // After parsing the options, the debug level is finally known.
@@ -912,9 +909,10 @@ export class Application extends Command {
     log.trace(util.inspect(context.config))
 
     const packageJson: NpmPackageJson = context.packageJson
+    assert(packageJson.version, 'packageJson.version')
 
     // Done again here, for REPL invocations.
-    if (config.isVersionRequest !== undefined && config.isVersionRequest) {
+    if (config.isVersionRequest ?? false) {
       log.always(packageJson.version)
       return ExitCodes.SUCCESS
     }
@@ -923,32 +921,74 @@ export class Application extends Command {
     // First non word (probably option) ends the list.
     const commands: string[] = this.identifyCommands(argv)
 
-    // If --help and no command, output the application help message.
-    if ((commands.length === 0) &&
-      (config.isHelpRequest !== undefined && config.isHelpRequest)) {
-      this.outputHelp()
-      return ExitCodes.SUCCESS // Help explicitly called.
+    // // If --help and no command, output the application help message.
+    // if ((commands.length === 0) &&
+    //   (config.isHelpRequest ?? false)) {
+    //   context.commandNode = this.commandsTree
+    //   this.outputHelp()
+    //   return ExitCodes.SUCCESS // Help explicitly called.
+    // }
+
+    // Warning: cannot change the global current folder in a server environment!
+    // Normally the applications should not rely on this, instead explicitly
+    // process relative paths and pass the config.cwd path to spawned processes.
+    if (!(this.enableREPL && config.interactiveServerPort !== undefined)) {
+      await makeDir(config.cwd)
+      process.chdir(config.cwd)
+      log.debug(`cwd()='${process.cwd()}'`)
     }
 
-    await makeDir(config.cwd)
-    // This global setting makes running multiple applications
-    // in a server impossible.
-    process.chdir(config.cwd)
-    log.debug(`cwd()='${process.cwd()}'`)
-
+    let commandArgv: string[]
     let exitCode: number = ExitCodes.SUCCESS
     try {
-      if (!this.commandsTree.hasChildrenCommands()) {
-        // There are no sub-commands, there should be only one
-        // way of running this application.
-        exitCode = await this.prepareAndRun({ argv: remainingArgv })
+      let commandInstance: DerivedCommand
+
+      if (this.commandsTree.hasChildrenCommands()) {
+        if (commands.length === 0) {
+          context.commandNode = this.commandsTree
+          if (config.isHelpRequest ?? false) {
+            this.outputHelp()
+            return ExitCodes.SUCCESS // Help explicitly called.
+          } else {
+            log.error('Missing mandatory command.')
+            this.outputHelp()
+            return ExitCodes.ERROR.SYNTAX // No commands.
+          }
+        }
+
+        // For complex application, with multiple commands,
+        // the command must be first identified and instantiated.
+        commandInstance = await this.instantiateCommand({ commands })
+
+        assert(commandInstance.context.commandNode)
+        // Strip the first args used to identify the command
+        commandArgv = argv.slice(commandInstance.context.commandNode.depth - 1)
       } else {
-        // The complex application, with multiple commands.
-        exitCode = await this.instantiateAndRunCommand({
-          commands,
-          argv
-        })
+        // For simple applications, without sub-commands,
+        // the command instance is exactly the application.
+        commandInstance = this as DerivedCommand
+        commandArgv = argv
+
+        context.commandNode = this.commandsTree
       }
+
+      exitCode = await this.prepareAndRun({
+        argv: commandArgv
+      })
+
+      // if (!this.commandsTree.hasChildrenCommands()) {
+      //   // For simple applications, without sub-commands,
+      //   // there should be only one way of running them,
+      //   // by calling the `Command` method.
+      //   exitCode = await this.prepareAndRun({ argv: remainingArgv })
+      // } else {
+      //   // For complex application, with multiple commands,
+      //   // the command must be first identified and instantiated.
+      //   exitCode = await this.instantiateAndRunCommand({
+      //     commands,
+      //     argv
+      //   })
+      // }
     } catch (error: any) {
       exitCode = this.processCommandError({ error, log })
     }
@@ -962,24 +1002,17 @@ export class Application extends Command {
     return exitCode
   }
 
-  async instantiateAndRunCommand (params: {
+  async instantiateCommand (params: {
     commands: string[]
-    argv: string[]
-  }): Promise<number> {
+  }): Promise<DerivedCommand> {
     assert(params, 'params')
     assert(params.commands, 'params.commands')
-    assert(params.argv, 'params.argv')
 
     const context: Context = this.context
 
     const log: Logger = context.log
-    const config: Configuration = context.config
+    log.trace('Application.instantiateCommand()')
 
-    if (params.commands.length === 0) {
-      log.error('Missing mandatory command.')
-      this.outputHelp()
-      return ExitCodes.ERROR.SYNTAX // No commands.
-    }
     // May throw 'not supported' or 'not unique'.
     const found: FoundCommandModule = this.commandsTree.findCommandModule(
       params.commands)
@@ -998,13 +1031,6 @@ export class Application extends Command {
     context.matchedCommands = found.commandNode.getUnaliasedCommandParts()
 
     log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
-
-    // Use the original array, since we might have `--` options,
-    // and skip already processed commands.
-    const commandArgs: string[] = params.argv.slice(found.commandNode.depth - 1)
-    commandArgs.forEach((arg, index) => {
-      log.trace(`cmd arg${index}: '${arg}'`)
-    })
 
     // Create a new logger and copy the level from the application logger.
     const commandLog: Logger = new Logger({
@@ -1026,17 +1052,86 @@ export class Application extends Command {
       context: commandContext
     })
 
-    if (config.isHelpRequest !== undefined && config.isHelpRequest) {
-      assert(commandInstance, 'commandInstance')
-      // Show the command specific help.
-      commandInstance.outputHelp()
-      return ExitCodes.SUCCESS // Help explicitly called.
-    }
-
-    return await commandInstance.prepareAndRun({
-      argv: commandArgs
-    })
+    return commandInstance
   }
+
+  // async instantiateAndRunCommand (params: {
+  //   commands: string[]
+  //   argv: string[]
+  // }): Promise<number> {
+  //   assert(params, 'params')
+  //   assert(params.commands, 'params.commands')
+  //   assert(params.argv, 'params.argv')
+
+  //   const context: Context = this.context
+
+  //   const log: Logger = context.log
+  //   const config: Configuration = context.config
+
+  //   // if (params.commands.length === 0) {
+  //   //   log.error('Missing mandatory command.')
+  //   //   this.outputHelp()
+  //   //   return ExitCodes.ERROR.SYNTAX // No commands.
+  //   // }
+
+  //   // May throw 'not supported' or 'not unique'.
+  //   const found: FoundCommandModule = this.commandsTree.findCommandModule(
+  //     params.commands)
+
+  //   assert(context.rootPath, 'context.rootPath')
+  //   // Throws an assert if there is no command class.
+  //   const DerivedCommandClass: typeof DerivedCommand =
+  //     await this.findCommandClass({
+  //       rootPath: context.rootPath,
+  //       moduleRelativePath: found.moduleRelativePath,
+  //       className: found.className
+  //     })
+
+  //   // Full name commands, not the actual encountered,
+  //   // which may be shortcuts.
+  //   context.matchedCommands = found.commandNode.getUnaliasedCommandParts()
+
+  //   log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
+
+  //   // Use the original array, since we might have `--` options,
+  //   // and skip already processed commands.
+  //   const commandArgs: string[] =
+  //     params.argv.slice(found.commandNode.depth - 1)
+  //   commandArgs.forEach((arg, index) => {
+  //     log.trace(`cmd arg${index}: '${arg}'`)
+  //   })
+
+  //   // Create a new logger and copy the level from the application logger.
+  //   const commandLog: Logger = new Logger({
+  //     console: log.console
+  //   })
+  //   commandLog.level = log.level
+
+  //   // The command context inherits most of the application context
+  //   // properties.
+  //   const commandContext: Context = new Context({
+  //     log: commandLog,
+  //     context
+  //   })
+
+  //   // Used by Help, to display aliases.
+  //   commandContext.commandNode = found.commandNode
+
+  //   const commandInstance: DerivedCommand = new DerivedCommandClass({
+  //     context: commandContext
+  //   })
+
+  //   if (config.isHelpRequest ?? false) {
+  //     assert(commandInstance, 'commandInstance')
+  //     // Show the command specific help.
+  //     commandInstance.outputHelp()
+  //     return ExitCodes.SUCCESS // Help explicitly called.
+  //   }
+
+  //   return await commandInstance.prepareAndRun({
+  //     argv: commandArgs
+  //   })
+  // }
 
   // Similar to static processStartError(), but slightly different.
   processCommandError (params: {
