@@ -70,8 +70,8 @@ export abstract class Command {
    */
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor (params: CommandConstructorParams) {
-    assert(params)
-    assert(params.context)
+    assert(params, 'params')
+    assert(params.context, 'params.context')
 
     this.context = params.context
 
@@ -102,8 +102,8 @@ export abstract class Command {
   async prepareAndRun (params: {
     argv: string[]
   }): Promise<number> {
-    assert(params)
-    assert(params.argv)
+    assert(params, 'params')
+    assert(params.argv, 'params.argv')
 
     const context: Context = this.context
 
@@ -200,15 +200,15 @@ export abstract class Command {
       ownArgv: string[]
       forwardableArgv: string[]
     } {
-    assert(params)
-    assert(params.argv)
+    assert(params, 'params')
+    assert(params.argv, 'params.argv')
 
     const context: Context = this.context
 
     const ownArgv: string[] = []
     const forwardableArgv: string[] = []
 
-    assert(context.commandNode)
+    assert(context.commandNode, 'context.commandNode')
     if (context.commandNode.shouldSplitForwardableArguments) {
       let isOwn = true
       for (const arg of params.argv) {
@@ -243,12 +243,12 @@ export abstract class Command {
   validateArgv (params: {
     argv: string[]
   }): ValidateArgvMessages[] {
-    assert(params)
-    assert(params.argv)
+    assert(params, 'params')
+    assert(params.argv, 'params.argv')
 
     const context: Context = this.context
 
-    assert(context.commandNode)
+    assert(context.commandNode, 'context.commandNode')
     const commandNode: CommandNode = context.commandNode
 
     const messages: ValidateArgvMessages[] = []
@@ -293,7 +293,7 @@ export abstract class Command {
    * by some commands.
    */
   getCommandDescription (): string {
-    assert(this.context.commandNode)
+    assert(this.context.commandNode, 'this.context.commandNode')
     return this.context.commandNode?.getHelpDescription()
   }
 
@@ -317,8 +317,9 @@ export abstract class Command {
     const help: Help = context.help ?? new Help({ context })
     context.help = help
 
-    assert(context.commandNode)
-    assert(context.commandNode.helpDefinitions)
+    assert(context.commandNode, 'context.commandNode')
+    assert(context.commandNode.helpDefinitions,
+      'context.commandNode.helpDefinitions')
 
     // Start with an empty line.
     help.output()
@@ -371,9 +372,10 @@ export abstract class Command {
 
     const log = context.log
 
-    assert(context.startTimestampMilliseconds)
-    assert(context.programName)
-    assert(context.matchedCommands)
+    assert(context.startTimestampMilliseconds,
+      'context.startTimestampMilliseconds')
+    assert(context.programName, 'context.programName')
+    assert(context.matchedCommands, 'context.matchedCommands')
 
     log.info()
     const durationString =
@@ -421,9 +423,9 @@ export abstract class Command {
   addGenerator (params: {
     object: any
   }): GeneratorDescription {
-    assert(params)
+    assert(params, 'params')
+    assert(params.object, 'params.object')
 
-    assert(params.object)
     const object = params.object
 
     const context: Context = this.context
@@ -434,9 +436,9 @@ export abstract class Command {
       object.generators = generators
     }
 
-    assert(context.programName)
-    assert(context.matchedCommands)
-    assert(context.unparsedArgv)
+    assert(context.programName, 'context.programName')
+    assert(context.matchedCommands, 'context.matchedCommands')
+    assert(context.unparsedArgv, 'context.unparsedArgv')
 
     const generator: GeneratorDescription = {
       tool: context.programName,
