@@ -259,12 +259,14 @@ const commonOptionsRepl: OptionsGroup[] = [
     optionsDefinitions: [
       {
         options: ['--interactive-server-port'],
+        /* c8 ignore start */
         init: (context) => {
           context.config.interactiveServerPort = undefined
         },
         action: (context, val) => /* istanbul ignore next */ {
           context.config.interactiveServerPort = +val // as number
         },
+        /* c8 ignore stop */
         hasValue: true,
         helpDefinitions: {
           isRequiredEarly: true
@@ -911,10 +913,12 @@ export class Application extends Command {
     assert(packageJson.version, 'packageJson.version')
 
     // Done again here, for REPL invocations.
+    /* c8 ignore start */
     if (config.isVersionRequest ?? false) {
       log.always(packageJson.version)
       return ExitCodes.SUCCESS
     }
+    /* c8 ignore stop */
 
     // Isolate commands as words with letters and inner dashes.
     // First non word (probably option) ends the list.
@@ -946,7 +950,9 @@ export class Application extends Command {
         if (commands.length === 0) {
           context.commandNode = this.commandsTree
           if (config.isHelpRequest ?? false) {
+            /* c8 ignore start */
             exitCode = ExitCodes.SUCCESS // Help explicitly called from REPL.
+            /* c8 ignore stop */
           } else {
             log.error('missing mandatory <command>')
             exitCode = ExitCodes.ERROR.SYNTAX // No commands.
