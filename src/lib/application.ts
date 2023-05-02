@@ -1254,9 +1254,19 @@ export class DerivedApplication extends Application {
     const context: Context = this.context
 
     // Mandatory, must be set here, since it computes
-    // the root path as relative to the path of this file..
+    // the root path as relative to the path of this file.
+
+    // In real life, adjust the number of dirname() calls to
+    // reach the project root, where package.json is located.
     context.rootPath =
       path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+  }
+
+  override async main (
+    _argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
+    return cli.ExitCodes.SUCCESS
   }
 }
 
