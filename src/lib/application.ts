@@ -195,6 +195,7 @@ const commonOptions: OptionsGroup[] = [
         action: (context) => {
           const config: Configuration = context.config
           if (config.logLevel === 'debug') {
+            // When used two times (`-d` `-d`) increase log level
             config.logLevel = 'trace'
           } else {
             config.logLevel = 'debug'
@@ -345,6 +346,8 @@ export class Application extends Command {
 
       // Redirect to the instance runner. It might start a REPL.
       exitCode = await application.start()
+
+      log.trace(`Application.start() returned ${exitCode}`)
     } catch (error: any) {
       exitCode = this.processStartError({ error, log })
     }
@@ -392,7 +395,7 @@ export class Application extends Command {
       // Show the full stack trace.
       log.console.error(error)
     }
-    log.verbose(`exitCode = ${exitCode}`)
+    log.debug(`exitCode: ${exitCode}`)
 
     return exitCode
   }
@@ -533,7 +536,7 @@ export class Application extends Command {
     // These are early messages, not shown immediately,
     // they are delayed until the log level is known.
     if (packageJson?.description !== undefined) {
-      log.verbose(`${packageJson.description}`)
+      log.debug(`${packageJson.description}`)
     }
 
     // Log os, node and arguments.
@@ -666,15 +669,16 @@ export class Application extends Command {
 
     const log: Logger = context.log
 
-    log.debug(`${packageJson.name}@${packageJson.version}`)
-    log.debug(`os arch=${os.arch()}, platform=${os.platform()},` +
-      ` release=${os.release()}`)
-    log.debug(`node ${process.version}`)
+    log.debug(`package: ${packageJson.name}@${packageJson.version}`)
+    log.debug(`os arch: ${os.arch()}, platform: ${os.platform()},` +
+      ` release: ${os.release()}`)
+    log.debug(`node: ${process.version}`)
 
-    log.debug(`argv0: ${process?.argv[1] ?? 'undefined'}`)
+    log.debug(`process.argv0: ${process?.argv[0] ?? 'undefined'}`)
+    log.debug(`process.argv1: ${process?.argv[1] ?? 'undefined'}`)
 
     context.processArgv.forEach((arg, index) => {
-      log.debug(`start arg${index}: '${arg}'`)
+      log.debug(`start argv${index}: '${arg}'`)
     })
   }
 
@@ -863,7 +867,7 @@ export class Application extends Command {
       const argv: string[] = evalCmd.trim().split(/\s+/)
 
       const exitCode: number = await this.dispatchCommand(argv)
-      log.verbose(`exit(${exitCode})`)
+      log.debug(`exit(${exitCode})`)
 
       // The last executed command exit code is passed as process exit code.
       process.exitCode = exitCode
@@ -902,7 +906,7 @@ export class Application extends Command {
     context.startTimestampMilliseconds = Date.now()
 
     argv.forEach((arg, index) => {
-      log.trace(`dispatchCommand arg${index}: '${arg}'`)
+      log.trace(`dispatchCommand argv${index}: '${arg}'`)
     })
 
     const config: Configuration = context.config
@@ -1036,7 +1040,7 @@ export class Application extends Command {
       // Show the full stack trace.
       log.console.error(error)
     }
-    log.verbose(`exit(${exitCode})`)
+    log.debug(`exit(${exitCode})`)
 
     return exitCode
   }
