@@ -252,7 +252,7 @@ export class Options {
 
     assert(this.context)
     const log = this.context.log
-    log.trace(`${Function.prototype.name}()`)
+    log.trace('Options.parse()')
 
     // In addition to common options, bring together all options from
     // all command option groups, if any.
