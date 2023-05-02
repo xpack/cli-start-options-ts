@@ -577,8 +577,7 @@ export class Application extends Command {
     // ------------------------------------------------------------------------
 
     // If no commands and -h, output the application help message.
-    if ((commands.length === 0) &&
-      (config.isHelpRequest ?? false)) {
+    if ((commands.length === 0) && (config.isHelpRequest ?? false)) {
       this.outputHelp()
       return ExitCodes.SUCCESS // Help explicitly called.
     }
@@ -947,13 +946,13 @@ export class Application extends Command {
         if (commands.length === 0) {
           context.commandNode = this.commandsTree
           if (config.isHelpRequest ?? false) {
-            this.outputHelp()
-            return ExitCodes.SUCCESS // Help explicitly called.
+            exitCode = ExitCodes.SUCCESS // Help explicitly called from REPL.
           } else {
-            log.error('Missing mandatory command.')
-            this.outputHelp()
-            return ExitCodes.ERROR.SYNTAX // No commands.
+            log.error('missing mandatory <command>')
+            exitCode = ExitCodes.ERROR.SYNTAX // No commands.
           }
+          this.outputHelp()
+          return exitCode
         }
 
         // For complex application, with multiple commands,
@@ -972,23 +971,9 @@ export class Application extends Command {
         context.commandNode = this.commandsTree
       }
 
-      exitCode = await this.prepareAndRun({
+      exitCode = await commandInstance.prepareAndRun({
         argv: commandArgv
       })
-
-      // if (!this.commandsTree.hasChildrenCommands()) {
-      //   // For simple applications, without sub-commands,
-      //   // there should be only one way of running them,
-      //   // by calling the `Command` method.
-      //   exitCode = await this.prepareAndRun({ argv: remainingArgv })
-      // } else {
-      //   // For complex application, with multiple commands,
-      //   // the command must be first identified and instantiated.
-      //   exitCode = await this.instantiateAndRunCommand({
-      //     commands,
-      //     argv
-      //   })
-      // }
     } catch (error: any) {
       exitCode = this.processCommandError({ error, log })
     }
@@ -1059,7 +1044,6 @@ export class Application extends Command {
     // Throws an assert if there is no command class.
     const DerivedCommandClass: typeof DerivedCommand =
       await this.findCommandClass({
-        rootPath: context.rootPath,
         moduleRelativePath: found.moduleRelativePath,
         className: found.className
       })
