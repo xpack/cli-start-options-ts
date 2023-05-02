@@ -22,6 +22,9 @@
 import { strict as assert } from 'node:assert'
 import * as nonStrictAssert from 'node:assert'
 
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 // ----------------------------------------------------------------------------
 
 // https://www.npmjs.com/package/tap
@@ -48,6 +51,12 @@ dumpLines()
 
 const mockConsole = new MockConsole()
 const log = new cli.Logger({ console: mockConsole, level: 'info' })
+
+const packageJson = {
+  description: 'The xyz description',
+  name: '@scope/xyz',
+  version: '1.2.3'
+}
 
 // ----------------------------------------------------------------------------
 
@@ -195,7 +204,7 @@ await test('cli.Application start()', async (t) => {
   try {
     mockConsole.clear()
 
-    const packageJson = { name: '@scope/name' }
+    const packageJson = { name: '@scope/xyz' }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -216,7 +225,8 @@ await test('cli.Application start()', async (t) => {
     mockConsole.clear()
 
     const packageJson = {
-      name: '@scope/name',
+      // No description
+      name: '@scope/xyz',
       version: '1.2.3'
     }
     const context = new cli.Context({
@@ -240,11 +250,6 @@ await test('cli.Application start()', async (t) => {
   await t.test('help description', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      description: 'My description',
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -267,8 +272,8 @@ await test('cli.Application start()', async (t) => {
     mockConsole.clear()
 
     const packageJson = {
-      description: 'My description',
-      name: '@scope/name',
+      description: 'The xyz description',
+      name: '@scope/xyz',
       version: '1.2.3',
       engines: {
         node: ' >=9999'
@@ -310,11 +315,6 @@ await test('cli.Application start()', async (t) => {
     // Local logger to check if the version is shown even when set to silent.
     const log = new cli.Logger({ console: mockConsole, level: 'silent' })
 
-    const packageJson = {
-      description: 'My description',
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -349,11 +349,6 @@ await test('cli.Application start()', async (t) => {
   await t.test('help request', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      description: 'My description',
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -377,7 +372,7 @@ await test('cli.Application start()', async (t) => {
     /* eslint-disable max-len */
     const expectedLines = [
       '', //  0
-      'My description', //  1
+      'The xyz description', //  1
       '', //  2
       'Usage: xyz [options...]', //  3
       '', //  4
@@ -395,7 +390,7 @@ await test('cli.Application start()', async (t) => {
       'xyz -h|--help           Quick help', // 16
       'xyz --version           Show version', // 17
       '', // 18
-      "npm @scope/name@1.2.3 '/a/b/c'" // 19
+      "npm @scope/xyz@1.2.3 '/a/b/c'" // 19
     ]
     /* eslint-enable max-len */
 
@@ -445,7 +440,7 @@ await test('cli.Application identifyCommands()', async (t) => {
   mockConsole.clear()
 
   try {
-    const packageJson = { name: '@scope/name' }
+    const packageJson = { name: '@scope/xyz' }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -464,7 +459,7 @@ await test('cli.Application identifyCommands()', async (t) => {
 
   // If the application has no commands defined, it should not match anything.
   await t.test('no commands', async (t) => {
-    const packageJson = { name: '@scope/name' }
+    const packageJson = { name: '@scope/xyz' }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -477,7 +472,7 @@ await test('cli.Application identifyCommands()', async (t) => {
     t.end()
   })
 
-  const packageJson = { name: '@scope/name' }
+  const packageJson = { name: '@scope/xyz' }
   const context = new cli.Context({
     log,
     packageJson: packageJson as cli.NpmPackageJson
@@ -526,11 +521,53 @@ class MockApplication extends cli.Application {
   }
 }
 
+class MockApplicationWithCommands extends cli.Application {
+  constructor (params: cli.ApplicationConstructorParams) {
+    super(params)
+
+    const context: cli.Context = this.context
+
+    // .../tests/tap/x.ts -> .../tests
+    context.rootPath =
+      path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+
+    this.commandsTree.addCommands({
+      one: {
+        moduleRelativePath: 'mock/commands/one.js',
+        className: 'MockCommandOne',
+        helpDefinitions: {
+          description: 'Command one'
+        }
+      },
+      two: {
+        moduleRelativePath: 'mock/commands/two.js',
+        helpDefinitions: {
+          description: 'Command two'
+        },
+        subCommands: {
+          alfa: {
+            moduleRelativePath: 'mock/commands/two-alfa.js',
+            helpDefinitions: {
+              description: 'Command two alfa'
+            }
+          },
+          beta: {
+            moduleRelativePath: 'mock/commands/two-beta.js',
+            helpDefinitions: {
+              description: 'Command two beta'
+            }
+          }
+        }
+      }
+    })
+  }
+}
+
 await test('cli.Application dispatchCommand()', async (t) => {
   mockConsole.clear()
 
   try {
-    const packageJson = { name: '@scope/name' }
+    const packageJson = { name: '@scope/xyz' }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -548,7 +585,7 @@ await test('cli.Application dispatchCommand()', async (t) => {
   }
 
   try {
-    const packageJson = { name: '@scope/name' }
+    const packageJson = { name: '@scope/xyz' }
     const context = new cli.Context({
       log,
       packageJson: packageJson as cli.NpmPackageJson
@@ -571,10 +608,6 @@ await test('cli.Application dispatchCommand()', async (t) => {
     // Local logger to check if the version is shown even when set to silent.
     const log = new cli.Logger({ console: mockConsole, level: 'silent' })
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -611,10 +644,6 @@ await test('cli.Application dispatchCommand()', async (t) => {
   await t.test('help request', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -636,7 +665,7 @@ await test('cli.Application dispatchCommand()', async (t) => {
     /* eslint-disable max-len */
     const expectedLines = [
       '', //  0
-      '@scope/name', //  1
+      'The xyz description', //  1
       '', //  2
       'Usage: xyz [options...]', //  3
       '', //  4
@@ -654,7 +683,7 @@ await test('cli.Application dispatchCommand()', async (t) => {
       'xyz -h|--help           Quick help', // 16
       'xyz --version           Show version', // 17
       '', // 18
-      "npm @scope/name@1.2.3 '/a/b/c'" // 19
+      "npm @scope/xyz@1.2.3 '/a/b/c'" // 19
     ]
     /* eslint-enable max-len */
 
@@ -669,10 +698,6 @@ await test('cli.Application dispatchCommand()', async (t) => {
   await t.test('invoke main()', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -697,6 +722,105 @@ await test('cli.Application dispatchCommand()', async (t) => {
       "argv[2]='cde'", // 2
       "argv[3]='--def'", // 3
       "forwardableArgv[0]='--xyz'" // 4
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('with commands, missing command', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '']
+    })
+
+    const application = new MockApplicationWithCommands({ context })
+
+    const exitCode = await application.start()
+
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit ERROR.SYNTAX')
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    const expectedErrorLines = [
+      'error: missing mandatory <command>' // 0
+    ]
+
+    t.equal(mockConsole.errLines.length, expectedErrorLines.length,
+      'error lines count')
+    // Compare content, not object.
+    t.same(mockConsole.errLines, expectedErrorLines, 'error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      '', //  0
+      'The xyz description', //  1
+      '', //  2
+      'Usage: xyz <command> [<subcommand>...] [<options> ...] [<args>...]', //  3
+      '', //  4
+      'where <command> is one of:', //  5
+      '  one, two', //  6
+      '', //  7
+      'Common options:', //  8
+      '  --loglevel <level>     Set log level (silent|warn|info|verbose|debug|trace) (optional)', //  9
+      '  -s|--silent            Disable all messages (--loglevel silent) (optional)', // 10
+      '  -q|--quiet             Mostly quiet, warnings and errors (--loglevel warn) (optional)', // 11
+      '  --informative          Informative (--loglevel info) (optional)', // 12
+      '  -v|--verbose           Verbose (--loglevel verbose) (optional)', // 13
+      '  -d|--debug             Debug messages (--loglevel debug) (optional)', // 14
+      '  -dd|--trace            Trace messages (--loglevel trace, -d -d) (optional)', // 15
+      '  --no-update-notifier   Skip check for a more recent version (optional)', // 16
+      '  -C <folder>            Set current folder (optional)', // 17
+      '', // 18
+      'xyz -h|--help            Quick help', // 19
+      'xyz <command> -h|--help  Quick help for command', // 20
+      'xyz --version            Show version', // 21
+      '' // 22
+    ]
+    /* eslint-enable max-len */
+
+    mockConsole.outLines.splice(mockConsole.outLines.length - 1, 1)
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('with commands, one', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', 'one']
+    })
+
+    const application = new MockApplicationWithCommands({ context })
+
+    const exitCode = await application.start()
+
+    t.equal(exitCode, 42, 'exit 42')
+
+    dumpLines(mockConsole.errLines)
+    dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      'one' // 0
     ]
 
     t.equal(mockConsole.outLines.length, expectedLines.length,
@@ -758,10 +882,6 @@ await test('cli.Application processCommandError()', async (t) => {
   await t.test('AssertionError', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -786,10 +906,6 @@ await test('cli.Application processCommandError()', async (t) => {
   await t.test('cli.ErrorWithMessage', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -822,10 +938,6 @@ await test('cli.Application processCommandError()', async (t) => {
   await t.test('cli.ErrorEmptyMessage', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -848,13 +960,69 @@ await test('cli.Application processCommandError()', async (t) => {
     t.end()
   })
 
+  await t.test('cli.SyntaxError', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', 'SyntaxError']
+    })
+
+    const application = new MockApplicationErrors({ context })
+
+    const exitCode = await application.start()
+    t.equal(exitCode, cli.ExitCodes.ERROR.SYNTAX, 'exit ERROR.SYNTAX')
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    const expectedErrorLines = [
+      'error: syntax' // 0
+    ]
+
+    t.equal(mockConsole.errLines.length, expectedErrorLines.length,
+      'error lines count')
+    // Compare content, not object.
+    t.same(mockConsole.errLines, expectedErrorLines, 'error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      '', //  0
+      'The xyz description', //  1
+      '', //  2
+      'Usage: xyz [options...]', //  3
+      '', //  4
+      'Common options:', //  5
+      '  --loglevel <level>    Set log level (silent|warn|info|verbose|debug|trace) (optional)', //  6
+      '  -s|--silent           Disable all messages (--loglevel silent) (optional)', //  7
+      '  -q|--quiet            Mostly quiet, warnings and errors (--loglevel warn) (optional)', //  8
+      '  --informative         Informative (--loglevel info) (optional)', //  9
+      '  -v|--verbose          Verbose (--loglevel verbose) (optional)', // 10
+      '  -d|--debug            Debug messages (--loglevel debug) (optional)', // 11
+      '  -dd|--trace           Trace messages (--loglevel trace, -d -d) (optional)', // 12
+      '  --no-update-notifier  Skip check for a more recent version (optional)', // 13
+      '  -C <folder>           Set current folder (optional)', // 14
+      '', // 15
+      'xyz -h|--help           Quick help', // 16
+      'xyz --version           Show version', // 17
+      '', // 18
+      "npm @scope/xyz@1.2.3 '/a/b/c'" // 19
+    ]
+    /* eslint-enable max-len */
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
   await t.test('system Error', async (t) => {
     mockConsole.clear()
 
-    const packageJson = {
-      name: '@scope/name',
-      version: '1.2.3'
-    }
     const context = new cli.Context({
       log,
       programName: 'xyz',
@@ -880,6 +1048,226 @@ await test('cli.Application processCommandError()', async (t) => {
 
     t.end()
   })
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
+class MockNotCommandClass {
+  member: number = 42
+}
+
+interface findCommandClassParams {
+  rootPath: string
+  moduleRelativePath: string
+  className?: string | undefined
+  parentClass?: typeof cli.Command
+}
+
+await test('cli.Application findCommandClass()', async (t) => {
+  mockConsole.clear()
+
+  await t.test('asserts', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson
+    })
+
+    const application = new MockApplication({ context })
+
+    try {
+      await application.findCommandClass(
+        undefined as unknown as findCommandClassParams
+      )
+      t.fail('does not throw')
+    } catch (error: any) {
+      t.ok(error instanceof assert.AssertionError,
+        'AssertionError')
+      t.equal(error.message, 'params', 'assert(params)')
+    }
+
+    const savedRootPath = context.rootPath
+    try {
+      context.rootPath = undefined
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      await application.findCommandClass({
+        rootPath: undefined as unknown as string,
+        moduleRelativePath: '.'
+      } as findCommandClassParams)
+      t.fail('does not throw')
+    } catch (error: any) {
+      t.ok(error instanceof assert.AssertionError,
+        'AssertionError')
+      t.equal(error.message, 'rootPath', 'assert(rootPath)')
+    }
+    context.rootPath = savedRootPath
+
+    try {
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      await application.findCommandClass({
+        rootPath: '/a/b/c',
+        moduleRelativePath: undefined as unknown as string
+      } as findCommandClassParams)
+      t.fail('does not throw')
+    } catch (error: any) {
+      t.ok(error instanceof assert.AssertionError,
+        'AssertionError')
+      t.equal(error.message, 'params.moduleRelativePath',
+        'assert(params.moduleRelativePath)')
+    }
+
+    t.end()
+  })
+
+  await t.test('with class name', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      packageJson: packageJson as cli.NpmPackageJson
+    })
+
+    const rootPath =
+      path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+
+    const application = new MockApplication({ context })
+
+    const commandClass: typeof cli.DerivedCommand =
+      await application.findCommandClass({
+        rootPath,
+        moduleRelativePath: 'mock/commands/one.js',
+        className: 'MockCommandOne'
+      })
+
+    t.equal(commandClass.name, 'MockCommandOne', 'MockCommandOne')
+
+    try {
+      await application.findCommandClass({
+        rootPath,
+        moduleRelativePath: 'mock/commands/one.js',
+        className: 'MockNotCommand'
+      })
+      t.fail('does not throw')
+    } catch (error: any) {
+      t.ok(error instanceof assert.AssertionError,
+        'AssertionError')
+      t.match(error.message, 'not derived from',
+        'assert(... not derived from)')
+    }
+
+    try {
+      await application.findCommandClass({
+        rootPath,
+        moduleRelativePath: 'mock/commands/one.js',
+        className: 'MockNotDefined'
+      })
+      t.fail('does not throw')
+    } catch (error: any) {
+      t.ok(error instanceof assert.AssertionError,
+        'AssertionError')
+      t.match(error.message, 'no class named ',
+        'assert(no class named ...)')
+    }
+
+    t.end()
+  })
+
+  await t.test('without class name', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      packageJson: packageJson as cli.NpmPackageJson
+    })
+
+    const rootPath =
+      path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+
+    const application = new MockApplication({ context })
+
+    const commandClass: typeof cli.DerivedCommand =
+      await application.findCommandClass({
+        rootPath,
+        moduleRelativePath: 'mock/commands/one.js'
+      })
+
+    t.equal(commandClass.name, 'MockCommandOne', 'MockCommandOne')
+
+    try {
+      await application.findCommandClass({
+        rootPath,
+        moduleRelativePath: 'mock/commands/one.js',
+        parentClass: MockNotCommandClass as unknown as
+          (typeof cli.DerivedCommand)
+      })
+      t.fail('does not throw')
+    } catch (error: any) {
+      t.ok(error instanceof assert.AssertionError,
+        'AssertionError')
+      t.match(error.message, 'no class derived from',
+        'assert(no class derived from ...)')
+    }
+    t.end()
+  })
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
+await test('cli.Application main()', async (t) => {
+  mockConsole.clear()
+
+  const context = new cli.Context({
+    log,
+    programName: 'xyz',
+    packageJson: packageJson as cli.NpmPackageJson
+  })
+
+  const application = new cli.Application({ context })
+
+  try {
+    await application.main(
+      [], []
+    )
+    t.fail('does not throw')
+  } catch (error: any) {
+    t.ok(error instanceof assert.AssertionError,
+      'AssertionError')
+    t.match(error.message, 'should define a main() method',
+      'assert(... should define a main() method ...)')
+  }
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
+await test('cli.Application DerivedApplication', async (t) => {
+  mockConsole.clear()
+
+  const context = new cli.Context({
+    log,
+    programName: 'xyz',
+    packageJson: packageJson as cli.NpmPackageJson
+  })
+
+  const application = new cli.DerivedApplication({ context })
+
+  const exitCode = await application.start()
+
+  // dumpLines(mockConsole.errLines)
+  // dumpLines(mockConsole.outLines)
+
+  t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
+  t.equal(mockConsole.errLines.length, 0, 'no error lines')
+  t.equal(mockConsole.outLines.length, 0, 'no output lines')
 
   t.end()
 })
