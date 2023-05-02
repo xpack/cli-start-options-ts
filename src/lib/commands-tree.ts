@@ -552,7 +552,7 @@ export class CommandsTree extends CommandNode {
   findCommandModule (
     commands: string[]
   ): FoundCommandModule {
-    assert(this.hasChildrenCommands(), 'No commands defined yet.')
+    assert(this.hasChildrenCommands(), 'no commands defined yet')
 
     const commandNode = this.findCommandNode(commands)
 
