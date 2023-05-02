@@ -232,14 +232,15 @@ const commonOptions: OptionsGroup[] = [
         action: (context, val) => {
           assert(val !== undefined)
           const config: Configuration = context.config
+          // When multiple -C options are given, each subsequent
+          // non-absolute -C <path> is interpreted relative to the
+          // preceding -C <path>.
           if (path.isAbsolute(val)) {
-            config.cwd = val
-          } else if (config.cwd !== undefined) {
-            config.cwd = path.resolve(config.cwd, val)
-          } else /* istanbul ignore next */ {
             config.cwd = path.resolve(val)
+          } else {
+            config.cwd = path.resolve(config.cwd, val)
           }
-          context.log.debug(`set cwd: '${config.cwd}'`)
+          context.log.debug(`set cwd='${config.cwd}'`)
         },
         hasValue: true,
         helpDefinitions: {
