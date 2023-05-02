@@ -498,7 +498,7 @@ class MockApplication extends cli.Application {
 
     context.rootPath = '/a/b/c'
 
-    this.commandsTree.setHelpDescription('The Xyz Title')
+    this.commandsTree.setHelpDescription('The xyz description')
     this.commandsTree.shouldSplitForwardableArguments = true
   }
 
@@ -844,7 +844,7 @@ class MockApplicationErrors extends cli.Application {
 
     context.rootPath = '/a/b/c'
 
-    this.commandsTree.setHelpDescription('The Xyz Title')
+    this.commandsTree.setHelpDescription('The xyz description')
   }
 
   override async main (
@@ -1268,6 +1268,464 @@ await test('cli.Application DerivedApplication', async (t) => {
   t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
   t.equal(mockConsole.errLines.length, 0, 'no error lines')
   t.equal(mockConsole.outLines.length, 0, 'no output lines')
+
+  t.end()
+})
+
+// ----------------------------------------------------------------------------
+
+class MockApplicationShowLogLevel extends cli.Application {
+  constructor (params: cli.ApplicationConstructorParams) {
+    super(params)
+
+    const context: cli.Context = this.context
+
+    context.rootPath = '/a/b/c'
+
+    this.commandsTree.setHelpDescription('The xyz description')
+    this.commandsTree.shouldSplitForwardableArguments = true
+  }
+
+  override async main (
+    _argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
+    const context: cli.Context = this.context
+
+    const log = context.log
+    const level: string = log.level ?? 'undefined'
+    log.always(`@${level}@`)
+
+    return 42
+  }
+}
+
+await test('cli.Application common options', async (t) => {
+  mockConsole.clear()
+
+  await t.test('default info', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@info@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('--loglevel silent', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--loglevel=silent']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@silent@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('--silent', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--silent']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@silent@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('--quiet', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--quiet']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@warn@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('--informative', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--informative']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@info@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('--verbose', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--verbose']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@verbose@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.end()
+  })
+
+  await t.test('--debug', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--debug']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.ok(mockConsole.outLines.length > 1, 'has output lines')
+
+    const outString = mockConsole.outLines.join('\n')
+
+    t.match(outString, "\ndebug: 'xyz' - started\n", 'has started')
+    t.match(outString, '\n@debug@\n', 'has log level debug')
+    t.match(outString, "\ndebug: 'xyz' - returned 42",
+      'has returned')
+
+    t.end()
+  })
+
+  await t.test('--trace', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--trace']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.ok(mockConsole.outLines.length > 1, 'has output lines')
+
+    const outString = mockConsole.outLines.join('\n')
+
+    t.match(outString, "\ndebug: 'xyz' - started\n", 'has started')
+    t.match(outString, '\n@trace@\n', 'has log level trace')
+    t.match(outString, "\ndebug: 'xyz' - returned 42",
+      'has returned')
+
+    t.end()
+  })
+
+  await t.test('-d -d', async (t) => {
+    mockConsole.clear()
+
+    const log = new cli.Logger({ console: mockConsole })
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '-d', '-d']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.ok(mockConsole.outLines.length > 1, 'has output lines')
+
+    const outString = mockConsole.outLines.join('\n')
+
+    t.match(outString, "\ndebug: 'xyz' - started\n", 'has started')
+    t.match(outString, '\n@trace@\n', 'has log level trace')
+    t.match(outString, "\ndebug: 'xyz' - returned 42\n",
+      'has returned')
+
+    t.end()
+  })
+
+  await t.test('--no-update-notifier', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '--no-update-notifier']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, 42, 'exit 42')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    const expectedLines = [
+      '@info@' // 0
+    ]
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    t.ok(context.config.noUpdateNotifier, 'noUpdateNotifier')
+
+    t.end()
+  })
+
+  await t.test('-C absolute', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '-C', '/a/b/./c', '-h']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.ok(mockConsole.outLines.length > 1,
+      'has output lines')
+
+    t.equal(context.config.cwd, '/a/b/c', '/a/b/c')
+
+    t.end()
+  })
+
+  await t.test('-C repetitive', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processArgv: ['', '', '-C', '/a/b/./c', '-C', 'd/./e', '-h']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.ok(mockConsole.outLines.length > 1,
+      'has output lines')
+
+    t.equal(context.config.cwd, '/a/b/c/d/e', '/a/b/c/d/e')
+
+    t.end()
+  })
+
+  await t.test('-C relative', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      programName: 'xyz',
+      packageJson: packageJson as cli.NpmPackageJson,
+      processCwd: '/x/y',
+      processArgv: ['', '', '-C', 'd/./e', '-h']
+    })
+
+    const application = new MockApplicationShowLogLevel({ context })
+
+    const exitCode = await application.start()
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    t.ok(mockConsole.outLines.length > 1,
+      'has output lines')
+
+    t.equal(context.config.cwd, '/x/y/d/e', '/x/y/d/e')
+
+    t.end()
+  })
 
   t.end()
 })
