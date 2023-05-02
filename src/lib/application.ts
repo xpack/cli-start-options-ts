@@ -598,29 +598,31 @@ export class Application extends Command {
       // and the last one will be returned. (probably not very useful)
       /* c8 ignore stop */
     } else {
-      // For regular invocations, also check if an update is available.
-      // Create on instance of notifier class, configured for the
-      // current package.
-      const updateChecker = new UpdateChecker({
-        log,
-        packageName: packageJson.name,
-        packageVersion: packageJson.version,
-        checkUpdatesIntervalSeconds: this.checkUpdatesIntervalSeconds
-      })
+      if (config.noUpdateNotifier) {
+        // Pass the original process arguments (without node & program path).
+        exitCode = await this.dispatchCommand(argv)
+      } else {
+        // For regular invocations, also check if an update is available.
+        // Create on instance of notifier class, configured for the
+        // current package.
+        const updateChecker = new UpdateChecker({
+          log,
+          packageName: packageJson.name,
+          packageVersion: packageJson.version,
+          checkUpdatesIntervalSeconds: this.checkUpdatesIntervalSeconds
+        })
 
-      // Start the update checker, as an asynchronous function
-      // running in parallel.
-      await updateChecker.initiateVersionRetrieval()
+        // Start the update checker, as an asynchronous function
+        // running in parallel.
+        await updateChecker.initiateVersionRetrieval()
 
-      // Pass the original process arguments (without node & program path).
-      exitCode = await this.dispatchCommand(argv)
+        // Pass the original process arguments (without node & program path).
+        exitCode = await this.dispatchCommand(argv)
 
-      // Before returning, possibly send a notification to the console.
-      await updateChecker.notifyIfUpdateIsAvailable()
-
-      log.verbose(`start() returns ${exitCode}`)
+        // Before returning, possibly send a notification to the console.
+        await updateChecker.notifyIfUpdateIsAvailable()
+      }
     }
-
     // ------------------------------------------------------------------------
 
     return exitCode
