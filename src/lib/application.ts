@@ -1002,6 +1002,44 @@ export class Application extends Command {
     return exitCode
   }
 
+  // Similar to static processStartError(), but slightly different.
+  processCommandError (params: {
+    error: any
+    log: Logger
+  }): number {
+    assert(params, 'params')
+    assert(params.log, 'params.log')
+    assert(params.log, 'params.log')
+
+    const error: any = params.error
+    const log: Logger = params.log
+
+    let exitCode: number = ExitCodes.ERROR.APPLICATION
+
+    if (error instanceof assert.AssertionError) {
+      // Rethrow assertion errors; they happen only during development
+      // and tests check their messages; otherwise should not occur.
+      throw error
+    } else if (error instanceof cli.Error) {
+      // CLI triggered error. Treat it gently.
+      if (error.message?.length > 0) {
+        log.error(error.message)
+      }
+      // For syntax errors display help.
+      if (error.exitCode === ExitCodes.ERROR.SYNTAX) {
+        this.outputHelp()
+      }
+      exitCode = error.exitCode
+    } else {
+      // System error, probably due to a bug.
+      // Show the full stack trace.
+      log.console.error(error)
+    }
+    log.verbose(`exit(${exitCode})`)
+
+    return exitCode
+  }
+
   async instantiateCommand (params: {
     commands: string[]
   }): Promise<DerivedCommand> {
@@ -1055,136 +1093,28 @@ export class Application extends Command {
     return commandInstance
   }
 
-  // async instantiateAndRunCommand (params: {
-  //   commands: string[]
-  //   argv: string[]
-  // }): Promise<number> {
-  //   assert(params, 'params')
-  //   assert(params.commands, 'params.commands')
-  //   assert(params.argv, 'params.argv')
-
-  //   const context: Context = this.context
-
-  //   const log: Logger = context.log
-  //   const config: Configuration = context.config
-
-  //   // if (params.commands.length === 0) {
-  //   //   log.error('Missing mandatory command.')
-  //   //   this.outputHelp()
-  //   //   return ExitCodes.ERROR.SYNTAX // No commands.
-  //   // }
-
-  //   // May throw 'not supported' or 'not unique'.
-  //   const found: FoundCommandModule = this.commandsTree.findCommandModule(
-  //     params.commands)
-
-  //   assert(context.rootPath, 'context.rootPath')
-  //   // Throws an assert if there is no command class.
-  //   const DerivedCommandClass: typeof DerivedCommand =
-  //     await this.findCommandClass({
-  //       rootPath: context.rootPath,
-  //       moduleRelativePath: found.moduleRelativePath,
-  //       className: found.className
-  //     })
-
-  //   // Full name commands, not the actual encountered,
-  //   // which may be shortcuts.
-  //   context.matchedCommands = found.commandNode.getUnaliasedCommandParts()
-
-  //   log.debug(`Command(s): '${context.matchedCommands.join(' ')}'`)
-
-  //   // Use the original array, since we might have `--` options,
-  //   // and skip already processed commands.
-  //   const commandArgs: string[] =
-  //     params.argv.slice(found.commandNode.depth - 1)
-  //   commandArgs.forEach((arg, index) => {
-  //     log.trace(`cmd arg${index}: '${arg}'`)
-  //   })
-
-  //   // Create a new logger and copy the level from the application logger.
-  //   const commandLog: Logger = new Logger({
-  //     console: log.console
-  //   })
-  //   commandLog.level = log.level
-
-  //   // The command context inherits most of the application context
-  //   // properties.
-  //   const commandContext: Context = new Context({
-  //     log: commandLog,
-  //     context
-  //   })
-
-  //   // Used by Help, to display aliases.
-  //   commandContext.commandNode = found.commandNode
-
-  //   const commandInstance: DerivedCommand = new DerivedCommandClass({
-  //     context: commandContext
-  //   })
-
-  //   if (config.isHelpRequest ?? false) {
-  //     assert(commandInstance, 'commandInstance')
-  //     // Show the command specific help.
-  //     commandInstance.outputHelp()
-  //     return ExitCodes.SUCCESS // Help explicitly called.
-  //   }
-
-  //   return await commandInstance.prepareAndRun({
-  //     argv: commandArgs
-  //   })
-  // }
-
-  // Similar to static processStartError(), but slightly different.
-  processCommandError (params: {
-    error: any
-    log: Logger
-  }): number {
-    assert(params, 'params')
-    assert(params.log, 'params.log')
-    assert(params.log, 'params.log')
-
-    const error: any = params.error
-    const log: Logger = params.log
-
-    let exitCode: number = ExitCodes.ERROR.APPLICATION
-
-    if (error instanceof assert.AssertionError) {
-      // Rethrow assertion errors; they happen only during development
-      // and are checked by tests.
-      throw error
-    } else if (error instanceof cli.Error) {
-      // CLI triggered error. Treat it gently.
-      if (error.message?.length > 0) {
-        log.error(error.message)
-      }
-      // For syntax errors display help.
-      if (error.exitCode === ExitCodes.ERROR.SYNTAX) {
-        this.outputHelp()
-      }
-      exitCode = error.exitCode
-    } else {
-      // System error, probably due to a bug.
-      // Show the full stack trace.
-      log.console.error(error)
-    }
-    log.verbose(`exit(${exitCode})`)
-
-    return exitCode
-  }
-
-  // Search for classes derived from cli.Command.
   async findCommandClass (params: {
-    rootPath: string
+    rootPath?: string
     moduleRelativePath: string
-    className: string | undefined
+    className?: string | undefined
+    parentClass?: typeof Command
   }): Promise<typeof DerivedCommand> {
     assert(params, 'params')
-    assert(params.rootPath, 'params.rootPath')
     assert(params.moduleRelativePath, 'params.moduleRelativePath')
 
-    const parentClass = Command
+    const context: Context = this.context
 
-    const modulePath: string =
-      path.join(params.rootPath, params.moduleRelativePath)
+    const log: Logger = context.log
+
+    const rootPath: string | undefined = params.rootPath ?? context.rootPath
+    assert(rootPath, 'rootPath')
+
+    const parentClass: typeof Command = params.parentClass ?? Command
+
+    const modulePath: string = path.resolve(
+      path.join(rootPath, params.moduleRelativePath))
+
+    log.trace(`modulePath: ${modulePath}`)
 
     // On Windows, absolute paths start with a drive letter, and the
     // explicit `file://` is mandatory.
@@ -1197,16 +1127,19 @@ export class Application extends Command {
         const object: any = moduleExports[property]
         // eslint-disable-next-line max-len
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (object.name === params.className &&
-          Object.prototype.isPrototypeOf.call(parentClass, object)) {
-          return moduleExports[property]
+        if (object.name === params.className) {
+          if (Object.prototype.isPrototypeOf.call(parentClass, object)) {
+            return moduleExports[property]
+          }
+          assert(false, `the class named '${params.className}' found in` +
+            ` '${modulePath}' is not derived from  '${parentClass.name}'`)
         }
       }
       // Module not found
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      assert(false, `A class '${params.className}' derived from ` +
-        `'${parentClass.name}' not found in '${modulePath}'.`)
+      assert(false, `no class named '${params.className}'` +
+        ` found in '${modulePath}'`)
     } else {
       // Return the first exported class derived from parent
       // class (`cli.Command`).
@@ -1221,8 +1154,8 @@ export class Application extends Command {
       // Module not found
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      assert(false, `A class derived from '${parentClass.name}' not ` +
-        `found in '${modulePath}'.`)
+      assert(false, `no class derived from '${parentClass.name}'` +
+        ` found in '${modulePath}'`)
     }
   }
 
@@ -1230,8 +1163,8 @@ export class Application extends Command {
     _argv: string[],
     _forwardableArgv?: string[]
   ): Promise<number> {
-    assert(false, 'For applications that do not have sub-commands, ' +
-      'define a main() method in the cli.Application derived class')
+    assert(false, 'applications that do not have sub-commands should' +
+      ' define a main() method in the cli.Application derived class')
   }
 }
 
