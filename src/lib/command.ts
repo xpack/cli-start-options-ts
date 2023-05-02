@@ -166,8 +166,9 @@ export abstract class Command {
 
     let exitCode: number = ExitCodes.SUCCESS
 
-    log.debug(`'${context.programName} ` +
-      `${context.matchedCommands.join(' ')}' started`)
+    log.debug(
+      `'${[context.programName, ...context.matchedCommands].join(' ')}'` +
+      ' - started')
 
     ownArgv.forEach((arg, index) => {
       log.trace(`own arg${index}: '${arg}'`)
@@ -178,8 +179,9 @@ export abstract class Command {
 
     exitCode = await this.main(ownArgv, forwardableArgv)
 
-    log.debug(`'${context.programName} ` +
-      `${context.matchedCommands.join(' ')}' - returned ${exitCode}`)
+    log.debug(
+      `'${[context.programName, ...context.matchedCommands].join(' ')}'` +
+      ` - returned ${exitCode}`)
 
     return exitCode
   }
