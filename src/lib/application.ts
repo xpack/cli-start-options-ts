@@ -936,9 +936,16 @@ export class Application extends Command {
     // Normally the applications should not rely on this, instead explicitly
     // process relative paths and pass the config.cwd path to spawned processes.
     if (!(this.enableREPL && config.interactiveServerPort !== undefined)) {
-      await makeDir(config.cwd)
-      process.chdir(config.cwd)
-      log.debug(`cwd()='${process.cwd()}'`)
+      try {
+        await makeDir(config.cwd)
+        process.chdir(config.cwd)
+        log.debug(`process.chdir('${process.cwd()}')`)
+      } catch (error: any) {
+        /* c8 ignore start */
+        throw new cli.ApplicationError(
+          `cannot change to '${config.cwd}' folder`)
+      }
+      /* c8 ignore stop */
     }
 
     let commandArgv: string[]
