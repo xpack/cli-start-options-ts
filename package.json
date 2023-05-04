@@ -111,7 +111,7 @@
       "tests/tap/060-*.ts",
       "tests/tap/070-*.ts",
       "tests/tap/080-*.ts",
-
+      "tests/tap/090-*.ts",
       "tests/tap/122-*.ts",
       "tests/tap/125-*.ts",
       "tests/tap/130-*.ts",
@@ -131,7 +131,8 @@
     "ignore": [
       "esm",
       "**/*.d.ts",
-      "**/*.js"
+      "**/*.js",
+      "tests/tap/deprecated"
     ]
   },
   "engines": {

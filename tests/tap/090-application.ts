@@ -75,12 +75,8 @@ class MockApplicationStatic extends cli.Application {
 }
 
 await test('cli.Application static start()', async (t) => {
-  // Fails to match the exception in async functions.
+  // Exception in async functions should be checked as rejections:
   // https://github.com/tapjs/node-tap/issues/865
-
-  // t.throws(async () => {
-  //   await cli.Application.start()
-  // }, assert.AssertionError, 'assert(application.context.rootPath)')
 
   try {
     await cli.Application.start()
@@ -92,7 +88,23 @@ await test('cli.Application static start()', async (t) => {
   }
 
   await t.test('default', async (t) => {
-    const exitCode = await MockApplicationStatic.start()
+    // The braces test if the context created internally.
+    const exitCode = await MockApplicationStatic.start({})
+    t.equal(exitCode, 42, 'exit 42')
+
+    t.end()
+  })
+
+  await t.test('default log', async (t) => {
+    const context = new cli.Context({
+      log,
+      packageJson: packageJson as cli.NpmPackageJson
+    })
+
+    context.log = undefined as unknown as cli.Logger
+
+    // The braces test if the context created internally.
+    const exitCode = await MockApplicationStatic.start({ context })
     t.equal(exitCode, 42, 'exit 42')
 
     t.end()
@@ -183,6 +195,33 @@ class MockApplicationNoDispatch extends cli.Application {
   }
 }
 
+class MockApplicationWithPackageJson extends cli.Application {
+  constructor (params: cli.ApplicationConstructorParams) {
+    super(params)
+
+    const context: cli.Context = this.context
+
+    // .../tests/tap/x.ts -> .../tests/mock/root
+    context.rootPath =
+      path.join(
+        path.dirname(path.dirname(fileURLToPath(import.meta.url))),
+        'mock', 'root'
+      )
+  }
+
+  override async main (
+    _argv: string[],
+    _forwardableArgv: string[]
+  ): Promise<number> {
+    const context: cli.Context = this.context
+
+    const log = context.log
+    log.always('@main@')
+
+    return 42
+  }
+}
+
 await test('cli.Application start()', async (t) => {
   mockConsole.clear()
 
@@ -220,6 +259,64 @@ await test('cli.Application start()', async (t) => {
       'assert(packageJson.version)')
     t.equal(error.message, 'packageJson.version', 'packageJson.version')
   }
+
+  await t.test('help from package.json', async (t) => {
+    mockConsole.clear()
+
+    const context = new cli.Context({
+      log,
+      processArgv: ['node', 'xyz', '-h']
+    })
+
+    const application = new MockApplicationWithPackageJson({ context })
+
+    const exitCode = await application.start()
+
+    t.equal(exitCode, cli.ExitCodes.SUCCESS, 'exit SUCCESS')
+
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
+
+    t.equal(mockConsole.errLines.length, 0, 'no error lines')
+
+    /* eslint-disable max-len */
+    const expectedLines = [
+      '', //  0
+      'The xyz description', //  1
+      '', //  2
+      'Usage: xyz [options...]', //  3
+      '', //  4
+      'Common options:', //  5
+      '  --loglevel <level>    Set log level (silent|warn|info|verbose|debug|trace) (optional)', //  6
+      '  -s|--silent           Disable all messages (--loglevel silent) (optional)', //  7
+      '  -q|--quiet            Mostly quiet, warnings and errors (--loglevel warn) (optional)', //  8
+      '  --informative         Informative (--loglevel info) (optional)', //  9
+      '  -v|--verbose          Verbose (--loglevel verbose) (optional)', // 10
+      '  -d|--debug            Debug messages (--loglevel debug) (optional)', // 11
+      '  -dd|--trace           Trace messages (--loglevel trace, -d -d) (optional)', // 12
+      '  --no-update-notifier  Skip check for a more recent version (optional)', // 13
+      '  -C <folder>           Set current folder (optional)', // 14
+      '', // 15
+      'xyz -h|--help           Quick help', // 16
+      'xyz --version           Show version', // 17
+      '' // 18
+    ]
+    /* eslint-enable max-len */
+
+    // Remove last line which includes the absolute path.
+    const removed =
+      mockConsole.outLines.splice(mockConsole.outLines.length - 1, 1)
+
+    t.equal(mockConsole.outLines.length, expectedLines.length,
+      'output lines count')
+    // Compare content, not object.
+    t.same(mockConsole.outLines, expectedLines, 'output lines content')
+
+    // dumpLines(removed)
+    t.match(removed[0], 'npm @scope/xyz@1.2.3 ', 'npm')
+
+    t.end()
+  })
 
   await t.test('help description as name', async (t) => {
     mockConsole.clear()
@@ -788,6 +885,7 @@ await test('cli.Application dispatchCommand()', async (t) => {
     ]
     /* eslint-enable max-len */
 
+    // Remove last line which includes the absolute path.
     mockConsole.outLines.splice(mockConsole.outLines.length - 1, 1)
 
     t.equal(mockConsole.outLines.length, expectedLines.length,
@@ -814,8 +912,8 @@ await test('cli.Application dispatchCommand()', async (t) => {
 
     t.equal(exitCode, 42, 'exit 42')
 
-    dumpLines(mockConsole.errLines)
-    dumpLines(mockConsole.outLines)
+    // dumpLines(mockConsole.errLines)
+    // dumpLines(mockConsole.outLines)
 
     t.equal(mockConsole.errLines.length, 0, 'no error lines')
 
