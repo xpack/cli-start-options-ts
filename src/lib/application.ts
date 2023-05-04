@@ -333,6 +333,8 @@ export class Application extends Command {
     let exitCode: number = ExitCodes.SUCCESS
     try {
       const context: Context = params?.context ?? new Context({ log })
+      // In case param.context had no log.
+      context.log = log
 
       // Instantiate the derived class.
       const application = new DerivedApplicationClass({
