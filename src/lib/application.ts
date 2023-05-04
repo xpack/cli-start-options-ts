@@ -572,7 +572,7 @@ export class Application extends Command {
 
     // Very early detection of `--version`, since it makes
     // all other irrelevant. Checked again in dispatchCommands() for REPL.
-    if (config.isVersionRequest ?? false) {
+    if (config.isVersionRequest) {
       log.always(packageJson.version)
       return ExitCodes.SUCCESS
     }
@@ -585,7 +585,7 @@ export class Application extends Command {
     // ------------------------------------------------------------------------
 
     // If no commands and -h, output the application help message.
-    if ((commands.length === 0) && (config.isHelpRequest ?? false)) {
+    if ((commands.length === 0) && (config.isHelpRequest)) {
       this.outputHelp()
       return ExitCodes.SUCCESS // Help explicitly called.
     }
@@ -925,7 +925,7 @@ export class Application extends Command {
 
     // Done again here, for REPL invocations.
     /* c8 ignore start */
-    if (config.isVersionRequest ?? false) {
+    if (config.isVersionRequest) {
       log.always(packageJson.version)
       return ExitCodes.SUCCESS
     }
@@ -937,7 +937,7 @@ export class Application extends Command {
 
     // // If --help and no command, output the application help message.
     // if ((commands.length === 0) &&
-    //   (config.isHelpRequest ?? false)) {
+    //   (config.isHelpRequest)) {
     //   context.commandNode = this.commandsTree
     //   this.outputHelp()
     //   return ExitCodes.SUCCESS // Help explicitly called.
@@ -967,7 +967,7 @@ export class Application extends Command {
       if (this.commandsTree.hasChildrenCommands()) {
         if (commands.length === 0) {
           context.commandNode = this.commandsTree
-          if (config.isHelpRequest ?? false) {
+          if (config.isHelpRequest) {
             /* c8 ignore start */
             exitCode = ExitCodes.SUCCESS // Help explicitly called from REPL.
             /* c8 ignore stop */
