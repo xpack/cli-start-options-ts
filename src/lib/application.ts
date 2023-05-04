@@ -594,8 +594,8 @@ export class Application extends Command {
 
     let exitCode: number = ExitCodes.SUCCESS
 
+    /* c8 ignore start */
     if ((commands.length === 0) && this.enableREPL) {
-      /* c8 ignore start */
       // If there are no commands on the command line and REPL is enabled,
       // enter the loop. Each line will be evaluated with dispatchCommands().
       exitCode = await this.enterRepl()
@@ -946,13 +946,15 @@ export class Application extends Command {
     // Warning: cannot change the global current folder in a server environment!
     // Normally the applications should not rely on this, instead explicitly
     // process relative paths and pass the config.cwd path to spawned processes.
+    /* c8 ignore start */
     if (!(this.enableREPL && config.interactiveServerPort !== undefined)) {
       try {
+        /* c8 ignore stop */
         await makeDir(config.cwd)
         process.chdir(config.cwd)
         log.debug(`process.chdir('${process.cwd()}')`)
-      } catch (error: any) {
         /* c8 ignore start */
+      } catch (error: any) {
         throw new cli.ApplicationError(
           `cannot change to '${config.cwd}' folder`)
       }
@@ -967,8 +969,8 @@ export class Application extends Command {
       if (this.commandsTree.hasChildrenCommands()) {
         if (commands.length === 0) {
           context.commandNode = this.commandsTree
+          /* c8 ignore start */
           if (config.isHelpRequest) {
-            /* c8 ignore start */
             exitCode = ExitCodes.SUCCESS // Help explicitly called from REPL.
             /* c8 ignore stop */
           } else {
