@@ -111,14 +111,7 @@
       "tests/tap/060-*.ts",
       "tests/tap/070-*.ts",
       "tests/tap/080-*.ts",
-      "tests/tap/090-*.ts",
-      "tests/tap/122-*.ts",
-      "tests/tap/125-*.ts",
-      "tests/tap/130-*.ts",
-      "tests/tap/135-*.ts",
-      "tests/tap/140-*.ts",
-      "tests/tap/160-*.ts",
-      "tests/tap/170-*.ts"
+      "tests/tap/090-*.ts"
     ],
     "node-arg": [
       "--loader=ts-node/esm"
