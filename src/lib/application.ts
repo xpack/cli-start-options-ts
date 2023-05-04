@@ -674,8 +674,10 @@ export class Application extends Command {
       ` release: ${os.release()}`)
     log.debug(`node: ${process.version}`)
 
-    log.debug(`process.argv0: ${process?.argv[0] ?? 'undefined'}`)
-    log.debug(`process.argv1: ${process?.argv[1] ?? 'undefined'}`)
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    log.debug(`process.argv0: ${process?.argv[0]}`)
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    log.debug(`process.argv1: ${process?.argv[1]}`)
 
     context.processArgv.forEach((arg, index) => {
       log.debug(`start argv${index}: '${arg}'`)
