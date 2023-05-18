@@ -4,6 +4,17 @@ Changes in reverse chronological order.
 
 Refer to GitHub [issues](https://github.com/xpack/cli-start-options-js/issues/).
 
+## 2023-05-18
+
+* v0.8.5.2 released
+* 2789333 #29: fix mkdir('/') on windows (legacy-js)
+
+## 2023-02-12
+
+* 7dd7721 cli-options.js: default un-aliased
+* adfde85 cli-application.js: fix date delta
+* a0728c4 cli-application.js: fix process.exit for engine
+
 ## 2023-02-09
 
 * v0.8.1 released

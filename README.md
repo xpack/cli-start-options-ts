@@ -89,7 +89,7 @@ A typical test result looks like:
 ```console
 $ npm run test
 
-> @ilg/cli-start-options@0.8.1 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.8.2 test /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard && npm run test-tap -s
 
 test/tap/author.js .................................... 8/8
@@ -185,7 +185,7 @@ To run the coverage tests, use `npm run test-coverage`:
 ```console
 $ npm run test-coverage
 
-> @ilg/cli-start-options@0.8.1 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.8.2 test-coverage /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > tap --coverage --reporter=classic --timeout 600 --no-color "test/tap/*.js"
 
 test/tap/author.js .................................... 8/8
@@ -237,7 +237,7 @@ To manually fix compliance with the style guide (where possible):
 ```console
 $ npm run fix
 
-> @ilg/cli-start-options@0.8.1 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
+> @ilg/cli-start-options@0.8.2 fix /Users/ilg/My Files/MacBookPro Projects/xPack/npm-modules/cli-start-options-js.git
 > standard --fix
 
 ```
@@ -280,7 +280,7 @@ Check if the version is present at
 When stable:
 
 - `npm dist-tag ls @ilg/cli-start-options`
-- `npm dist-tag add @ilg/cli-start-options@0.8.1 latest`
+- `npm dist-tag add @ilg/cli-start-options@0.8.2 latest`
 - `npm dist-tag ls @ilg/cli-start-options`
 
 ## License
