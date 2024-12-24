@@ -1,0 +1,13 @@
+{
+  "description": "Sample Minimal",
+  "name": "@scope/minimal",
+  "version": "1.2.3",
+  "type": "module",
+  "exports": {
+    "import": {
+      "default": "./src/main.js",
+      "types": "./src/main.d.ts"
+    }
+  },
+  "author": "Liviu Ionescu <ilg@livius.net>"
+}
