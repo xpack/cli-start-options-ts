@@ -22,7 +22,7 @@ The project uses two branches:
 To clone the `master` branch, use:
 
 ```sh
-mkdir ${HOME}/Work/npm-modules && cd ${HOME}/Work/npm-modules
+mkdir ${HOME}/Work/npm-packages && cd ${HOME}/Work/npm-packages
 git clone \
 https://github.com/xpack/cli-start-options-ts.git cli-start-options-ts.git
 ```
@@ -169,11 +169,11 @@ A full test run, including coverage, looks like:
 
 [10:13:41 PM] Project 'src/tsconfig.json' is out of date because output 'esm/index.js' is older than input 'src/lib/cli-options.ts'
 
-[10:13:41 PM] Building project '/Users/ilg/My Files/WKS Projects/xpack.github/npm-modules/cli-start-options-ts.git/src/tsconfig.json'...
+[10:13:41 PM] Building project '/Users/ilg/My Files/WKS Projects/xpack.github/npm-packages/cli-start-options-ts.git/src/tsconfig.json'...
 
 [10:13:42 PM] Project 'tests/tsconfig.json' is out of date because output 'tests/mock/common.js' is older than input 'tests/mock/xtest/src/xtest/verbosity.ts'
 
-[10:13:42 PM] Building project '/Users/ilg/My Files/WKS Projects/xpack.github/npm-modules/cli-start-options-ts.git/tests/tsconfig.json'...
+[10:13:42 PM] Building project '/Users/ilg/My Files/WKS Projects/xpack.github/npm-packages/cli-start-options-ts.git/tests/tsconfig.json'...
 
 
 > @xpack/cli-start-options@0.10.0-pre lint
