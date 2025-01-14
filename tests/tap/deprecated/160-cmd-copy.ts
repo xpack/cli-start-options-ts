@@ -192,10 +192,10 @@ await test('xtest cop --file xxx --output yyy -q',
 if (!skipSomeTests) {
   await test('unpack',
     async (t) => {
-      const tgzPath = path.resolve(fixtures, 'cmd-code.tgz')
+      const tgzPath = path.resolve(fixtures, 'cmd-code.tar.gz')
       try {
         await extractTgz(tgzPath, workFolder)
-        t.pass('cmd-code.tgz unpacked into ' + workFolder)
+        t.pass('cmd-code.tar.gz unpacked into ' + workFolder)
         await fs.promises.chmod(filePath, 0o444)
         t.pass('chmod ro file')
         await makeDir(readOnlyFolder)

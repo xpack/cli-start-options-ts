@@ -284,7 +284,7 @@ export function splitLines (message: string): string[] {
 // ----------------------------------------------------------------------------
 
 /**
- * @summary Extract files from a .tgz archive into a folder.
+ * @summary Extract files from a .tar.gz archive into a folder.
  *
  * @param tgzPath Path to archive file.
  * @param destPath Path to destination folder.
