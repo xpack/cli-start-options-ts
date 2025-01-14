@@ -195,7 +195,7 @@ class Common {
   }
 
   /**
-   * @summary Extract files from a .tgz archive into a folder.
+   * @summary Extract files from a .tar.gz archive into a folder.
    *
    * @async
    * @param {string} tgzPath Path to archive file.
