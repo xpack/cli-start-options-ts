@@ -1,6 +1,6 @@
 {
-  "name": "test",
-  "version": "3.4.5",
+  "name": "@xpack/xpm-liquid",
+  "version": "0.1.2",
   "description": "Mock ZTest",
   "author": {
     "name": "Liviu Ionescu",

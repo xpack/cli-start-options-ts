@@ -76,6 +76,10 @@ class Ztest extends CliApplication {
     // the shortcut of using `__dirname` of the main file.
     Self.rootPath = __dirname
 
+    // Run the update check
+    Self.checkUpdatesIntervalSeconds = 5
+    process.stdout.isTTY = true
+
     // ------------------------------------------------------------------------
     // Initialise the tree of known commands.
     // Paths should be relative to the package root.

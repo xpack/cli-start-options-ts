@@ -42,6 +42,27 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "tap ztest.js",
+      "program": "${workspaceRoot}/test/mock/ztest/bin/ztest.js",
+      "stopOnEntry": true,
+      "args": [
+        "--help"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "tap errors.js",
       "program": "${workspaceRoot}/test/tap/errors.js",
       "stopOnEntry": true,
